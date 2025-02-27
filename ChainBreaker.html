@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Precision Ring-Breaking Game</title>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=i88e1kfWezZzYkLu26oV9B3VW-WgaAg3aXiLl1LjxBqWgkZSMzBQCHKVvO_Y9LD-jPl_bAsxqxZmqqMN_CTpAqifXtZ2_HVI8QMOJSGWx3zPabHJUgLhUJQ5pC1RwncGyR_O5PaQq4hiI9DQzXxg1Fy_doGp_GWjXAAm71OnPdu_kTIXlWxBTEuT_RlqnbLGJyDK4lhzX5-X27Uqrww5Ipu_WZE2tdlwzOOYOKrfwkdyVh5yUEx3uefJQzO7IRby1nVNpqU_u4yL5eCNeTShiw" charset="UTF-8"></script><style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Arial', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sound toggle button removed as audio functionality has been removed -->
+  
+  <!-- Load Phaser 3 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+  <script>
+    // BootScene: Loads assets (except audio)
+    class BootScene extends Phaser.Scene {
+      constructor() {
+        super('BootScene');
+      }
+      
+      preload() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        
+        // Loading bar
+        const progressBar = this.add.graphics();
+        const progressBox = this.add.graphics();
+        progressBox.fillStyle(0x222222, 0.8);
+        progressBox.fillRect(width/2 - 160, height/2 - 25, 320, 50);
+        
+        const loadingText = this.add.text(width/2, height/2 - 50, 'Loading...', { 
+          font: '20px Arial', 
+          fill: '#ffffff' 
+        }).setOrigin(0.5);
+        
+        this.load.on('progress', (value) => {
+          progressBar.clear();
+          progressBar.fillStyle(0xffffff, 1);
+          progressBar.fillRect(width/2 - 150, height/2 - 15, 300 * value, 30);
+        });
+        
+        this.load.on('complete', () => {
+          progressBar.destroy();
+          progressBox.destroy();
+          loadingText.destroy();
+        });
+        
+        // Removed audio file loading
+        
+        // Create particle texture for break effects.
+        let particleGraphics = this.make.graphics({ x: 0, y: 0, add: false });
+        particleGraphics.fillStyle(0xffffff, 1);
+        particleGraphics.fillCircle(4, 4, 4);
+        particleGraphics.generateTexture('particle', 8, 8);
+        
+        // Create star texture for the background.
+        let starGraphics = this.make.graphics({ x: 0, y: 0, add: false });
+        starGraphics.fillStyle(0xffffff, 1);
+        starGraphics.fillRect(0, 0, 2, 2);
+        starGraphics.generateTexture('star', 2, 2);
+      }
+      
+      create() {
+        this.scene.start('MainScene');
+      }
+    }
+    
+    // MainScene: Main game logic (sound calls removed)
+    class MainScene extends Phaser.Scene {
+      constructor() {
+        super('MainScene');
+      }
+      
+      create() {
+        // --- Starfield Background ---
+        this.backgroundParticles = this.add.particles('star');
+        this.backgroundEmitter = this.backgroundParticles.createEmitter({
+          x: { min: 0, max: this.cameras.main.width },
+          y: 0,
+          lifespan: 8000,
+          speedY: { min: 10, max: 30 },
+          scale: { start: 1, end: 0 },
+          quantity: 2,
+          blendMode: 'ADD'
+        });
+        
+        // Center point
+        this.center = { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 };
+        
+        // --- Flash Overlay for Hit Feedback ---
+        this.flash = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xffffff)
+          .setOrigin(0, 0);
+        this.flash.alpha = 0;
+        
+        // --- Background Glow ---
+        this.backgroundGlow = this.add.graphics();
+        
+        // --- Level & UI ---
+        this.setupUI();
+        
+        // --- Particle Effects for Ring Breaks ---
+        this.setupParticleEffects();
+        
+        // --- Rotating Needle Setup ---
+        this.setupNeedle();
+        
+        // --- Input Handling ---
+        this.input.keyboard.on('keydown-SPACE', this.handleInput, this);
+        this.input.on('pointerdown', this.handleInput, this);
+        
+        // --- Game Over Overlay ---
+        this.gameOverFlag = false;
+        this.gameOverText = this.add.text(this.center.x, this.center.y, '', { 
+          font: '48px Arial', 
+          fill: '#ff0000', 
+          align: 'center',
+          stroke: '#000000',
+          strokeThickness: 6
+        }).setOrigin(0.5);
+        
+        // --- Initialize Ring Visual Properties ---
+        this.baseRadius = 100;
+        this.ringThickness = 20;
+        this.ringGap = 15;
+        
+        // --- Level Design Setup ---
+        this.setupLevelDesigns();
+        
+        // --- Start the Level ---
+        this.startLevel();
+      }
+      
+      setupUI() {
+        this.level = 1;
+        this.score = 0;
+        this.combo = 0;
+        this.lastCorrectTime = 0;
+        this.comboTimeout = 2000; // ms to maintain combo
+        this.lives = 3;
+        this.regenDelay = 5000;
+        
+        const textStyle = { 
+          font: '24px Arial', 
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeThickness: 3
+        };
+        
+        this.levelText = this.add.text(this.cameras.main.width / 2, 10, 'Level: 1', textStyle)
+          .setOrigin(0.5, 0);
+        this.scoreText = this.add.text(10, 10, 'Score: 0', textStyle);
+        this.comboText = this.add.text(10, 40, 'Combo: 0', { ...textStyle, fill: '#ffff00' });
+        this.livesText = this.add.text(10, 70, 'Lives: 3', { ...textStyle, fill: '#ff5555' });
+        
+        // Fever mode UI
+        this.feverMode = false;
+        this.feverModeDuration = 5000;
+        this.feverTimer = 0;
+        this.feverText = this.add.text(10, 100, '', { ...textStyle, fill: '#ff00ff' });
+        
+        // Level theme display
+        this.themeText = this.add.text(this.cameras.main.width / 2, 50, '', {
+          font: '20px Arial',
+          fill: '#00ffff',
+          stroke: '#000000',
+          strokeThickness: 3
+        }).setOrigin(0.5, 0);
+      }
+      
+      setupParticleEffects() {
+        this.breakParticles = this.add.particles('particle');
+        this.breakEmitter = this.breakParticles.createEmitter({
+          speed: { min: -100, max: 100 },
+          scale: { start: 1, end: 0 },
+          lifespan: 500,
+          blendMode: 'ADD',
+          quantity: 30,
+          on: false
+        });
+        
+        // Confetti effect for level up
+        this.confettiParticles = this.add.particles('particle');
+        this.confettiEmitter = this.confettiParticles.createEmitter({
+          x: { min: 0, max: this.cameras.main.width },
+          y: 0,
+          speed: { min: 100, max: 200 },
+          angle: { min: 80, max: 100 },
+          scale: { start: 1, end: 0 },
+          lifespan: 3000,
+          tint: [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff],
+          on: false
+        });
+      }
+      
+      setupNeedle() {
+        this.needle = this.add.graphics();
+        this.needleAngle = 0;
+        this.originalNeedleSpeed = Phaser.Math.DegToRad(180); // Base speed
+        this.needleSpeed = this.originalNeedleSpeed;
+        this.needleReverseProb = 0; // Chance for needle to reverse (in higher levels)
+      }
+      
+      setupLevelDesigns() {
+        this.levelDesigns = [
+          {
+            name: "Beginner's Circle",
+            theme: "Standard rings with stationary targets",
+            color: 0x00ffff,
+            specialEffects: false,
+            sweetSpotSize: 15, // Degrees
+            needleSpeed: 1, // Multiplier
+            ringMovement: false
+          },
+          {
+            name: "Speedy Spins",
+            theme: "Faster needle movement",
+            color: 0x00ff00,
+            specialEffects: false,
+            sweetSpotSize: 15,
+            needleSpeed: 1.3,
+            ringMovement: false
+          },
+          {
+            name: "Moving Targets",
+            theme: "Sweet spots begin to rotate",
+            color: 0xffff00,
+            specialEffects: false,
+            sweetSpotSize: 15,
+            needleSpeed: 1.2,
+            ringMovement: true,
+            ringSpeed: 0.0005
+          },
+          {
+            name: "Narrowing Path",
+            theme: "Smaller sweet spots to hit",
+            color: 0xff00ff,
+            specialEffects: true,
+            sweetSpotSize: 10,
+            needleSpeed: 1.3,
+            ringMovement: true,
+            ringSpeed: 0.0007
+          },
+          {
+            name: "Chaos Theory",
+            theme: "Unpredictable needle movements",
+            color: 0xff0000,
+            specialEffects: true,
+            sweetSpotSize: 12,
+            needleSpeed: 1.4,
+            ringMovement: true,
+            ringSpeed: 0.001,
+            needleReverseProb: 0.02
+          },
+          {
+            name: "Master of Precision",
+            theme: "The ultimate challenge",
+            color: 0xffffff,
+            specialEffects: true,
+            sweetSpotSize: 8,
+            needleSpeed: 1.8,
+            ringMovement: true,
+            ringSpeed: 0.0015,
+            needleReverseProb: 0.03,
+            pulsingRings: true
+          }
+        ];
+      }
+      
+      getActiveDesign() {
+        const designIndex = Math.min(this.level - 1, this.levelDesigns.length - 1);
+        return this.levelDesigns[designIndex];
+      }
+      
+      update(time, delta) {
+        if (this.gameOverFlag) return;
+        let dt = delta / 1000;
+        
+        this.updateBackgroundGlow(time);
+        this.updateNeedle(dt);
+        this.ringStack.forEach(ring => ring.update(delta));
+        
+        // Reset combo if timeout exceeded
+        if (time - this.lastCorrectTime > this.comboTimeout) {
+          this.combo = 0;
+          this.comboText.setText('Combo: ' + this.combo);
+        }
+        
+        this.updateFeverMode(delta);
+      }
+      
+      updateBackgroundGlow(time) {
+        const intensity = this.feverMode ? 0.3 : 0.1;
+        const pulseFactor = Math.sin(time / 500) * 0.05 + intensity;
+        this.backgroundGlow.clear();
+        this.backgroundGlow.fillStyle(this.currentRingColor, pulseFactor);
+        this.backgroundGlow.fillCircle(this.center.x, this.center.y, this.baseRadius * 3);
+      }
+      
+      updateNeedle(dt) {
+        const design = this.getActiveDesign();
+        if (design.needleReverseProb && Math.random() < design.needleReverseProb) {
+          this.needleSpeed = -this.needleSpeed;
+        }
+        this.needleAngle += this.needleSpeed * dt;
+        if (this.needleAngle >= Math.PI * 2) this.needleAngle -= Math.PI * 2;
+        if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
+        this.drawNeedle();
+      }
+      
+      updateFeverMode(delta) {
+        if (this.feverMode) {
+          this.feverTimer -= delta;
+          if (this.feverTimer <= 0) {
+            this.feverMode = false;
+            this.feverText.setText('');
+          } else {
+            this.feverText.setText('FEVER MODE: ' + Math.ceil(this.feverTimer / 1000) + 's');
+          }
+        }
+      }
+      
+      drawNeedle() {
+        this.needle.clear();
+        let color = this.feverMode ? 0xff00ff : 0xffffff;
+        this.needle.lineStyle(4, color, 1);
+        let needleLength = this.activeRing.radius + this.activeRing.thickness / 2;
+        let endX = this.center.x + Math.cos(this.needleAngle) * needleLength;
+        let endY = this.center.y + Math.sin(this.needleAngle) * needleLength;
+        this.needle.strokeLineShape(new Phaser.Geom.Line(this.center.x, this.center.y, endX, endY));
+      }
+      
+      handleInput() {
+        if (this.gameOverFlag) return;
+        
+        let diff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
+        const design = this.getActiveDesign();
+        const threshold = Phaser.Math.DegToRad(design.sweetSpotSize);
+        if (Math.abs(diff) <= threshold) {
+          this.handleSuccessfulHit();
+        } else {
+          this.handleMiss();
+        }
+        this.resetRegenTimer();
+      }
+      
+      handleSuccessfulHit() {
+        // Visual feedback for a correct hit
+        this.flash.alpha = 1;
+        this.tweens.add({
+          targets: this.flash,
+          alpha: 0,
+          duration: 150,
+          ease: 'Linear'
+        });
+        this.breakEmitter.setTint(this.activeRing.ringColor);
+        this.breakEmitter.explode(30, this.center.x, this.center.y);
+        this.cameras.main.shake(150, 0.01);
+        
+        this.tweens.add({
+          targets: this.activeRing.graphics,
+          scaleX: 0,
+          scaleY: 0,
+          ease: 'Power2',
+          duration: 200,
+          onComplete: () => {
+            this.activeRing.destroy();
+            Phaser.Utils.Array.Remove(this.ringStack, this.activeRing);
+            if (this.ringStack.length === 0) {
+              this.levelUp();
+            } else {
+              this.activeRing = this.ringStack[this.ringStack.length - 1];
+            }
+          }
+        });
+        
+        this.combo++;
+        this.comboText.setText('Combo: ' + this.combo);
+        this.lastCorrectTime = this.time.now;
+        let multiplier = this.feverMode ? 2 : (1 + this.combo * 0.1);
+        this.score += Math.floor(10 * multiplier);
+        this.scoreText.setText('Score: ' + this.score);
+        
+        this.needleSpeed *= 1.03;
+        this.regenDelay = Math.max(3000, this.regenDelay * 0.98);
+        
+        if (this.combo >= 5 && !this.feverMode) {
+          this.activateFeverMode();
+        }
+      }
+      
+      handleMiss() {
+        this.combo = 0;
+        this.comboText.setText('Combo: ' + this.combo);
+        this.lives--;
+        this.livesText.setText('Lives: ' + this.lives);
+        
+        this.cameras.main.shake(150, 0.015);
+        this.tweens.add({
+          targets: this.activeRing.graphics,
+          x: this.activeRing.x + 5,
+          y: this.activeRing.y + 5,
+          yoyo: true,
+          duration: 50,
+          repeat: 2,
+          onComplete: () => {
+            this.activeRing.graphics.x = this.activeRing.x;
+            this.activeRing.graphics.y = this.activeRing.y;
+          }
+        });
+        
+        if (this.lives <= 0) {
+          this.gameOver();
+        }
+      }
+      
+      activateFeverMode() {
+        this.feverMode = true;
+        this.feverTimer = this.feverModeDuration;
+        this.feverText.setText('FEVER MODE: 5s');
+        this.cameras.main.flash(500, 255, 0, 255);
+      }
+      
+      resetRegenTimer() {
+        if (this.regenTimer) {
+          this.regenTimer.remove(false);
+        }
+        this.regenTimer = this.time.addEvent({
+          delay: this.regenDelay,
+          callback: this.regenerateRing,
+          callbackScope: this
+        });
+      }
+      
+      regenerateRing() {
+        let lastRadius = this.ringStack.length > 0 
+          ? this.ringStack[this.ringStack.length - 1].radius 
+          : this.baseRadius - (this.ringThickness + this.ringGap);
+        let newRadius = lastRadius + this.ringThickness + this.ringGap;
+        let maxVisibleRadius = (Math.min(this.cameras.main.width, this.cameras.main.height) / 2) - 50;
+        
+        if (newRadius > maxVisibleRadius) {
+          this.levelUp();
+          return;
+        }
+        
+        let newRing = new Ring(this, this.center.x, this.center.y, newRadius, this.ringThickness, this.currentRingColor);
+        this.ringStack.push(newRing);
+        this.activeRing = newRing;
+        this.resetRegenTimer();
+      }
+      
+      levelUp() {
+        this.confettiEmitter.explode(50, this.center.x, this.center.y);
+        this.cameras.main.flash(500, 0, 255, 0);
+        
+        let levelUpText = this.add.text(this.center.x, this.center.y, 'LEVEL UP!', { 
+          font: '48px Arial', 
+          fill: '#00ff00',
+          stroke: '#000000',
+          strokeThickness: 5
+        });
+        levelUpText.setOrigin(0.5);
+        
+        this.tweens.add({
+          targets: levelUpText,
+          alpha: 0,
+          scale: 2,
+          duration: 1000,
+          ease: 'Power2',
+          onComplete: () => levelUpText.destroy()
+        });
+        
+        this.level++;
+        this.levelText.setText('Level: ' + this.level);
+        
+        const design = this.getActiveDesign();
+        this.themeText.setText(design.name + ': ' + design.theme);
+        
+        this.needleSpeed = this.originalNeedleSpeed * design.needleSpeed;
+        this.needleReverseProb = design.needleReverseProb || 0;
+        this.regenDelay = Math.max(2000, 5000 - (this.level * 200));
+        
+        if (this.level % 3 === 0) {
+          this.lives = Math.min(this.lives + 1, 5);
+          this.livesText.setText('Lives: ' + this.lives);
+          let bonusText = this.add.text(this.center.x, this.center.y + 60, '+1 LIFE!', { 
+            font: '32px Arial', 
+            fill: '#ff5555',
+            stroke: '#000000',
+            strokeThickness: 4
+          });
+          bonusText.setOrigin(0.5);
+          this.tweens.add({
+            targets: bonusText,
+            alpha: 0,
+            y: this.center.y + 30,
+            duration: 1200,
+            ease: 'Power2',
+            onComplete: () => bonusText.destroy()
+          });
+        }
+        
+        this.time.delayedCall(1000, () => { this.startLevel(); }, [], this);
+      }
+      
+      startLevel() {
+        const design = this.getActiveDesign();
+        let hsv = Phaser.Display.Color.HSVToRGB((this.level * 0.1) % 1, 1, 1);
+        this.currentRingColor = design.color || Phaser.Display.Color.GetColor(hsv.r, hsv.g, hsv.b);
+        this.themeText.setText(design.name + ': ' + design.theme);
+        
+        this.ringStack = [];
+        let numRings = 4;
+        for (let i = 0; i < numRings; i++) {
+          let radius = this.baseRadius + i * (this.ringThickness + this.ringGap);
+          let ring = new Ring(this, this.center.x, this.center.y, radius, this.ringThickness, this.currentRingColor, design);
+          this.ringStack.push(ring);
+        }
+        
+        this.activeRing = this.ringStack[this.ringStack.length - 1];
+        this.resetRegenTimer();
+      }
+      
+      gameOver() {
+        this.gameOverFlag = true;
+        this.gameOverText.setText('GAME OVER\nScore: ' + this.score + '\nLevel: ' + this.level + '\nClick to Restart');
+        
+        this.ringStack.forEach(ring => {
+          this.tweens.add({
+            targets: ring.graphics,
+            alpha: 0,
+            duration: 500
+          });
+        });
+        
+        this.input.once('pointerdown', () => {
+          this.resetGame();
+          this.gameOverFlag = false;
+          this.gameOverText.setText('');
+        });
+      }
+      
+      resetGame() {
+        this.level = 1;
+        this.levelText.setText('Level: ' + this.level);
+        this.score = 0;
+        this.combo = 0;
+        this.lives = 3;
+        this.needleSpeed = this.originalNeedleSpeed;
+        this.regenDelay = 5000;
+        this.scoreText.setText('Score: 0');
+        this.comboText.setText('Combo: 0');
+        this.livesText.setText('Lives: 3');
+        this.feverMode = false;
+        this.feverText.setText('');
+        
+        if (this.ringStack) {
+          this.ringStack.forEach(ring => ring.destroy());
+        }
+        
+        this.startLevel();
+      }
+    }
+    
+    // Ring class: Draws and updates rings (with sweet spot arrow)
+    class Ring {
+      constructor(scene, x, y, radius, thickness, ringColor, design = {}) {
+        this.scene = scene;
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.thickness = thickness;
+        this.ringColor = ringColor || 0x00ffff;
+        this.graphics = scene.add.graphics({ x: x, y: y });
+        this.sweetSpotAngle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+        this.debugText = null;
+        this.design = design;
+        this.pulseDirection = 1;
+        this.pulseMagnitude = 0;
+        
+        this.movementEnabled = design.ringMovement || false;
+        this.movementSpeed = design.ringSpeed || 0.0005;
+        
+        if (this.scene.debugMode) {
+          this.debugText = this.scene.add.text(this.x, this.y, '', { font: '12px Arial', fill: '#ff0000' });
+          this.debugText.setOrigin(0.5);
+        }
+        
+        this.draw();
+      }
+      
+      draw() {
+        this.graphics.clear();
+        this.graphics.fillStyle(this.ringColor, 0.2);
+        this.graphics.fillCircle(0, 0, this.radius);
+        
+        this.graphics.lineStyle(this.thickness, this.ringColor, 0.8);
+        this.graphics.strokeCircle(0, 0, this.radius);
+        
+        const arcWidth = Phaser.Math.DegToRad(this.design.sweetSpotSize || 15);
+        this.graphics.lineStyle(this.thickness, 0xffffff, 1); 
+        this.graphics.beginPath();
+        this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - arcWidth, this.sweetSpotAngle + arcWidth, false);
+        this.graphics.strokePath();
+        
+        let arrowX = Math.cos(this.sweetSpotAngle) * (this.radius - this.thickness - 5);
+        let arrowY = Math.sin(this.sweetSpotAngle) * (this.radius - this.thickness - 5);
+        this.graphics.fillStyle(0xffffff, 1);
+        this.graphics.beginPath();
+        this.graphics.moveTo(arrowX, arrowY);
+        this.graphics.lineTo(arrowX - 5, arrowY - 10);
+        this.graphics.lineTo(arrowX + 5, arrowY - 10);
+        this.graphics.closePath();
+        this.graphics.fillPath();
+        
+        if (this.debugText) {
+          this.debugText.setText('Sweet Spot: ' + Phaser.Math.RadToDeg(this.sweetSpotAngle).toFixed(1));
+        }
+      }
+      
+      update(delta) {
+        if (this.movementEnabled) {
+          this.sweetSpotAngle += this.movementSpeed * delta;
+          if (this.sweetSpotAngle > Math.PI * 2) {
+            this.sweetSpotAngle -= Math.PI * 2;
+          }
+          this.draw();
+        }
+        if (this.design.pulsingRings) {
+          this.pulseMagnitude += this.pulseDirection * 0.001 * delta;
+          if (this.pulseMagnitude > 0.05 || this.pulseMagnitude < -0.05) {
+            this.pulseDirection *= -1;
+          }
+          this.graphics.scaleX = 1 + this.pulseMagnitude;
+          this.graphics.scaleY = 1 + this.pulseMagnitude;
+        }
+      }
+      
+      destroy() {
+        this.graphics.destroy();
+        if (this.debugText) {
+          this.debugText.destroy();
+        }
+      }
+    }
+    
+    const config = {
+      type: Phaser.AUTO,
+      width: 800,
+      height: 600,
+      scene: [BootScene, MainScene],
+      audio: { disableWebAudio: false }
+    };
+    
+    const game = new Phaser.Game(config);
+  </script>
+</body>
+</html>
