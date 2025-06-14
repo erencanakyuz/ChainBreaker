@@ -8,6 +8,8 @@
   <title>Chain Breaker Pro - Precision Ring-Breaking Game</title>
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+
+  <!-- Enhanced CSS with gradient backgrounds and modern styling -->
   <style>
     * {
       margin: 0;
@@ -19,7 +21,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: #000;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       font-family: 'Arial', sans-serif;
       width: 100vw;
       height: 100vh;
@@ -31,6 +33,7 @@
       position: fixed;
       top: 0;
       left: 0;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.9) 100%);
     }
 
     #phaser-game {
@@ -42,33 +45,65 @@
       display: block;
       width: 100% !important;
       height: 100% !important;
+      box-shadow: inset 0 0 100px rgba(0, 150, 255, 0.3);
     }
 
     .menu-button {
       font-size: 24px;
       cursor: pointer;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+      border-radius: 12px;
+      padding: 10px 20px;
+      border: none;
+      color: white;
+      font-weight: bold;
+      transition: all 0.3s ease;
     }
 
-    /* Loading screen için */
+    .menu-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Enhanced loading screen with gradient */
     #loading {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: #000;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       color: white;
       font-size: 24px;
       z-index: 1000;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Animated loading indicator */
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 20px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
 
 <body>
   <div id="loading">
+    <div class="loading-spinner"></div>
     <div>Chain Breaker Pro Yükleniyor...</div>
   </div>
 
@@ -76,10 +111,89 @@
     <div id="phaser-game"></div>
   </div>
 
-  <!-- Load Phaser 3 from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+  <!-- Load external color libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
+
+  <!-- Load latest Phaser 3 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
   <script>
-    // BootScene: Yükleme işlemlerini yapar.
+    // Advanced Color System using Chroma.js only
+    class ColorSystem {
+      constructor() {
+        this.initializeColorPalettes();
+      }
+
+      initializeColorPalettes() {
+        // Create sophisticated color palettes using Chroma.js
+        this.palettes = {
+          neon: chroma.scale(['#ff0080', '#00ff80', '#0080ff', '#ff8000']).mode('hsl').colors(8),
+          sunset: chroma.scale(['#ff6b6b', '#feca57', '#ff9ff3', '#54a0ff']).mode('lch').colors(8),
+          ocean: chroma.scale(['#0066cc', '#00ccff', '#66ffcc', '#ccffff']).mode('lab').colors(8),
+          fire: chroma.scale(['#ff3333', '#ff6600', '#ffcc00', '#ffffff']).mode('hsl').colors(8),
+          cosmic: chroma.scale(['#6c5ce7', '#fd79a8', '#fdcb6e', '#00cec9']).mode('lch').colors(8),
+          aurora: chroma.scale(['#00ff87', '#60efff', '#ff0080', '#8000ff']).mode('hsl').colors(8)
+        };
+
+        // Convert to Phaser-compatible hex integers
+        this.convertedPalettes = {};
+        Object.keys(this.palettes).forEach(key => {
+          this.convertedPalettes[key] = this.palettes[key].map(color =>
+            parseInt(color.replace('#', '0x'), 16)
+          );
+        });
+      }
+
+      // Get dynamic color based on level and mode using Chroma.js
+      getDynamicColor(level, baseColor, intensity = 1) {
+        const color = chroma(baseColor);
+        const hue = (color.get('hsl.h') + (level * 30)) % 360;
+        const saturation = Math.min(1, color.get('hsl.s') * intensity);
+        const lightness = Math.max(0.2, Math.min(0.8, color.get('hsl.l') * intensity));
+
+        return parseInt(chroma.hsl(hue, saturation, lightness).hex().replace('#', '0x'), 16);
+      }
+
+      // Generate complementary colors using Chroma.js
+      getComplementaryColors(baseColor, count = 4) {
+        const baseChroma = chroma(baseColor);
+        const colors = [];
+        const hueStep = 360 / count;
+        const baseHue = baseChroma.get('hsl.h');
+
+        for (let i = 0; i < count; i++) {
+          const newHue = (baseHue + (i * hueStep)) % 360;
+          colors.push(parseInt(chroma.hsl(newHue, baseChroma.get('hsl.s'), baseChroma.get('hsl.l')).hex().replace('#', '0x'), 16));
+        }
+        return colors;
+      }
+
+      // Get animated color transition using Chroma.js
+      getAnimatedColor(baseColor, time, speed = 1) {
+        const color = chroma(baseColor);
+        const hueShift = Math.sin(time * speed) * 30;
+        const newHue = (color.get('hsl.h') + hueShift) % 360;
+
+        return parseInt(chroma.hsl(newHue, color.get('hsl.s'), color.get('hsl.l')).hex().replace('#', '0x'), 16);
+      }
+
+      // Get gradient colors for backgrounds
+      getGradientColors(palette, steps = 5) {
+        if (!this.convertedPalettes[palette]) return this.convertedPalettes.neon;
+        return chroma.scale(this.palettes[palette]).colors(steps).map(color =>
+          parseInt(color.replace('#', '0x'), 16)
+        );
+      }
+
+      // Helper method to convert hex to Phaser color
+      hexToPhaser(hexColor) {
+        return parseInt(hexColor.replace('#', '0x'), 16);
+      }
+    }
+
+    // Initialize global color system
+    const colorSystem = new ColorSystem();
+
+    // BootScene: Enhanced with gradient loading and better visuals
     class BootScene extends Phaser.Scene {
       constructor() {
         super('BootScene');
@@ -87,34 +201,93 @@
 
       preload() {
         const { width, height } = this.cameras.main;
-        let progressBox = this.add.graphics();
-        progressBox.fillStyle(0x222222, 0.8);
-        progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50);
 
-        let loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', { font: '20px Arial', fill: '#ffffff' }).setOrigin(0.5);
+        // Create gradient background for loading
+        const gradientGraphics = this.add.graphics();
+        gradientGraphics.fillGradientStyle(0x1e3c72, 0x1e3c72, 0x2a5298, 0x2a5298, 1);
+        gradientGraphics.fillRect(0, 0, width, height);
+
+        // Enhanced progress box with gradient
+        let progressBox = this.add.graphics();
+        progressBox.fillGradientStyle(0x333333, 0x333333, 0x555555, 0x555555, 0.9);
+        progressBox.fillRoundedRect(width / 2 - 160, height / 2 - 25, 320, 50, 10);
+
+        let loadingText = this.add.text(width / 2, height / 2 - 70, 'Loading Amazing Colors...', {
+          font: '24px Arial',
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeThickness: 2
+        }).setOrigin(0.5);
+
+        // Add pulsing effect to loading text
+        this.tweens.add({
+          targets: loadingText,
+          alpha: 0.3,
+          duration: 1000,
+          yoyo: true,
+          repeat: -1
+        });
 
         this.load.on('progress', (value) => {
           let bar = this.add.graphics();
-          bar.fillStyle(0xffffff, 1);
-          bar.fillRect(width / 2 - 150, height / 2 - 15, 300 * value, 30);
+          const gradientColors = colorSystem.getGradientColors('neon', 3);
+          bar.fillGradientStyle(gradientColors[0], gradientColors[1], gradientColors[2], gradientColors[0], 1);
+          bar.fillRoundedRect(width / 2 - 150, height / 2 - 15, 300 * value, 30, 8);
         });
 
         this.load.on('complete', () => {
           progressBox.destroy();
           loadingText.destroy();
+
+          // Hide HTML loading screen
+          const loadingDiv = document.getElementById('loading');
+          if (loadingDiv) {
+            loadingDiv.style.opacity = '0';
+            setTimeout(() => loadingDiv.style.display = 'none', 500);
+          }
         });
 
-        // Break efektleri için particle texture
+        // Enhanced particle textures with gradients
         let particleGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-        particleGraphics.fillStyle(0xffffff, 1);
+        particleGraphics.fillGradientStyle(0xffffff, 0xffffff, 0x66ffff, 0x0066ff, 1);
         particleGraphics.fillCircle(4, 4, 4);
         particleGraphics.generateTexture('particle', 8, 8);
 
-        // Arka plan için star texture
+        // Create glowing star texture using custom drawing
         let starGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-        starGraphics.fillStyle(0xffffff, 1);
-        starGraphics.fillRect(0, 0, 2, 2);
-        starGraphics.generateTexture('star', 2, 2);
+        starGraphics.fillGradientStyle(0xffffff, 0xffffff, 0x66ffff, 0x0066ff, 1);
+
+        // Draw star manually since fillStar might not be available in older versions
+        const cx = 4, cy = 4, spikes = 5, outerRadius = 3, innerRadius = 1.5;
+        let rot = Math.PI / 2 * 3;
+        let x = cx, y = cy;
+        const step = Math.PI / spikes;
+
+        starGraphics.beginPath();
+        starGraphics.moveTo(cx, cy - outerRadius);
+
+        for (let i = 0; i < spikes; i++) {
+          x = cx + Math.cos(rot) * outerRadius;
+          y = cy + Math.sin(rot) * outerRadius;
+          starGraphics.lineTo(x, y);
+          rot += step;
+
+          x = cx + Math.cos(rot) * innerRadius;
+          y = cy + Math.sin(rot) * innerRadius;
+          starGraphics.lineTo(x, y);
+          rot += step;
+        }
+        starGraphics.lineTo(cx, cy - outerRadius);
+        starGraphics.closePath();
+        starGraphics.fillPath();
+        starGraphics.generateTexture('star', 8, 8);
+
+        // Create diamond texture
+        let diamondGraphics = this.make.graphics({ x: 0, y: 0, add: false });
+        diamondGraphics.fillGradientStyle(0xff66ff, 0xff66ff, 0x6666ff, 0x66ffff, 1);
+        diamondGraphics.fillRect(2, 0, 4, 8);
+        diamondGraphics.fillRect(0, 2, 8, 4);
+        diamondGraphics.generateTexture('diamond', 8, 8);
       }
 
       create() {
@@ -122,7 +295,7 @@
       }
     }
 
-    // MenuScene: Oyuncunun mod seçebileceği ana menü.
+    // MenuScene: Enhanced with beautiful gradients and modern color palettes
     class MenuScene extends Phaser.Scene {
       constructor() {
         super('MenuScene');
@@ -130,49 +303,85 @@
 
       create() {
         const { width, height } = this.cameras.main;
-        // Başlık ve arka plan
-        this.add.text(width / 2, 80, 'Precision Ring-Breaking Game', {
-          font: '40px Arial',
+
+        // Create gradient background
+        const bgGraphics = this.add.graphics();
+        bgGraphics.fillGradientStyle(0x1a1a2e, 0x16213e, 0x0f3460, 0x533483, 1);
+        bgGraphics.fillRect(0, 0, width, height);
+
+        // Add animated background particles (Phaser 3.70 syntax)
+        this.backgroundParticles = this.add.particles(0, 0, 'diamond', {
+          x: { min: 0, max: width },
+          y: { min: 0, max: height },
+          lifespan: 8000,
+          speed: { min: 20, max: 60 },
+          scale: { start: 0.3, end: 0 },
+          quantity: 2,
+          blendMode: 'ADD',
+          tint: colorSystem.convertedPalettes.cosmic,
+          alpha: { start: 0.6, end: 0 }
+        });
+
+        // Enhanced title with glow effect
+        const titleText = this.add.text(width / 2, 80, 'CHAIN BREAKER PRO', {
+          font: '48px Arial',
           fill: '#ffffff',
-          stroke: '#000000',
-          strokeThickness: 5
+          stroke: '#6c5ce7',
+          strokeThickness: 4
         }).setOrigin(0.5);
 
-        this.add.text(width / 2, 150, 'Select Mode', { font: '32px Arial', fill: '#ffff00', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5);
+        // Add glow effect to title
+        this.tweens.add({
+          targets: titleText,
+          alpha: 0.7,
+          duration: 2000,
+          yoyo: true,
+          repeat: -1
+        });
 
-        // Menü seçenekleri (modeDesigns)
+        const subtitleText = this.add.text(width / 2, 150, 'Select Your Challenge', {
+          font: '28px Arial',
+          fill: '#fd79a8',
+          stroke: '#000',
+          strokeThickness: 2
+        }).setOrigin(0.5);
+
+        // Enhanced mode designs with sophisticated color palettes
         this.modeDesigns = [
           {
-            name: "Beginner's Circle",
-            theme: "Standard rings with stationary targets",
-            color: 0x00aaff,
-            bgColor: 0x001a33,
-            particleColors: [0x00aaff, 0x00cfff, 0x0099ff],
-            ringColors: [0x00aaff, 0xff0000, 0x00ff00, 0xffff00],
+            name: "Neon Dreams",
+            theme: "Electric colors and smooth gameplay",
+            palette: 'neon',
+            color: colorSystem.convertedPalettes.neon[0],
+            bgColor: 0x0f0f2e,
+            particleColors: colorSystem.convertedPalettes.neon.slice(0, 4),
+            ringColors: colorSystem.convertedPalettes.neon,
             specialEffects: false,
             sweetSpotSize: 15,
             needleSpeed: 1,
             ringMovement: false
           },
           {
-            name: "Speedy Spins",
-            theme: "Faster needle movement",
-            color: 0x0099ff,
-            bgColor: 0x001133,
-            particleColors: [0x0099ff, 0x00bfff, 0x0077ff],
-            ringColors: [0x0099ff, 0xff00ff, 0x00ffff, 0xffaa00],
+            name: "Sunset Velocity",
+            theme: "Warm colors with increasing speed",
+            palette: 'sunset',
+            color: colorSystem.convertedPalettes.sunset[0],
+            bgColor: 0x2e1810,
+            particleColors: colorSystem.convertedPalettes.sunset.slice(0, 4),
+            ringColors: colorSystem.convertedPalettes.sunset,
             specialEffects: false,
             sweetSpotSize: 15,
             needleSpeed: 1.3,
             ringMovement: false
           },
           {
-            name: "Moving Targets",
-            theme: "Sweet spots begin to rotate",
-            color: 0x0088ff,
-            bgColor: 0x001122,
-            particleColors: [0x0088ff, 0x00aaff, 0x0066ff],
-            ringColors: [0x0088ff, 0xff8800, 0xff0088, 0x88ff00],
+            name: "Ocean Depths",
+            theme: "Cool blues with moving targets",
+            palette: 'ocean',
+            color: colorSystem.convertedPalettes.ocean[0],
+            bgColor: 0x0a1a2e,
+            particleColors: colorSystem.convertedPalettes.ocean.slice(0, 4),
+            ringColors: colorSystem.convertedPalettes.ocean,
             specialEffects: false,
             sweetSpotSize: 15,
             needleSpeed: 1.2,
@@ -180,12 +389,13 @@
             ringSpeed: 0.0005
           },
           {
-            name: "Narrowing Path",
-            theme: "Smaller sweet spots to hit",
-            color: 0x0077ff,
-            bgColor: 0x000f33,
-            particleColors: [0x0077ff, 0x0099ff, 0x0055ff],
-            ringColors: [0x0077ff, 0x77ff77, 0xff7777, 0xffbb00],
+            name: "Fire Storm",
+            theme: "Intense reds with precise targeting",
+            palette: 'fire',
+            color: colorSystem.convertedPalettes.fire[0],
+            bgColor: 0x2e0a0a,
+            particleColors: colorSystem.convertedPalettes.fire.slice(0, 4),
+            ringColors: colorSystem.convertedPalettes.fire,
             specialEffects: true,
             sweetSpotSize: 10,
             needleSpeed: 1.3,
@@ -193,12 +403,13 @@
             ringSpeed: 0.0007
           },
           {
-            name: "Chaos Theory",
-            theme: "Unpredictable needle movements",
-            color: 0x0066ff,
-            bgColor: 0x000a22,
-            particleColors: [0x0066ff, 0x0088ff, 0x0044ff],
-            ringColors: [0x0066ff, 0xff6600, 0x66ff66, 0xff0066],
+            name: "Cosmic Chaos",
+            theme: "Unpredictable with space-age colors",
+            palette: 'cosmic',
+            color: colorSystem.convertedPalettes.cosmic[0],
+            bgColor: 0x1a0e2e,
+            particleColors: colorSystem.convertedPalettes.cosmic.slice(0, 4),
+            ringColors: colorSystem.convertedPalettes.cosmic,
             specialEffects: true,
             sweetSpotSize: 12,
             needleSpeed: 1.4,
@@ -207,12 +418,13 @@
             needleReverseProb: 0.005
           },
           {
-            name: "Master of Precision",
-            theme: "The ultimate challenge",
-            color: 0x0055ff,
-            bgColor: 0x000822,
-            particleColors: [0x0055ff, 0x0077ff, 0x0033ff],
-            ringColors: [0x0055ff, 0xff5500, 0x55ff55, 0xff55ff],
+            name: "Aurora Master",
+            theme: "The ultimate precision challenge",
+            palette: 'aurora',
+            color: colorSystem.convertedPalettes.aurora[0],
+            bgColor: 0x0e2e1a,
+            particleColors: colorSystem.convertedPalettes.aurora.slice(0, 4),
+            ringColors: colorSystem.convertedPalettes.aurora,
             specialEffects: true,
             sweetSpotSize: 8,
             needleSpeed: 1.8,
@@ -223,18 +435,94 @@
           }
         ];
 
-        let startY = 220, spacing = 60;
+        let startY = 220, spacing = 70;
         this.modeDesigns.forEach((mode, index) => {
-          let modeText = this.add.text(width / 2, startY + index * spacing, mode.name, { font: '28px Arial', fill: '#ffffff', stroke: '#000000', strokeThickness: 3 })
-            .setOrigin(0.5)
-            .setInteractive({ useHandCursor: true });
+          // Create background for each mode button
+          const buttonBg = this.add.graphics();
+          buttonBg.fillGradientStyle(mode.color, mode.color, mode.bgColor, mode.bgColor, 0.3);
+          buttonBg.fillRoundedRect(width / 2 - 250, startY + index * spacing - 20, 500, 50, 15);
+          buttonBg.lineStyle(2, mode.color, 0.8);
+          buttonBg.strokeRoundedRect(width / 2 - 250, startY + index * spacing - 20, 500, 50, 15);
 
-          modeText.on('pointerdown', () => {
-            this.scene.start('MainScene', { selectedMode: mode });
+          // Mode name text with enhanced styling
+          let modeText = this.add.text(width / 2 - 200, startY + index * spacing, mode.name, {
+            font: '24px Arial',
+            fill: '#ffffff',
+            stroke: mode.color,
+            strokeThickness: 2
+          }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
+
+          // Theme description text
+          let themeText = this.add.text(width / 2 - 200, startY + index * spacing + 15, mode.theme, {
+            font: '14px Arial',
+            fill: chroma(mode.color).brighten(1).hex(),
+            alpha: 0.8
+          }).setOrigin(0, 0.5);
+
+          // Add interactive effects
+          const buttonElements = [buttonBg, modeText, themeText];
+
+          buttonElements.forEach(element => {
+            if (element !== buttonBg) {
+              element.setInteractive({ useHandCursor: true });
+            }
+
+            element.on('pointerdown', () => {
+              // Add flash effect on selection
+              this.tweens.add({
+                targets: buttonBg,
+                alpha: 1,
+                duration: 100,
+                yoyo: true,
+                onComplete: () => {
+                  this.scene.start('MainScene', { selectedMode: mode });
+                }
+              });
+            });
+
+            element.on('pointerover', () => {
+              // Hover effects
+              this.tweens.add({
+                targets: [modeText, themeText],
+                scale: 1.05,
+                duration: 200
+              });
+
+              this.tweens.add({
+                targets: buttonBg,
+                alpha: 0.6,
+                duration: 200
+              });
+
+              modeText.setFill(chroma(mode.color).brighten(2).hex());
+            });
+
+            element.on('pointerout', () => {
+              // Reset hover effects
+              this.tweens.add({
+                targets: [modeText, themeText],
+                scale: 1,
+                duration: 200
+              });
+
+              this.tweens.add({
+                targets: buttonBg,
+                alpha: 0.3,
+                duration: 200
+              });
+
+              modeText.setFill('#ffffff');
+            });
           });
 
-          modeText.on('pointerover', () => { modeText.setFill('#ffff00'); });
-          modeText.on('pointerout', () => { modeText.setFill('#ffffff'); });
+          // Add subtle pulsing animation to buttons
+          this.tweens.add({
+            targets: buttonBg,
+            alpha: 0.2,
+            duration: 3000 + (index * 500),
+            yoyo: true,
+            repeat: -1
+          });
         });
       }
     }
@@ -258,99 +546,126 @@
       }
 
       create() {
-        // --- Arka plan ve ek particle efektleri ---
-        this.backgroundParticles = this.add.particles('star');
-        this.backgroundEmitter = this.backgroundParticles.createEmitter({
+        // Create dynamic gradient background based on selected mode
+        const currentPalette = this.selectedMode ? this.selectedMode.palette : 'neon';
+        const bgColors = colorSystem.getGradientColors(currentPalette, 4);
+
+        this.backgroundGradient = this.add.graphics();
+        this.backgroundGradient.fillGradientStyle(
+          bgColors[0], bgColors[1], bgColors[2], bgColors[3], 1
+        );
+        this.backgroundGradient.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+
+        // Enhanced background particles with dynamic colors (Phaser 3.70 syntax)
+        this.backgroundParticles = this.add.particles(0, 0, 'star', {
           x: { min: 0, max: this.cameras.main.width },
           y: 0,
           lifespan: 8000,
           speedY: { min: 10, max: 30 },
           scale: { start: 1, end: 0 },
-          quantity: 6,
-          blendMode: 'ADD'
+          quantity: 4,
+          blendMode: 'ADD',
+          tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
+          alpha: { start: 0.7, end: 0 }
         });
 
-        // Optimized background particles - reduced quantity and increased lifespan
-        this.bgParticles = this.add.particles('particle');
-        this.bgEmitter = this.bgParticles.createEmitter({
+        // Dynamic floating particles (Phaser 3.70 syntax)
+        this.bgParticles = this.add.particles(0, 0, 'diamond', {
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 15000,  // Longer lifespan, fewer spawns
-          speed: { min: 10, max: 50 },
+          lifespan: 12000,
+          speed: { min: 15, max: 40 },
           angle: { min: 0, max: 360 },
-          scale: { start: 0.3, end: 0 },
-          quantity: 1, // Reduced from 3 to 1
-          frequency: 500, // Add frequency control
+          scale: { start: 0.4, end: 0 },
+          quantity: 1,
+          frequency: 800,
           blendMode: 'ADD',
-          tint: [0x0088ff, 0x00ffcc, 0x0055ff],
-          alpha: { start: 0.5, end: 0 } // Reduced alpha for better performance
+          tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
+          alpha: { start: 0.6, end: 0 }
         });
 
-        // Optimized spark emitter with pooling
-        this.sparkEmitter = this.add.particles('particle').createEmitter({
-          x: 0,
-          y: 0,
-          lifespan: 300, // Reduced lifespan
-          speed: { min: -150, max: 150 }, // Reduced speed range
-          scale: { start: 1.2, end: 0 }, // Slightly smaller
-          quantity: 15, // Reduced from 30 to 15
+        // Enhanced spark emitter with palette colors (Phaser 3.70 syntax)
+        this.sparkEmitter = this.add.particles(0, 0, 'particle', {
+          lifespan: 400,
+          speed: { min: -120, max: 120 },
+          scale: { start: 1.0, end: 0 },
+          quantity: 12,
           blendMode: 'ADD',
-          tint: [0xff0000, 0x00ff00, 0x0000ff, 0xffff00],
-          on: false
+          tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.neon,
+          emitting: false
         });
 
-        // Optimized break particles
-        this.breakParticles = this.add.particles('particle');
-        this.breakEmitter = this.breakParticles.createEmitter({
-          lifespan: 600, // Reduced lifespan
-          speed: { min: 60, max: 150 }, // Reduced speed
-          scale: { start: 0.8, end: 0 }, // Smaller particles
-          quantity: 20, // Reduced from 40 to 20
+        // Sophisticated break particles (Phaser 3.70 syntax)
+        this.breakParticles = this.add.particles(0, 0, 'diamond', {
+          lifespan: 800,
+          speed: { min: 80, max: 180 },
+          scale: { start: 0.6, end: 0 },
+          quantity: 18,
           blendMode: 'ADD',
-          gravityY: 80, // Reduced gravity
-          on: false
+          gravityY: 100,
+          tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.fire,
+          emitting: false
         });
 
-        // Fever Mode partikülleri
-        this.feverParticles = this.add.particles('particle');
-        this.feverEmitter = this.feverParticles.createEmitter({
+        // Enhanced fever mode particles (Phaser 3.70 syntax)
+        this.feverParticles = this.add.particles(0, 0, 'star', {
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 5000,
-          speed: { min: 50, max: 100 },
-          scale: { start: 0.4, end: 0 },
-          quantity: 5,
+          lifespan: 4000,
+          speed: { min: 60, max: 120 },
+          scale: { start: 0.5, end: 0 },
+          quantity: 6,
           blendMode: 'ADD',
-          tint: [0xff0000, 0xff8800, 0xffff00], // Kırmızı & Sarı tonları
-          alpha: { start: 1, end: 0 }
+          tint: colorSystem.convertedPalettes.fire,
+          alpha: { start: 0.8, end: 0 },
+          emitting: false
         });
-        this.feverEmitter.stop(); // Fever Mode başta kapalı olacak
 
-        this.confettiParticles = this.add.particles('particle');
-        this.confettiEmitter = this.confettiParticles.createEmitter({
+        // Multi-colored confetti system (Phaser 3.70 syntax)
+        this.confettiParticles = this.add.particles(0, 0, 'diamond', {
           x: { min: 0, max: this.cameras.main.width },
-          y: 0,
-          speed: { min: 100, max: 200 },
-          angle: { min: 80, max: 100 },
-          scale: { start: 1, end: 0 },
-          lifespan: 3000,
-          tint: [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff],
-          on: false
+          y: -50,
+          speed: { min: 150, max: 250 },
+          angle: { min: 75, max: 105 },
+          scale: { start: 0.8, end: 0 },
+          lifespan: 3500,
+          tint: [
+            ...colorSystem.convertedPalettes.neon,
+            ...colorSystem.convertedPalettes.sunset,
+            ...colorSystem.convertedPalettes.cosmic
+          ],
+          emitting: false
         });
 
         this.center = { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 };
-        this.flash = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xccccff).setOrigin(0, 0);
+
+        // Remove the white flash effect as requested by user previously
+        this.flash = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000).setOrigin(0, 0);
         this.flash.alpha = 0;
+
         this.backgroundGlow = this.add.graphics();
         this.setupUI();
         this.setupParticleEffects();
         this.setupNeedle();
         this.input.on('pointerdown', this.handleInput, this);
-        this.debugText = this.add.text(10, 130, '', { font: '16px Arial', fill: '#ffffff' });
+
+        // Enhanced debug text with better styling
+        this.debugText = this.add.text(10, 130, '', {
+          font: '14px Arial',
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeThickness: 1,
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          padding: { x: 8, y: 4 }
+        });
+
         this.gameOverFlag = false;
         this.gameOverText = this.add.text(this.center.x, this.center.y, '', {
-          font: '48px Arial', fill: '#ff0000', align: 'center',
-          stroke: '#000000', strokeThickness: 6
+          font: '48px Arial',
+          fill: this.selectedMode ? chroma(this.selectedMode.color).hex() : '#ff6b6b',
+          align: 'center',
+          stroke: '#000000',
+          strokeThickness: 6
         }).setOrigin(0.5);
 
         // Çember ayarları
@@ -366,18 +681,112 @@
         this.combo = 0;
         this.lives = 3;
         this.regenDelay = 5000;
-        const textStyle = { font: '24px Arial', fill: '#ffffff', stroke: '#000000', strokeThickness: 3 };
-        this.levelText = this.add.text(this.cameras.main.width / 2, 10, 'Level: ' + this.level, textStyle).setOrigin(0.5, 0);
-        this.scoreText = this.add.text(10, 10, 'Score: 0', textStyle);
-        this.comboText = this.add.text(10, 40, 'Combo: 0', { ...textStyle, fill: '#ffff00' });
-        this.livesText = this.add.text(10, 70, 'Lives: 3', { ...textStyle, fill: '#ff5555' });
+
+        // Get current mode colors for UI theming
+        const modeColor = this.selectedMode ? chroma(this.selectedMode.color).hex() : '#00aaff';
+        const accentColor = this.selectedMode ? chroma(this.selectedMode.color).brighten(1).hex() : '#66ffcc';
+
+        // Enhanced text styles with dynamic colors
+        const baseTextStyle = {
+          font: '22px Arial',
+          fill: '#ffffff',
+          stroke: modeColor,
+          strokeThickness: 2,
+          backgroundColor: 'rgba(0,0,0,0.4)',
+          padding: { x: 12, y: 6 }
+        };
+
+        // Level indicator with enhanced styling
+        this.levelText = this.add.text(this.cameras.main.width / 2, 15, 'Level: ' + this.level, {
+          ...baseTextStyle,
+          font: '28px Arial',
+          fill: accentColor
+        }).setOrigin(0.5, 0);
+
+        // Add pulsing effect to level text
+        this.tweens.add({
+          targets: this.levelText,
+          alpha: 0.8,
+          duration: 1500,
+          yoyo: true,
+          repeat: -1
+        });
+
+        // Score with gradient background
+        const scoreBg = this.add.graphics();
+        scoreBg.fillGradientStyle(0x000000, 0x333333, 0x000000, 0x333333, 0.7);
+        scoreBg.fillRoundedRect(5, 5, 150, 35, 8);
+        scoreBg.lineStyle(2, parseInt(modeColor.replace('#', '0x'), 16), 0.8);
+        scoreBg.strokeRoundedRect(5, 5, 150, 35, 8);
+
+        this.scoreText = this.add.text(15, 10, 'Score: 0', {
+          ...baseTextStyle,
+          backgroundColor: 'transparent'
+        });
+
+        // Combo counter with special effects
+        const comboBg = this.add.graphics();
+        comboBg.fillGradientStyle(0x000000, 0x444444, 0x000000, 0x444444, 0.7);
+        comboBg.fillRoundedRect(5, 45, 150, 35, 8);
+
+        this.comboText = this.add.text(15, 50, 'Combo: 0', {
+          ...baseTextStyle,
+          fill: '#ffff00',
+          backgroundColor: 'transparent'
+        });
+
+        // Lives with heart-like styling
+        const livesBg = this.add.graphics();
+        livesBg.fillGradientStyle(0x330000, 0x660000, 0x330000, 0x660000, 0.7);
+        livesBg.fillRoundedRect(5, 85, 120, 35, 8);
+
+        this.livesText = this.add.text(15, 90, 'Lives: 3', {
+          ...baseTextStyle,
+          fill: '#ff6b6b',
+          backgroundColor: 'transparent'
+        });
+
+        // Fever mode setup
         this.feverMode = false;
         this.feverModeDuration = 5000;
         this.feverTimer = 0;
-        this.feverText = this.add.text(10, 100, '', { ...textStyle, fill: '#ff00ff' });
-        this.themeText = this.add.text(this.cameras.main.width / 2, 50, '', {
-          font: '20px Arial', fill: '#00ffff', stroke: '#000000', strokeThickness: 3
+
+        this.feverText = this.add.text(15, 130, '', {
+          ...baseTextStyle,
+          fill: '#ff00ff',
+          font: '20px Arial'
+        });
+
+        // Theme description with better styling
+        this.themeText = this.add.text(this.cameras.main.width / 2, 60,
+          this.selectedMode ? this.selectedMode.theme : 'Standard Mode', {
+          font: '18px Arial',
+          fill: accentColor,
+          stroke: '#000000',
+          strokeThickness: 2,
+          alpha: 0.9
         }).setOrigin(0.5, 0);
+
+        // Add mode name indicator
+        if (this.selectedMode) {
+          this.modeNameText = this.add.text(this.cameras.main.width - 15, 15, this.selectedMode.name, {
+            font: '20px Arial',
+            fill: modeColor,
+            stroke: '#000000',
+            strokeThickness: 2,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            padding: { x: 10, y: 5 }
+          }).setOrigin(1, 0);
+
+          // Add subtle animation to mode name
+          this.tweens.add({
+            targets: this.modeNameText,
+            alpha: 0.7,
+            duration: 2000,
+            yoyo: true,
+            repeat: -1
+          });
+        }
       }
 
       setupParticleEffects() {
@@ -592,21 +1001,19 @@
       handleSuccessfulHit() {
         // Flash effect removed for better user experience
 
-        // Kırılan halkanın rengini alıp, break emitter'a uygula
-        this.breakEmitter.setTint(this.activeRing.ringColor);
-        this.breakEmitter.explode(30, this.center.x, this.center.y);
+        // Trigger break particles at ring position
+        this.breakParticles.explode(30, this.center.x, this.center.y);
 
-        // Ek spark efekti
+        // Additional spark effects
         this.sparkEmitter.explode(30, this.center.x, this.center.y);
         this.cameras.main.shake(150, 0.01);
 
-        // Arka plan partiküllerinin rengini, aktif tasarımın particleColors dizisine göre ayarla
-        this.bgEmitter.setTint(this.getActiveDesign().particleColors);
+        // Background particles already configured with design colors
 
-        // Fever Mode aktifse ek partikül efekti çalıştır
+        // Activate fever mode particle effects
         if (this.feverMode) {
-          this.feverEmitter.start();
-          this.time.delayedCall(500, () => { this.feverEmitter.stop(); });
+          this.feverParticles.start();
+          this.time.delayedCall(500, () => { this.feverParticles.stop(); });
         }
 
         let multiplier = this.feverMode ? 2 : (1 + this.combo * 0.1);
@@ -649,7 +1056,7 @@
         }
       }
 
-      // Optimized score popup with object pooling
+      // Optimized score popup with object pooling (Phaser 3.70 compatible)
       showScorePopup(points, x, y) {
         let popup = this.getPooledScorePopup();
         let baseScale = points >= 100 ? 2 : (points >= 50 ? 1.5 : 1);
@@ -660,30 +1067,36 @@
         popup.setAlpha(1);
         popup.setVisible(true);
 
-        this.tweens.timeline({
+        // Chain tweens manually since timeline is not available in Phaser 3.70
+        this.tweens.add({
           targets: popup,
-          tweens: [
-            {
-              scaleX: baseScale * 1.2,
-              scaleY: baseScale * 0.8,
-              angle: { from: -15, to: 0 },
-              ease: 'Back.easeOut',
-              duration: 400
-            },
-            {
+          scaleX: baseScale * 1.2,
+          scaleY: baseScale * 0.8,
+          angle: -15,
+          ease: 'Back.easeOut',
+          duration: 400,
+          onComplete: () => {
+            // Second tween: normalize scale
+            this.tweens.add({
+              targets: popup,
               scaleX: baseScale,
               scaleY: baseScale,
-              duration: 200
-            },
-            {
-              y: popup.y - 80,
-              alpha: 0,
-              ease: 'Power2',
-              duration: 800,
-              delay: 100
-            }
-          ],
-          onComplete: () => this.returnPooledScorePopup(popup)
+              angle: 0,
+              duration: 200,
+              onComplete: () => {
+                // Third tween: fade out and move up
+                this.tweens.add({
+                  targets: popup,
+                  y: y - 80,
+                  alpha: 0,
+                  ease: 'Power2',
+                  duration: 800,
+                  delay: 100,
+                  onComplete: () => this.returnPooledScorePopup(popup)
+                });
+              }
+            });
+          }
         });
       }
 
@@ -770,7 +1183,7 @@
       }
 
       levelUp() {
-        this.confettiEmitter.explode(50, this.center.x, this.center.y);
+        this.confettiParticles.explode(50, this.center.x, this.center.y);
         this.cameras.main.flash(500, 0, 255, 0);
         let levelUpText = this.add.text(this.center.x, this.center.y, 'LEVEL UP!', {
           font: '48px Arial',
@@ -818,7 +1231,7 @@
         const design = this.getActiveDesign();
         this.currentRingColor = design.color;
         this.cameras.main.setBackgroundColor(design.bgColor);
-        this.bgEmitter.setTint(design.particleColors);
+        // Background particles already configured with design colors
         this.themeText.setText(design.name + ': ' + design.theme);
         this.ringStack = [];
 
