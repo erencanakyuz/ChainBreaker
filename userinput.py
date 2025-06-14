@@ -1,1 +1,2 @@
-user_input = input("prompt: ")
+user_input = input("Version-3'ü main yapmak için:\nA. Version-3'ü main'e çevir (branch adını değiştir)\nB. Version-3'teki değişiklikleri main'e push et, Version-3'ü koru\nHangi seçenek? (A/B/stop): ")
+print(f"Seçiminiz: {user_input}")
