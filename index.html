@@ -124,14 +124,14 @@
       }
 
       initializeColorPalettes() {
-        // Create sophisticated color palettes using Chroma.js
+        // Create sophisticated cartoon-style color palettes using Chroma.js
         this.palettes = {
-          neon: chroma.scale(['#ff0080', '#00ff80', '#0080ff', '#ff8000']).mode('hsl').colors(8),
-          sunset: chroma.scale(['#ff6b6b', '#feca57', '#ff9ff3', '#54a0ff']).mode('lch').colors(8),
-          ocean: chroma.scale(['#0066cc', '#00ccff', '#66ffcc', '#ccffff']).mode('lab').colors(8),
-          fire: chroma.scale(['#ff3333', '#ff6600', '#ffcc00', '#ffffff']).mode('hsl').colors(8),
-          cosmic: chroma.scale(['#6c5ce7', '#fd79a8', '#fdcb6e', '#00cec9']).mode('lch').colors(8),
-          aurora: chroma.scale(['#00ff87', '#60efff', '#ff0080', '#8000ff']).mode('hsl').colors(8)
+          neon: chroma.scale(['#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57']).mode('lch').colors(8),
+          sunset: chroma.scale(['#FF6B9D', '#F38BA8', '#E8B4CB', '#C8A2C8']).mode('lch').colors(8),
+          ocean: chroma.scale(['#74B9FF', '#0984E3', '#6C5CE7', '#A29BFE']).mode('lab').colors(8),
+          fire: chroma.scale(['#E17055', '#FDCB6E', '#F39C12', '#E67E22']).mode('lch').colors(8),
+          cosmic: chroma.scale(['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E']).mode('lch').colors(8),
+          aurora: chroma.scale(['#00CEC9', '#55EFC4', '#81ECEC', '#74B9FF']).mode('lch').colors(8)
         };
 
         // Convert to Phaser-compatible hex integers
@@ -247,18 +247,29 @@
           }
         });
 
-        // Enhanced particle textures with gradients
+        // Enhanced cartoon-style particle textures
         let particleGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-        particleGraphics.fillGradientStyle(0xffffff, 0xffffff, 0x66ffff, 0x0066ff, 1);
-        particleGraphics.fillCircle(4, 4, 4);
+
+        // Create a cartoon bubble-style particle
+        particleGraphics.fillGradientStyle(0xFFFFFF, 0xFFFFFF, 0x4ECDC4, 0x45B7D1, 1);
+        particleGraphics.fillCircle(4, 4, 3.5);
+
+        // Add highlight for 3D effect
+        particleGraphics.fillStyle(0xFFFFFF, 0.8);
+        particleGraphics.fillCircle(5, 3, 1.5);
+
+        // Add subtle outline
+        particleGraphics.lineStyle(1, 0x000000, 0.3);
+        particleGraphics.strokeCircle(4, 4, 3.5);
         particleGraphics.generateTexture('particle', 8, 8);
 
-        // Create glowing star texture using custom drawing
+        // Create cartoon-style star texture
         let starGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-        starGraphics.fillGradientStyle(0xffffff, 0xffffff, 0x66ffff, 0x0066ff, 1);
 
-        // Draw star manually since fillStar might not be available in older versions
-        const cx = 4, cy = 4, spikes = 5, outerRadius = 3, innerRadius = 1.5;
+        // Draw cartoon star with gradient
+        starGraphics.fillGradientStyle(0xFECA57, 0xFECA57, 0xE17055, 0xD63031, 1);
+
+        const cx = 4, cy = 4, spikes = 5, outerRadius = 3.5, innerRadius = 1.8;
         let rot = Math.PI / 2 * 3;
         let x = cx, y = cy;
         const step = Math.PI / spikes;
@@ -280,13 +291,45 @@
         starGraphics.lineTo(cx, cy - outerRadius);
         starGraphics.closePath();
         starGraphics.fillPath();
+
+        // Add star highlight
+        starGraphics.fillStyle(0xFFFFAA, 0.9);
+        starGraphics.fillCircle(5, 3, 1);
+
+        // Add star outline
+        starGraphics.lineStyle(1, 0x000000, 0.4);
+        starGraphics.strokePath();
         starGraphics.generateTexture('star', 8, 8);
 
-        // Create diamond texture
+        // Create cartoon gem/diamond texture
         let diamondGraphics = this.make.graphics({ x: 0, y: 0, add: false });
-        diamondGraphics.fillGradientStyle(0xff66ff, 0xff66ff, 0x6666ff, 0x66ffff, 1);
-        diamondGraphics.fillRect(2, 0, 4, 8);
-        diamondGraphics.fillRect(0, 2, 8, 4);
+
+        // Create a sparkling gem effect
+        diamondGraphics.fillGradientStyle(0xA29BFE, 0xA29BFE, 0x6C5CE7, 0x5F3DC4, 1);
+
+        // Diamond shape
+        diamondGraphics.beginPath();
+        diamondGraphics.moveTo(4, 1);
+        diamondGraphics.lineTo(7, 4);
+        diamondGraphics.lineTo(4, 7);
+        diamondGraphics.lineTo(1, 4);
+        diamondGraphics.closePath();
+        diamondGraphics.fillPath();
+
+        // Add sparkle highlights
+        diamondGraphics.fillStyle(0xFFFFFF, 0.9);
+        diamondGraphics.fillCircle(3, 3, 0.8);
+        diamondGraphics.fillCircle(5.5, 2.5, 0.5);
+
+        // Diamond outline
+        diamondGraphics.lineStyle(1, 0x000000, 0.5);
+        diamondGraphics.beginPath();
+        diamondGraphics.moveTo(4, 1);
+        diamondGraphics.lineTo(7, 4);
+        diamondGraphics.lineTo(4, 7);
+        diamondGraphics.lineTo(1, 4);
+        diamondGraphics.closePath();
+        diamondGraphics.strokePath();
         diamondGraphics.generateTexture('diamond', 8, 8);
       }
 
@@ -346,14 +389,14 @@
           strokeThickness: 2
         }).setOrigin(0.5);
 
-        // Enhanced mode designs with sophisticated color palettes
+        // Enhanced cartoon-themed mode designs
         this.modeDesigns = [
           {
-            name: "Neon Dreams",
-            theme: "Electric colors and smooth gameplay",
+            name: "Bubble Pop",
+            theme: "Gentle bubbles and smooth precision",
             palette: 'neon',
             color: colorSystem.convertedPalettes.neon[0],
-            bgColor: 0x0f0f2e,
+            bgColor: 0x2C3E50,
             particleColors: colorSystem.convertedPalettes.neon.slice(0, 4),
             ringColors: colorSystem.convertedPalettes.neon,
             specialEffects: false,
@@ -362,11 +405,11 @@
             ringMovement: false
           },
           {
-            name: "Sunset Velocity",
-            theme: "Warm colors with increasing speed",
+            name: "Cotton Candy",
+            theme: "Sweet pastels with swift motions",
             palette: 'sunset',
             color: colorSystem.convertedPalettes.sunset[0],
-            bgColor: 0x2e1810,
+            bgColor: 0x2D3436,
             particleColors: colorSystem.convertedPalettes.sunset.slice(0, 4),
             ringColors: colorSystem.convertedPalettes.sunset,
             specialEffects: false,
@@ -375,11 +418,11 @@
             ringMovement: false
           },
           {
-            name: "Ocean Depths",
-            theme: "Cool blues with moving targets",
+            name: "Ocean Waves",
+            theme: "Flowing blues with dancing targets",
             palette: 'ocean',
             color: colorSystem.convertedPalettes.ocean[0],
-            bgColor: 0x0a1a2e,
+            bgColor: 0x2C3E50,
             particleColors: colorSystem.convertedPalettes.ocean.slice(0, 4),
             ringColors: colorSystem.convertedPalettes.ocean,
             specialEffects: false,
@@ -389,11 +432,11 @@
             ringSpeed: 0.0005
           },
           {
-            name: "Fire Storm",
-            theme: "Intense reds with precise targeting",
+            name: "Golden Sunset",
+            theme: "Warm golds with precise timing",
             palette: 'fire',
             color: colorSystem.convertedPalettes.fire[0],
-            bgColor: 0x2e0a0a,
+            bgColor: 0x2D3436,
             particleColors: colorSystem.convertedPalettes.fire.slice(0, 4),
             ringColors: colorSystem.convertedPalettes.fire,
             specialEffects: true,
@@ -403,11 +446,11 @@
             ringSpeed: 0.0007
           },
           {
-            name: "Cosmic Chaos",
-            theme: "Unpredictable with space-age colors",
+            name: "Magic Prism",
+            theme: "Enchanted colors with wild patterns",
             palette: 'cosmic',
             color: colorSystem.convertedPalettes.cosmic[0],
-            bgColor: 0x1a0e2e,
+            bgColor: 0x2C3E50,
             particleColors: colorSystem.convertedPalettes.cosmic.slice(0, 4),
             ringColors: colorSystem.convertedPalettes.cosmic,
             specialEffects: true,
@@ -418,11 +461,11 @@
             needleReverseProb: 0.005
           },
           {
-            name: "Aurora Master",
-            theme: "The ultimate precision challenge",
+            name: "Rainbow Master",
+            theme: "The ultimate cartoon challenge",
             palette: 'aurora',
             color: colorSystem.convertedPalettes.aurora[0],
-            bgColor: 0x0e2e1a,
+            bgColor: 0x34495E,
             particleColors: colorSystem.convertedPalettes.aurora.slice(0, 4),
             ringColors: colorSystem.convertedPalettes.aurora,
             specialEffects: true,
@@ -937,12 +980,20 @@
         if (!this.activeRing) return;
 
         this.needle.clear();
-        const baseColor = this.feverMode ? 0xff00ff : 0xffffff;
+
+        // Enhanced cartoon-style needle colors
+        const baseColor = this.feverMode ? chroma('#FF6B9D').hex() : chroma('#FFFFFF').hex();
+        const shadowColor = this.feverMode ? chroma('#E84393').hex() : chroma('#DDD').hex();
+        const highlightColor = this.feverMode ? chroma('#FD79A8').hex() : chroma('#FFFFAA').hex();
+
+        const baseColorInt = parseInt(baseColor.replace('#', '0x'), 16);
+        const shadowColorInt = parseInt(shadowColor.replace('#', '0x'), 16);
+        const highlightColorInt = parseInt(highlightColor.replace('#', '0x'), 16);
 
         // Pre-calculate frequently used values
         const outerEdge = this.activeRing.radius + this.activeRing.thickness / 2;
         const margin = 46;
-        const markerRadius = 15;
+        const markerRadius = 18;
 
         // Cache trigonometric calculations
         const cosAngle = Math.cos(this.needleAngle);
@@ -957,18 +1008,45 @@
         const endX = this.center.x + cosAngle * endDistance;
         const endY = this.center.y + sinAngle * endDistance;
 
-        // Use batch drawing for better performance
-        this.needle.lineStyle(20, baseColor, 0.4);
+        // Draw needle shadow for depth
+        this.needle.lineStyle(26, 0x000000, 0.3);
+        this.needle.strokeLineShape(new Phaser.Geom.Line(startX + 3, startY + 3, endX + 3, endY + 3));
+
+        // Draw needle outer glow
+        this.needle.lineStyle(22, baseColorInt, 0.4);
         this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
 
-        this.needle.lineStyle(4, baseColor, 1);
+        // Draw needle main body with gradient effect
+        this.needle.lineStyle(12, shadowColorInt, 0.8);
         this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
 
-        this.needle.fillStyle(baseColor, 1);
+        this.needle.lineStyle(6, baseColorInt, 1);
+        this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
+
+        // Draw cartoon-style marker ball with 3D effect
+        // Shadow
+        this.needle.fillStyle(0x000000, 0.4);
+        this.needle.fillCircle(endX + 2, endY + 2, markerRadius);
+
+        // Main marker body
+        this.needle.fillStyle(shadowColorInt, 1);
         this.needle.fillCircle(endX, endY, markerRadius);
 
-        this.needle.lineStyle(3, 0x000000, 1);
+        // Highlight gradient
+        this.needle.fillStyle(baseColorInt, 0.9);
+        this.needle.fillCircle(endX, endY, markerRadius - 3);
+
+        // Top highlight
+        this.needle.fillStyle(highlightColorInt, 0.8);
+        this.needle.fillCircle(endX - 4, endY - 4, markerRadius / 3);
+
+        // Marker outline for definition
+        this.needle.lineStyle(3, 0x000000, 0.7);
         this.needle.strokeCircle(endX, endY, markerRadius);
+
+        // Inner highlight ring
+        this.needle.lineStyle(2, highlightColorInt, 0.6);
+        this.needle.strokeCircle(endX, endY, markerRadius - 6);
       }
 
       handleInput() {
@@ -1355,35 +1433,89 @@
 
         this.graphics.clear();
 
-        // Simplified ring drawing without complex texture caching
+        // Professional cartoon-style ring drawing with gradients and effects
 
-        // Draw base ring directly (simplified approach to avoid texture caching issues)
-        this.graphics.fillStyle(0x000000, 0.3);
-        this.graphics.fillCircle(5, 5, this.radius);
-        this.graphics.lineStyle(this.thickness + 4, this.ringColor, 0.3);
-        this.graphics.strokeCircle(0, 0, this.radius);
-        this.graphics.fillStyle(this.ringColor, 0.2);
-        this.graphics.fillCircle(0, 0, this.radius);
-        this.graphics.lineStyle(this.thickness, this.ringColor, 0.8);
+        // Create a more vibrant ring color
+        const brightColor = chroma(this.ringColor).brighten(0.3).hex();
+        const darkColor = chroma(this.ringColor).darken(0.5).hex();
+        const brightColorInt = parseInt(brightColor.replace('#', '0x'), 16);
+        const darkColorInt = parseInt(darkColor.replace('#', '0x'), 16);
+
+        // Draw shadow/depth effect
+        this.graphics.fillStyle(0x000000, 0.4);
+        this.graphics.fillCircle(4, 4, this.radius + 2);
+
+        // Draw outer glow
+        this.graphics.lineStyle(this.thickness + 8, this.ringColor, 0.15);
         this.graphics.strokeCircle(0, 0, this.radius);
 
-        // Draw dynamic elements (sweet spot and arrow)
-        this.graphics.lineStyle(this.thickness, 0xffffff, 1);
+        // Draw gradient ring with cartoon style
+        this.graphics.lineStyle(this.thickness + 2, darkColorInt, 0.8);
+        this.graphics.strokeCircle(0, 0, this.radius);
+
+        // Inner bright highlight
+        this.graphics.lineStyle(this.thickness - 4, brightColorInt, 0.9);
+        this.graphics.strokeCircle(0, 0, this.radius);
+
+        // Core ring color
+        this.graphics.lineStyle(this.thickness - 8, this.ringColor, 1.0);
+        this.graphics.strokeCircle(0, 0, this.radius);
+
+        // Draw sweet spot with enhanced cartoon style
+        const sweetSpotColor = chroma('#FFFFFF').hex();
+        const sweetSpotColorInt = parseInt(sweetSpotColor.replace('#', '0x'), 16);
+
+        // Sweet spot outer glow
+        this.graphics.lineStyle(this.thickness + 4, sweetSpotColorInt, 0.3);
         this.graphics.beginPath();
         this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
         this.graphics.strokePath();
 
-        // Pre-calculated arrow position
-        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 5);
-        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 5);
-
-        this.graphics.fillStyle(0xffffff, 1);
+        // Sweet spot main area
+        this.graphics.lineStyle(this.thickness, sweetSpotColorInt, 0.9);
         this.graphics.beginPath();
-        this.graphics.moveTo(arrowX, arrowY);
-        this.graphics.lineTo(arrowX - 5, arrowY - 10);
-        this.graphics.lineTo(arrowX + 5, arrowY - 10);
+        this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
+        this.graphics.strokePath();
+
+        // Enhanced cartoon arrow with 3D effect
+        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 8);
+        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 8);
+
+        // Arrow shadow
+        this.graphics.fillStyle(0x000000, 0.4);
+        this.graphics.beginPath();
+        this.graphics.moveTo(arrowX + 2, arrowY + 2);
+        this.graphics.lineTo(arrowX - 6, arrowY - 8);
+        this.graphics.lineTo(arrowX + 10, arrowY - 8);
         this.graphics.closePath();
         this.graphics.fillPath();
+
+        // Arrow main body with gradient effect
+        this.graphics.fillStyle(sweetSpotColorInt, 1);
+        this.graphics.beginPath();
+        this.graphics.moveTo(arrowX, arrowY);
+        this.graphics.lineTo(arrowX - 8, arrowY - 12);
+        this.graphics.lineTo(arrowX + 8, arrowY - 12);
+        this.graphics.closePath();
+        this.graphics.fillPath();
+
+        // Arrow highlight
+        this.graphics.fillStyle(0xFFFFAA, 0.8);
+        this.graphics.beginPath();
+        this.graphics.moveTo(arrowX, arrowY);
+        this.graphics.lineTo(arrowX - 4, arrowY - 8);
+        this.graphics.lineTo(arrowX + 4, arrowY - 8);
+        this.graphics.closePath();
+        this.graphics.fillPath();
+
+        // Arrow outline for definition
+        this.graphics.lineStyle(2, 0x000000, 0.6);
+        this.graphics.beginPath();
+        this.graphics.moveTo(arrowX, arrowY);
+        this.graphics.lineTo(arrowX - 8, arrowY - 12);
+        this.graphics.lineTo(arrowX + 8, arrowY - 12);
+        this.graphics.closePath();
+        this.graphics.strokePath();
 
         this.hasDrawn = true;
         this.isDirty = false;
