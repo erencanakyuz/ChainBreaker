@@ -615,21 +615,27 @@
         let popupY = this.center.y + Math.sin(this.needleAngle) * this.activeRing.radius;
         this.showScorePopup(points, popupX, popupY);
 
+        // Store reference to broken ring for animation
+        const brokenRing = this.activeRing;
+
+        // Immediately switch to next ring (don't wait for animation)
+        Phaser.Utils.Array.Remove(this.ringStack, this.activeRing);
+        if (this.ringStack.length === 0) {
+          this.levelUp();
+        } else {
+          this.activeRing = this.ringStack[this.ringStack.length - 1];
+        }
+
+        // Play broken ring animation in background
         this.tweens.add({
-          targets: this.activeRing.graphics,
+          targets: brokenRing.graphics,
           scaleX: 0,
           scaleY: 0,
           alpha: 0,
           ease: 'Power2',
-          duration: 800, // Increased from 200 to 800 for slower animation
+          duration: 800, // Slower animation for visual appeal
           onComplete: () => {
-            this.activeRing.destroy();
-            Phaser.Utils.Array.Remove(this.ringStack, this.activeRing);
-            if (this.ringStack.length === 0) {
-              this.levelUp();
-            } else {
-              this.activeRing = this.ringStack[this.ringStack.length - 1];
-            }
+            brokenRing.destroy(); // Clean up when animation finishes
           }
         });
         this.combo++;
