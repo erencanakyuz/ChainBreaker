@@ -1,23 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
+
 <head>
   <meta charset="UTF-8">
-  <title>Precision Ring-Breaking Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Chain Breaker Pro - Precision Ring-Breaking Game</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
       overflow: hidden;
       background: #000;
       font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
+
+    #game-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      border: 2px solid #333;
+      border-radius: 8px;
+    }
+
     .menu-button {
       font-size: 24px;
       cursor: pointer;
     }
+
+    /* Loading screen için */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      z-index: 1000;
+    }
   </style>
 </head>
+
 <body>
+  <div id="loading">
+    <div>Chain Breaker Pro Yükleniyor...</div>
+  </div>
+
+  <div id="game-container">
+    <div id="phaser-game"></div>
+  </div>
+
   <!-- Load Phaser 3 from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
   <script>
@@ -26,62 +82,62 @@
       constructor() {
         super('BootScene');
       }
-      
+
       preload() {
         const { width, height } = this.cameras.main;
         let progressBox = this.add.graphics();
         progressBox.fillStyle(0x222222, 0.8);
         progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50);
-        
+
         let loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', { font: '20px Arial', fill: '#ffffff' }).setOrigin(0.5);
-        
+
         this.load.on('progress', (value) => {
           let bar = this.add.graphics();
           bar.fillStyle(0xffffff, 1);
           bar.fillRect(width / 2 - 150, height / 2 - 15, 300 * value, 30);
         });
-        
+
         this.load.on('complete', () => {
           progressBox.destroy();
           loadingText.destroy();
         });
-        
+
         // Break efektleri için particle texture
         let particleGraphics = this.make.graphics({ x: 0, y: 0, add: false });
         particleGraphics.fillStyle(0xffffff, 1);
         particleGraphics.fillCircle(4, 4, 4);
         particleGraphics.generateTexture('particle', 8, 8);
-        
+
         // Arka plan için star texture
         let starGraphics = this.make.graphics({ x: 0, y: 0, add: false });
         starGraphics.fillStyle(0xffffff, 1);
         starGraphics.fillRect(0, 0, 2, 2);
         starGraphics.generateTexture('star', 2, 2);
       }
-      
+
       create() {
         this.scene.start('MenuScene');
       }
     }
-    
+
     // MenuScene: Oyuncunun mod seçebileceği ana menü.
     class MenuScene extends Phaser.Scene {
       constructor() {
         super('MenuScene');
       }
-      
+
       create() {
         const { width, height } = this.cameras.main;
         // Başlık ve arka plan
-        this.add.text(width/2, 80, 'Precision Ring-Breaking Game', {
+        this.add.text(width / 2, 80, 'Precision Ring-Breaking Game', {
           font: '40px Arial',
           fill: '#ffffff',
           stroke: '#000000',
           strokeThickness: 5
         }).setOrigin(0.5);
-        
-        this.add.text(width/2, 150, 'Select Mode', { font: '32px Arial', fill: '#ffff00', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5);
-        
+
+        this.add.text(width / 2, 150, 'Select Mode', { font: '32px Arial', fill: '#ffff00', stroke: '#000', strokeThickness: 3 }).setOrigin(0.5);
+
         // Menü seçenekleri (modeDesigns)
         this.modeDesigns = [
           {
@@ -164,34 +220,41 @@
             pulsingRings: true
           }
         ];
-        
+
         let startY = 220, spacing = 60;
         this.modeDesigns.forEach((mode, index) => {
-          let modeText = this.add.text(width/2, startY + index * spacing, mode.name, { font: '28px Arial', fill: '#ffffff', stroke: '#000000', strokeThickness: 3 })
+          let modeText = this.add.text(width / 2, startY + index * spacing, mode.name, { font: '28px Arial', fill: '#ffffff', stroke: '#000000', strokeThickness: 3 })
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true });
-          
+
           modeText.on('pointerdown', () => {
             this.scene.start('MainScene', { selectedMode: mode });
           });
-          
+
           modeText.on('pointerover', () => { modeText.setFill('#ffff00'); });
           modeText.on('pointerout', () => { modeText.setFill('#ffffff'); });
         });
       }
     }
-    
+
     // MainScene: Oyun mekaniğini barındırır.
     class MainScene extends Phaser.Scene {
       constructor() {
         super('MainScene');
+        // Object pools for memory efficiency
+        this.scorePopupPool = [];
+        this.ringPool = [];
+        this.maxPoolSize = 20;
       }
-      
+
       init(data) {
         this.selectedMode = data.selectedMode || null;
         this.level = 1;
+        this.lastUpdateTime = 0;
+        this.targetFPS = 60;
+        this.frameBudget = 1000 / this.targetFPS;
       }
-      
+
       create() {
         // --- Arka plan ve ek particle efektleri ---
         this.backgroundParticles = this.add.particles('star');
@@ -204,53 +267,54 @@
           quantity: 6,
           blendMode: 'ADD'
         });
-        
-        // Geliştirilmiş arka plan partikülleri
+
+        // Optimized background particles - reduced quantity and increased lifespan
         this.bgParticles = this.add.particles('particle');
         this.bgEmitter = this.bgParticles.createEmitter({
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 12000,  // Partiküller daha uzun süre sahnede kalacak
-          speed: { min: 10, max: 50 }, // Daha geniş hız aralığı
+          lifespan: 15000,  // Longer lifespan, fewer spawns
+          speed: { min: 10, max: 50 },
           angle: { min: 0, max: 360 },
-          scale: { start: 0.3, end: 0 }, // Hafif daha büyük başlayacak
-          quantity: 3, // Daha fazla partikül
+          scale: { start: 0.3, end: 0 },
+          quantity: 1, // Reduced from 3 to 1
+          frequency: 500, // Add frequency control
           blendMode: 'ADD',
-          tint: [0x0088ff, 0x00ffcc, 0x0055ff], // Çeşitli mavi tonları
-          alpha: { start: 0.7, end: 0 } // Daha belirgin görsellik
+          tint: [0x0088ff, 0x00ffcc, 0x0055ff],
+          alpha: { start: 0.5, end: 0 } // Reduced alpha for better performance
         });
-        
-        // Ek spark emitter: ekstra 3D patlama efekti
+
+        // Optimized spark emitter with pooling
         this.sparkEmitter = this.add.particles('particle').createEmitter({
           x: 0,
           y: 0,
-          lifespan: 400,
-          speed: { min: -200, max: 200 },
-          scale: { start: 1.5, end: 0 },
-          quantity: 30,
+          lifespan: 300, // Reduced lifespan
+          speed: { min: -150, max: 150 }, // Reduced speed range
+          scale: { start: 1.2, end: 0 }, // Slightly smaller
+          quantity: 15, // Reduced from 30 to 15
           blendMode: 'ADD',
           tint: [0xff0000, 0x00ff00, 0x0000ff, 0xffff00],
           on: false
         });
-        
-        // Kırılma partikülleri (halkalar kırıldığında tetiklenecek)
+
+        // Optimized break particles
         this.breakParticles = this.add.particles('particle');
         this.breakEmitter = this.breakParticles.createEmitter({
-          lifespan: 800, 
-          speed: { min: 80, max: 200 }, 
-          scale: { start: 1, end: 0 }, 
-          quantity: 40, // Daha büyük patlama efekti
+          lifespan: 600, // Reduced lifespan
+          speed: { min: 60, max: 150 }, // Reduced speed
+          scale: { start: 0.8, end: 0 }, // Smaller particles
+          quantity: 20, // Reduced from 40 to 20
           blendMode: 'ADD',
-          gravityY: 100, // Aşağı doğru düşme etkisi
-          on: false // Başlangıçta kapalı, sadece kırılınca çalışacak
+          gravityY: 80, // Reduced gravity
+          on: false
         });
-        
+
         // Fever Mode partikülleri
         this.feverParticles = this.add.particles('particle');
         this.feverEmitter = this.feverParticles.createEmitter({
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 5000, 
+          lifespan: 5000,
           speed: { min: 50, max: 100 },
           scale: { start: 0.4, end: 0 },
           quantity: 5,
@@ -259,7 +323,7 @@
           alpha: { start: 1, end: 0 }
         });
         this.feverEmitter.stop(); // Fever Mode başta kapalı olacak
-        
+
         this.confettiParticles = this.add.particles('particle');
         this.confettiEmitter = this.confettiParticles.createEmitter({
           x: { min: 0, max: this.cameras.main.width },
@@ -271,9 +335,9 @@
           tint: [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff],
           on: false
         });
-        
+
         this.center = { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 };
-        this.flash = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xccccff).setOrigin(0,0);
+        this.flash = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xccccff).setOrigin(0, 0);
         this.flash.alpha = 0;
         this.backgroundGlow = this.add.graphics();
         this.setupUI();
@@ -282,11 +346,11 @@
         this.input.on('pointerdown', this.handleInput, this);
         this.debugText = this.add.text(10, 130, '', { font: '16px Arial', fill: '#ffffff' });
         this.gameOverFlag = false;
-        this.gameOverText = this.add.text(this.center.x, this.center.y, '', { 
+        this.gameOverText = this.add.text(this.center.x, this.center.y, '', {
           font: '48px Arial', fill: '#ff0000', align: 'center',
           stroke: '#000000', strokeThickness: 6
         }).setOrigin(0.5);
-        
+
         // Çember ayarları
         this.baseRadius = 100;
         this.ringThickness = 20;
@@ -294,7 +358,7 @@
         this.setupLevelDesigns();
         this.startLevel();
       }
-      
+
       setupUI() {
         this.score = 0;
         this.combo = 0;
@@ -313,11 +377,11 @@
           font: '20px Arial', fill: '#00ffff', stroke: '#000000', strokeThickness: 3
         }).setOrigin(0.5, 0);
       }
-      
+
       setupParticleEffects() {
         // Bu bölümde daha önce oluşturduğumuz partikül emitter'leri zaten create() içerisinde ayarlandı.
       }
-      
+
       setupNeedle() {
         this.needle = this.add.graphics();
         this.needleAngle = 0;
@@ -325,7 +389,7 @@
         this.needleSpeed = this.originalNeedleSpeed;
         this.needleReverseProb = 0;
       }
-      
+
       setupLevelDesigns() {
         if (this.selectedMode) {
           this.baseMode = this.selectedMode;
@@ -344,11 +408,19 @@
           }];
         }
       }
-      
+
       getActiveDesign() {
+        // Cache the active design to avoid recalculation
+        if (this.cachedDesign && this.cachedDesign.level === this.level) {
+          return this.cachedDesign;
+        }
+
+        let design;
         if (this.baseMode) {
-          let mod = this.level - 1;
-          return {
+          const mod = this.level - 1;
+          const difficultyMultiplier = Math.min(mod * 0.08, 3); // Cap difficulty scaling
+
+          design = {
             name: this.baseMode.name,
             theme: this.baseMode.theme,
             color: this.baseMode.color,
@@ -356,32 +428,63 @@
             particleColors: this.baseMode.particleColors,
             ringColors: this.baseMode.ringColors,
             specialEffects: this.baseMode.specialEffects,
-            sweetSpotSize: Math.max(this.baseMode.sweetSpotSize - mod, 5),
-            needleSpeed: this.baseMode.needleSpeed * (1 + 0.1 * mod),
+            sweetSpotSize: Math.max(this.baseMode.sweetSpotSize - mod * 0.5, 3), // Slower reduction
+            needleSpeed: this.baseMode.needleSpeed * (1 + difficultyMultiplier),
             ringMovement: this.baseMode.ringMovement,
-            ringSpeed: (this.baseMode.ringSpeed || 0) * (1 + 0.05 * mod),
+            ringSpeed: (this.baseMode.ringSpeed || 0) * (1 + difficultyMultiplier * 0.5),
             needleReverseProb: this.baseMode.needleReverseProb || 0
           };
         } else {
           const designIndex = Math.min(this.level - 1, this.levelDesigns.length - 1);
-          return this.levelDesigns[designIndex];
+          design = this.levelDesigns[designIndex];
         }
+
+        // Cache the design with level info
+        this.cachedDesign = { ...design, level: this.level };
+        return design;
       }
-      
+
       update(time, delta) {
         if (this.gameOverFlag) return;
+
+        // Frame budgeting for consistent performance
+        const startTime = performance.now();
         let dt = delta / 1000;
-        this.updateBackgroundGlow(time);
+        this.frameCount = (this.frameCount || 0) + 1;
+
+        // Priority 1: Critical game logic (always runs)
         this.updateNeedle(dt);
-        this.ringStack.forEach(ring => ring.update(delta));
         this.updateFeverMode(delta);
-        this.debugText.setText(
-          'Regen Delay: ' + this.regenDelay.toFixed(0) +
-          '\nNeedle Speed: ' + this.needleSpeed.toFixed(2) +
-          '\nCombo: ' + this.combo
-        );
+
+        // Priority 2: Visual updates (skip if frame budget exceeded)
+        if (performance.now() - startTime < this.frameBudget * 0.7) {
+          // Update background glow less frequently (every 3rd frame)
+          if (this.frameCount % 3 === 0) {
+            this.updateBackgroundGlow(time);
+          }
+
+          // Batch ring updates - limit to 2 rings per frame for performance
+          const ringsToUpdate = Math.min(2, this.ringStack.length);
+          for (let i = 0; i < ringsToUpdate; i++) {
+            const ring = this.ringStack[i];
+            if (ring.needsUpdate) {
+              ring.update(delta);
+            }
+          }
+        }
+
+        // Priority 3: Non-critical updates (skip if running slow)
+        if (performance.now() - startTime < this.frameBudget * 0.9) {
+          if (this.frameCount % 15 === 0) { // Reduced frequency further
+            this.debugText.setText(
+              'FPS: ' + Math.round(1000 / delta) +
+              '\nCombo: ' + this.combo +
+              '\nLevel: ' + this.level
+            );
+          }
+        }
       }
-      
+
       updateBackgroundGlow(time) {
         const intensity = this.feverMode ? 0.3 : 0.1;
         const pulseFactor = Math.sin(time / 500) * 0.05 + intensity;
@@ -389,18 +492,24 @@
         this.backgroundGlow.fillStyle(this.getActiveDesign().color, pulseFactor);
         this.backgroundGlow.fillCircle(this.center.x, this.center.y, this.baseRadius * 3);
       }
-      
+
       updateNeedle(dt) {
         const design = this.getActiveDesign();
         if (design.needleReverseProb && Math.random() < design.needleReverseProb) {
           this.needleSpeed = -this.needleSpeed;
         }
+
+        const oldAngle = this.needleAngle;
         this.needleAngle += this.needleSpeed * dt;
         if (this.needleAngle >= Math.PI * 2) this.needleAngle -= Math.PI * 2;
         if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
-        this.drawNeedle();
+
+        // Only redraw if angle changed significantly (optimization)
+        if (Math.abs(oldAngle - this.needleAngle) > 0.01) {
+          this.drawNeedle();
+        }
       }
-      
+
       updateFeverMode(delta) {
         if (this.feverMode) {
           this.feverTimer -= delta;
@@ -412,58 +521,72 @@
           }
         }
       }
-      
-   drawNeedle() {
-  this.needle.clear();
-  let baseColor = this.feverMode ? 0xff00ff : 0xffffff;
-  
-  // Aktif çemberin dış kenarı (yarıçap + kalınlığın yarısı)
-  let outerEdge = this.activeRing.radius + this.activeRing.thickness / 2;
-  // İğnenin çemberden ne kadar uzaklıkta başlayacağını belirleyen margin (daha fazla dışa çekiyoruz)
-  let margin = 46;
-  
-  // İğne çizgisinin başlangıç ve bitiş noktalarını hesaplayalım:
-  // Başlangıç: çemberin dışından margin kadar uzakta (iğnenin dış kısmı)
-  let startX = this.center.x + Math.cos(this.needleAngle) * (outerEdge + margin);
-  let startY = this.center.y + Math.sin(this.needleAngle) * (outerEdge + margin);
-  // Bitiş: çemberin hemen dış kenarı, marker için biraz boşluk bırakıyoruz (örneğin +5 piksel)
-  let endX = this.center.x + Math.cos(this.needleAngle) * (outerEdge + 5);
-  let endY = this.center.y + Math.sin(this.needleAngle) * (outerEdge + 5);
-  
-  // 1. Glow efekti: Kalın, yarı şeffaf çizgi
-  this.needle.lineStyle(20, baseColor, 0.4);
-  this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
-  
-  // 2. İğne çizgisi: İnce ve net çizgi
-  this.needle.lineStyle(4, baseColor, 1);
-  this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
-  
-  // 3. Marker (Modern imleç): Dairesel, kalın bir işaretleyici
-  // Marker boyutu, ucun daha belirgin olmasını sağlar
-  let markerRadius = 15;
-  this.needle.fillStyle(baseColor, 1);
-  this.needle.fillCircle(endX, endY, markerRadius);
-  
-  // Marker için dış kenar vurgusu: Daha modern bir görünüm katar
-  this.needle.lineStyle(3, 0x000000, 1);
-  this.needle.strokeCircle(endX, endY, markerRadius);
-}
 
+      drawNeedle() {
+        if (!this.activeRing) return;
+
+        this.needle.clear();
+        const baseColor = this.feverMode ? 0xff00ff : 0xffffff;
+
+        // Pre-calculate frequently used values
+        const outerEdge = this.activeRing.radius + this.activeRing.thickness / 2;
+        const margin = 46;
+        const markerRadius = 15;
+
+        // Cache trigonometric calculations
+        const cosAngle = Math.cos(this.needleAngle);
+        const sinAngle = Math.sin(this.needleAngle);
+
+        // Pre-calculate positions
+        const startDistance = outerEdge + margin;
+        const endDistance = outerEdge + 5;
+
+        const startX = this.center.x + cosAngle * startDistance;
+        const startY = this.center.y + sinAngle * startDistance;
+        const endX = this.center.x + cosAngle * endDistance;
+        const endY = this.center.y + sinAngle * endDistance;
+
+        // Use batch drawing for better performance
+        this.needle.lineStyle(20, baseColor, 0.4);
+        this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
+
+        this.needle.lineStyle(4, baseColor, 1);
+        this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
+
+        this.needle.fillStyle(baseColor, 1);
+        this.needle.fillCircle(endX, endY, markerRadius);
+
+        this.needle.lineStyle(3, 0x000000, 1);
+        this.needle.strokeCircle(endX, endY, markerRadius);
+      }
 
       handleInput() {
-        if (this.gameOverFlag) return;
+        if (this.gameOverFlag || !this.activeRing) return;
+
+        // Prevent input spam - minimum 100ms between inputs
+        const now = performance.now();
+        if (this.lastInputTime && now - this.lastInputTime < 100) return;
+        this.lastInputTime = now;
+
         this.activeRing.inputReceived = true;
-        let diff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
-        const design = this.getActiveDesign();
-        const threshold = Phaser.Math.DegToRad(design.sweetSpotSize);
-        if (Math.abs(diff) <= threshold) {
+
+        // Cached angle difference calculation
+        const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
+        const absAngleDiff = Math.abs(angleDiff);
+
+        // Pre-calculate threshold to avoid repeated calculations
+        if (!this.cachedThreshold) {
+          this.cachedThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
+        }
+
+        if (absAngleDiff <= this.cachedThreshold) {
           this.handleSuccessfulHit();
         } else {
           this.handleMiss();
         }
         this.resetRegenTimer();
       }
-      
+
       handleSuccessfulHit() {
         this.flash.alpha = 1;
         this.tweens.add({
@@ -472,30 +595,30 @@
           duration: 150,
           ease: 'Linear'
         });
-        
+
         // Kırılan halkanın rengini alıp, break emitter'a uygula
         this.breakEmitter.setTint(this.activeRing.ringColor);
         this.breakEmitter.explode(30, this.center.x, this.center.y);
-        
+
         // Ek spark efekti
         this.sparkEmitter.explode(30, this.center.x, this.center.y);
         this.cameras.main.shake(150, 0.01);
-        
+
         // Arka plan partiküllerinin rengini, aktif tasarımın particleColors dizisine göre ayarla
         this.bgEmitter.setTint(this.getActiveDesign().particleColors);
-        
+
         // Fever Mode aktifse ek partikül efekti çalıştır
         if (this.feverMode) {
           this.feverEmitter.start();
           this.time.delayedCall(500, () => { this.feverEmitter.stop(); });
         }
-        
+
         let multiplier = this.feverMode ? 2 : (1 + this.combo * 0.1);
         let points = Math.floor(10 * multiplier);
         let popupX = this.center.x + Math.cos(this.needleAngle) * this.activeRing.radius;
         let popupY = this.center.y + Math.sin(this.needleAngle) * this.activeRing.radius;
         this.showScorePopup(points, popupX, popupY);
-        
+
         this.tweens.add({
           targets: this.activeRing.graphics,
           scaleX: 0,
@@ -522,20 +645,18 @@
           this.activateFeverMode();
         }
       }
-      
-      // Gelişmiş, dinamik +Score popup animasyonu
+
+      // Optimized score popup with object pooling
       showScorePopup(points, x, y) {
-        let baseScale = 1;
-        if (points >= 50) baseScale = 1.5;
-        if (points >= 100) baseScale = 2;
-        let popup = this.add.text(x, y, '+' + points, { 
-          font: '48px Arial', 
-          fill: '#ffdd00', 
-          stroke: '#000000', 
-          strokeThickness: 4 
-        }).setOrigin(0.5);
-        popup.setShadow(4, 4, "#333333", 4, false, true);
+        let popup = this.getPooledScorePopup();
+        let baseScale = points >= 100 ? 2 : (points >= 50 ? 1.5 : 1);
+
+        popup.setText('+' + points);
+        popup.setPosition(x, y);
         popup.setScale(0);
+        popup.setAlpha(1);
+        popup.setVisible(true);
+
         this.tweens.timeline({
           targets: popup,
           tweens: [
@@ -559,10 +680,31 @@
               delay: 100
             }
           ],
-          onComplete: () => popup.destroy()
+          onComplete: () => this.returnPooledScorePopup(popup)
         });
       }
-      
+
+      getPooledScorePopup() {
+        if (this.scorePopupPool.length > 0) {
+          return this.scorePopupPool.pop();
+        }
+        return this.add.text(0, 0, '', {
+          font: '48px Arial',
+          fill: '#ffdd00',
+          stroke: '#000000',
+          strokeThickness: 4
+        }).setOrigin(0.5).setShadow(4, 4, "#333333", 4, false, true);
+      }
+
+      returnPooledScorePopup(popup) {
+        popup.setVisible(false);
+        if (this.scorePopupPool.length < this.maxPoolSize) {
+          this.scorePopupPool.push(popup);
+        } else {
+          popup.destroy();
+        }
+      }
+
       handleMiss() {
         this.combo = 0;
         this.comboText.setText('Combo: ' + this.combo);
@@ -585,14 +727,14 @@
           this.gameOver();
         }
       }
-      
+
       activateFeverMode() {
         this.feverMode = true;
         this.feverTimer = this.feverModeDuration;
         this.feverText.setText('FEVER MODE: 5s');
         this.cameras.main.flash(500, 255, 0, 255);
       }
-      
+
       resetRegenTimer() {
         if (this.regenTimer) {
           this.regenTimer.remove(false);
@@ -603,7 +745,7 @@
           callbackScope: this
         });
       }
-      
+
       regenerateRing() {
         if (this.activeRing && !this.activeRing.inputReceived) {
           this.combo = 0;
@@ -613,8 +755,8 @@
           this.gameOver();
           return;
         }
-        let lastRadius = this.ringStack.length > 0 
-          ? this.ringStack[this.ringStack.length - 1].radius 
+        let lastRadius = this.ringStack.length > 0
+          ? this.ringStack[this.ringStack.length - 1].radius
           : this.baseRadius - (this.ringThickness + this.ringGap);
         let newRadius = lastRadius + this.ringThickness + this.ringGap;
         let ringColor = Phaser.Utils.Array.GetRandom(this.getActiveDesign().ringColors);
@@ -623,12 +765,12 @@
         this.activeRing = newRing;
         this.resetRegenTimer();
       }
-      
+
       levelUp() {
         this.confettiEmitter.explode(50, this.center.x, this.center.y);
         this.cameras.main.flash(500, 0, 255, 0);
-        let levelUpText = this.add.text(this.center.x, this.center.y, 'LEVEL UP!', { 
-          font: '48px Arial', 
+        let levelUpText = this.add.text(this.center.x, this.center.y, 'LEVEL UP!', {
+          font: '48px Arial',
           fill: '#00ff00',
           stroke: '#000000',
           strokeThickness: 5
@@ -651,8 +793,8 @@
         if (this.level % 3 === 0) {
           this.lives = Math.min(this.lives + 1, 5);
           this.livesText.setText('Lives: ' + this.lives);
-          let bonusText = this.add.text(this.center.x, this.center.y + 60, '+1 LIFE!', { 
-            font: '32px Arial', 
+          let bonusText = this.add.text(this.center.x, this.center.y + 60, '+1 LIFE!', {
+            font: '32px Arial',
             fill: '#ff5555',
             stroke: '#000000',
             strokeThickness: 4
@@ -668,7 +810,7 @@
         }
         this.time.delayedCall(1000, () => { this.startLevel(); }, [], this);
       }
-      
+
       startLevel() {
         const design = this.getActiveDesign();
         this.currentRingColor = design.color;
@@ -676,17 +818,30 @@
         this.bgEmitter.setTint(design.particleColors);
         this.themeText.setText(design.name + ': ' + design.theme);
         this.ringStack = [];
-        let numRings = 8;
+
+        // Dynamic ring count based on difficulty
+        const numRings = Math.min(8, 6 + Math.floor(this.level / 5));
+        const radiusIncrement = this.ringThickness + this.ringGap;
+
+        // Pre-calculate colors for better performance
+        const colorPool = [...design.ringColors];
+
         for (let i = 0; i < numRings; i++) {
-          let radius = this.baseRadius + i * (this.ringThickness + this.ringGap);
-          let ringColor = Phaser.Utils.Array.GetRandom(design.ringColors);
-          let ring = new Ring(this, this.center.x, this.center.y, radius, this.ringThickness, ringColor, design);
+          const radius = this.baseRadius + i * radiusIncrement;
+          const ringColor = colorPool[i % colorPool.length]; // Cycle through colors
+          const ring = new Ring(this, this.center.x, this.center.y, radius, this.ringThickness, ringColor, design);
           this.ringStack.push(ring);
         }
+
         this.activeRing = this.ringStack[this.ringStack.length - 1];
+
+        // Invalidate cached values when starting new level
+        this.cachedDesign = null;
+        this.cachedThreshold = null;
+
         this.resetRegenTimer();
       }
-      
+
       gameOver() {
         this.gameOverFlag = true;
         this.gameOverText.setText('GAME OVER\nScore: ' + this.score + '\nLevel: ' + this.level + '\nClick to Restart');
@@ -703,27 +858,48 @@
           this.gameOverText.setText('');
         });
       }
-      
+
       resetGame() {
+        // Clear all timers and tweens
+        if (this.regenTimer) this.regenTimer.remove(false);
+        this.tweens.killAll();
+
+        // Clean up ring stack
+        if (this.ringStack) {
+          this.ringStack.forEach(ring => ring.destroy());
+          this.ringStack.length = 0; // Clear array
+        }
+
+        // Clean up object pools
+        if (this.scorePopupPool) {
+          this.scorePopupPool.forEach(popup => popup.destroy());
+          this.scorePopupPool.length = 0;
+        }
+
+        // Memory cleanup (texture cache removed for stability)
+
+        // Reset game state
         this.level = 1;
-        this.levelText.setText('Level: ' + this.level);
         this.score = 0;
         this.combo = 0;
         this.lives = 3;
         this.needleSpeed = this.originalNeedleSpeed;
         this.regenDelay = 5000;
+        this.feverMode = false;
+        this.cachedThreshold = null; // Clear cached threshold
+        this.frameCount = 0;
+
+        // Update UI
+        this.levelText.setText('Level: ' + this.level);
         this.scoreText.setText('Score: 0');
         this.comboText.setText('Combo: 0');
         this.livesText.setText('Lives: 3');
-        this.feverMode = false;
         this.feverText.setText('');
-        if (this.ringStack) {
-          this.ringStack.forEach(ring => ring.destroy());
-        }
+
         this.startLevel();
       }
     }
-    
+
     // Ring sınıfı: Her çemberi, glow, 3D gölge, sweet spot ve ok ile çizer.
     class Ring {
       constructor(scene, x, y, radius, thickness, ringColor, design = {}) {
@@ -742,34 +918,49 @@
         this.inputReceived = false;
         this.movementEnabled = design.ringMovement || false;
         this.movementSpeed = design.ringSpeed || 0.0005;
+        this.needsUpdate = this.movementEnabled || design.pulsingRings;
+
+        // Performance: Pre-calculate frequently used values
+        this.arcWidth = Phaser.Math.DegToRad(this.design.sweetSpotSize || 15);
+        this.arrowCosCache = Math.cos(this.sweetSpotAngle);
+        this.arrowSinCache = Math.sin(this.sweetSpotAngle);
+        this.isDirty = true;
+        this.hasDrawn = false;
+
         if (this.scene.debugMode) {
           this.debugText = this.scene.add.text(this.x, this.y, '', { font: '12px Arial', fill: '#ff0000' }).setOrigin(0.5);
         }
         this.draw();
       }
-      
+
       draw() {
+        // Only clear if necessary - check if ring actually changed
+        if (!this.isDirty && this.hasDrawn) return;
+
         this.graphics.clear();
-        // 3D gölge: Çemberin hafif offset siyah kopyası
+
+        // Simplified ring drawing without complex texture caching
+
+        // Draw base ring directly (simplified approach to avoid texture caching issues)
         this.graphics.fillStyle(0x000000, 0.3);
         this.graphics.fillCircle(5, 5, this.radius);
-        // Glow efekti
         this.graphics.lineStyle(this.thickness + 4, this.ringColor, 0.3);
         this.graphics.strokeCircle(0, 0, this.radius);
-        // Ana çember: Doldurulmuş ve konturlu
         this.graphics.fillStyle(this.ringColor, 0.2);
         this.graphics.fillCircle(0, 0, this.radius);
         this.graphics.lineStyle(this.thickness, this.ringColor, 0.8);
         this.graphics.strokeCircle(0, 0, this.radius);
-        // Sweet spot yayını çiz
-        const arcWidth = Phaser.Math.DegToRad(this.design.sweetSpotSize || 15);
+
+        // Draw dynamic elements (sweet spot and arrow)
         this.graphics.lineStyle(this.thickness, 0xffffff, 1);
         this.graphics.beginPath();
-        this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - arcWidth, this.sweetSpotAngle + arcWidth, false);
+        this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
         this.graphics.strokePath();
-        // Sweet spot okunu çiz
-        let arrowX = Math.cos(this.sweetSpotAngle) * (this.radius - this.thickness - 5);
-        let arrowY = Math.sin(this.sweetSpotAngle) * (this.radius - this.thickness - 5);
+
+        // Pre-calculated arrow position
+        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 5);
+        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 5);
+
         this.graphics.fillStyle(0xffffff, 1);
         this.graphics.beginPath();
         this.graphics.moveTo(arrowX, arrowY);
@@ -777,41 +968,100 @@
         this.graphics.lineTo(arrowX + 5, arrowY - 10);
         this.graphics.closePath();
         this.graphics.fillPath();
+
+        this.hasDrawn = true;
+        this.isDirty = false;
+
         if (this.debugText) {
-          this.debugText.setText('Sweet Spot: ' + Phaser.Math.RadToDeg(this.sweetSpotAngle).toFixed(1));
+          this.debugText.setText('Angle: ' + Math.round(Phaser.Math.RadToDeg(this.sweetSpotAngle)));
         }
       }
-      
+
       update(delta) {
+        let needsRedraw = false;
+
         if (this.movementEnabled) {
+          const oldAngle = this.sweetSpotAngle;
           this.sweetSpotAngle += this.movementSpeed * delta;
           if (this.sweetSpotAngle > Math.PI * 2) this.sweetSpotAngle -= Math.PI * 2;
-          this.draw();
+
+          // Only redraw if angle changed significantly
+          if (Math.abs(oldAngle - this.sweetSpotAngle) > 0.005) {
+            // Update cached trigonometric values
+            this.arrowCosCache = Math.cos(this.sweetSpotAngle);
+            this.arrowSinCache = Math.sin(this.sweetSpotAngle);
+            this.isDirty = true;
+            needsRedraw = true;
+          }
         }
+
         if (this.design.pulsingRings) {
+          const oldMagnitude = this.pulseMagnitude;
           this.pulseMagnitude += this.pulseDirection * 0.001 * delta;
           if (this.pulseMagnitude > 0.05 || this.pulseMagnitude < -0.05) this.pulseDirection *= -1;
-          this.graphics.scaleX = 1 + this.pulseMagnitude;
-          this.graphics.scaleY = 1 + this.pulseMagnitude;
+
+          // Only update scale if magnitude changed significantly
+          if (Math.abs(oldMagnitude - this.pulseMagnitude) > 0.001) {
+            this.graphics.scaleX = 1 + this.pulseMagnitude;
+            this.graphics.scaleY = 1 + this.pulseMagnitude;
+          }
         }
+
+        if (needsRedraw) {
+          this.draw();
+        }
+
+        // Set needsUpdate flag for next frame
+        this.needsUpdate = this.movementEnabled || this.design.pulsingRings;
       }
-      
+
       destroy() {
         this.graphics.destroy();
         if (this.debugText) this.debugText.destroy();
       }
     }
-    
+
+    // Loading screen'i kaldır
+    document.addEventListener('DOMContentLoaded', function () {
+      const loadingElement = document.getElementById('loading');
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+    });
+
     const config = {
-      type: Phaser.AUTO,
+      type: Phaser.AUTO, // Let Phaser choose the best renderer
       width: 800,
       height: 600,
+      parent: 'phaser-game',
       scene: [BootScene, MenuScene, MainScene],
-      scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
-      audio: { disableWebAudio: false }
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 600
+      },
+      backgroundColor: '#000000',
+      // Simplified config to avoid canvas creation issues
+      dom: {
+        createContainer: true
+      }
     };
-    
-    const game = new Phaser.Game(config);
+
+    // Simple, reliable game initialization
+    window.addEventListener('load', function () {
+      // Wait a moment for everything to be ready
+      setTimeout(() => {
+        const loadingElement = document.getElementById('loading');
+        if (loadingElement) {
+          loadingElement.style.display = 'none';
+        }
+
+        // Create the game
+        const game = new Phaser.Game(config);
+      }, 500);
+    });
   </script>
 </body>
+
 </html>
