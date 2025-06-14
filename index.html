@@ -21,25 +21,27 @@
       overflow: hidden;
       background: #000;
       font-family: 'Arial', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      width: 100vw;
+      height: 100vh;
     }
 
     #game-container {
-      width: 100%;
+      width: 100vw;
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    #phaser-game {
+      width: 100%;
+      height: 100%;
     }
 
     canvas {
       display: block;
-      margin: 0 auto;
-      border: 2px solid #333;
-      border-radius: 8px;
+      width: 100% !important;
+      height: 100% !important;
     }
 
     .menu-button {
@@ -588,13 +590,7 @@
       }
 
       handleSuccessfulHit() {
-        this.flash.alpha = 1;
-        this.tweens.add({
-          targets: this.flash,
-          alpha: 0,
-          duration: 150,
-          ease: 'Linear'
-        });
+        // Flash effect removed for better user experience
 
         // Kırılan halkanın rengini alıp, break emitter'a uygula
         this.breakEmitter.setTint(this.activeRing.ringColor);
@@ -623,8 +619,9 @@
           targets: this.activeRing.graphics,
           scaleX: 0,
           scaleY: 0,
+          alpha: 0,
           ease: 'Power2',
-          duration: 200,
+          duration: 800, // Increased from 200 to 800 for slower animation
           onComplete: () => {
             this.activeRing.destroy();
             Phaser.Utils.Array.Remove(this.ringStack, this.activeRing);
@@ -1031,15 +1028,15 @@
 
     const config = {
       type: Phaser.AUTO, // Let Phaser choose the best renderer
-      width: 800,
-      height: 600,
+      width: window.innerWidth,
+      height: window.innerHeight,
       parent: 'phaser-game',
       scene: [BootScene, MenuScene, MainScene],
       scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 800,
-        height: 600
+        width: window.innerWidth,
+        height: window.innerHeight
       },
       backgroundColor: '#000000',
       // Simplified config to avoid canvas creation issues
@@ -1059,6 +1056,11 @@
 
         // Create the game
         const game = new Phaser.Game(config);
+
+        // Handle window resize for fullscreen support
+        window.addEventListener('resize', () => {
+          game.scale.resize(window.innerWidth, window.innerHeight);
+        });
       }, 500);
     });
   </script>
