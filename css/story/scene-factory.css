@@ -41,6 +41,7 @@
     background: linear-gradient(135deg, #2C3E50, #34495E, #1ABC9C);
     border-radius: 10px 10px 0 0;
     box-shadow: 0 0 20px rgba(0, 255, 200, 0.3);
+    z-index: 2;
 }
 
 .scene-factory .factory-building-2 {
@@ -52,6 +53,7 @@
     background: linear-gradient(135deg, #8E44AD, #9B59B6, #E74C3C);
     border-radius: 15px 15px 0 0;
     box-shadow: 0 0 25px rgba(231, 76, 60, 0.4);
+    z-index: 2;
 }
 
 .scene-factory .factory-building-3 {
@@ -75,6 +77,7 @@
     background: linear-gradient(135deg, #E67E22, #D35400, #27AE60);
     border-radius: 12px 12px 0 0;
     box-shadow: 0 0 22px rgba(39, 174, 96, 0.4);
+    z-index: 2;
 }
 
 .scene-factory .factory-building-5 {
@@ -86,6 +89,7 @@
     background: linear-gradient(135deg, #95A5A6, #7F8C8D, #9B59B6);
     border-radius: 8px 8px 0 0;
     box-shadow: 0 0 18px rgba(155, 89, 182, 0.3);
+    z-index: 2;
 }
 
 /* Additional Factory Buildings */
@@ -98,6 +102,7 @@
     background: linear-gradient(135deg, #FF6B6B, #FF8E53, #FF6B35);
     border-radius: 8px 8px 0 0;
     box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+    z-index: 2;
 }
 
 .scene-factory .factory-building-7 {
@@ -109,7 +114,7 @@
     background: linear-gradient(135deg, #4ECDC4, #44A08D, #093637);
     border-radius: 6px 6px 0 0;
     box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
-    z-index: 1;
+    z-index: 2;
 }
 
 .scene-factory .factory-building-8 {
@@ -121,6 +126,7 @@
     background: linear-gradient(135deg, #A8E6CF, #7FDBDA, #ABC4FF);
     border-radius: 10px 10px 0 0;
     box-shadow: 0 0 25px rgba(168, 230, 207, 0.5);
+    z-index: 2;
 }
 
 .scene-factory .factory-building-9 {
@@ -132,6 +138,7 @@
     background: linear-gradient(135deg, #FFD93D, #6BCF7F, #4D96FF);
     border-radius: 5px 5px 0 0;
     box-shadow: 0 0 18px rgba(255, 217, 61, 0.4);
+    z-index: 2;
 }
 
 .scene-factory .factory-building-10 {
@@ -143,6 +150,7 @@
     background: linear-gradient(135deg, #C44569, #F8B500, #F97F51);
     border-radius: 7px 7px 0 0;
     box-shadow: 0 0 20px rgba(196, 69, 105, 0.4);
+    z-index: 2;
 }
 
 /* Multi-level Factory Complex */
@@ -202,7 +210,7 @@
     border-radius: 25px;
     animation: conveyorMove 3s linear infinite;
     box-shadow: 0 0 20px rgba(52, 73, 94, 0.6);
-    z-index: 2;
+    z-index: 0;
 }
 
 
@@ -218,6 +226,7 @@
     border-radius: 50%;
     animation: ringPulse 2s ease-in-out infinite, ringFloat 3s ease-in-out infinite;
     box-shadow: 0 0 30px #FFD700;
+    z-index: 2;
 }
 
 .scene-factory .ring-platinum {
@@ -231,6 +240,7 @@
     animation: ringPulse 2.3s ease-in-out infinite, ringFloat 3.3s ease-in-out infinite;
     animation-delay: 0.7s;
     box-shadow: 0 0 25px #E5E4E2;
+    z-index: 3;
 }
 
 .scene-factory .ring-crystal {
@@ -244,6 +254,7 @@
     animation: ringPulse 1.9s ease-in-out infinite, ringFloat 2.9s ease-in-out infinite, crystalShimmer 4s ease-in-out infinite;
     animation-delay: 1.2s;
     box-shadow: 0 0 35px #87CEEB;
+    z-index: 1;
 }
 
 .scene-factory .ring-diamond {
@@ -257,6 +268,7 @@
     animation: ringPulse 2.1s ease-in-out infinite, ringFloat 3.1s ease-in-out infinite, diamondSparkle 3s ease-in-out infinite;
     animation-delay: 1.8s;
     box-shadow: 0 0 28px #B9F2FF;
+    z-index: 1;
 }
 
 .scene-factory .ring-exotic {
@@ -270,6 +282,7 @@
     animation: ringPulse 2.4s ease-in-out infinite, ringFloat 3.4s ease-in-out infinite, exoticGlow 5s ease-in-out infinite;
     animation-delay: 2.2s;
     box-shadow: 0 0 32px #FF69B4;
+    z-index: 1;
 }
 
 
@@ -286,7 +299,7 @@
     background: radial-gradient(circle, rgba(52, 152, 219, 0.3), transparent);
     animation: ringConveyorJourney 8s linear infinite;
     animation-delay: 0s;
-    z-index: 3;
+    z-index: 1;
 }
 
 .scene-factory .new-ring-2 {
@@ -300,7 +313,7 @@
     background: radial-gradient(circle, rgba(231, 76, 60, 0.3), transparent);
     animation: ringConveyorJourney 8s linear infinite;
     animation-delay: 2s;
-    z-index: 3;
+    z-index: 1;
 }
 
 .scene-factory .new-ring-3 {
@@ -314,7 +327,7 @@
     background: radial-gradient(circle, rgba(46, 204, 113, 0.3), transparent);
     animation: ringConveyorJourney 8s linear infinite;
     animation-delay: 4s;
-    z-index: 3;
+    z-index: 1;
 }
 
 .scene-factory .new-ring-4 {
@@ -328,7 +341,7 @@
     background: radial-gradient(circle, rgba(155, 89, 182, 0.3), transparent);
     animation: ringConveyorJourney 8s linear infinite;
     animation-delay: 6s;
-    z-index: 3;
+    z-index: 1;
 }
 
 .scene-factory .shipping-container {
@@ -503,29 +516,88 @@
 }
 
 /* Space Cargo Ships */
+/* Advanced Spaceships */
 .scene-factory .cargo-ship-1 {
     position: absolute;
     top: 18%;
-    left: 60%;
-    width: 35px;
-    height: 15px;
-    background: linear-gradient(45deg, #95A5A6, #7F8C8D);
-    border-radius: 8px;
-    animation: cargoFlight 12s linear infinite;
+    left: 0%;
+    width: 45px;
+    height: 20px;
+    background: linear-gradient(90deg, #2C3E50 0%, #34495E 30%, #85C1E9 50%, #5DADE2 70%, #2980B9 100%);
+    border-radius: 25px 5px 5px 25px;
+    animation: cargoFlight 12s linear infinite, spaceshipGlow 3s ease-in-out infinite;
     z-index: 2;
+    box-shadow: 0 0 20px rgba(52, 152, 219, 0.6),
+        inset 2px 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.scene-factory .cargo-ship-1::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 8px;
+    background: linear-gradient(45deg, #E74C3C, #FF6B6B);
+    border-radius: 50%;
+    box-shadow: 0 0 15px #E74C3C;
+    animation: engineThrust 0.5s ease-in-out infinite alternate;
+}
+
+.scene-factory .cargo-ship-1::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 65%;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #00FFFF, #0080FF);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00FFFF;
+    animation: cockpitLight 2s ease-in-out infinite;
 }
 
 .scene-factory .cargo-ship-2 {
     position: absolute;
     top: 12%;
-    left: 70%;
-    width: 30px;
-    height: 12px;
-    background: linear-gradient(45deg, #3498DB, #2980B9);
-    border-radius: 6px;
-    animation: cargoFlight 15s linear infinite;
+    left: 0%;
+    width: 38px;
+    height: 18px;
+    background: linear-gradient(90deg, #8E44AD 0%, #9B59B6 30%, #BB8FCE 50%, #D2B4DE 70%, #E8DAEF 100%);
+    border-radius: 20px 8px 8px 20px;
+    animation: cargoFlight 15s linear infinite, spaceshipGlow 2.5s ease-in-out infinite;
     animation-delay: 4s;
     z-index: 2;
+    box-shadow: 0 0 18px rgba(155, 89, 182, 0.6),
+        inset 2px 0 4px rgba(255, 255, 255, 0.3);
+}
+
+.scene-factory .cargo-ship-2::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -6px;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 6px;
+    background: linear-gradient(45deg, #F39C12, #F7DC6F);
+    border-radius: 50%;
+    box-shadow: 0 0 12px #F39C12;
+    animation: engineThrust 0.4s ease-in-out infinite alternate;
+}
+
+.scene-factory .cargo-ship-2::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 70%;
+    width: 6px;
+    height: 6px;
+    background: radial-gradient(circle, #FF00FF, #8A2BE2);
+    border-radius: 50%;
+    box-shadow: 0 0 8px #FF00FF;
+    animation: cockpitLight 1.8s ease-in-out infinite;
 }
 
 /* Space Communication Beam */
@@ -1275,23 +1347,42 @@
 
 @keyframes cargoFlight {
     0% {
-        transform: translateX(0) translateY(0);
+        transform: translateX(-100px) translateY(0);
+        opacity: 0;
     }
 
-    25% {
-        transform: translateX(100px) translateY(-10px);
+    5% {
+        opacity: 1;
     }
 
-    50% {
-        transform: translateX(200px) translateY(-5px);
+    20% {
+        transform: translateX(calc(20vw)) translateY(-8px);
+        opacity: 1;
     }
 
-    75% {
-        transform: translateX(300px) translateY(-15px);
+    40% {
+        transform: translateX(calc(40vw)) translateY(-5px);
+        opacity: 1;
+    }
+
+    60% {
+        transform: translateX(calc(60vw)) translateY(-12px);
+        opacity: 1;
+    }
+
+    80% {
+        transform: translateX(calc(80vw)) translateY(-8px);
+        opacity: 1;
+    }
+
+    95% {
+        transform: translateX(calc(100vw + 50px)) translateY(-15px);
+        opacity: 1;
     }
 
     100% {
-        transform: translateX(450px) translateY(-20px);
+        transform: translateX(calc(100vw + 100px)) translateY(-20px);
+        opacity: 0;
     }
 }
 
@@ -1517,5 +1608,44 @@
     100% {
         transform: translateX(calc(80vw)) translateY(-350px) scale(0.4);
         opacity: 0.6;
+    }
+}
+
+/* Spaceship Animations */
+@keyframes spaceshipGlow {
+
+    0%,
+    100% {
+        filter: brightness(1) drop-shadow(0 0 5px rgba(52, 152, 219, 0.3));
+    }
+
+    50% {
+        filter: brightness(1.3) drop-shadow(0 0 15px rgba(52, 152, 219, 0.8));
+    }
+}
+
+@keyframes engineThrust {
+    0% {
+        transform: translateY(-50%) scaleX(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-50%) scaleX(1.5);
+        opacity: 0.6;
+    }
+}
+
+@keyframes cockpitLight {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
     }
 }
