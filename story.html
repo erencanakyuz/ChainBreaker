@@ -544,70 +544,60 @@
 
         <!-- Scene 3: Factory - Ring Production -->
         <div class="story-scene scene-factory" id="scene-3">
+            <!-- City Skyline Container -->
+            <div class="city-skyline">
+                <!-- Factory Buildings -->
+                <div class="factory-building-1">
+                    <div class="chimney-1"></div>
+                    <div class="smoke-1"></div>
+                </div>
+
+                <div class="factory-building-2">
+                    <div class="chimney-2"></div>
+                    <div class="smoke-2"></div>
+                </div>
+
+                <div class="factory-building-3">
+                    <div class="chimney-3"></div>
+                    <div class="smoke-3"></div>
+                </div>
+
+                <div class="factory-building-4"></div>
+                <div class="factory-building-5"></div>
+            </div>
+
+            <!-- Main Ring Production Factory -->
+            <div class="main-ring-factory"></div>
+
+            <!-- Ring Conveyor System -->
+            <div class="ring-conveyor"></div>
+
+            <!-- Active Ring Production -->
+            <div class="ring-1"></div>
+            <div class="ring-2"></div>
+            <div class="ring-3"></div>
+            <div class="ring-4"></div>
+
+            <!-- Factory Lights -->
+            <div class="factory-light-1"></div>
+            <div class="factory-light-2"></div>
+            <div class="factory-light-3"></div>
+            <div class="factory-light-4"></div>
+
+            <!-- Floating Particles -->
+            <div class="particle-1"></div>
+            <div class="particle-2"></div>
+            <div class="particle-3"></div>
+
+            <!-- Animated Numbers (preserved from original) -->
             <div class="hover">
-                <svg class="illustration" width="438" height="548" viewBox="0 0 438 548">
-                    <defs>
-                        <radialGradient cx="50%" cy="50%" r="60%" id="factory-gradient">
-                            <stop stop-color="#AB3424" offset="0%" />
-                            <stop stop-color="#E14B25" offset="89%" />
-                        </radialGradient>
-                    </defs>
-                    <g fill="none" fill-rule="evenodd">
-                        <!-- Factory Building Structure -->
-                        <rect x="50" y="200" width="300" height="200" fill="url(#factory-gradient)" rx="10" />
-                        <rect x="80" y="150" width="240" height="60" fill="#666" rx="5" />
-
-                        <!-- Chimneys -->
-                        <rect x="120" y="100" width="30" height="80" fill="#444" />
-                        <rect x="180" y="80" width="35" height="100" fill="#444" />
-                        <rect x="240" y="90" width="30" height="90" fill="#444" />
-
-                        <!-- Smoke -->
-                        <circle cx="135" cy="80" r="15" fill="rgba(255,255,255,0.3)" opacity="0.8">
-                            <animate attributeName="cy" values="80;40;80" dur="3s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx="197" cy="60" r="18" fill="rgba(255,255,255,0.3)" opacity="0.6">
-                            <animate attributeName="cy" values="60;20;60" dur="4s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" values="0.6;0.1;0.6" dur="4s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx="255" cy="70" r="12" fill="rgba(255,255,255,0.3)" opacity="0.7">
-                            <animate attributeName="cy" values="70;30;70" dur="2.5s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.5s" repeatCount="indefinite" />
-                        </circle>
-
-                        <!-- Windows with lights -->
-                        <rect x="90" y="230" width="25" height="30" fill="#FFD700" rx="3">
-                            <animate attributeName="fill" values="#FFD700;#FFA500;#FFD700" dur="2s"
-                                repeatCount="indefinite" />
-                        </rect>
-                        <rect x="140" y="230" width="25" height="30" fill="#FFD700" rx="3">
-                            <animate attributeName="fill" values="#FFA500;#FFD700;#FFA500" dur="2.5s"
-                                repeatCount="indefinite" />
-                        </rect>
-                        <rect x="190" y="230" width="25" height="30" fill="#FFD700" rx="3">
-                            <animate attributeName="fill" values="#FFD700;#FFA500;#FFD700" dur="1.8s"
-                                repeatCount="indefinite" />
-                        </rect>
-
-                        <!-- Ring Production Area -->
-                        <rect x="250" y="220" width="80" height="80" fill="#333" rx="5" />
-                        <text x="290" y="245" fill="#FFF" font-size="8" text-anchor="middle">RING</text>
-                        <text x="290" y="255" fill="#FFF" font-size="8" text-anchor="middle">FACTORY</text>
-
-                        <!-- Animated Rings being produced -->
-                        <circle cx="290" cy="270" r="8" fill="none" stroke="#00f7ff" stroke-width="2" opacity="0">
-                            <animate attributeName="r" values="0;8;15;0" dur="3s" repeatCount="indefinite" />
-                            <animate attributeName="opacity" values="0;1;0.5;0" dur="3s" repeatCount="indefinite" />
-                        </circle>
-                        <circle cx="290" cy="270" r="12" fill="none" stroke="#08ffff" stroke-width="1.5" opacity="0">
-                            <animate attributeName="r" values="0;12;20;0" dur="4s" repeatCount="indefinite"
-                                begin="1s" />
-                            <animate attributeName="opacity" values="0;0.8;0.3;0" dur="4s" repeatCount="indefinite"
-                                begin="1s" />
-                        </circle>
-                    </g>
-                </svg>
+                <div class="illustration">
+                    <div class="number-one">1</div>
+                    <div class="number-two">2</div>
+                    <div class="number-three">3</div>
+                    <div class="number-four">4</div>
+                    <div class="number-five">5</div>
+                </div>
             </div>
             <div class="story-text">
                 İnsanlar Pluton'un isteğini duydu ve hemen harekete geçti! Deniz kenarında dev bir halka üretim tesisi
