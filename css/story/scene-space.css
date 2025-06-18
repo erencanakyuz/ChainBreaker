@@ -59,9 +59,9 @@
     width: var(--titan-size);
     height: var(--titan-size);
     border-radius: calc(var(--titan-size) / 2);
-    background: #a5c6ff;
+    background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 50%, #2c1810 100%);
     transform-style: preserve-3d;
-    box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.38823529411764707) inset, -30px -20px 50px #637bff inset;
+    box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset, -30px -20px 50px #4a00e0 inset, 0 0 20px rgba(142, 45, 226, 0.4);
     animation: titan 6s infinite ease;
     top: -220px;
     z-index: 10;
@@ -71,57 +71,57 @@
 @keyframes pluto-jealousy-gaze {
     0% {
         transform: translateY(-50%) translateX(120px) rotate(0deg);
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 40px rgba(40, 0, 0, 0.4);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 40px rgba(74, 0, 224, 0.4);
     }
 
     15% {
         transform: translateY(-50.5%) translateX(80px) rotate(-1deg);
         /* Saturn'e yaklaşıyor - kıskançlık artıyor */
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 70px rgba(100, 0, 0, 0.7);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 70px rgba(139, 0, 0, 0.7);
     }
 
     30% {
         transform: translateY(-49.5%) translateX(30px) rotate(0.5deg);
         /* Saturn'e çok yakın - maksimum kıskançlık */
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 90px rgba(140, 0, 0, 0.9);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 90px rgba(220, 20, 60, 0.9);
     }
 
     50% {
         transform: translateY(-50%) translateX(-30px) rotate(-0.3deg);
         /* Saturn'ün diğer tarafında - hala bakıyor */
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 85px rgba(130, 0, 0, 0.8);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 85px rgba(199, 21, 133, 0.8);
     }
 
     70% {
         transform: translateY(-49.8%) translateX(-80px) rotate(0.8deg);
         /* Biraz uzaklaştı ama hala bakıyor */
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 65px rgba(90, 0, 0, 0.6);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 65px rgba(138, 43, 226, 0.6);
     }
 
     85% {
         transform: translateY(-50.2%) translateX(0px) rotate(-0.1deg);
         /* Merkeze döndü - kıskançlık devam ediyor */
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 75px rgba(110, 0, 0, 0.7);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 75px rgba(160, 32, 240, 0.7);
     }
 
     100% {
         transform: translateY(-50%) translateX(120px) rotate(0deg);
         /* Başlangıç pozisyonuna döndü */
-        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
-            -30px -20px 50px #637bff inset,
-            0 0 40px rgba(40, 0, 0, 0.4);
+        box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
+            -30px -20px 50px #4a00e0 inset,
+            0 0 40px rgba(74, 0, 224, 0.4);
     }
 }
 
@@ -192,10 +192,11 @@
     transform: translateY(-50%);
     width: 6px;
     height: 6px;
-    background: #53487a;
+    background: #ff1744;
     border-radius: 10px;
     bottom: 34px;
-    animation: blink 1s 0s infinite linear;
+    animation: blink 1s 0s infinite linear, pluto-eyes-glow 3s infinite ease-in-out;
+    box-shadow: 0 0 8px rgba(255, 23, 68, 0.6);
 }
 
 @keyframes pluto-eyes-glow {
@@ -256,9 +257,9 @@
     width: var(--saturn-size);
     height: var(--saturn-size);
     border-radius: calc(var(--saturn-size) / 2);
-    background: white;
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 40%, #ff8c42 70%, #ffa500 100%);
     transform-style: preserve-3d;
-    box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.32941176470588235) inset, -30px -20px 50px #a5adff inset;
+    box-shadow: 0px 0px 0px 4px rgba(255, 215, 0, 0.6) inset, -30px -20px 50px #ff8c42 inset, 0 0 25px rgba(255, 215, 0, 0.5);
     animation: saturn 0.6s infinite linear;
     z-index: 5;
     /* Pluto'nun arkasında */
@@ -322,10 +323,11 @@
     transform: translateY(-50%);
     width: 6px;
     height: 6px;
-    background: #53487a;
+    background: #1565c0;
     border-radius: 10px;
     bottom: 34px;
     animation: blink 1s 0s infinite linear;
+    box-shadow: 0 0 6px rgba(21, 101, 192, 0.5);
 }
 
 .scene_saturn__face .face_clip .eye.eye--left {
@@ -346,10 +348,10 @@
     width: 15px;
     height: 10px;
     top: -5px;
-    background: #ea0e61;
+    background: #ff4081;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
-    box-shadow: 0 6px 0px #53487a inset;
+    box-shadow: 0 6px 0px #1565c0 inset, 0 0 4px rgba(255, 64, 129, 0.4);
 }
 
 /* ===== SATURN SPARKS ===== */
@@ -480,7 +482,8 @@
     top: 50%;
     transform: translateY(-50%);
     width: 30px;
-    background: #08f7ff;
+    background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+    box-shadow: 0 0 6px rgba(255, 154, 158, 0.7);
     transform-origin: 50% calc(var(--saturn-ring-size) / 2 + 30px);
 }
 
@@ -697,16 +700,28 @@
     top: calc(30px - (12px * 3));
 }
 
+.scene_saturn__ring .layer:nth-of-type(3) .layer_part {
+    background: linear-gradient(135deg, #ff7675 0%, #fd79a8 50%, #fdcb6e 100%);
+    box-shadow: 0 0 4px rgba(255, 118, 117, 0.4);
+}
+
 .scene_saturn__ring .layer:nth-of-type(4) {
     top: calc(30px - (12px * 4));
 }
 
+.scene_saturn__ring .layer:nth-of-type(4) .layer_part {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 50%, #55a3ff 100%);
+    box-shadow: 0 0 3px rgba(0, 184, 148, 0.3);
+}
+
 .scene_saturn__ring .layer:nth-of-type(1) .layer_part {
-    background: #08ffff;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffd23f 100%);
+    box-shadow: 0 0 8px rgba(255, 107, 53, 0.6);
 }
 
 .scene_saturn__ring .layer:nth-of-type(2) .layer_part {
-    background: #08ffff;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 50%, #8e44ad 100%);
+    box-shadow: 0 0 6px rgba(231, 76, 60, 0.5);
 }
 
 .scene_saturn__ring .layer .layer_part {
@@ -718,7 +733,8 @@
     transform: translateY(-50%);
     width: 20px;
     height: var(--saturn-ring-width);
-    background: #21ced2;
+    background: linear-gradient(135deg, #9b59b6 0%, #3498db 50%, #1abc9c 100%);
+    box-shadow: 0 0 5px rgba(155, 89, 182, 0.4);
     transform-origin: 50% calc(var(--saturn-ring-size) / 2);
 }
 
