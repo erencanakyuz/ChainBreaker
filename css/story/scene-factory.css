@@ -1104,13 +1104,13 @@
     border-radius: 10px;
     font-family: 'Press Start 2P', monospace;
     font-size: 6px;
-    animation: achievementSlide 6s ease-in-out infinite;
+    animation: achievementSlide 8s ease-in-out infinite;
     z-index: 6;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
 }
 
 .scene-factory .achievement-popup::before {
-    content: '🏆 RING MASTER ACHIEVED!';
+    content: '✨RING CREATED!';
 }
 
 /* Day/Night Cycle */
