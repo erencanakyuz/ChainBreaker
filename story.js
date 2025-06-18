@@ -93,11 +93,11 @@ class StoryManager {
             1: 'css/story/scene-space.css',
             2: 'css/story/scene-lighthouse.css',
             3: 'css/story/scene-factory.css',
-            4: 'css/story/scene-final.css' // scene-final uses space css, but we can define it
+            4: 'css/story/scene-final.css' // Changed to use the new final scene CSS
         };
 
         // Scene 4 reuses scene 1's CSS, so we handle that.
-        const cssFile = sceneNumber === 4 ? sceneMap[1] : sceneMap[sceneNumber];
+        const cssFile = sceneMap[sceneNumber];
         const cssId = `story-scene-${sceneNumber}-css`;
 
         if (cssFile) {
@@ -107,7 +107,7 @@ class StoryManager {
                 // Preload CSS for the next scene for a smoother transition
                 const nextSceneNumber = this.currentScene + 1;
                 if (nextSceneNumber <= this.totalScenes) {
-                    const nextCssFile = nextSceneNumber === 4 ? sceneMap[1] : sceneMap[nextSceneNumber];
+                    const nextCssFile = sceneMap[nextSceneNumber];
                     const nextCssId = `story-scene-${nextSceneNumber}-css`;
                     this.preloadCSS(nextCssFile, nextCssId);
                 }
