@@ -29,81 +29,43 @@
   <!-- Load latest Phaser 3 from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
   <script>
-    // Advanced Color System using Chroma.js only
-    class ColorSystem {
-      constructor() {
-        this.initializeColorPalettes();
+    // Simplified Color Palettes - No overengineering
+    const Palettes = {
+      neon: ['#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF6B6B', '#A8E6CF', '#74B9FF', '#FD79A8'],
+      sunset: ['#FF6B9D', '#F38BA8', '#E8B4CB', '#C8A2C8', '#FDCB6E', '#E17055', '#F39C12', '#E67E22'],
+      ocean: ['#74B9FF', '#0984E3', '#6C5CE7', '#A29BFE', '#00B894', '#00CEC9', '#55EFC4', '#81ECEC'],
+      fire: ['#E17055', '#FDCB6E', '#F39C12', '#E67E22', '#D63031', '#FF7675', '#FD79A8', '#FDCB6E'],
+      cosmic: ['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E', '#74B9FF', '#00B894', '#FF6B9D', '#FECA57'],
+      aurora: ['#00CEC9', '#55EFC4', '#81ECEC', '#74B9FF', '#A29BFE', '#6C5CE7', '#FD79A8', '#FDCB6E']
+    };
+
+    // Simple utility functions
+    const getPhaserColors = (paletteName) => {
+      return Palettes[paletteName].map(color => parseInt(color.replace('#', '0x'), 16));
+    };
+
+    const getGradientColors = (paletteName, steps = 5) => {
+      const palette = Palettes[paletteName] || Palettes.neon;
+      const result = [];
+      for (let i = 0; i < steps; i++) {
+        const index = Math.floor((i / (steps - 1)) * (palette.length - 1));
+        result.push(parseInt(palette[index].replace('#', '0x'), 16));
       }
+      return result;
+    };
 
-      initializeColorPalettes() {
-        // Create sophisticated cartoon-style color palettes using Chroma.js
-        this.palettes = {
-          neon: chroma.scale(['#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57']).mode('lch').colors(8),
-          sunset: chroma.scale(['#FF6B9D', '#F38BA8', '#E8B4CB', '#C8A2C8']).mode('lch').colors(8),
-          ocean: chroma.scale(['#74B9FF', '#0984E3', '#6C5CE7', '#A29BFE']).mode('lab').colors(8),
-          fire: chroma.scale(['#E17055', '#FDCB6E', '#F39C12', '#E67E22']).mode('lch').colors(8),
-          cosmic: chroma.scale(['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E']).mode('lch').colors(8),
-          aurora: chroma.scale(['#00CEC9', '#55EFC4', '#81ECEC', '#74B9FF']).mode('lch').colors(8)
-        };
-
-        // Convert to Phaser-compatible hex integers
-        this.convertedPalettes = {};
-        Object.keys(this.palettes).forEach(key => {
-          this.convertedPalettes[key] = this.palettes[key].map(color =>
-            parseInt(color.replace('#', '0x'), 16)
-          );
-        });
-      }
-
-      // Get dynamic color based on level and mode using Chroma.js
-      getDynamicColor(level, baseColor, intensity = 1) {
-        const color = chroma(baseColor);
-        const hue = (color.get('hsl.h') + (level * 30)) % 360;
-        const saturation = Math.min(1, color.get('hsl.s') * intensity);
-        const lightness = Math.max(0.2, Math.min(0.8, color.get('hsl.l') * intensity));
-
-        return parseInt(chroma.hsl(hue, saturation, lightness).hex().replace('#', '0x'), 16);
-      }
-
-      // Generate complementary colors using Chroma.js
-      getComplementaryColors(baseColor, count = 4) {
-        const baseChroma = chroma(baseColor);
-        const colors = [];
-        const hueStep = 360 / count;
-        const baseHue = baseChroma.get('hsl.h');
-
-        for (let i = 0; i < count; i++) {
-          const newHue = (baseHue + (i * hueStep)) % 360;
-          colors.push(parseInt(chroma.hsl(newHue, baseChroma.get('hsl.s'), baseChroma.get('hsl.l')).hex().replace('#', '0x'), 16));
-        }
-        return colors;
-      }
-
-      // Get animated color transition using Chroma.js
-      getAnimatedColor(baseColor, time, speed = 1) {
-        const color = chroma(baseColor);
-        const hueShift = Math.sin(time * speed) * 30;
-        const newHue = (color.get('hsl.h') + hueShift) % 360;
-
-        return parseInt(chroma.hsl(newHue, color.get('hsl.s'), color.get('hsl.l')).hex().replace('#', '0x'), 16);
-      }
-
-      // Get gradient colors for backgrounds
-      getGradientColors(palette, steps = 5) {
-        if (!this.convertedPalettes[palette]) return this.convertedPalettes.neon;
-        return chroma.scale(this.palettes[palette]).colors(steps).map(color =>
-          parseInt(color.replace('#', '0x'), 16)
-        );
-      }
-
-      // Helper method to convert hex to Phaser color
-      hexToPhaser(hexColor) {
-        return parseInt(hexColor.replace('#', '0x'), 16);
-      }
-    }
-
-    // Initialize global color system
-    const colorSystem = new ColorSystem();
+    // Simplified color system object
+    const colorSystem = {
+      convertedPalettes: {
+        neon: getPhaserColors('neon'),
+        sunset: getPhaserColors('sunset'),
+        ocean: getPhaserColors('ocean'),
+        fire: getPhaserColors('fire'),
+        cosmic: getPhaserColors('cosmic'),
+        aurora: getPhaserColors('aurora')
+      },
+      getGradientColors: getGradientColors
+    };
 
     // BootScene: Enhanced with gradient loading and better visuals
     class BootScene extends Phaser.Scene {
@@ -407,10 +369,10 @@
             strokeThickness: 2
           }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
-          // Theme description text
+          // Theme description text - simplified
           let themeText = this.add.text(width / 2 - 200, startY + index * spacing + 15, mode.theme, {
             font: '14px Arial',
-            fill: chroma(mode.color).brighten(1).hex(),
+            fill: '#cccccc', // Simplified - use fixed light gray
             alpha: 0.8
           }).setOrigin(0, 0.5);
 
@@ -449,7 +411,7 @@
                 duration: 200
               });
 
-              modeText.setFill(chroma(mode.color).brighten(2).hex());
+              modeText.setFill('#ffffff'); // Simplified - use white on hover
             });
 
             element.on('pointerout', () => {
@@ -603,6 +565,15 @@
         this.setupNeedle();
         this.input.on('pointerdown', this.handleInput, this);
 
+        // Performance test controls
+        this.input.keyboard.on('keydown-P', () => {
+          this.runPerformanceTest();
+        });
+
+        this.input.keyboard.on('keydown-R', () => {
+          this.resetPerformanceMetrics();
+        });
+
         // Enhanced debug text with better styling
         this.debugText = this.add.text(10, 130, '', {
           font: '14px Arial',
@@ -613,10 +584,30 @@
           padding: { x: 8, y: 4 }
         });
 
+        // FPS Counter - always visible for performance monitoring
+        this.fpsText = this.add.text(this.cameras.main.width - 15, 15, 'FPS: 60', {
+          font: '16px Arial',
+          fill: '#00ff00',
+          stroke: '#000000',
+          strokeThickness: 2,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          padding: { x: 8, y: 4 }
+        }).setOrigin(1, 0);
+
+        // Performance metrics
+        this.performanceMetrics = {
+          frameCount: 0,
+          lastTime: performance.now(),
+          fpsHistory: [],
+          averageFPS: 60,
+          minFPS: 60,
+          maxFPS: 60
+        };
+
         this.gameOverFlag = false;
         this.gameOverText = this.add.text(this.center.x, this.center.y, '', {
           font: '48px Arial',
-          fill: this.selectedMode ? chroma(this.selectedMode.color).hex() : '#ff6b6b',
+          fill: '#ff6b6b', // Simplified - use fixed color
           align: 'center',
           stroke: '#000000',
           strokeThickness: 6
@@ -636,9 +627,9 @@
         this.lives = 3;
         this.regenDelay = 5000;
 
-        // Get current mode colors for UI theming
-        const modeColor = this.selectedMode ? chroma(this.selectedMode.color).hex() : '#00aaff';
-        const accentColor = this.selectedMode ? chroma(this.selectedMode.color).brighten(1).hex() : '#66ffcc';
+        // Get current mode colors for UI theming - simplified
+        const modeColor = this.selectedMode ? '#' + this.selectedMode.color.toString(16).padStart(6, '0') : '#00aaff';
+        const accentColor = this.selectedMode ? '#66ffcc' : '#66ffcc'; // Use fixed accent color
 
         // Enhanced text styles with dynamic colors
         const baseTextStyle = {
@@ -721,6 +712,15 @@
           alpha: 0.9
         }).setOrigin(0.5, 0);
 
+        // Performance test instructions
+        this.perfTestText = this.add.text(15, this.cameras.main.height - 60,
+          'Performance Test: Press P for stress test, R to reset metrics', {
+          font: '12px Arial',
+          fill: '#888888',
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          padding: { x: 6, y: 3 }
+        });
+
         // Add mode name indicator
         if (this.selectedMode) {
           this.modeNameText = this.add.text(this.cameras.main.width - 15, 15, this.selectedMode.name, {
@@ -748,11 +748,36 @@
       }
 
       setupNeedle() {
-        this.needle = this.add.graphics();
+        // Create needle once as a render texture for optimal performance
+        this.createNeedleTexture();
         this.needleAngle = 0;
         this.originalNeedleSpeed = Phaser.Math.DegToRad(180);
         this.needleSpeed = this.originalNeedleSpeed;
         this.needleReverseProb = 0;
+      }
+
+      createNeedleTexture() {
+        // Create simple arrow pointing towards center
+        this.needle = this.add.graphics();
+        this.drawSimpleArrow();
+      }
+
+      drawSimpleArrow() {
+        this.needle.clear();
+
+        // Simple white arrow with black outline
+        this.needle.fillStyle(0xFFFFFF);
+        this.needle.lineStyle(2, 0x000000);
+
+        // Draw arrow pointing inward (towards center)
+        this.needle.beginPath();
+        this.needle.moveTo(0, -8);  // Top point
+        this.needle.lineTo(-6, 8);  // Bottom left
+        this.needle.lineTo(0, 4);   // Middle notch
+        this.needle.lineTo(6, 8);   // Bottom right
+        this.needle.closePath();
+        this.needle.fillPath();
+        this.needle.strokePath();
       }
 
       setupLevelDesigns() {
@@ -812,6 +837,9 @@
       update(time, delta) {
         if (this.gameOverFlag) return;
 
+        // Performance monitoring
+        this.updatePerformanceMetrics(delta);
+
         // Frame budgeting for consistent performance
         const startTime = performance.now();
         let dt = delta / 1000;
@@ -828,25 +856,56 @@
             this.updateBackgroundGlow(time);
           }
 
-          // Optimized ring updates - limit to 1 ring per frame for better performance
-          const ringsToUpdate = Math.min(1, this.ringStack.length);
-          for (let i = 0; i < ringsToUpdate; i++) {
-            const ring = this.ringStack[i];
+          // Update all moving rings every frame - critical for smooth movement
+          this.ringStack.forEach(ring => {
             if (ring.needsUpdate) {
               ring.update(delta);
             }
-          }
+          });
         }
 
         // Priority 3: Non-critical updates (skip if running slow)
         if (performance.now() - startTime < this.frameBudget * 0.9) {
           if (this.frameCount % 15 === 0) { // Reduced frequency further
             this.debugText.setText(
-              'FPS: ' + Math.round(1000 / delta) +
+              'Rings: ' + this.ringStack.length +
               '\nCombo: ' + this.combo +
-              '\nLevel: ' + this.level
+              '\nLevel: ' + this.level +
+              '\nMin FPS: ' + this.performanceMetrics.minFPS +
+              '\nAvg FPS: ' + this.performanceMetrics.averageFPS
             );
           }
+        }
+      }
+
+      updatePerformanceMetrics(delta) {
+        const currentFPS = Math.round(1000 / delta);
+
+        // Update FPS history for averaging
+        this.performanceMetrics.fpsHistory.push(currentFPS);
+        if (this.performanceMetrics.fpsHistory.length > 60) { // Keep last 60 frames
+          this.performanceMetrics.fpsHistory.shift();
+        }
+
+        // Calculate average FPS
+        const sum = this.performanceMetrics.fpsHistory.reduce((a, b) => a + b, 0);
+        this.performanceMetrics.averageFPS = Math.round(sum / this.performanceMetrics.fpsHistory.length);
+
+        // Track min and max FPS
+        this.performanceMetrics.minFPS = Math.min(this.performanceMetrics.minFPS, currentFPS);
+        this.performanceMetrics.maxFPS = Math.max(this.performanceMetrics.maxFPS, currentFPS);
+
+        // Update FPS display with color coding
+        let fpsColor = '#00ff00'; // Green for good FPS
+        if (currentFPS < 30) fpsColor = '#ff0000'; // Red for bad FPS
+        else if (currentFPS < 45) fpsColor = '#ffff00'; // Yellow for moderate FPS
+
+        this.fpsText.setFill(fpsColor);
+        this.fpsText.setText(`FPS: ${currentFPS}`);
+
+        // Performance warning
+        if (currentFPS < 20 && this.frameCount % 120 === 0) {
+          console.warn('Performance Warning: FPS below 20, consider reducing effects');
         }
       }
 
@@ -864,14 +923,19 @@
           this.needleSpeed = -this.needleSpeed;
         }
 
-        const oldAngle = this.needleAngle;
         this.needleAngle += this.needleSpeed * dt;
         if (this.needleAngle >= Math.PI * 2) this.needleAngle -= Math.PI * 2;
         if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
 
-        // Only redraw if angle changed significantly (optimization)
-        if (Math.abs(oldAngle - this.needleAngle) > 0.01) {
-          this.drawNeedle();
+        // Position needle around the active ring with proper rotation
+        if (this.activeRing) {
+          const radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15; // Small margin outside ring
+
+          this.needle.x = this.center.x + Math.cos(this.needleAngle) * radius;
+          this.needle.y = this.center.y + Math.sin(this.needleAngle) * radius;
+
+          // Rotate arrow to point towards center
+          this.needle.rotation = this.needleAngle + Math.PI; // +PI to point inward
         }
       }
 
@@ -892,78 +956,7 @@
         }
       }
 
-      drawNeedle() {
-        if (!this.activeRing) return;
-
-        this.needle.clear();
-
-        // Enhanced cartoon-style needle colors
-        const baseColor = this.feverMode ? chroma('#FF6B9D').hex() : chroma('#FFFFFF').hex();
-        const shadowColor = this.feverMode ? chroma('#E84393').hex() : chroma('#DDD').hex();
-        const highlightColor = this.feverMode ? chroma('#FD79A8').hex() : chroma('#FFFFAA').hex();
-
-        const baseColorInt = parseInt(baseColor.replace('#', '0x'), 16);
-        const shadowColorInt = parseInt(shadowColor.replace('#', '0x'), 16);
-        const highlightColorInt = parseInt(highlightColor.replace('#', '0x'), 16);
-
-        // Pre-calculate frequently used values
-        const outerEdge = this.activeRing.radius + this.activeRing.thickness / 2;
-        const margin = 46;
-        const markerRadius = 18;
-
-        // Cache trigonometric calculations
-        const cosAngle = Math.cos(this.needleAngle);
-        const sinAngle = Math.sin(this.needleAngle);
-
-        // Pre-calculate positions
-        const startDistance = outerEdge + margin;
-        const endDistance = outerEdge + 5;
-
-        const startX = this.center.x + cosAngle * startDistance;
-        const startY = this.center.y + sinAngle * startDistance;
-        const endX = this.center.x + cosAngle * endDistance;
-        const endY = this.center.y + sinAngle * endDistance;
-
-        // Draw needle shadow for depth
-        this.needle.lineStyle(26, 0x000000, 0.3);
-        this.needle.strokeLineShape(new Phaser.Geom.Line(startX + 3, startY + 3, endX + 3, endY + 3));
-
-        // Draw needle outer glow
-        this.needle.lineStyle(22, baseColorInt, 0.4);
-        this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
-
-        // Draw needle main body with gradient effect
-        this.needle.lineStyle(12, shadowColorInt, 0.8);
-        this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
-
-        this.needle.lineStyle(6, baseColorInt, 1);
-        this.needle.strokeLineShape(new Phaser.Geom.Line(startX, startY, endX, endY));
-
-        // Draw cartoon-style marker ball with 3D effect
-        // Shadow
-        this.needle.fillStyle(0x000000, 0.4);
-        this.needle.fillCircle(endX + 2, endY + 2, markerRadius);
-
-        // Main marker body
-        this.needle.fillStyle(shadowColorInt, 1);
-        this.needle.fillCircle(endX, endY, markerRadius);
-
-        // Highlight gradient
-        this.needle.fillStyle(baseColorInt, 0.9);
-        this.needle.fillCircle(endX, endY, markerRadius - 3);
-
-        // Top highlight
-        this.needle.fillStyle(highlightColorInt, 0.8);
-        this.needle.fillCircle(endX - 4, endY - 4, markerRadius / 3);
-
-        // Marker outline for definition
-        this.needle.lineStyle(3, 0x000000, 0.7);
-        this.needle.strokeCircle(endX, endY, markerRadius);
-
-        // Inner highlight ring
-        this.needle.lineStyle(2, highlightColorInt, 0.6);
-        this.needle.strokeCircle(endX, endY, markerRadius - 6);
-      }
+      // Removed drawNeedle - now using optimized sprite-based needle
 
       handleInput() {
         if (this.gameOverFlag || !this.activeRing) return;
@@ -1156,7 +1149,12 @@
           this.combo = 0;
           this.comboText.setText('Combo: 0');
         }
-        if (this.ringStack.length >= 9) {
+
+        // Dynamic max rings based on level design instead of arbitrary number
+        const design = this.getActiveDesign();
+        const maxRings = Math.min(12, 8 + Math.floor(this.level / 3)); // Scales with level
+
+        if (this.ringStack.length >= maxRings) {
           this.gameOver();
           return;
         }
@@ -1286,7 +1284,7 @@
 
         // Memory cleanup (texture cache removed for stability)
 
-        // Reset game state
+        // Reset game state - complete reset including timers
         this.level = 1;
         this.score = 0;
         this.combo = 0;
@@ -1296,6 +1294,11 @@
         this.feverMode = false;
         this.cachedThreshold = null; // Clear cached threshold
         this.frameCount = 0;
+
+        // Reset throttling timers to prevent input blocking after restart
+        this.lastInputTime = null;
+        this.lastScorePopupTime = null;
+        this.lastComboEffectTime = null;
 
         // Update UI
         this.levelText.setText('Level: ' + this.level);
@@ -1320,6 +1323,51 @@
         if (feverOverlay) {
           feverOverlay.remove();
         }
+      }
+
+      runPerformanceTest() {
+        console.log('=== PERFORMANCE TEST STARTED ===');
+        console.log('Press R to reset metrics, P to run test again');
+
+        // Create stress test - many particles and effects
+        for (let i = 0; i < 20; i++) {
+          this.breakParticles.explode(20,
+            this.center.x + Math.random() * 200 - 100,
+            this.center.y + Math.random() * 200 - 100
+          );
+        }
+
+        // Show multiple effects simultaneously
+        this.showScorePopup(9999, this.center.x, this.center.y - 50);
+        this.showComboEffect();
+
+        // Enable fever mode for more particles
+        if (!this.feverMode) {
+          this.activateFeverMode();
+        }
+
+        // Log current performance
+        setTimeout(() => {
+          console.log('Performance Test Results:');
+          console.log('Current FPS:', Math.round(1000 / this.game.loop.delta));
+          console.log('Average FPS:', this.performanceMetrics.averageFPS);
+          console.log('Min FPS:', this.performanceMetrics.minFPS);
+          console.log('Max FPS:', this.performanceMetrics.maxFPS);
+          console.log('Ring Count:', this.ringStack.length);
+          console.log('=== TEST COMPLETE ===');
+        }, 2000);
+      }
+
+      resetPerformanceMetrics() {
+        this.performanceMetrics = {
+          frameCount: 0,
+          lastTime: performance.now(),
+          fpsHistory: [],
+          averageFPS: 60,
+          minFPS: 60,
+          maxFPS: 60
+        };
+        console.log('Performance metrics reset');
       }
     }
 
@@ -1364,11 +1412,9 @@
 
         // Professional cartoon-style ring drawing with gradients and effects
 
-        // Create a more vibrant ring color
-        const brightColor = chroma(this.ringColor).brighten(0.3).hex();
-        const darkColor = chroma(this.ringColor).darken(0.5).hex();
-        const brightColorInt = parseInt(brightColor.replace('#', '0x'), 16);
-        const darkColorInt = parseInt(darkColor.replace('#', '0x'), 16);
+        // Simplified color variations without Chroma.js
+        const brightColorInt = this.ringColor | 0x444444; // Simple brightening
+        const darkColorInt = this.ringColor & 0xBBBBBB; // Simple darkening
 
         // Draw shadow/depth effect
         this.graphics.fillStyle(0x000000, 0.4);
@@ -1390,9 +1436,8 @@
         this.graphics.lineStyle(this.thickness - 8, this.ringColor, 1.0);
         this.graphics.strokeCircle(0, 0, this.radius);
 
-        // Draw sweet spot with enhanced cartoon style
-        const sweetSpotColor = chroma('#FFFFFF').hex();
-        const sweetSpotColorInt = parseInt(sweetSpotColor.replace('#', '0x'), 16);
+        // Draw sweet spot with enhanced cartoon style - simplified
+        const sweetSpotColorInt = 0xFFFFFF;
 
         // Sweet spot outer glow
         this.graphics.lineStyle(this.thickness + 4, sweetSpotColorInt, 0.3);
@@ -1498,13 +1543,7 @@
       }
     }
 
-    // Loading screen'i kaldır
-    document.addEventListener('DOMContentLoaded', function () {
-      const loadingElement = document.getElementById('loading');
-      if (loadingElement) {
-        loadingElement.style.display = 'none';
-      }
-    });
+    // Removed redundant DOMContentLoaded listener - window.load is sufficient
 
     const config = {
       type: Phaser.AUTO, // Let Phaser choose the best renderer
