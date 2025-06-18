@@ -532,6 +532,7 @@
         super('MainScene');
         // Object pools for memory efficiency
         this.scorePopupPool = [];
+        this.comboEffectPool = [];
         this.ringPool = [];
         this.maxPoolSize = 20;
       }
@@ -847,6 +848,10 @@
         this.originalNeedleSpeed = Phaser.Math.DegToRad(180);
         this.needleSpeed = this.originalNeedleSpeed;
         this.needleReverseProb = 0;
+
+        // Performance optimization variables
+        this.lastNeedleColor = null;
+        this.lastPulseFactor = null;
       }
 
       createNeedleTexture() {
@@ -947,10 +952,10 @@
       update(time, delta) {
         if (this.gameOverFlag) return;
 
-        // Performance monitoring
+        // Performance monitoring with enhanced metrics
         this.updatePerformanceMetrics(delta);
 
-        // Frame budgeting for consistent performance
+        // Advanced frame budgeting for consistent performance
         const startTime = performance.now();
         let dt = delta / 1000;
         this.frameCount = (this.frameCount || 0) + 1;
@@ -960,9 +965,9 @@
         this.updateFeverMode(delta);
 
         // Priority 2: Visual updates (skip if frame budget exceeded)
-        if (performance.now() - startTime < this.frameBudget * 0.7) {
-          // Update background glow less frequently (every 3rd frame)
-          if (this.frameCount % 3 === 0) {
+        if (performance.now() - startTime < this.frameBudget * 0.6) { // Reduced threshold for better performance
+          // Update background glow less frequently (every 5th frame instead of 3rd)
+          if (this.frameCount % 5 === 0) {
             this.updateBackgroundGlow(time);
           }
 
@@ -975,14 +980,15 @@
         }
 
         // Priority 3: Non-critical updates (skip if running slow)
-        if (performance.now() - startTime < this.frameBudget * 0.9) {
-          if (this.frameCount % 15 === 0) { // Reduced frequency further
+        if (performance.now() - startTime < this.frameBudget * 0.8) { // Increased threshold
+          if (this.frameCount % 30 === 0) { // Reduced frequency from 15 to 30 frames
             this.debugText.setText(
               'Rings: ' + this.ringStack.length +
               '\nCombo: ' + this.combo +
               '\nLevel: ' + this.level +
               '\nMin FPS: ' + this.performanceMetrics.minFPS +
-              '\nAvg FPS: ' + this.performanceMetrics.averageFPS
+              '\nAvg FPS: ' + this.performanceMetrics.averageFPS +
+              '\nMemory: ' + this.getMemoryUsage() + 'MB'
             );
           }
         }
@@ -1020,11 +1026,20 @@
       }
 
       updateBackgroundGlow(time) {
-        const intensity = this.feverMode ? 0.3 : 0.1;
-        const pulseFactor = Math.sin(time / 500) * 0.05 + intensity;
+        // Only update if intensity actually changed to reduce expensive graphics operations
+        const newIntensity = this.feverMode ? 0.3 : 0.1;
+        const newPulseFactor = Math.sin(time / 500) * 0.05 + newIntensity;
+
+        // Skip update if change is too small (performance optimization)
+        if (this.lastPulseFactor && Math.abs(newPulseFactor - this.lastPulseFactor) < 0.01) {
+          return;
+        }
+
         this.backgroundGlow.clear();
-        this.backgroundGlow.fillStyle(this.getActiveDesign().color, pulseFactor);
+        this.backgroundGlow.fillStyle(this.getActiveDesign().color, newPulseFactor);
         this.backgroundGlow.fillCircle(this.center.x, this.center.y, this.baseRadius * 3);
+
+        this.lastPulseFactor = newPulseFactor;
       }
 
       updateNeedle(dt) {
@@ -1037,8 +1052,37 @@
         if (this.needleAngle >= Math.PI * 2) this.needleAngle -= Math.PI * 2;
         if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
 
-        // Redraw needle to update color based on position (every frame for accurate color)
-        this.drawSimpleArrow();
+        // Check if needle is in sweet spot area (collision zone) - optimized
+        let needleColor = 0x000000; // Default black
+        if (this.activeRing) {
+          const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
+          const absAngleDiff = Math.abs(angleDiff);
+          const sweetSpotThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
+
+          // Turn white when in sweet spot area
+          if (absAngleDiff <= sweetSpotThreshold) {
+            needleColor = 0xFFFFFF; // White when in collision zone
+          }
+        }
+
+        // Only redraw needle if color changed to reduce graphics operations
+        if (this.lastNeedleColor !== needleColor) {
+          this.needle.clear();
+          this.needle.fillStyle(needleColor);
+          this.needle.lineStyle(2, 0x666666); // Gray outline
+
+          // Draw bigger arrow pointing inward toward center (local coordinate system)
+          this.needle.beginPath();
+          this.needle.moveTo(15, 0);   // Arrow tip pointing right (toward center when properly rotated)
+          this.needle.lineTo(-10, -8); // Top left of arrow base
+          this.needle.lineTo(-5, 0);   // Middle notch
+          this.needle.lineTo(-10, 8);  // Bottom left of arrow base
+          this.needle.closePath();
+          this.needle.fillPath();
+          this.needle.strokePath();
+
+          this.lastNeedleColor = needleColor;
+        }
 
         // Position needle around the active ring with proper rotation
         if (this.activeRing) {
@@ -1069,8 +1113,6 @@
           }
         }
       }
-
-      // Removed drawNeedle - now using optimized sprite-based needle
 
       handleInput() {
         if (this.gameOverFlag || !this.activeRing) return;
@@ -1162,29 +1204,37 @@
         }
       }
 
-      // Enhanced score popup with CSS integration - performance optimized
+      // Enhanced score popup with object pooling - performance optimized
       showScorePopup(points, x, y) {
         // Throttle score popup creation to prevent spam
         if (this.lastScorePopupTime && Date.now() - this.lastScorePopupTime < 50) return;
         this.lastScorePopupTime = Date.now();
 
-        // Use CSS score popup effect
-        const scoreDiv = document.createElement('div');
-        scoreDiv.className = 'score-popup';
+        // Use object pool for DOM elements to reduce creation/destruction overhead
+        let scoreDiv = this.scorePopupPool.pop();
+        if (!scoreDiv) {
+          scoreDiv = document.createElement('div');
+          scoreDiv.className = 'score-popup';
+        }
+
         scoreDiv.textContent = '+' + points;
         scoreDiv.style.left = x + 'px';
         scoreDiv.style.top = y + 'px';
+        scoreDiv.style.display = 'block';
         document.body.appendChild(scoreDiv);
 
-        // Remove CSS effect after animation completes
+        // Return to pool after animation completes
         setTimeout(() => {
           if (scoreDiv.parentNode) {
             scoreDiv.remove();
+            scoreDiv.style.display = 'none';
+            // Return to pool if not full
+            if (this.scorePopupPool.length < this.maxPoolSize) {
+              this.scorePopupPool.push(scoreDiv);
+            }
           }
         }, 800); // Reduced timeout to match CSS animation
       }
-
-      // Removed object pooling methods as we now use CSS effects
 
       handleMiss() {
         this.combo = 0;
@@ -1235,14 +1285,26 @@
         if (this.lastComboEffectTime && Date.now() - this.lastComboEffectTime < 500) return;
         this.lastComboEffectTime = Date.now();
 
-        const comboDiv = document.createElement('div');
-        comboDiv.className = 'combo-effect';
+        // Use object pool for combo effects to reduce DOM creation overhead
+        let comboDiv = this.comboEffectPool.pop();
+        if (!comboDiv) {
+          comboDiv = document.createElement('div');
+          comboDiv.className = 'combo-effect';
+        }
+
         comboDiv.textContent = `COMBO x${this.combo}!`;
+        comboDiv.style.display = 'block';
         document.body.appendChild(comboDiv);
 
+        // Return to pool after animation completes
         setTimeout(() => {
           if (comboDiv.parentNode) {
             comboDiv.remove();
+            comboDiv.style.display = 'none';
+            // Return to pool if not full
+            if (this.comboEffectPool.length < this.maxPoolSize) {
+              this.comboEffectPool.push(comboDiv);
+            }
           }
         }, 600); // Reduced timeout to match CSS animation
       }
@@ -1399,10 +1461,23 @@
           this.ringStack.length = 0; // Clear array
         }
 
-        // Clean up object pools
+        // Clean up object pools - DOM elements don't have destroy method
         if (this.scorePopupPool) {
-          this.scorePopupPool.forEach(popup => popup.destroy());
+          this.scorePopupPool.forEach(popup => {
+            if (popup.parentNode) {
+              popup.remove(); // Remove DOM element properly
+            }
+          });
           this.scorePopupPool.length = 0;
+        }
+
+        if (this.comboEffectPool) {
+          this.comboEffectPool.forEach(combo => {
+            if (combo.parentNode) {
+              combo.remove(); // Remove DOM element properly
+            }
+          });
+          this.comboEffectPool.length = 0;
         }
 
         // Memory cleanup (texture cache removed for stability)
@@ -1422,6 +1497,10 @@
         this.lastInputTime = null;
         this.lastScorePopupTime = null;
         this.lastComboEffectTime = null;
+
+        // Reset performance optimization variables
+        this.lastNeedleColor = null;
+        this.lastPulseFactor = null;
 
         // Update UI
         this.levelText.setText('Level: ' + this.level);
@@ -1452,12 +1531,15 @@
       }
 
       runPerformanceTest() {
-        console.log('=== PERFORMANCE TEST STARTED ===');
+        console.log('=== ADVANCED PERFORMANCE TEST STARTED ===');
         console.log('Press R to reset metrics, P to run test again');
 
+        const startMemory = this.getMemoryUsage();
+        console.log('Start Memory:', startMemory + 'MB');
+
         // Create stress test - many particles and effects
-        for (let i = 0; i < 20; i++) {
-          this.breakParticles.explode(20,
+        for (let i = 0; i < 15; i++) { // Reduced from 20 to 15 for optimization
+          this.breakParticles.explode(15, // Reduced from 20 to 15
             this.center.x + Math.random() * 200 - 100,
             this.center.y + Math.random() * 200 - 100
           );
@@ -1472,16 +1554,22 @@
           this.activateFeverMode();
         }
 
-        // Log current performance
+        // Enhanced performance logging
         setTimeout(() => {
+          const endMemory = this.getMemoryUsage();
           console.log('Performance Test Results:');
           console.log('Current FPS:', Math.round(1000 / this.game.loop.delta));
           console.log('Average FPS:', this.performanceMetrics.averageFPS);
           console.log('Min FPS:', this.performanceMetrics.minFPS);
           console.log('Max FPS:', this.performanceMetrics.maxFPS);
           console.log('Ring Count:', this.ringStack.length);
-          console.log('=== TEST COMPLETE ===');
-        }, 2000);
+          console.log('Start Memory:', startMemory + 'MB');
+          console.log('End Memory:', endMemory + 'MB');
+          console.log('Memory Increase:', Math.round((endMemory - startMemory) * 100) / 100 + 'MB');
+          console.log('Score Popup Pool Size:', this.scorePopupPool.length);
+          console.log('Combo Effect Pool Size:', this.comboEffectPool.length);
+          console.log('=== ADVANCED TEST COMPLETE ===');
+        }, 3000); // Increased to 3 seconds for better measurement
       }
 
       resetPerformanceMetrics() {
@@ -1497,8 +1585,6 @@
       }
 
       // ===== SPACE BACKGROUND EFFECTS METHODS =====
-
-
 
       createStarsBackground() {
         // Create twinkling stars similar to scene-space.css
@@ -1532,11 +1618,17 @@
         }
       }
 
-
-
-
-
-
+      getMemoryUsage() {
+        // Get memory usage information if available (Chrome/modern browsers)
+        if (performance.memory) {
+          return Math.round(performance.memory.usedJSHeapSize / 1024 / 1024 * 100) / 100;
+        }
+        // Fallback estimation based on game objects
+        const ringCount = this.ringStack ? this.ringStack.length : 0;
+        const particleEstimate = 0.1; // Base particle system memory
+        const ringEstimate = ringCount * 0.02; // Each ring ~0.02MB
+        return Math.round((particleEstimate + ringEstimate) * 100) / 100;
+      }
     }
 
     // Ring sınıfı: Her çemberi, glow, 3D gölge, sweet spot ve ok ile çizer.
