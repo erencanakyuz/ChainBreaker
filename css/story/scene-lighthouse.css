@@ -1133,3 +1133,513 @@
         opacity: 0.8;
     }
 }
+
+/* ===== COMMUNICATION SIGNALS (PLUTO ↔ LIGHTHOUSE) ===== */
+.scene-lighthouse .communication-beams {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.scene-lighthouse .signal-beam {
+    position: absolute;
+    background: linear-gradient(45deg,
+            transparent 0%,
+            rgba(142, 45, 226, 0.8) 20%,
+            rgba(var(--aqua-rgb), 0.9) 50%,
+            rgba(142, 45, 226, 0.8) 80%,
+            transparent 100%);
+    height: 3px;
+    border-radius: 10px;
+    animation: signal-transmission 4s ease-in-out infinite;
+    opacity: 0;
+}
+
+/* Pluto to Lighthouse Signal */
+.scene-lighthouse .signal-pluto-to-lighthouse {
+    bottom: 65%;
+    left: 45%;
+    width: 200px;
+    transform: rotate(15deg);
+    animation-delay: 9s;
+}
+
+/* Lighthouse to Pluto Response */
+.scene-lighthouse .signal-lighthouse-to-pluto {
+    bottom: 68%;
+    left: 48%;
+    width: 180px;
+    background: linear-gradient(-45deg,
+            transparent 0%,
+            rgba(var(--yellow-rgb), 0.8) 20%,
+            rgba(var(--aqua-rgb), 0.9) 50%,
+            rgba(var(--yellow-rgb), 0.8) 80%,
+            transparent 100%);
+    transform: rotate(-15deg);
+    animation-delay: 11s;
+}
+
+/* Signal Dots/Particles */
+.scene-lighthouse .signal-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--aqua);
+    border-radius: 50%;
+    animation: signal-dot-travel 3s linear infinite;
+    opacity: 0;
+    box-shadow: 0 0 10px rgba(var(--aqua-rgb), 0.8);
+}
+
+.scene-lighthouse .signal-dot.dot1 {
+    bottom: 65%;
+    left: 45%;
+    animation-delay: 9.5s;
+    background: rgba(142, 45, 226, 0.9);
+}
+
+.scene-lighthouse .signal-dot.dot2 {
+    bottom: 65%;
+    left: 47%;
+    animation-delay: 10s;
+    background: var(--aqua);
+}
+
+.scene-lighthouse .signal-dot.dot3 {
+    bottom: 65%;
+    left: 49%;
+    animation-delay: 10.5s;
+    background: var(--yellow);
+}
+
+/* Morse Code Effect */
+.scene-lighthouse .morse-code {
+    position: absolute;
+    top: 18%;
+    left: 48%;
+    width: 40px;
+    height: 6px;
+    background: var(--yellow);
+    border-radius: 3px;
+    animation: morse-blink 1s linear infinite;
+    opacity: 0;
+    animation-delay: 13s;
+}
+
+.scene-lighthouse .morse-code::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 20px;
+    height: 6px;
+    background: var(--yellow);
+    border-radius: 3px;
+    animation: morse-blink 1s linear infinite;
+    animation-delay: 0.3s;
+}
+
+.scene-lighthouse .morse-code::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 30px;
+    height: 6px;
+    background: var(--yellow);
+    border-radius: 3px;
+    animation: morse-blink 1s linear infinite;
+    animation-delay: 0.6s;
+}
+
+@keyframes signal-transmission {
+    0% {
+        opacity: 0;
+        transform: scaleX(0.1);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    80% {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scaleX(0.1);
+    }
+}
+
+@keyframes signal-dot-travel {
+    0% {
+        opacity: 0;
+        transform: translateX(0) translateY(0) scale(0.5);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(50px) translateY(-10px) scale(1);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translateX(150px) translateY(-30px) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(200px) translateY(-40px) scale(0.5);
+    }
+}
+
+@keyframes morse-blink {
+
+    0%,
+    40% {
+        opacity: 0;
+    }
+
+    41%,
+    70% {
+        opacity: 1;
+    }
+
+    71%,
+    100% {
+        opacity: 0;
+    }
+}
+
+
+
+
+
+/* ===== HUMAN FIGURES & LIGHTHOUSE KEEPER ===== */
+.scene-lighthouse .lighthouse-keeper {
+    position: absolute;
+    bottom: 70%;
+    left: 49%;
+    width: 12px;
+    height: 20px;
+    z-index: 7;
+    animation: keeper-wave 4s ease-in-out infinite;
+    animation-delay: 16s;
+}
+
+.scene-lighthouse .lighthouse-keeper .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #ffdbac;
+    border-radius: 50%;
+    box-shadow: 0 0 3px rgba(255, 219, 172, 0.8);
+}
+
+.scene-lighthouse .lighthouse-keeper .body {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 12px;
+    background: #4169e1;
+    border-radius: 2px;
+}
+
+.scene-lighthouse .lighthouse-keeper .arm {
+    position: absolute;
+    top: 7px;
+    width: 6px;
+    height: 2px;
+    background: #ffdbac;
+    border-radius: 1px;
+    transform-origin: left center;
+    animation: arm-wave 2s ease-in-out infinite;
+}
+
+.scene-lighthouse .lighthouse-keeper .arm.left {
+    left: -3px;
+    animation-delay: 0s;
+}
+
+.scene-lighthouse .lighthouse-keeper .arm.right {
+    right: -3px;
+    animation-delay: 0.5s;
+    transform-origin: right center;
+}
+
+.scene-lighthouse .lighthouse-keeper .legs {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 8px;
+    background: #2f4f4f;
+    border-radius: 0 0 2px 2px;
+}
+
+/* Beach observer */
+.scene-lighthouse .beach-observer {
+    position: absolute;
+    bottom: 75%;
+    left: 40%;
+    width: 10px;
+    height: 16px;
+    z-index: 5;
+    animation: observer-point 6s ease-in-out infinite;
+    animation-delay: 12s;
+}
+
+.scene-lighthouse .beach-observer .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: #8b4513;
+    border-radius: 50%;
+}
+
+.scene-lighthouse .beach-observer .body {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 10px;
+    background: #228b22;
+    border-radius: 2px;
+}
+
+.scene-lighthouse .beach-observer .arm {
+    position: absolute;
+    top: 6px;
+    right: -3px;
+    width: 5px;
+    height: 2px;
+    background: #8b4513;
+    border-radius: 1px;
+    transform-origin: left center;
+    transform: rotate(45deg);
+    animation: pointing-gesture 3s ease-in-out infinite;
+}
+
+/* Boat worker */
+.scene-lighthouse .boat-worker {
+    position: absolute;
+    bottom: 73%;
+    left: 60%;
+    width: 8px;
+    height: 14px;
+    z-index: 6;
+    animation: boat-worker-activity 5s ease-in-out infinite;
+    animation-delay: 8s;
+}
+
+.scene-lighthouse .boat-worker .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #daa520;
+    border-radius: 50%;
+}
+
+.scene-lighthouse .boat-worker .body {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 8px;
+    background: #dc143c;
+    border-radius: 1px;
+}
+
+.scene-lighthouse .boat-worker .hat {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 2px;
+    background: #ff4500;
+    border-radius: 50%;
+}
+
+/* Communication effects between humans */
+.scene-lighthouse .human-communication {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.scene-lighthouse .speech-bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--aqua);
+    border-radius: 10px;
+    padding: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--dark);
+    opacity: 0;
+    animation: speech-appear 3s ease-in-out infinite;
+}
+
+.scene-lighthouse .speech-bubble.keeper-speech {
+    bottom: 80%;
+    left: 52%;
+    animation-delay: 17s;
+}
+
+.scene-lighthouse .speech-bubble.keeper-speech::before {
+    content: 'Signal received!';
+}
+
+.scene-lighthouse .speech-bubble.observer-speech {
+    bottom: 85%;
+    left: 42%;
+    animation-delay: 14s;
+}
+
+.scene-lighthouse .speech-bubble.observer-speech::before {
+    content: 'Look! Pluto!';
+}
+
+.scene-lighthouse .speech-bubble.worker-speech {
+    bottom: 83%;
+    left: 62%;
+    animation-delay: 10s;
+}
+
+.scene-lighthouse .speech-bubble.worker-speech::before {
+    content: 'Amazing rings!';
+}
+
+.scene-lighthouse .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 30%;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(255, 255, 255, 0.9);
+}
+
+@keyframes keeper-wave {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.1) translateY(-2px);
+    }
+
+    50% {
+        transform: scale(1) translateY(0);
+    }
+
+    75% {
+        transform: scale(1.05) translateY(-1px);
+    }
+}
+
+@keyframes arm-wave {
+
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(30deg);
+    }
+}
+
+@keyframes observer-point {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    30% {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    70% {
+        transform: scale(1.05) rotate(-3deg);
+    }
+}
+
+@keyframes pointing-gesture {
+
+    0%,
+    100% {
+        transform: rotate(45deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(60deg) scale(1.1);
+    }
+}
+
+@keyframes boat-worker-activity {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-3px) rotate(2deg);
+    }
+
+    50% {
+        transform: translateY(-1px) rotate(0deg);
+    }
+
+    75% {
+        transform: translateY(-2px) rotate(-2deg);
+    }
+}
+
+@keyframes speech-appear {
+
+    0%,
+    70% {
+        opacity: 0;
+        transform: translateY(5px) scale(0.8);
+    }
+
+    80%,
+    95% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-3px) scale(0.9);
+    }
+}
