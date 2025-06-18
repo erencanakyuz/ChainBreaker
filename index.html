@@ -239,27 +239,25 @@
           alpha: { start: 0.6, end: 0 }
         });
 
-        // Enhanced title with glow effect
-        const titleText = this.add.text(width / 2, 80, 'CHAIN BREAKER PRO', {
-          font: '48px Arial',
-          fill: '#ffffff',
-          stroke: '#6c5ce7',
-          strokeThickness: 4
-        }).setOrigin(0.5);
+        // Create DOM element for samurai-styled title
+        const titleElement = document.createElement('h1');
+        titleElement.className = 'game-title';
+        titleElement.textContent = 'ChainX';
+        titleElement.style.position = 'absolute';
+        titleElement.style.top = '8rem';
+        titleElement.style.left = '50%';
+        titleElement.style.transform = 'translateX(-50%)';
+        titleElement.style.zIndex = '1000';
+        document.body.appendChild(titleElement);
 
-        // Add glow effect to title
-        this.tweens.add({
-          targets: titleText,
-          alpha: 0.7,
-          duration: 2000,
-          yoyo: true,
-          repeat: -1
-        });
+        // Store reference to remove when scene changes
+        this.titleElement = titleElement;
 
-        const subtitleText = this.add.text(width / 2, 150, 'Select Your Challenge', {
-          font: '28px Arial',
-          fill: '#fd79a8',
-          stroke: '#000',
+        const subtitleText = this.add.text(width / 2, 180, 'Choose Your Path, Warrior', {
+          fontFamily: '"Press Start 2P", monospace',
+          fontSize: '16px',
+          fill: '#edab50',
+          stroke: '#8c241d',
           strokeThickness: 2
         }).setOrigin(0.5);
 
@@ -441,6 +439,14 @@
             repeat: -1
           });
         });
+      }
+
+      shutdown() {
+        // Clean up the DOM title element when leaving menu
+        if (this.titleElement) {
+          this.titleElement.remove();
+          this.titleElement = null;
+        }
       }
     }
 

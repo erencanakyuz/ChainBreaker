@@ -1,3 +1,6 @@
+/* Import samurai-style pixel font */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
 /* Modern CSS with @property support for advanced animations */
 @property --ring-progress {
     syntax: "<percentage>";
@@ -17,9 +20,14 @@
     initial-value: 0deg;
 }
 
-/* Modern CSS Custom Properties */
+/* Samurai theme CSS Custom Properties */
 :root {
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --samurai-gold: #edab50;
+    --samurai-orange: #dc7237;
+    --samurai-red: #8c241d;
+    --samurai-bg: #2a2a2a;
+    --samurai-dark: #1a1a1a;
+    --primary-gradient: linear-gradient(135deg, var(--samurai-bg) 0%, var(--samurai-dark) 100%);
     --neon-blue: #4ecdc4;
     --neon-pink: #ff6b9d;
     --neon-yellow: #feca57;
@@ -39,17 +47,19 @@
     box-sizing: border-box;
 }
 
-/* Modern Body with Enhanced Gradients */
+/* Samurai-themed Body with Enhanced Gradients */
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
     background:
-        radial-gradient(ellipse at 20% 80%, rgba(120, 119, 198, 0.3), transparent),
-        radial-gradient(ellipse at 80% 20%, rgba(255, 119, 198, 0.3), transparent),
-        radial-gradient(ellipse at 40% 40%, rgba(120, 219, 226, 0.2), transparent),
+        radial-gradient(ellipse at 20% 80%, rgba(237, 171, 80, 0.1), transparent),
+        radial-gradient(ellipse at 80% 20%, rgba(220, 114, 55, 0.1), transparent),
+        radial-gradient(ellipse at 40% 40%, rgba(140, 36, 29, 0.2), transparent),
         var(--primary-gradient);
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family: "Press Start 2P", 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 62.5%;
+    /* Base font size for rem calculations */
     width: 100vw;
     height: 100vh;
     position: relative;
@@ -115,26 +125,61 @@ canvas {
     filter: contrast(1.1) saturate(1.2);
 }
 
-/* Modern Menu Buttons with Advanced Gradients */
+/* Samurai Game Title */
+.game-title {
+    color: var(--samurai-gold);
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(4rem, 10vw, 8rem);
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow:
+        0 5px 0 var(--samurai-orange),
+        0 15px 0 var(--samurai-red),
+        0 20px 30px rgba(0, 0, 0, 0.5);
+    margin: 2rem 0;
+    animation: title-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes title-glow {
+    from {
+        text-shadow:
+            0 5px 0 var(--samurai-orange),
+            0 15px 0 var(--samurai-red),
+            0 20px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    to {
+        text-shadow:
+            0 5px 0 var(--samurai-orange),
+            0 15px 0 var(--samurai-red),
+            0 20px 30px rgba(0, 0, 0, 0.5),
+            0 0 40px var(--samurai-gold);
+    }
+}
+
+/* Samurai-styled Menu Buttons */
 .menu-button {
-    --button-hue: 280deg;
-    font-size: clamp(18px, 3vw, 24px);
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
     cursor: pointer;
     background:
         linear-gradient(45deg,
-            hsl(var(--button-hue), 70%, 60%),
-            hsl(calc(var(--button-hue) + 60deg), 70%, 60%));
-    border-radius: 16px;
-    padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px);
-    border: none;
-    color: white;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            var(--samurai-gold),
+            var(--samurai-orange));
+    border-radius: 8px;
+    padding: clamp(1.2rem, 2vw, 1.6rem) clamp(2rem, 4vw, 3rem);
+    border: 3px solid var(--samurai-red);
+    color: var(--samurai-dark);
+    font-weight: 400;
+    letter-spacing: 1px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow:
+        0 8px 0 var(--samurai-red),
+        0 12px 20px rgba(0, 0, 0, 0.4);
+    image-rendering: pixelated;
 }
 
 .menu-button::before {
@@ -144,16 +189,20 @@ canvas {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.4s;
 }
 
 .menu-button:hover {
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-2px);
     box-shadow:
-        0 16px 40px rgba(0, 0, 0, 0.4),
-        0 0 20px rgba(255, 255, 255, 0.1);
-    filter: hue-rotate(20deg) brightness(1.1);
+        0 6px 0 var(--samurai-red),
+        0 10px 25px rgba(0, 0, 0, 0.5);
+    background:
+        linear-gradient(45deg,
+            #f5c068,
+            #e8944f);
+    border-color: #a52e24;
 }
 
 .menu-button:hover::before {
@@ -161,10 +210,13 @@ canvas {
 }
 
 .menu-button:active {
-    transform: translateY(-2px) scale(0.98);
+    transform: translateY(4px);
+    box-shadow:
+        0 2px 0 var(--samurai-red),
+        0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Enhanced Loading Screen with Modern Animations */
+/* Samurai-themed Loading Screen */
 #loading {
     position: fixed;
     top: 0;
@@ -172,39 +224,43 @@ canvas {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(ellipse at 30% 70%, rgba(108, 92, 231, 0.4), transparent),
-        radial-gradient(ellipse at 70% 30%, rgba(255, 107, 157, 0.4), transparent),
-        linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        radial-gradient(ellipse at 30% 70%, rgba(237, 171, 80, 0.3), transparent),
+        radial-gradient(ellipse at 70% 30%, rgba(220, 114, 55, 0.3), transparent),
+        linear-gradient(135deg, var(--samurai-bg) 0%, var(--samurai-dark) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-size: clamp(18px, 4vw, 28px);
-    font-weight: 600;
+    color: var(--samurai-gold);
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 400;
     z-index: 1000;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    text-shadow:
+        0 2px 0 var(--samurai-orange),
+        0 4px 8px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(0px);
 }
 
-/* Modern Loading Spinner with Conic Gradient */
+/* Samurai Loading Spinner */
 .loading-spinner {
     --progress: 0%;
-    width: clamp(60px, 10vw, 80px);
-    height: clamp(60px, 10vw, 80px);
+    width: clamp(6rem, 10vw, 8rem);
+    height: clamp(6rem, 10vw, 8rem);
     border-radius: 50%;
     background: conic-gradient(from 0deg,
-            var(--neon-blue) var(--progress),
-            var(--neon-pink) calc(var(--progress) + 25%),
-            var(--neon-yellow) calc(var(--progress) + 50%),
-            var(--neon-purple) calc(var(--progress) + 75%),
-            var(--neon-blue) 100%);
+            var(--samurai-gold) var(--progress),
+            var(--samurai-orange) calc(var(--progress) + 25%),
+            var(--samurai-red) calc(var(--progress) + 50%),
+            var(--samurai-dark) calc(var(--progress) + 75%),
+            var(--samurai-gold) 100%);
     animation:
         spin-modern 2s linear infinite,
-        pulse-glow 1.5s ease-in-out infinite alternate;
-    margin-bottom: 30px;
+        samurai-pulse 1.5s ease-in-out infinite alternate;
+    margin-bottom: 3rem;
     position: relative;
-    filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.6));
+    filter: drop-shadow(0 0 20px rgba(237, 171, 80, 0.6));
+    image-rendering: pixelated;
 }
 
 .loading-spinner::before {
@@ -215,7 +271,7 @@ canvas {
     transform: translate(-50%, -50%);
     width: 70%;
     height: 70%;
-    background: #1e3c72;
+    background: var(--samurai-bg);
     border-radius: 50%;
 }
 
@@ -229,14 +285,14 @@ canvas {
     }
 }
 
-@keyframes pulse-glow {
+@keyframes samurai-pulse {
     from {
-        filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.6));
+        filter: drop-shadow(0 0 20px rgba(237, 171, 80, 0.6));
         transform: scale(1);
     }
 
     to {
-        filter: drop-shadow(0 0 30px rgba(255, 107, 157, 0.8));
+        filter: drop-shadow(0 0 30px rgba(220, 114, 55, 0.8));
         transform: scale(1.05);
     }
 }
@@ -518,9 +574,62 @@ canvas {
     }
 }
 
+/* Samurai Mode Button Styling */
+.mode-button {
+    font-family: "Press Start 2P", monospace;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background:
+        linear-gradient(135deg,
+            rgba(237, 171, 80, 0.2),
+            rgba(220, 114, 55, 0.2));
+    border: 2px solid var(--samurai-gold);
+    border-radius: 6px;
+    padding: 1.2rem 2rem;
+    color: var(--samurai-gold);
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin: 0.8rem 0;
+    backdrop-filter: blur(5px);
+    box-shadow:
+        0 4px 0 rgba(140, 36, 29, 0.3),
+        0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.mode-button:hover {
+    background:
+        linear-gradient(135deg,
+            rgba(237, 171, 80, 0.4),
+            rgba(220, 114, 55, 0.4));
+    border-color: #f5c068;
+    color: #f5c068;
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 0 rgba(140, 36, 29, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mode-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 2px 0 rgba(140, 36, 29, 0.2),
+        0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.mode-description {
+    font-family: "Press Start 2P", monospace;
+    font-size: 0.8rem;
+    color: rgba(237, 171, 80, 0.7);
+    margin-top: 0.5rem;
+    text-transform: none;
+}
+
 /* Modern Focus States for Accessibility */
-.menu-button:focus-visible {
-    outline: 3px solid var(--neon-blue);
+.menu-button:focus-visible,
+.mode-button:focus-visible {
+    outline: 3px solid var(--samurai-gold);
     outline-offset: 2px;
 }
 
