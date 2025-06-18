@@ -1,0 +1,157 @@
+/* ChainBreaker Pro - Story System Base Styles */
+
+/* ===== CSS CUSTOM PROPERTIES ===== */
+:root {
+    /* Saturn Scene Variables */
+    --saturn-size: 152px;
+    --saturn-ring-size: 330px;
+    --saturn-ring-width: 50px;
+    --saturn-ring-segments: 50;
+    --titan-size: 84px;
+
+    /* Lighthouse Scene Variables */
+    --x-dark: #29284c;
+    --dark: #4c4b82;
+    --medium: #717ae1;
+    --light: #b9befa;
+    --x-light: #d6d9f6;
+    --aqua: #75e2fa;
+    --grey: #9e9ebe;
+    --yellow: #f7f2b4;
+    --light-speed: 20s;
+    --boat-speed: 100s;
+
+    /* RGB versions for use in rgba() */
+    --dark-rgb: 76, 75, 130;
+    --yellow-rgb: 247, 242, 180;
+    --aqua-rgb: 117, 226, 250;
+    --x-light-rgb: 214, 217, 246;
+}
+
+/* ===== STORY CONTAINER ===== */
+.story-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1000;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.story-scene {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.story-scene.active {
+    opacity: 1;
+}
+
+/* ===== STORY TEXT OVERLAY ===== */
+.story-text {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 80%;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 100;
+    animation: fadeInText 2s ease-in-out;
+}
+
+/* ===== NAVIGATION CONTROLS ===== */
+.story-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 101;
+}
+
+.story-controls button {
+    background: #6C5CE7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.story-controls button:hover {
+    background: #A29BFE;
+}
+
+.story-controls button:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+/* ===== COMMON UTILITY CLASSES ===== */
+
+/* Absolute positioning utility (replaces %absPosition) */
+.abs-position {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Eye utility base (used across scenes) */
+.eye-base {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #53487a;
+    border-radius: 10px;
+    bottom: 34px;
+    animation: blink 1s 0s infinite linear;
+}
+
+.eye-base.eye--left {
+    left: -80px;
+}
+
+.eye-base.eye--right {
+    left: 80px;
+}
+
+/* ===== LOADING STATES ===== */
+.scene-loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.scene-loading::before {
+    content: "Loading...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    z-index: 1000;
+}

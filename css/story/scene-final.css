@@ -1,0 +1,313 @@
+/* ChainBreaker Pro - Final Scene (Game Transition) */
+
+/* ===== FINAL SCENE BASE ===== */
+.scene-final {
+    background: radial-gradient(ellipse at center, #2C3E50 0%, #000000 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===== BREAKING RINGS EFFECT ===== */
+.scene-final .breaking-rings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.scene-final .ring-fragment {
+    position: absolute;
+    border: 3px solid #E74C3C;
+    border-radius: 50%;
+    animation: ringBreak 3s ease-out infinite;
+}
+
+.scene-final .ring-fragment:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.scene-final .ring-fragment:nth-child(2) {
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    left: 70%;
+    animation-delay: 0.5s;
+}
+
+.scene-final .ring-fragment:nth-child(3) {
+    width: 100px;
+    height: 100px;
+    top: 70%;
+    left: 30%;
+    animation-delay: 1s;
+}
+
+.scene-final .ring-fragment:nth-child(4) {
+    width: 40px;
+    height: 40px;
+    top: 30%;
+    left: 80%;
+    animation-delay: 1.5s;
+}
+
+.scene-final .ring-fragment:nth-child(5) {
+    width: 70px;
+    height: 70px;
+    top: 60%;
+    left: 10%;
+    animation-delay: 2s;
+}
+
+/* ===== SPACE DEBRIS ===== */
+.scene-final .space-debris {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.scene-final .debris {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #F39C12;
+    border-radius: 50%;
+    animation: debris 4s linear infinite;
+}
+
+.scene-final .debris:nth-child(1) {
+    top: 10%;
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.scene-final .debris:nth-child(2) {
+    top: 40%;
+    left: 85%;
+    animation-delay: 0.8s;
+}
+
+.scene-final .debris:nth-child(3) {
+    top: 70%;
+    left: 25%;
+    animation-delay: 1.6s;
+}
+
+.scene-final .debris:nth-child(4) {
+    top: 20%;
+    left: 65%;
+    animation-delay: 2.4s;
+}
+
+.scene-final .debris:nth-child(5) {
+    top: 80%;
+    left: 45%;
+    animation-delay: 3.2s;
+}
+
+/* ===== CHAINBREAKER HERO INTRO ===== */
+.scene-final .hero-intro {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 10;
+}
+
+.scene-final .hero-title {
+    font-size: 48px;
+    color: #E74C3C;
+    text-shadow: 0 0 20px #E74C3C;
+    margin-bottom: 20px;
+    animation: heroGlow 2s ease-in-out infinite alternate;
+}
+
+.scene-final .hero-subtitle {
+    font-size: 18px;
+    color: #ECF0F1;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.scene-final .mission-brief {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #E74C3C;
+    max-width: 400px;
+    margin: 0 auto;
+    animation: fadeInText 3s ease-in-out;
+}
+
+/* ===== GAME START PROMPT ===== */
+.scene-final .game-prompt {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.scene-final .start-button {
+    background: linear-gradient(#E74C3C, #C0392B);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-family: 'Press Start 2P', monospace;
+    border-radius: 5px;
+    cursor: pointer;
+    animation: buttonPulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+}
+
+.scene-final .start-button:hover {
+    background: linear-gradient(#C0392B, #A93226);
+    transform: scale(1.05);
+}
+
+/* ===== ATMOSPHERIC EFFECTS ===== */
+.scene-final .cosmic-dust {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(1px 1px at 20px 30px, #fff, transparent),
+        radial-gradient(1px 1px at 40px 70px, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 160px 30px, rgba(255, 255, 255, 0.2), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: cosmicFloat 20s linear infinite;
+    opacity: 0.6;
+}
+
+.scene-final .energy-wave {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    border: 2px solid rgba(231, 76, 60, 0.3);
+    border-radius: 50%;
+    animation: energyPulse 3s ease-out infinite;
+}
+
+.scene-final .energy-wave:nth-child(2) {
+    animation-delay: 1s;
+    width: 500px;
+    height: 500px;
+}
+
+.scene-final .energy-wave:nth-child(3) {
+    animation-delay: 2s;
+    width: 700px;
+    height: 700px;
+}
+
+/* ===== DRAMATIC LIGHTING ===== */
+.scene-final .dramatic-light {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 100%;
+    background: linear-gradient(180deg,
+            rgba(231, 76, 60, 0.2) 0%,
+            rgba(231, 76, 60, 0.1) 30%,
+            transparent 70%);
+    animation: lightSweep 4s ease-in-out infinite;
+}
+
+/* ===== FINAL SCENE SPECIFIC ANIMATIONS ===== */
+@keyframes ringBreak {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(0.3) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes debris {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes heroGlow {
+    from {
+        text-shadow: 0 0 20px #E74C3C;
+    }
+
+    to {
+        text-shadow: 0 0 30px #E74C3C, 0 0 40px #E74C3C;
+    }
+}
+
+@keyframes buttonPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(231, 76, 60, 0.8);
+    }
+}
+
+@keyframes cosmicFloat {
+    from {
+        transform: translateX(0px);
+    }
+
+    to {
+        transform: translateX(-200px);
+    }
+}
+
+@keyframes energyPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+@keyframes lightSweep {
+
+    0%,
+    100% {
+        transform: translateX(-50%) rotateZ(-5deg);
+    }
+
+    50% {
+        transform: translateX(-50%) rotateZ(5deg);
+    }
+}
