@@ -1,0 +1,114 @@
+{
+    "greeting": [
+        "Merhaba! Ben Pluto! 🪐✨",
+        "Uzaydan selamlar! 👋🌌",
+        "Selam earthlings! 🛸",
+        "Herkese uzay selamları! 🚀",
+        "Günaydın güneş sistemi! ☀️🪐"
+    ],
+    "happy": [
+        "Çok mutluyum! 😊✨",
+        "Harika hissediyorum! 🌟",
+        "Bu gün mükemmel! 🎉",
+        "Neşeli bir uzay günü! 🌈",
+        "Keyfim yerinde! 🎵"
+    ],
+    "excited": [
+        "Wow! Bu harika! 🤩",
+        "Çok heyecanlıyım! ⚡",
+        "İnanılmaz! 🔥",
+        "Bu muhteşem! ✨",
+        "Enfes! 🎊"
+    ],
+    "sad": [
+        "Biraz üzgünüm... 😢",
+        "Moralim bozuk... 💙",
+        "Hüzünlü bir gün... ☁️",
+        "İçim sıkılıyor... 😔",
+        "Melankolik hissediyorum... 🌧️"
+    ],
+    "angry": [
+        "Çok sinirliydim! 😠",
+        "Bu beni kızdırıyor! 💢",
+        "Grrr! 😤",
+        "Sabrım tükendi! ⚡",
+        "Artık yeter! 🔥"
+    ],
+    "confused": [
+        "Ne oluyor anlamadım? 🤔",
+        "Kafam karıştı... 😵",
+        "Bu garip... 🤨",
+        "Anlayamadım... ❓",
+        "Ne demek bu? 🤷‍♂️"
+    ],
+    "wise": [
+        "Uzay hakkında çok şey biliyorum... 🧠✨",
+        "Deneyim konuşuyor... 👴🪐",
+        "Yılların verdiği bilgelik... 🌟",
+        "Evrenin sırlarını keşfettim... 🌌",
+        "Bilgi güçtür... 📚"
+    ],
+    "sleepy": [
+        "Uyumam lazım... 😴",
+        "Yorgunum... 💤",
+        "Gözlerim kapanıyor... 👁️",
+        "Uyku zamanı... 🌙",
+        "Dinlenmeye ihtiyacım var... 😪"
+    ],
+    "game_start": [
+        "Oyuna başlayalım! 🎮",
+        "Hadi başlayalım! 🚀",
+        "Oyun zamanı! 🎯",
+        "Hazır mısın? Let's go! ⚡",
+        "Eğlence başlıyor! 🎊"
+    ],
+    "game_success": [
+        "Mükemmel vuruş! 🎯",
+        "Harika! 🌟",
+        "Süper! 💫",
+        "Bravo! 👏",
+        "Muhteşem timing! ⏰"
+    ],
+    "game_miss": [
+        "Bir daha dene! 💪",
+        "Neredeyse! 🎯",
+        "Yaklaştın! 📍",
+        "Devam et! 🔄",
+        "Alıştırma yapar! 🎨"
+    ],
+    "encouragement": [
+        "Sen yaparsın! 💪",
+        "İnanıyorum sana! ⭐",
+        "Devam et, süpersin! 🚀",
+        "Başarabilirsin! 🌟",
+        "Güveniyorum sana! 💫"
+    ],
+    "celebration": [
+        "Yaşasın! 🎉",
+        "Parti zamanı! 🎊",
+        "Kutlayalım! 🥳",
+        "Başardık! 🏆",
+        "Harika bir iş! 👏"
+    ],
+    "meditation": [
+        "İç huzur uzayın derinliklerinde bulunur... 🌌",
+        "Sükûnet, ruhun müziğidir... 🎵",
+        "Nefes al, uzayın enerjisini hisset... 🌟",
+        "Sessizlik en güzel konuşmadır... 🤫",
+        "Sabır, zamanın en güzel hediyesidir... ⏳"
+    ],
+    "weather": [
+        "Uzay hava durumu değişken... 🌦️",
+        "Bugün meteor yağmuru var! ☄️",
+        "Aurora ışıkları muhteşem! 🌌",
+        "Sakin bir uzay günü... ☀️",
+        "Kozmik rüzgarlar esiyor... 💨"
+    ],
+    "default": [
+        "Merhaba! 👋",
+        "Nasılsın? 😊",
+        "Ne yapıyoruz? 🤔",
+        "Bugün güzel bir gün! ☀️",
+        "Uzaydan selamlar! 🌌"
+    ]
+}
