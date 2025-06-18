@@ -262,6 +262,75 @@
           strokeThickness: 2
         }).setOrigin(0.5);
 
+        // Story Button
+        const storyButtonBg = this.add.graphics();
+        storyButtonBg.fillGradientStyle(0x6C5CE7, 0x6C5CE7, 0x4834D4, 0x4834D4, 0.8);
+        storyButtonBg.fillRoundedRect(width / 2 - 100, 150, 200, 40, 10);
+        storyButtonBg.lineStyle(2, 0xA29BFE, 0.9);
+        storyButtonBg.strokeRoundedRect(width / 2 - 100, 150, 200, 40, 10);
+
+        const storyText = this.add.text(width / 2, 170, '📖 STORY MODE', {
+          font: '16px Arial',
+          fill: '#ffffff',
+          stroke: '#4834D4',
+          strokeThickness: 2
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        // Story button interactions
+        [storyButtonBg, storyText].forEach(element => {
+          if (element !== storyButtonBg) {
+            element.setInteractive({ useHandCursor: true });
+          }
+
+          element.on('pointerdown', () => {
+            // Remove title immediately when starting story
+            if (this.titleElement) {
+              this.titleElement.remove();
+              this.titleElement = null;
+            }
+
+            // Add flash effect on selection
+            this.tweens.add({
+              targets: storyButtonBg,
+              alpha: 1,
+              duration: 100,
+              yoyo: true,
+              onComplete: () => {
+                // Redirect to story page
+                window.location.href = 'story.html';
+              }
+            });
+          });
+
+          element.on('pointerover', () => {
+            this.tweens.add({
+              targets: storyText,
+              scale: 1.1,
+              duration: 200
+            });
+
+            this.tweens.add({
+              targets: storyButtonBg,
+              alpha: 1,
+              duration: 200
+            });
+          });
+
+          element.on('pointerout', () => {
+            this.tweens.add({
+              targets: storyText,
+              scale: 1,
+              duration: 200
+            });
+
+            this.tweens.add({
+              targets: storyButtonBg,
+              alpha: 0.8,
+              duration: 200
+            });
+          });
+        });
+
         // Enhanced cartoon-themed mode designs
         this.modeDesigns = [
           {

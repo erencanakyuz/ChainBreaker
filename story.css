@@ -1,0 +1,1605 @@
+/* ChainBreaker Pro - Complete Story Animation CSS */
+
+/* CSS Custom Properties (replaces SCSS variables) */
+:root {
+    --saturn-size: 152px;
+    --saturn-ring-size: 330px;
+    --saturn-ring-width: 50px;
+    --saturn-ring-segments: 50;
+    --titan-size: 84px;
+
+    --x-dark: #29284c;
+    --dark: #4c4b82;
+    --medium: #717ae1;
+    --light: #b9befa;
+    --x-light: #d6d9f6;
+    --aqua: #75e2fa;
+    --grey: #9e9ebe;
+    --yellow: #f7f2b4;
+    --light-speed: 20s;
+    --boat-speed: 100s;
+}
+
+/* Story Container */
+.story-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1000;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.story-scene {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.story-scene.active {
+    opacity: 1;
+}
+
+/* Story Text Overlay */
+.story-text {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 80%;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 100;
+    animation: fadeInText 2s ease-in-out;
+}
+
+/* Navigation Controls */
+.story-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 101;
+}
+
+.story-controls button {
+    background: #6C5CE7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.story-controls button:hover {
+    background: #A29BFE;
+}
+
+.story-controls button:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+/* ===== SATURN SPACE SCENE ===== */
+
+/* Absolute positioning utility (replaces %absPosition) */
+.abs-position,
+.scene,
+.scene_titanShadow,
+.scene_titan,
+.scene_saturn,
+.scene_saturn__shadow,
+.scene_saturn__shadowRing {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Eye utility (replaces %eye) */
+.eye-base,
+.scene_titan .eyes .eye,
+.scene_saturn__face .face_clip .eye {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #53487a;
+    border-radius: 10px;
+    bottom: 34px;
+    animation: blink 1s 0s infinite linear;
+}
+
+.eye-base.eye--left,
+.scene_titan .eyes .eye.eye--left,
+.scene_saturn__face .face_clip .eye.eye--left {
+    left: -80px;
+}
+
+.eye-base.eye--right,
+.scene_titan .eyes .eye.eye--right,
+.scene_saturn__face .face_clip .eye.eye--right {
+    left: 80px;
+}
+
+.scene-space {
+    background: #38216b;
+}
+
+.scene {
+    perspective: 2600px;
+    width: 500px;
+    height: 500px;
+}
+
+.scene_titanShadow {
+    width: var(--titan-size);
+    height: calc(var(--titan-size) / 4);
+    border-radius: 100%;
+    transform-style: preserve-3d;
+    box-shadow: 0px 200px 20px #291863;
+    animation: titan 6s infinite ease;
+    bottom: 400px;
+}
+
+.t_wrap {
+    animation: titanWrap 6s infinite ease;
+}
+
+.scene_titan {
+    width: var(--titan-size);
+    height: var(--titan-size);
+    border-radius: calc(var(--titan-size) / 2);
+    background: #a5c6ff;
+    transform-style: preserve-3d;
+    box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.38823529411764707) inset, -30px -20px 50px #637bff inset;
+    animation: titan 6s infinite ease;
+    top: -220px;
+}
+
+.scene_titan .eyes {
+    animation: titan_eye 6s infinite ease;
+}
+
+.scene_titan .eyes .eye.eye--left {
+    left: -34px;
+    bottom: -120px;
+}
+
+.scene_titan .eyes .eye.eye--right {
+    left: 34px;
+    bottom: -120px;
+}
+
+.scene_saturn {
+    width: var(--saturn-size);
+    height: var(--saturn-size);
+    border-radius: calc(var(--saturn-size) / 2);
+    background: white;
+    transform-style: preserve-3d;
+    box-shadow: 0px 0px 0px 4px rgba(255, 255, 255, 0.32941176470588235) inset, -30px -20px 50px #a5adff inset;
+    animation: saturn 0.6s infinite linear;
+}
+
+.scene_saturn__shadow {
+    width: var(--saturn-size);
+    height: calc(var(--saturn-size) / 4);
+    border-radius: 100%;
+    box-shadow: 0 150px 40px #291863;
+}
+
+.scene_saturn__shadowRing {
+    width: var(--saturn-ring-size);
+    height: calc(var(--saturn-size) / 8);
+    border-radius: 100%;
+    box-shadow: 0 150px 40px #291863;
+    left: -100px;
+    animation: ringShadow 0.6s infinite linear;
+}
+
+.scene_saturn__face {
+    position: absolute;
+    left: -200px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation: face 12s infinite linear;
+}
+
+.scene_saturn__face .face_clip {
+    position: relative;
+    width: 360px;
+    height: 360px;
+    border-radius: 180px;
+    overflow: hidden;
+    animation: faceTilt 6s ease-in-out infinite;
+}
+
+.scene_saturn__face .face_clip .mouth {
+    position: absolute;
+    left: 160px;
+    bottom: -160px;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    background: #53487a;
+    animation: blink 1s 0s infinite linear;
+}
+
+.scene_saturn__sparks {
+    transform-style: preserve-3d;
+}
+
+.scene_saturn__sparks .spark {
+    position: absolute;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(odd) {
+    animation: spin 0.4s infinite linear;
+    width: 2px;
+    height: 18px;
+    background: #ffe082;
+    border-radius: 20px;
+    transform-origin: 50% 120px;
+}
+
+/* Manually expanded spark animations (replaces SCSS @for loop) */
+.scene_saturn__sparks .spark:nth-of-type(1) {
+    animation: spark--1 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(2) {
+    animation: spark--2 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(3) {
+    animation: spark--3 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(4) {
+    animation: spark--4 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(5) {
+    animation: spark--5 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(6) {
+    animation: spark--6 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(7) {
+    animation: spark--7 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(8) {
+    animation: spark--8 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(9) {
+    animation: spark--9 0.6s infinite linear;
+}
+
+.scene_saturn__sparks .spark:nth-of-type(10) {
+    animation: spark--10 0.6s infinite linear;
+}
+
+@keyframes spark--1 {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spark--2 {
+    from {
+        transform: rotate(36deg);
+    }
+
+    to {
+        transform: rotate(396deg);
+    }
+}
+
+@keyframes spark--3 {
+    from {
+        transform: rotate(72deg);
+    }
+
+    to {
+        transform: rotate(432deg);
+    }
+}
+
+@keyframes spark--4 {
+    from {
+        transform: rotate(108deg);
+    }
+
+    to {
+        transform: rotate(468deg);
+    }
+}
+
+@keyframes spark--5 {
+    from {
+        transform: rotate(144deg);
+    }
+
+    to {
+        transform: rotate(504deg);
+    }
+}
+
+@keyframes spark--6 {
+    from {
+        transform: rotate(180deg);
+    }
+
+    to {
+        transform: rotate(540deg);
+    }
+}
+
+@keyframes spark--7 {
+    from {
+        transform: rotate(216deg);
+    }
+
+    to {
+        transform: rotate(576deg);
+    }
+}
+
+@keyframes spark--8 {
+    from {
+        transform: rotate(252deg);
+    }
+
+    to {
+        transform: rotate(612deg);
+    }
+}
+
+@keyframes spark--9 {
+    from {
+        transform: rotate(288deg);
+    }
+
+    to {
+        transform: rotate(648deg);
+    }
+}
+
+@keyframes spark--10 {
+    from {
+        transform: rotate(324deg);
+    }
+
+    to {
+        transform: rotate(684deg);
+    }
+}
+
+.scene_saturn__ring {
+    position: absolute;
+    left: -100px;
+    top: 50%;
+    transform: translateY(-50%) rotateX(84deg);
+    animation: ring 0.6s infinite linear;
+    transform-style: preserve-3d;
+}
+
+.scene_saturn__ring .small {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 0.6s infinite linear;
+}
+
+.scene_saturn__ring .small .small_part {
+    position: absolute;
+}
+
+/* Manually expanded small ring parts (replaces SCSS @for loop) */
+.scene_saturn__ring .small .small_part:nth-of-type(1) {
+    transform: rotate(0deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(2) {
+    transform: rotate(7.2deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(3) {
+    transform: rotate(14.4deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(4) {
+    transform: rotate(21.6deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(5) {
+    transform: rotate(28.8deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(6) {
+    transform: rotate(36deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(7) {
+    transform: rotate(43.2deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(8) {
+    transform: rotate(50.4deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(9) {
+    transform: rotate(57.6deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .small .small_part:nth-of-type(10) {
+    transform: rotate(64.8deg) translateY(-160px);
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .layer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.scene_saturn__ring .layer:nth-of-type(1) .layer_part {
+    width: var(--saturn-ring-width);
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 4px;
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part {
+    width: calc(var(--saturn-ring-width) + 40px);
+    height: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+}
+
+/* Manually expanded layer parts (replaces SCSS @for loop) */
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(1) {
+    transform: rotate(0deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(2) {
+    transform: rotate(7.2deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(3) {
+    transform: rotate(14.4deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(4) {
+    transform: rotate(21.6deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(5) {
+    transform: rotate(28.8deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(6) {
+    transform: rotate(36deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(7) {
+    transform: rotate(43.2deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(8) {
+    transform: rotate(50.4deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(9) {
+    transform: rotate(57.6deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) .layer_part:nth-of-type(10) {
+    transform: rotate(64.8deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part {
+    position: absolute;
+    transform-origin: 50% 140px;
+}
+
+/* Manually expanded main layer parts (replaces SCSS @for loop) */
+.scene_saturn__ring .layer .layer_part:nth-of-type(1) {
+    transform: rotate(0deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(2) {
+    transform: rotate(7.2deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(3) {
+    transform: rotate(14.4deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(4) {
+    transform: rotate(21.6deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(5) {
+    transform: rotate(28.8deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(6) {
+    transform: rotate(36deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(7) {
+    transform: rotate(43.2deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(8) {
+    transform: rotate(50.4deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(9) {
+    transform: rotate(57.6deg) translateY(-140px);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(10) {
+    transform: rotate(64.8deg) translateY(-140px);
+}
+
+/* ===== LIGHTHOUSE SCENE ===== */
+.scene-lighthouse {
+    background: linear-gradient(var(--x-dark), var(--dark));
+}
+
+.scene-lighthouse html,
+.scene-lighthouse body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.scene-lighthouse .background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at bottom,
+            var(--x-dark) 0%,
+            var(--dark) 100%);
+    overflow: hidden;
+}
+
+.scene-lighthouse .mountains {
+    position: absolute;
+    width: 110%;
+    height: 100%;
+    z-index: 2;
+}
+
+.scene-lighthouse .mountains .mountain {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80%;
+    background: linear-gradient(var(--dark), var(--x-dark));
+    clip-path: polygon(0 100%, 15% 60%, 40% 80%, 60% 40%, 75% 60%, 90% 30%, 100% 100%);
+}
+
+.scene-lighthouse .mountains .mountain:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20%;
+    background: linear-gradient(transparent, rgba(var(--aqua), 0.1));
+}
+
+.scene-lighthouse .mountain:nth-child(2) {
+    left: -20%;
+    height: 70%;
+    opacity: 0.8;
+    clip-path: polygon(0 100%, 20% 70%, 50% 50%, 80% 80%, 100% 100%);
+}
+
+.scene-lighthouse .mountain:nth-child(3) {
+    left: 10%;
+    height: 60%;
+    opacity: 0.6;
+    clip-path: polygon(0 100%, 30% 80%, 70% 40%, 100% 100%);
+}
+
+.scene-lighthouse .mountain:nth-child(4) {
+    left: -10%;
+    height: 50%;
+    opacity: 0.4;
+    clip-path: polygon(0 100%, 40% 60%, 100% 100%);
+}
+
+.scene-lighthouse .mountain:nth-child(4):after {
+    background: linear-gradient(transparent, rgba(white, 0.1) 5px);
+}
+
+.scene-lighthouse .sea {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(var(--dark), var(--x-dark));
+    overflow: hidden;
+    z-index: 3;
+}
+
+.scene-lighthouse .sea:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--aqua);
+    opacity: 0.5;
+}
+
+.scene-lighthouse .sea .wave {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(transparent, rgba(var(--aqua), 0.1));
+    animation: wave 3s ease-in-out infinite;
+}
+
+/* Manually expanded wave animations (replaces SCSS @for loop) */
+.scene-lighthouse .sea .wave:nth-of-type(1) {
+    animation-delay: 0s;
+}
+
+.scene-lighthouse .sea .wave:nth-of-type(2) {
+    animation-delay: 0.5s;
+}
+
+.scene-lighthouse .sea .wave:nth-of-type(3) {
+    animation-delay: 1s;
+}
+
+.scene-lighthouse .sea .wave:nth-of-type(4) {
+    animation-delay: 1.5s;
+}
+
+.scene-lighthouse .sea .wave:nth-of-type(5) {
+    animation-delay: 2s;
+}
+
+.scene-lighthouse .sea .wave:nth-of-type(6) {
+    animation-delay: 2.5s;
+}
+
+.scene-lighthouse .boat {
+    position: absolute;
+    bottom: 55%;
+    left: 0;
+    width: 60px;
+    height: 20px;
+    animation: boat var(--boat-speed) linear infinite;
+    z-index: 4;
+}
+
+.scene-lighthouse .boat:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%) skewX(35deg);
+    width: 80%;
+    height: 5px;
+    background: rgba(var(--dark), 0.3);
+    border-radius: 50%;
+    animation: boatShadow var(--boat-speed) ease-in-out infinite;
+}
+
+.scene-lighthouse .boat:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--grey);
+    clip-path: polygon(10% 100%, 90% 100%, 80% 0%, 20% 0%);
+    border-radius: 0 0 20px 20px;
+}
+
+.scene-lighthouse .boat .base {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 30px;
+    background: var(--grey);
+}
+
+.scene-lighthouse .boat .sail:nth-child(1) {
+    position: absolute;
+    bottom: 130%;
+    left: 20%;
+    width: 20px;
+    height: 25px;
+    background: var(--x-light);
+    clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 100%);
+}
+
+.scene-lighthouse .boat .sail:nth-child(2) {
+    position: absolute;
+    bottom: 160%;
+    left: 40%;
+    width: 15px;
+    height: 20px;
+    background: var(--light);
+    clip-path: polygon(0 0, 100% 30%, 100% 100%, 0 100%);
+}
+
+.scene-lighthouse .moon {
+    position: absolute;
+    top: 10%;
+    right: 15%;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle at 30% 30%, var(--x-light), var(--light));
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(var(--x-light), 0.5);
+    z-index: 1;
+}
+
+.scene-lighthouse .stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.scene-lighthouse .stars:before,
+.scene-lighthouse .stars:after {
+    content: '';
+    position: absolute;
+    background: var(--x-light);
+    border-radius: 50%;
+}
+
+.scene-lighthouse .stars .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--x-light);
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+}
+
+.scene-lighthouse .stars .star:nth-child(1) {
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.scene-lighthouse .stars .star:nth-child(2) {
+    top: 30%;
+    left: 80%;
+    animation-delay: 1s;
+}
+
+.scene-lighthouse .stars .star:nth-child(3) {
+    top: 10%;
+    left: 60%;
+    animation-delay: 2s;
+}
+
+.scene-lighthouse .stars .star:nth-child(4) {
+    top: 40%;
+    left: 30%;
+    animation-delay: 1.5s;
+}
+
+.scene-lighthouse .stars .star:nth-child(5) {
+    top: 15%;
+    left: 90%;
+    animation-delay: 0.5s;
+}
+
+.scene-lighthouse .stars .star:nth-child(6) {
+    top: 50%;
+    left: 70%;
+    animation-delay: 2.5s;
+}
+
+.scene-lighthouse .lighthouse-group {
+    position: absolute;
+    bottom: 45%;
+    right: 20%;
+    z-index: 5;
+}
+
+.scene-lighthouse .land {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    height: 100px;
+    background: linear-gradient(var(--dark), var(--x-dark));
+    clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+    z-index: 4;
+}
+
+.scene-lighthouse .lighthouse-holder {
+    position: relative;
+    width: 100px;
+    height: 150px;
+}
+
+.scene-lighthouse .lighthouse-holder .shadow {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%) skewX(-20deg);
+    width: 60%;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+.scene-lighthouse .lighthouse-holder .lighthouse {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 120px;
+    background: linear-gradient(var(--x-light), var(--light));
+    border-radius: 5px 5px 0 0;
+}
+
+.scene-lighthouse .lighthouse-holder .lighthouse:after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: -2px;
+    right: -2px;
+    height: 3px;
+    background: var(--dark);
+    border-radius: 2px;
+}
+
+.scene-lighthouse .lighthouse-holder .top {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 35px;
+}
+
+.scene-lighthouse .lighthouse-holder .top .light-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(var(--yellow), var(--x-light));
+    overflow: hidden;
+    animation: lightGlow 4s ease-in-out infinite;
+}
+
+.scene-lighthouse .lighthouse-holder .top .light-container .light {
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(var(--yellow), 0.8) 45%,
+            rgba(var(--yellow), 1) 50%,
+            rgba(var(--yellow), 0.8) 55%,
+            transparent 100%);
+    transform-origin: 0 50%;
+    animation: lightRotate var(--light-speed) linear infinite;
+}
+
+.scene-lighthouse .lighthouse-holder .top .rail {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 8px;
+    background: var(--dark);
+    border-radius: 4px;
+}
+
+.scene-lighthouse .lighthouse-holder .top .rail:before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35px;
+    height: 2px;
+    background: var(--grey);
+}
+
+.scene-lighthouse .lighthouse-holder .middle {
+    position: absolute;
+    bottom: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 20px;
+    background: var(--light);
+    border-radius: 3px;
+}
+
+.scene-lighthouse .lighthouse-holder .middle:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 60%;
+    background: rgba(var(--yellow), 0.6);
+    border-radius: 2px;
+}
+
+.scene-lighthouse .lighthouse-holder .roof {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid var(--dark);
+}
+
+.scene-lighthouse .lighthouse-holder .roof:before {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: -22px;
+    width: 44px;
+    height: 8px;
+    background: var(--dark);
+    border-radius: 22px;
+}
+
+.scene-lighthouse .lighthouse-holder .roof:after {
+    content: '';
+    position: absolute;
+    bottom: -35px;
+    left: -18px;
+    width: 36px;
+    height: 6px;
+    background: var(--grey);
+    border-radius: 18px;
+}
+
+.scene-lighthouse .lighthouse-holder .roof .roof-light {
+    position: absolute;
+    bottom: -8px;
+    left: -3px;
+    width: 6px;
+    height: 6px;
+    background: var(--yellow);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--yellow);
+}
+
+.scene-lighthouse .lighthouse-holder .glow {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle,
+            rgba(var(--yellow), 0.3) 0%,
+            rgba(var(--yellow), 0.1) 30%,
+            transparent 70%);
+    border-radius: 50%;
+    animation: lightGlow 4s ease-in-out infinite;
+}
+
+.scene-lighthouse .windows {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.scene-lighthouse .windows .window {
+    width: 8px;
+    height: 12px;
+    background: rgba(var(--yellow), 0.8);
+    margin: 15px 0;
+    border-radius: 2px;
+    box-shadow: inset 1px 1px 0 rgba(var(--yellow), 1),
+        inset -1px -1px 0 rgba(var(--light), 0.5);
+}
+
+.scene-lighthouse .windows .window:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--light);
+}
+
+.scene-lighthouse .windows .window:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--light);
+}
+
+.scene-lighthouse .door {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 25px;
+    background: var(--dark);
+    border-radius: 8px 8px 0 0;
+}
+
+.scene-lighthouse .door .stairs {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 25px;
+    height: 8px;
+    background: linear-gradient(var(--grey), var(--dark));
+    border-radius: 0 0 5px 5px;
+}
+
+.scene-lighthouse .door .stairs:before {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: var(--dark);
+    border-radius: 0 0 3px 3px;
+}
+
+/* ===== FACTORY SCENE ===== */
+.scene-factory {
+    background-image: linear-gradient(#000203 0%,
+            #00345E 85%,
+            #004D89 100%);
+}
+
+.scene-factory .illustration {
+    display: block;
+    position: relative;
+    width: auto;
+    height: 90%;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.scene-factory .hover {
+    width: 100%;
+    height: 100%;
+    animation: hover 5s ease-in-out infinite;
+    animation-fill-mode: forwards;
+}
+
+.scene-factory .number-one {
+    transform: translateY(-10px) translateZ(0);
+    opacity: 0;
+    animation: fadeNumberDown-10 4s ease-in-out infinite;
+    animation-fill-mode: forwards;
+}
+
+.scene-factory .number-two {
+    transform: translateY(-20px) translateZ(0);
+    opacity: 0;
+    animation: fadeNumberDown-20 4s ease-in-out infinite;
+    animation-delay: 1s;
+    animation-fill-mode: forwards;
+}
+
+.scene-factory .number-three {
+    transform: translateY(-30px) translateZ(0);
+    opacity: 0;
+    animation: fadeNumberDown-30 4s ease-in-out infinite;
+    animation-delay: 2s;
+    animation-fill-mode: forwards;
+}
+
+.scene-factory .number-four {
+    transform: translateY(-50px) translateZ(0);
+    opacity: 0;
+    animation: fadeNumberDown-50 4s ease-in-out infinite;
+    animation-delay: 3s;
+    animation-fill-mode: forwards;
+}
+
+.scene-factory .number-five {
+    transform: translateY(-60px) translateZ(0);
+    opacity: 0;
+    animation: fadeNumberDown-60 4s ease-in-out infinite;
+    animation-delay: 4s;
+    animation-fill-mode: forwards;
+}
+
+/* ===== KEYFRAME ANIMATIONS ===== */
+
+/* Saturn Scene Animations */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes saturn {
+    0% {
+        left: 0;
+    }
+
+    25% {
+        left: -40px;
+    }
+
+    50% {
+        left: 0px;
+    }
+
+    75% {
+        left: 40px;
+    }
+}
+
+@keyframes ring {
+    0% {
+        left: 0;
+        transform: rotateX(84deg) rotateY(8deg);
+    }
+
+    25% {
+        left: 70px;
+    }
+
+    50% {
+        left: 0px;
+        transform: rotateX(80deg) rotateY(-8deg);
+    }
+
+    75% {
+        left: -70px;
+    }
+
+    100% {
+        left: 0px;
+        transform: rotateX(84deg) rotateY(8deg);
+    }
+}
+
+@keyframes ringShadow {
+    0% {
+        left: -100px;
+    }
+
+    25% {
+        left: -40px;
+    }
+
+    50% {
+        left: -100px;
+    }
+
+    75% {
+        left: -140px;
+    }
+
+    100% {
+        left: -100px;
+    }
+}
+
+@keyframes face {
+    from {
+        left: -200px;
+    }
+
+    to {
+        left: 200px;
+    }
+}
+
+@keyframes faceTilt {
+    0% {
+        transform: rotate(12deg);
+    }
+
+    50% {
+        transform: rotate(-12deg);
+    }
+
+    100% {
+        transform: rotate(12deg);
+    }
+}
+
+@keyframes blink {
+    0% {
+        height: 6px;
+    }
+
+    40% {
+        height: 6px;
+    }
+
+    50% {
+        height: 0px;
+    }
+
+    60% {
+        height: 6px;
+    }
+
+    100% {
+        height: 6px;
+    }
+}
+
+@keyframes titanWrap {
+    0% {
+        transform: translateY(370px);
+    }
+
+    33% {
+        transform: translateY(370px);
+    }
+
+    38% {
+        transform: translateY(400px);
+    }
+
+    43% {
+        transform: translateY(370px);
+    }
+
+    73% {
+        transform: translateY(370px);
+    }
+
+    78% {
+        transform: translateY(400px);
+    }
+
+    83% {
+        transform: translateY(370px);
+    }
+
+    100% {
+        transform: translateY(370px);
+    }
+}
+
+@keyframes titan {
+    0% {
+        left: -400px;
+    }
+
+    33% {
+        left: -400px;
+    }
+
+    43% {
+        left: 400px;
+    }
+
+    73% {
+        left: 400px;
+    }
+
+    83% {
+        left: -400px;
+    }
+
+    100% {
+        left: -400px;
+    }
+}
+
+@keyframes titan_eye {
+    0% {
+        transform: rotate(-10deg);
+    }
+
+    33% {
+        transform: rotate(-10deg);
+    }
+
+    43% {
+        transform: rotate(10deg);
+    }
+
+    73% {
+        transform: rotate(10deg);
+    }
+
+    83% {
+        transform: rotate(-10deg);
+    }
+
+    100% {
+        transform: rotate(-10deg);
+    }
+}
+
+/* Lighthouse Scene Animations */
+@keyframes twinkle {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes wave {
+    50% {
+        transform: translateX(-10px);
+    }
+}
+
+@keyframes lightRotate {
+    25% {
+        transform: perspective(500px) rotateY(35deg);
+    }
+
+    75% {
+        transform: perspective(500px) rotateY(-35deg);
+    }
+}
+
+@keyframes lightGlow {
+    50% {
+        opacity: 0;
+    }
+
+    75% {
+        opacity: 1;
+    }
+}
+
+@keyframes boat {
+    0% {
+        transform: translateX(120vw) scale(0.8);
+    }
+
+    80%,
+    100% {
+        transform: translateX(-25vw) scale(0.8);
+    }
+}
+
+@keyframes boatShadow {
+    0% {
+        transform: skewX(35deg) translateX(15px);
+    }
+
+    50%,
+    100% {
+        transform: skewX(-55deg) translateX(-40px);
+    }
+}
+
+/* Factory Scene Animations */
+@keyframes hover {
+    0% {
+        transform: translateY(0);
+    }
+
+    25% {
+        transform: translateY(-3px);
+    }
+
+    75% {
+        transform: translateY(3px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Manually expanded number animations (replaces SCSS @mixin/@include) */
+@keyframes fadeNumberDown-10 {
+    0% {
+        transform: translateY(-10px) translateZ(0);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.4;
+    }
+
+    60% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(140px) translateZ(0);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeNumberDown-20 {
+    0% {
+        transform: translateY(-20px) translateZ(0);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.4;
+    }
+
+    60% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(140px) translateZ(0);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeNumberDown-30 {
+    0% {
+        transform: translateY(-30px) translateZ(0);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.4;
+    }
+
+    60% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(130px) translateZ(0);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeNumberDown-50 {
+    0% {
+        transform: translateY(-50px) translateZ(0);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.4;
+    }
+
+    60% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(110px) translateZ(0);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeNumberDown-60 {
+    0% {
+        transform: translateY(-60px) translateZ(0);
+        opacity: 0;
+    }
+
+    40% {
+        opacity: 0.4;
+    }
+
+    60% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(90px) translateZ(0);
+        opacity: 0;
+    }
+}
+
+/* Story Text Animation */
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
