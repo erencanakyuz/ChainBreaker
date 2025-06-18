@@ -545,15 +545,26 @@
       }
 
       create() {
-        // Create dynamic gradient background based on selected mode
+        // Create dynamic space background based on selected mode (enhanced with space effects)
         const currentPalette = this.selectedMode ? this.selectedMode.palette : 'neon';
         const bgColors = colorSystem.getGradientColors(currentPalette, 4);
 
+        // Create space gradient background similar to scene-space
         this.backgroundGradient = this.add.graphics();
         this.backgroundGradient.fillGradientStyle(
-          bgColors[0], bgColors[1], bgColors[2], bgColors[3], 1
+          0x1b2735, 0x1b2735, 0x090a0f, 0x090a0f, 1
         );
         this.backgroundGradient.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+
+        // Add ambient space lighting effect
+        this.ambientLight = this.add.graphics();
+        this.ambientLight.fillGradientStyle(
+          0x1e3c72, 0x16213e, 0x0f3460, 0x533483, 0.3
+        );
+        this.ambientLight.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+
+        // Add twinkling stars background only
+        this.createStarsBackground();
 
         // Optimized background particles with reduced count (Phaser 3.70 syntax)
         this.backgroundParticles = this.add.particles(0, 0, 'star', {
@@ -1368,10 +1379,19 @@
       resetGame() {
         // Clear all timers and tweens
         if (this.regenTimer) this.regenTimer.remove(false);
+
+        // Clean up space background effect timers (only stars now)
+
         this.tweens.killAll();
 
         // Clean up CSS effects from DOM
         this.cleanupCSSEffects();
+
+        // Clean up space background containers
+        if (this.starsContainer) {
+          this.starsContainer.destroy();
+          this.starsContainer = null;
+        }
 
         // Clean up ring stack
         if (this.ringStack) {
@@ -1409,6 +1429,9 @@
         this.comboText.setText('Combo: 0');
         this.livesText.setText('Lives: 3');
         this.feverText.setText('');
+
+        // Recreate space background effects
+        this.createStarsBackground();
 
         this.startLevel();
       }
@@ -1472,6 +1495,48 @@
         };
         console.log('Performance metrics reset');
       }
+
+      // ===== SPACE BACKGROUND EFFECTS METHODS =====
+
+
+
+      createStarsBackground() {
+        // Create twinkling stars similar to scene-space.css
+        this.starsContainer = this.add.container(0, 0);
+
+        // Generate 40 stars with random positions and twinkling
+        for (let i = 0; i < 40; i++) {
+          const star = this.add.circle(
+            Phaser.Math.Between(0, this.cameras.main.width),
+            Phaser.Math.Between(0, this.cameras.main.height),
+            Phaser.Math.Between(1, 3),
+            0xffffff,
+            Phaser.Math.FloatBetween(0.2, 1)
+          );
+
+          star.setBlendMode(Phaser.BlendModes.ADD);
+
+          // Add twinkling animation
+          this.tweens.add({
+            targets: star,
+            alpha: 0.2,
+            scale: 0.8,
+            duration: Phaser.Math.Between(3000, 6000),
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            delay: Phaser.Math.Between(0, 5000)
+          });
+
+          this.starsContainer.add(star);
+        }
+      }
+
+
+
+
+
+
     }
 
     // Ring sınıfı: Her çemberi, glow, 3D gölge, sweet spot ve ok ile çizer.
