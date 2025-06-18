@@ -29,11 +29,13 @@
     background: linear-gradient(to bottom, transparent 0%, rgba(20, 30, 50, 0.8) 100%);
 }
 
-/* Multiple factory buildings creating a city */
+/* ===== EXPANDED FACTORY CITY COMPLEX ===== */
+
+/* Main Production Buildings */
 .scene-factory .factory-building-1 {
     position: absolute;
     bottom: 0;
-    left: 10%;
+    left: 5%;
     width: 120px;
     height: 180px;
     background: linear-gradient(135deg, #2C3E50, #34495E, #1ABC9C);
@@ -44,7 +46,7 @@
 .scene-factory .factory-building-2 {
     position: absolute;
     bottom: 0;
-    left: 25%;
+    left: 15%;
     width: 150px;
     height: 220px;
     background: linear-gradient(135deg, #8E44AD, #9B59B6, #E74C3C);
@@ -55,19 +57,19 @@
 .scene-factory .factory-building-3 {
     position: absolute;
     bottom: 0;
-    left: 45%;
+    left: 35%;
     width: 200px;
-    height: 280px;
+    height: 320px;
     background: linear-gradient(135deg, #3498DB, #2980B9, #F39C12);
     border-radius: 20px 20px 0 0;
-    box-shadow: 0 0 30px rgba(52, 152, 219, 0.5);
+    box-shadow: 0 0 40px rgba(52, 152, 219, 0.6);
     z-index: 2;
 }
 
 .scene-factory .factory-building-4 {
     position: absolute;
     bottom: 0;
-    right: 25%;
+    right: 30%;
     width: 130px;
     height: 200px;
     background: linear-gradient(135deg, #E67E22, #D35400, #27AE60);
@@ -78,7 +80,7 @@
 .scene-factory .factory-building-5 {
     position: absolute;
     bottom: 0;
-    right: 10%;
+    right: 15%;
     width: 110px;
     height: 160px;
     background: linear-gradient(135deg, #95A5A6, #7F8C8D, #9B59B6);
@@ -86,86 +88,212 @@
     box-shadow: 0 0 18px rgba(155, 89, 182, 0.3);
 }
 
-/* ===== RING PRODUCTION SYSTEM ===== */
-.scene-factory .main-ring-factory {
+/* Additional Factory Buildings */
+.scene-factory .factory-building-6 {
     position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 180px;
+    bottom: 0;
+    right: 5%;
+    width: 90px;
+    height: 140px;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53, #FF6B35);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+.scene-factory .factory-building-7 {
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 80px;
+    height: 190px;
+    background: linear-gradient(135deg, #4ECDC4, #44A08D, #093637);
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
+    z-index: 1;
+}
+
+.scene-factory .factory-building-8 {
+    position: absolute;
+    bottom: 0;
+    left: 55%;
+    width: 100px;
+    height: 240px;
+    background: linear-gradient(135deg, #A8E6CF, #7FDBDA, #ABC4FF);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 0 25px rgba(168, 230, 207, 0.5);
+}
+
+.scene-factory .factory-building-9 {
+    position: absolute;
+    bottom: 0;
+    right: 40%;
+    width: 75px;
     height: 120px;
-    background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
-    border-radius: 20px;
-    box-shadow: 0 0 40px rgba(70, 181, 209, 0.6);
+    background: linear-gradient(135deg, #FFD93D, #6BCF7F, #4D96FF);
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 0 18px rgba(255, 217, 61, 0.4);
+}
+
+.scene-factory .factory-building-10 {
+    position: absolute;
+    bottom: 0;
+    left: 70%;
+    width: 85px;
+    height: 170px;
+    background: linear-gradient(135deg, #C44569, #F8B500, #F97F51);
+    border-radius: 7px 7px 0 0;
+    box-shadow: 0 0 20px rgba(196, 69, 105, 0.4);
+}
+
+/* Multi-level Factory Complex */
+.scene-factory .multi-level-complex {
+    position: absolute;
+    bottom: 0;
+    left: 45%;
+    width: 250px;
+    height: 350px;
     z-index: 3;
 }
 
-.scene-factory .ring-conveyor {
+.scene-factory .factory-bridge-1 {
     position: absolute;
-    bottom: 25%;
-    left: 5%;
-    right: 5%;
-    height: 40px;
-    background: repeating-linear-gradient(90deg,
-            #34495E 0px,
-            #34495E 30px,
-            #2C3E50 30px,
-            #2C3E50 60px);
-    border-radius: 20px;
-    animation: conveyorMove 4s linear infinite;
-    box-shadow: 0 0 15px rgba(52, 73, 94, 0.5);
+    top: 200px;
+    left: 25%;
+    width: 100px;
+    height: 8px;
+    background: linear-gradient(90deg, #34495E, #2C3E50);
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Active ring production with multiple rings */
-.scene-factory .ring-1 {
+.scene-factory .factory-bridge-2 {
     position: absolute;
-    top: 30%;
-    left: 20%;
-    width: 60px;
-    height: 60px;
-    border: 8px solid #FF6B6B;
-    border-radius: 50%;
-    animation: ringPulse 2s ease-in-out infinite, ringFloat 3s ease-in-out infinite;
-    box-shadow: 0 0 20px #FF6B6B;
-}
-
-.scene-factory .ring-2 {
-    position: absolute;
-    top: 45%;
+    top: 160px;
     left: 35%;
-    width: 50px;
-    height: 50px;
-    border: 6px solid #4ECDC4;
-    border-radius: 50%;
-    animation: ringPulse 2.5s ease-in-out infinite, ringFloat 3.5s ease-in-out infinite;
-    animation-delay: 0.8s;
-    box-shadow: 0 0 18px #4ECDC4;
+    width: 120px;
+    height: 6px;
+    background: linear-gradient(90deg, #2C3E50, #34495E);
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.scene-factory .ring-3 {
+/* ===== ADVANCED RING PRODUCTION SYSTEM ===== */
+
+
+
+
+
+/* Ring Shaping Station */
+.scene-factory .ring-shaper {
     position: absolute;
     top: 35%;
-    right: 30%;
-    width: 70px;
+    left: 35%;
+    width: 90px;
     height: 70px;
-    border: 10px solid #45B7D1;
-    border-radius: 50%;
-    animation: ringPulse 1.8s ease-in-out infinite, ringFloat 2.8s ease-in-out infinite;
-    animation-delay: 1.5s;
-    box-shadow: 0 0 25px #45B7D1;
+    background: linear-gradient(45deg, #9B59B6, #8E44AD);
+    border-radius: 18px;
+    box-shadow: 0 0 30px rgba(155, 89, 182, 0.6);
+    animation: shaperWork 2.5s ease-in-out infinite;
 }
 
-.scene-factory .ring-4 {
+
+
+/* Multiple Conveyor Systems */
+.scene-factory .ring-conveyor-main {
     position: absolute;
-    top: 50%;
-    right: 15%;
-    width: 45px;
+    bottom: 30%;
+    left: 5%;
+    right: 5%;
     height: 45px;
-    border: 5px solid #F39C12;
+    background: repeating-linear-gradient(90deg,
+            #34495E 0px,
+            #34495E 35px,
+            #2C3E50 35px,
+            #2C3E50 70px);
+    border-radius: 25px;
+    animation: conveyorMove 3s linear infinite;
+    box-shadow: 0 0 20px rgba(52, 73, 94, 0.6);
+    z-index: 2;
+}
+
+
+
+/* Advanced Ring Production - Different Types */
+.scene-factory .ring-gold {
+    position: absolute;
+    top: 25%;
+    left: 18%;
+    width: 70px;
+    height: 70px;
+    border: 10px solid #FFD700;
     border-radius: 50%;
-    animation: ringPulse 2.2s ease-in-out infinite, ringFloat 3.2s ease-in-out infinite;
-    animation-delay: 2s;
-    box-shadow: 0 0 15px #F39C12;
+    animation: ringPulse 2s ease-in-out infinite, ringFloat 3s ease-in-out infinite;
+    box-shadow: 0 0 30px #FFD700;
+}
+
+.scene-factory .ring-platinum {
+    position: absolute;
+    top: 40%;
+    left: 32%;
+    width: 55px;
+    height: 55px;
+    border: 8px solid #E5E4E2;
+    border-radius: 50%;
+    animation: ringPulse 2.3s ease-in-out infinite, ringFloat 3.3s ease-in-out infinite;
+    animation-delay: 0.7s;
+    box-shadow: 0 0 25px #E5E4E2;
+}
+
+.scene-factory .ring-crystal {
+    position: absolute;
+    top: 32%;
+    right: 25%;
+    width: 65px;
+    height: 65px;
+    border: 9px solid #87CEEB;
+    border-radius: 50%;
+    animation: ringPulse 1.9s ease-in-out infinite, ringFloat 2.9s ease-in-out infinite, crystalShimmer 4s ease-in-out infinite;
+    animation-delay: 1.2s;
+    box-shadow: 0 0 35px #87CEEB;
+}
+
+.scene-factory .ring-diamond {
+    position: absolute;
+    top: 48%;
+    right: 12%;
+    width: 50px;
+    height: 50px;
+    border: 7px solid #B9F2FF;
+    border-radius: 50%;
+    animation: ringPulse 2.1s ease-in-out infinite, ringFloat 3.1s ease-in-out infinite, diamondSparkle 3s ease-in-out infinite;
+    animation-delay: 1.8s;
+    box-shadow: 0 0 28px #B9F2FF;
+}
+
+.scene-factory .ring-exotic {
+    position: absolute;
+    top: 42%;
+    left: 48%;
+    width: 60px;
+    height: 60px;
+    border: 8px solid #FF69B4;
+    border-radius: 50%;
+    animation: ringPulse 2.4s ease-in-out infinite, ringFloat 3.4s ease-in-out infinite, exoticGlow 5s ease-in-out infinite;
+    animation-delay: 2.2s;
+    box-shadow: 0 0 32px #FF69B4;
+}
+
+
+
+.scene-factory .shipping-container {
+    position: absolute;
+    bottom: 15%;
+    right: 5%;
+    width: 60px;
+    height: 35px;
+    background: linear-gradient(45deg, #E74C3C, #C0392B);
+    border-radius: 8px;
+    animation: containerLoad 4s ease-in-out infinite;
 }
 
 /* ===== CHIMNEYS AND SMOKE ===== */
@@ -287,7 +415,284 @@
     animation-delay: 1.5s;
 }
 
-/* ===== FLOATING PARTICLES ===== */
+/* ===== SPACE CONNECTION ===== */
+
+/* Pluto in the Distance */
+.scene-factory .distant-pluto {
+    position: absolute;
+    top: 8%;
+    right: 12%;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #8E44AD, #2C3E50);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(142, 68, 173, 0.6);
+    animation: plutoWaiting 6s ease-in-out infinite;
+    z-index: 1;
+}
+
+.scene-factory .distant-pluto::before {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 20%;
+    width: 8px;
+    height: 8px;
+    background: #E74C3C;
+    border-radius: 50%;
+    animation: plutoEyes 4s ease-in-out infinite;
+}
+
+.scene-factory .distant-pluto::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    right: 20%;
+    width: 8px;
+    height: 8px;
+    background: #E74C3C;
+    border-radius: 50%;
+    animation: plutoEyes 4s ease-in-out infinite;
+    animation-delay: 0.5s;
+}
+
+/* Space Cargo Ships */
+.scene-factory .cargo-ship-1 {
+    position: absolute;
+    top: 18%;
+    left: 60%;
+    width: 35px;
+    height: 15px;
+    background: linear-gradient(45deg, #95A5A6, #7F8C8D);
+    border-radius: 8px;
+    animation: cargoFlight 12s linear infinite;
+    z-index: 2;
+}
+
+.scene-factory .cargo-ship-2 {
+    position: absolute;
+    top: 12%;
+    left: 70%;
+    width: 30px;
+    height: 12px;
+    background: linear-gradient(45deg, #3498DB, #2980B9);
+    border-radius: 6px;
+    animation: cargoFlight 15s linear infinite;
+    animation-delay: 4s;
+    z-index: 2;
+}
+
+/* Space Communication Beam */
+.scene-factory .space-communication {
+    position: absolute;
+    top: 15%;
+    right: 20%;
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(45deg,
+            transparent 0%,
+            rgba(142, 68, 173, 0.8) 30%,
+            rgba(52, 152, 219, 0.9) 60%,
+            transparent 100%);
+    transform: rotate(-25deg);
+    animation: spaceSignal 8s ease-in-out infinite;
+}
+
+/* ===== WORKER FIGURES ===== */
+
+/* Factory Workers */
+.scene-factory .worker-1 {
+    position: absolute;
+    bottom: 180px;
+    left: 25%;
+    width: 8px;
+    height: 15px;
+    z-index: 3;
+    animation: workerActivity 4s ease-in-out infinite;
+}
+
+.scene-factory .worker-1 .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #ffdbac;
+    border-radius: 50%;
+}
+
+.scene-factory .worker-1 .body {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 8px;
+    background: #FF6B6B;
+    border-radius: 2px;
+}
+
+.scene-factory .worker-1 .helmet {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 3px;
+    background: #F39C12;
+    border-radius: 50%;
+}
+
+.scene-factory .worker-2 {
+    position: absolute;
+    bottom: 220px;
+    left: 45%;
+    width: 7px;
+    height: 14px;
+    z-index: 3;
+    animation: workerActivity 5s ease-in-out infinite;
+    animation-delay: 1.5s;
+}
+
+.scene-factory .worker-2 .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 3px;
+    background: #8b4513;
+    border-radius: 50%;
+}
+
+.scene-factory .worker-2 .body {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 7px;
+    background: #4ECDC4;
+    border-radius: 1px;
+}
+
+.scene-factory .worker-3 {
+    position: absolute;
+    bottom: 200px;
+    right: 25%;
+    width: 8px;
+    height: 16px;
+    z-index: 3;
+    animation: workerActivity 3.5s ease-in-out infinite;
+    animation-delay: 3s;
+}
+
+.scene-factory .worker-3 .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #daa520;
+    border-radius: 50%;
+}
+
+.scene-factory .worker-3 .body {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 9px;
+    background: #9B59B6;
+    border-radius: 2px;
+}
+
+/* Engineers and Supervisors */
+.scene-factory .engineer-1 {
+    position: absolute;
+    bottom: 140px;
+    left: 55%;
+    width: 9px;
+    height: 17px;
+    z-index: 3;
+    animation: engineerWork 6s ease-in-out infinite;
+}
+
+.scene-factory .engineer-1 .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #ffdbac;
+    border-radius: 50%;
+}
+
+.scene-factory .engineer-1 .body {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 7px;
+    height: 10px;
+    background: #2980B9;
+    border-radius: 2px;
+}
+
+.scene-factory .engineer-1 .glasses {
+    position: absolute;
+    top: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 1px;
+    background: #34495E;
+    border-radius: 1px;
+}
+
+/* ===== TRAFFIC SYSTEM ===== */
+
+.scene-factory .delivery-truck {
+    position: absolute;
+    bottom: 50px;
+    left: -60px;
+    width: 40px;
+    height: 20px;
+    background: linear-gradient(45deg, #E67E22, #D35400);
+    border-radius: 5px;
+    animation: truckDelivery 20s linear infinite;
+    z-index: 2;
+}
+
+.scene-factory .delivery-truck::before {
+    content: '';
+    position: absolute;
+    left: 25px;
+    bottom: 0;
+    width: 15px;
+    height: 15px;
+    background: linear-gradient(45deg, #F39C12, #E67E22);
+    border-radius: 3px;
+}
+
+.scene-factory .cargo-vehicle {
+    position: absolute;
+    bottom: 60px;
+    right: -50px;
+    width: 35px;
+    height: 18px;
+    background: linear-gradient(45deg, #27AE60, #229954);
+    border-radius: 4px;
+    animation: cargoMovement 25s linear infinite;
+    animation-delay: 8s;
+    z-index: 2;
+}
+
+/* ===== ENHANCED PARTICLES & EFFECTS ===== */
 .scene-factory .particle-1 {
     position: absolute;
     top: 20%;
@@ -321,6 +726,30 @@
     border-radius: 50%;
     animation: particleFloat 5s ease-in-out infinite;
     animation-delay: 4s;
+}
+
+.scene-factory .particle-4 {
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    width: 3px;
+    height: 3px;
+    background: #FFD700;
+    border-radius: 50%;
+    animation: particleFloat 8s ease-in-out infinite;
+    animation-delay: 1s;
+}
+
+.scene-factory .particle-5 {
+    position: absolute;
+    top: 18%;
+    right: 35%;
+    width: 4px;
+    height: 4px;
+    background: #E74C3C;
+    border-radius: 50%;
+    animation: particleFloat 6.5s ease-in-out infinite;
+    animation-delay: 3s;
 }
 
 /* ===== ANIMATIONS ===== */
@@ -568,4 +997,452 @@
     height: 100%;
     animation: hover 5s ease-in-out infinite;
     animation-fill-mode: forwards;
+}
+
+/* ===== PRODUCTION INDICATORS & INTERACTIVE ELEMENTS ===== */
+
+/* Production Progress Bars */
+.scene-factory .production-indicator {
+    position: absolute;
+    top: 70%;
+    left: 20%;
+    width: 60%;
+    height: 8px;
+    background: rgba(52, 73, 94, 0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 5;
+}
+
+.scene-factory .production-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #27AE60, #2ECC71, #58D68D);
+    border-radius: 4px;
+    animation: productionFill 8s ease-in-out infinite;
+}
+
+/* Ring Counter Display */
+.scene-factory .ring-counter {
+    position: absolute;
+    top: 75%;
+    right: 10%;
+    background: rgba(0, 0, 0, 0.8);
+    color: #00FF00;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    animation: counterUpdate 2s ease-in-out infinite;
+    z-index: 5;
+}
+
+.scene-factory .ring-counter::before {
+    content: 'RINGS: 1,247';
+}
+
+
+
+
+
+/* Achievement Unlocks */
+.scene-factory .achievement-popup {
+    position: absolute;
+    top: 15%;
+    left: 5%;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: #2C3E50;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    animation: achievementSlide 6s ease-in-out infinite;
+    z-index: 6;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.scene-factory .achievement-popup::before {
+    content: '🏆 RING MASTER ACHIEVED!';
+}
+
+/* Day/Night Cycle */
+.scene-factory .day-night-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            rgba(255, 140, 0, 0.1) 0%,
+            rgba(255, 69, 0, 0.2) 50%,
+            rgba(25, 25, 112, 0.4) 100%);
+    animation: dayNightCycle 20s ease-in-out infinite;
+    z-index: 1;
+}
+
+/* Weather Effects */
+.scene-factory .rain-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.scene-factory .rain-drop {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: linear-gradient(to bottom, transparent, rgba(173, 216, 230, 0.8));
+    animation: rainFall 2s linear infinite;
+}
+
+.scene-factory .rain-drop:nth-child(1) {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.scene-factory .rain-drop:nth-child(2) {
+    left: 25%;
+    animation-delay: 0.3s;
+}
+
+.scene-factory .rain-drop:nth-child(3) {
+    left: 40%;
+    animation-delay: 0.6s;
+}
+
+.scene-factory .rain-drop:nth-child(4) {
+    left: 55%;
+    animation-delay: 0.9s;
+}
+
+.scene-factory .rain-drop:nth-child(5) {
+    left: 70%;
+    animation-delay: 1.2s;
+}
+
+.scene-factory .rain-drop:nth-child(6) {
+    left: 85%;
+    animation-delay: 1.5s;
+}
+
+/* ===== NEW ADVANCED ANIMATIONS ===== */
+
+
+
+@keyframes shaperWork {
+
+    0%,
+    100% {
+        transform: scale(1) translateX(0);
+    }
+
+    33% {
+        transform: scale(1.1) translateX(2px);
+    }
+
+    66% {
+        transform: scale(1.15) translateX(-2px);
+    }
+}
+
+
+
+
+
+@keyframes containerLoad {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-5px);
+    }
+}
+
+/* Ring Type Specific Animations */
+@keyframes crystalShimmer {
+
+    0%,
+    100% {
+        filter: brightness(1) hue-rotate(0deg);
+    }
+
+    50% {
+        filter: brightness(1.3) hue-rotate(30deg);
+    }
+}
+
+@keyframes diamondSparkle {
+
+    0%,
+    100% {
+        filter: brightness(1) saturate(1);
+    }
+
+    25% {
+        filter: brightness(1.5) saturate(1.5);
+    }
+
+    50% {
+        filter: brightness(1.2) saturate(1.2);
+    }
+
+    75% {
+        filter: brightness(1.7) saturate(1.8);
+    }
+}
+
+@keyframes exoticGlow {
+
+    0%,
+    100% {
+        filter: brightness(1) hue-rotate(0deg);
+    }
+
+    33% {
+        filter: brightness(1.4) hue-rotate(120deg);
+    }
+
+    66% {
+        filter: brightness(1.2) hue-rotate(240deg);
+    }
+}
+
+/* Space & Movement Animations */
+@keyframes plutoWaiting {
+
+    0%,
+    100% {
+        transform: scale(1) translateY(0);
+    }
+
+    50% {
+        transform: scale(1.1) translateY(-5px);
+    }
+}
+
+@keyframes plutoEyes {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes cargoFlight {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+
+    25% {
+        transform: translateX(100px) translateY(-10px);
+    }
+
+    50% {
+        transform: translateX(200px) translateY(-5px);
+    }
+
+    75% {
+        transform: translateX(300px) translateY(-15px);
+    }
+
+    100% {
+        transform: translateX(450px) translateY(-20px);
+    }
+}
+
+@keyframes spaceSignal {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scaleX(0.1) rotate(-25deg);
+    }
+
+    20% {
+        opacity: 1;
+        transform: scaleX(1) rotate(-25deg);
+    }
+
+    80% {
+        opacity: 1;
+        transform: scaleX(1) rotate(-25deg);
+    }
+}
+
+/* Worker & Traffic Animations */
+@keyframes workerActivity {
+
+    0%,
+    100% {
+        transform: scale(1) translateX(0);
+    }
+
+    25% {
+        transform: scale(1.05) translateX(1px);
+    }
+
+    50% {
+        transform: scale(1) translateX(0);
+    }
+
+    75% {
+        transform: scale(1.05) translateX(-1px);
+    }
+}
+
+@keyframes engineerWork {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    33% {
+        transform: scale(1.1) rotate(2deg);
+    }
+
+    66% {
+        transform: scale(1.05) rotate(-2deg);
+    }
+}
+
+@keyframes truckDelivery {
+    0% {
+        transform: translateX(0);
+    }
+
+    70% {
+        transform: translateX(calc(100vw + 60px));
+    }
+
+    100% {
+        transform: translateX(calc(100vw + 60px));
+    }
+}
+
+@keyframes cargoMovement {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-100vw - 50px));
+    }
+}
+
+/* Interactive Element Animations */
+@keyframes productionFill {
+    0% {
+        width: 0%;
+    }
+
+    70% {
+        width: 85%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes counterUpdate {
+
+    0%,
+    90% {
+        transform: scale(1);
+    }
+
+    95% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+
+@keyframes achievementSlide {
+
+    0%,
+    85% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    90% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    95% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+@keyframes dayNightCycle {
+    0% {
+        opacity: 0.2;
+        filter: hue-rotate(0deg);
+    }
+
+    25% {
+        opacity: 0.1;
+        filter: hue-rotate(90deg);
+    }
+
+    50% {
+        opacity: 0.6;
+        filter: hue-rotate(180deg);
+    }
+
+    75% {
+        opacity: 0.4;
+        filter: hue-rotate(270deg);
+    }
+
+    100% {
+        opacity: 0.2;
+        filter: hue-rotate(360deg);
+    }
+}
+
+@keyframes rainFall {
+    0% {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
 }
