@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 class StoryManager {
     constructor() {
         this.currentScene = 1;
-        this.totalScenes = 4;
+        this.totalScenes = 5;
         this.loadedCSS = new Set();
 
         // DOM Elements
@@ -63,6 +63,9 @@ class StoryManager {
             sceneElement.classList.add('active');
         }
 
+        // Generate stars for scenes that need them
+        this.generateStarsForScene(sceneNumber);
+
         this.updateControls();
     }
 
@@ -93,10 +96,11 @@ class StoryManager {
             1: 'css/story/scene-space.css',
             2: 'css/story/scene-lighthouse.css',
             3: 'css/story/scene-factory.css',
-            4: 'css/story/scene-final.css' // Changed to use the new final scene CSS
+            4: 'css/story/scene-journey.css',
+            5: 'css/story/scene-final.css'
         };
 
-        // Scene 4 reuses scene 1's CSS, so we handle that.
+        // Scene 5 reuses scene 1's CSS for stars, so we handle that.
         const cssFile = sceneMap[sceneNumber];
         const cssId = `story-scene-${sceneNumber}-css`;
 
@@ -161,17 +165,47 @@ class StoryManager {
     }
 
     generateStars() {
-        const starsContainer = document.querySelector('#scene-1 .stars');
-        if (!starsContainer) return;
-
-        let starHTML = '';
-        for (let i = 0; i < 100; i++) {
-            starHTML += '<div class="star"></div>';
-        }
-        starsContainer.innerHTML = starHTML;
+        // Generate stars for Scene 1 (Space scene)
+        this.generateStarsForScene(1);
 
         // Initialize enhanced effects
         this.initializeEnhancedEffects();
+    }
+
+    generateStarsForScene(sceneNumber) {
+        // Scenes that need stars: 1 (space), 4 (journey), 5 (final)
+        const scenesWithStars = [1, 4, 5];
+
+        if (!scenesWithStars.includes(sceneNumber)) {
+            return;
+        }
+
+        const starsContainer = document.querySelector(`#scene-${sceneNumber} .stars`);
+        if (!starsContainer) return;
+
+        // Don't regenerate if stars already exist
+        if (starsContainer.children.length > 0) return;
+
+        let starHTML = '';
+        const starCount = sceneNumber === 4 ? 150 : 100; // More stars for journey scene
+
+        for (let i = 0; i < starCount; i++) {
+            const left = Math.random() * 100;
+            const top = Math.random() * 100;
+            const size = Math.random() * 3 + 1;
+            const animationDelay = Math.random() * 3;
+
+            starHTML += `<div class="star" style="
+                left: ${left}%;
+                top: ${top}%;
+                width: ${size}px;
+                height: ${size}px;
+                animation-delay: ${animationDelay}s;
+            "></div>`;
+        }
+        starsContainer.innerHTML = starHTML;
+
+        console.log(`✨ Generated ${starCount} stars for scene ${sceneNumber}!`);
     }
 
     initializeEnhancedEffects() {

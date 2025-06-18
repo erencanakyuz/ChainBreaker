@@ -2,7 +2,8 @@
 
 /* ===== FINAL SCENE BASE ===== */
 .scene-final {
-    background: radial-gradient(ellipse at center, #2c1b35 0%, #090a0f 100%); /* More intense, purple-ish center */
+    background: radial-gradient(ellipse at center, #2c1b35 0%, #090a0f 100%);
+    /* More intense, purple-ish center */
     overflow: hidden;
 }
 
@@ -14,6 +15,7 @@
     width: 100%;
     height: 100%;
 }
+
 .scene-final .star {
     position: absolute;
     background: #fff;
@@ -45,36 +47,44 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    animation: none; /* remove old wrap animation */
+    animation: none;
+    /* remove old wrap animation */
 }
 
 .scene-final .scene_titan {
-    position: static; /* Reset positioning */
+    position: static;
+    /* Reset positioning */
     transform: none;
     box-shadow: 0px 0px 0px 8px rgba(200, 220, 255, 0.5) inset, -30px -20px 50px #8a9fff inset;
     animation: pluto-ascension 8s infinite ease-in-out;
 }
 
 @keyframes pluto-ascension {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1.1);
-        box-shadow: 0px 0px 0px 8px rgba(200, 220, 255, 0.5) inset, 
-                    -30px -20px 50px #8a9fff inset,
-                    0 0 60px rgba(180, 150, 255, 0.7);
+        box-shadow: 0px 0px 0px 8px rgba(200, 220, 255, 0.5) inset,
+            -30px -20px 50px #8a9fff inset,
+            0 0 60px rgba(180, 150, 255, 0.7);
     }
+
     50% {
         transform: scale(1.2);
-        box-shadow: 0px 0px 0px 12px rgba(220, 235, 255, 0.7) inset, 
-                    -30px -20px 50px #a2baff inset,
-                    0 0 120px 30px rgba(200, 180, 255, 1);
+        box-shadow: 0px 0px 0px 12px rgba(220, 235, 255, 0.7) inset,
+            -30px -20px 50px #a2baff inset,
+            0 0 120px 30px rgba(200, 180, 255, 1);
     }
 }
 
 @keyframes titan-ascension-shadow {
-     0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(150px) scale(1);
         box-shadow: 0px 0px 20px #1c0f3a;
     }
+
     50% {
         transform: translateY(150px) scale(1.1);
         box-shadow: 0px 0px 50px #3a1f78;
@@ -84,7 +94,8 @@
 
 .scene-final .scene_titan .eyes .eye {
     background: #53487a;
-    animation: blink 3s infinite; /* Simple, happy blink */
+    animation: blink 3s infinite;
+    /* Simple, happy blink */
 }
 
 /* ===== BREAKING RINGS ===== */
@@ -110,24 +121,106 @@
 }
 
 @keyframes fragment-orbit {
-    0% { transform: rotateZ(0deg) translateX(150px) rotateZ(-0deg) scale(0.5); opacity: 0; }
-    25% { opacity: 1; }
-    75% { opacity: 1; }
-    100% { transform: rotateZ(360deg) translateX(150px) rotateZ(-360deg) scale(2); opacity: 0; }
+    0% {
+        transform: rotateZ(0deg) translateX(150px) rotateZ(-0deg) scale(0.5);
+        opacity: 0;
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotateZ(360deg) translateX(150px) rotateZ(-360deg) scale(2);
+        opacity: 0;
+    }
 }
 
 /* Distribute fragments around Pluto with different delays, sizes, and colors */
-.ring-fragment:nth-child(2) { animation-delay: -0.2s; background: #b3e5fc; transform-origin: 0px 0; }
-.ring-fragment:nth-child(3) { animation-delay: -0.4s; background: #ffccbc; transform-origin: 50px 50px; }
-.ring-fragment:nth-child(4) { animation-delay: -0.6s; background: #dcedc8; transform-origin: -50px -50px; }
-.ring-fragment:nth-child(5) { animation-delay: -0.8s; background: #cfd8dc; transform-origin: 100px 0; }
-.ring-fragment:nth-child(6) { animation-delay: -1.0s; background: #f8bbd0; transform-origin: 0 100px; }
-.ring-fragment:nth-child(7) { animation-delay: -1.2s; background: #d1c4e9; transform-origin: -100px 0; }
-.ring-fragment:nth-child(8) { animation-delay: -1.4s; background: #c8e6c9; transform-origin: 0 -100px; }
-.ring-fragment:nth-child(9) { animation-delay: -1.6s; background: #fff9c4; transform-origin: 80px -80px; }
-.ring-fragment:nth-child(10) { animation-delay: -1.8s; background: #b2dfdb; transform-origin: -80px 80px; }
-.ring-fragment:nth-child(11) { animation-delay: -2.0s; animation-duration: 3s; background: #ffecb3; }
-.ring-fragment:nth-child(12) { animation-delay: -2.2s; animation-duration: 5s; background: #f0f4c3; }
-.ring-fragment:nth-child(13) { animation-delay: -2.4s; animation-duration: 3.5s; background: #e1bee7; }
-.ring-fragment:nth-child(14) { animation-delay: -2.6s; animation-duration: 4.5s; background: #c5cae9; }
-.ring-fragment:nth-child(15) { animation-delay: -2.8s; animation-duration: 6s; background: #bbdefb; }
+.ring-fragment:nth-child(2) {
+    animation-delay: -0.2s;
+    background: #b3e5fc;
+    transform-origin: 0px 0;
+}
+
+.ring-fragment:nth-child(3) {
+    animation-delay: -0.4s;
+    background: #ffccbc;
+    transform-origin: 50px 50px;
+}
+
+.ring-fragment:nth-child(4) {
+    animation-delay: -0.6s;
+    background: #dcedc8;
+    transform-origin: -50px -50px;
+}
+
+.ring-fragment:nth-child(5) {
+    animation-delay: -0.8s;
+    background: #cfd8dc;
+    transform-origin: 100px 0;
+}
+
+.ring-fragment:nth-child(6) {
+    animation-delay: -1.0s;
+    background: #f8bbd0;
+    transform-origin: 0 100px;
+}
+
+.ring-fragment:nth-child(7) {
+    animation-delay: -1.2s;
+    background: #d1c4e9;
+    transform-origin: -100px 0;
+}
+
+.ring-fragment:nth-child(8) {
+    animation-delay: -1.4s;
+    background: #c8e6c9;
+    transform-origin: 0 -100px;
+}
+
+.ring-fragment:nth-child(9) {
+    animation-delay: -1.6s;
+    background: #fff9c4;
+    transform-origin: 80px -80px;
+}
+
+.ring-fragment:nth-child(10) {
+    animation-delay: -1.8s;
+    background: #b2dfdb;
+    transform-origin: -80px 80px;
+}
+
+.ring-fragment:nth-child(11) {
+    animation-delay: -2.0s;
+    animation-duration: 3s;
+    background: #ffecb3;
+}
+
+.ring-fragment:nth-child(12) {
+    animation-delay: -2.2s;
+    animation-duration: 5s;
+    background: #f0f4c3;
+}
+
+.ring-fragment:nth-child(13) {
+    animation-delay: -2.4s;
+    animation-duration: 3.5s;
+    background: #e1bee7;
+}
+
+.ring-fragment:nth-child(14) {
+    animation-delay: -2.6s;
+    animation-duration: 4.5s;
+    background: #c5cae9;
+}
+
+.ring-fragment:nth-child(15) {
+    animation-delay: -2.8s;
+    animation-duration: 6s;
+    background: #bbdefb;
+}
