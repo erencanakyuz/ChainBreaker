@@ -1489,59 +1489,101 @@
     pointer-events: none;
 }
 
-.scene-lighthouse .speech-bubble {
+
+
+/* ===== YENİ DIALOGUE SİSTEMİ ===== */
+
+/* Temel speech bubble tasarımı */
+.scene-lighthouse .dialogue {
     position: absolute;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--aqua);
-    border-radius: 10px;
-    padding: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--aqua);
+    border-radius: 12px;
+    padding: 10px 15px;
     font-family: 'Press Start 2P', monospace;
-    font-size: 6px;
+    font-size: 7px;
     color: var(--dark);
     opacity: 0;
-    animation: speech-appear 3s ease-in-out infinite;
+    z-index: 10;
+    max-width: 150px;
+    text-align: center;
 }
 
-.scene-lighthouse .speech-bubble.keeper-speech {
-    bottom: 435px;
-    right: 385px;
-    animation-delay: 17s;
-}
-
-.scene-lighthouse .speech-bubble.keeper-speech::before {
-    content: 'Signal received!';
-}
-
-.scene-lighthouse .speech-bubble.observer-speech {
-    bottom: 435px;
-    right: 415px;
-    animation-delay: 14s;
-}
-
-.scene-lighthouse .speech-bubble.observer-speech::before {
-    content: 'Look! Pluto!';
-}
-
-.scene-lighthouse .speech-bubble.worker-speech {
-    bottom: 435px;
-    right: 355px;
-    animation-delay: 10s;
-}
-
-.scene-lighthouse .speech-bubble.worker-speech::before {
-    content: 'Amazing rings!';
-}
-
-.scene-lighthouse .speech-bubble::after {
+/* Dialogue kuyrukları */
+.scene-lighthouse .dialogue::after {
     content: '';
     position: absolute;
-    bottom: -8px;
-    left: 30%;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-top: 8px solid rgba(255, 255, 255, 0.9);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid rgba(255, 255, 255, 0.95);
+}
+
+/* 1. Human: Look at Pluto! (10s - 6 saniye) */
+.scene-lighthouse .dialogue-1 {
+    bottom: 460px;
+    right: 350px;
+    animation: dialogue-show 6s ease-in-out 10s forwards;
+}
+
+.scene-lighthouse .dialogue-1::before {
+    content: 'Look at Pluto! He seems sad...';
+}
+
+/* 2. Pluto: I wish I had beautiful rings (17s - 7 saniye) */
+.scene-lighthouse .dialogue-2 {
+    bottom: 350px;
+    left: 40%;
+    background: rgba(142, 45, 226, 0.95);
+    border-color: var(--purple);
+    color: var(--light);
+    animation: dialogue-show 7s ease-in-out 17s forwards;
+}
+
+.scene-lighthouse .dialogue-2::before {
+    content: 'I wish I had beautiful rings like Saturn...';
+}
+
+.scene-lighthouse .dialogue-2::after {
+    border-top-color: rgba(142, 45, 226, 0.95);
+}
+
+/* 3. Human Response: We will help you! (25s - 6 saniye) */
+.scene-lighthouse .dialogue-3 {
+    bottom: 460px;
+    right: 350px;
+    animation: dialogue-show 6s ease-in-out 25s forwards;
+}
+
+.scene-lighthouse .dialogue-3::before {
+    content: 'Don\'t worry! We will build you a ring factory!';
+}
+
+/* Dialogue animasyonu - daha yavaş ve net */
+@keyframes dialogue-show {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    90% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.9);
+    }
 }
 
 @keyframes keeper-wave {
@@ -1621,25 +1663,5 @@
 
     75% {
         transform: translateY(-2px) rotate(-2deg);
-    }
-}
-
-@keyframes speech-appear {
-
-    0%,
-    70% {
-        opacity: 0;
-        transform: translateY(5px) scale(0.8);
-    }
-
-    80%,
-    95% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-3px) scale(0.9);
     }
 }
