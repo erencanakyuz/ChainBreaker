@@ -10,7 +10,7 @@
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
 
   <!-- Link to external CSS file -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=1.0">
 </head>
 
 <body>
@@ -511,83 +511,82 @@
         );
         this.backgroundGradient.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
-        // Enhanced background particles with dynamic colors (Phaser 3.70 syntax)
+        // Optimized background particles with reduced count (Phaser 3.70 syntax)
         this.backgroundParticles = this.add.particles(0, 0, 'star', {
           x: { min: 0, max: this.cameras.main.width },
           y: 0,
           lifespan: 8000,
           speedY: { min: 10, max: 30 },
-          scale: { start: 1, end: 0 },
-          quantity: 4,
+          scale: { start: 0.8, end: 0 },
+          quantity: 2, // Reduced from 4
           blendMode: 'ADD',
           tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
-          alpha: { start: 0.7, end: 0 }
+          alpha: { start: 0.5, end: 0 } // Reduced opacity
         });
 
-        // Dynamic floating particles (Phaser 3.70 syntax)
+        // Optimized floating particles with reduced frequency (Phaser 3.70 syntax)
         this.bgParticles = this.add.particles(0, 0, 'diamond', {
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 12000,
-          speed: { min: 15, max: 40 },
+          lifespan: 10000, // Reduced lifespan
+          speed: { min: 15, max: 35 },
           angle: { min: 0, max: 360 },
-          scale: { start: 0.4, end: 0 },
+          scale: { start: 0.3, end: 0 }, // Smaller size
           quantity: 1,
-          frequency: 800,
+          frequency: 1200, // Reduced frequency
           blendMode: 'ADD',
           tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
-          alpha: { start: 0.6, end: 0 }
+          alpha: { start: 0.4, end: 0 } // Reduced opacity
         });
 
-        // Enhanced spark emitter with palette colors (Phaser 3.70 syntax)
+        // Optimized spark emitter with reduced count (Phaser 3.70 syntax)
         this.sparkEmitter = this.add.particles(0, 0, 'particle', {
-          lifespan: 400,
-          speed: { min: -120, max: 120 },
-          scale: { start: 1.0, end: 0 },
-          quantity: 12,
+          lifespan: 300, // Shorter lifespan
+          speed: { min: -80, max: 80 }, // Reduced speed range
+          scale: { start: 0.8, end: 0 }, // Smaller size
+          quantity: 8, // Reduced from 12
           blendMode: 'ADD',
           tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.neon,
           emitting: false
         });
 
-        // Sophisticated break particles (Phaser 3.70 syntax)
+        // Optimized break particles (Phaser 3.70 syntax)
         this.breakParticles = this.add.particles(0, 0, 'diamond', {
-          lifespan: 800,
-          speed: { min: 80, max: 180 },
-          scale: { start: 0.6, end: 0 },
-          quantity: 18,
+          lifespan: 600, // Shorter lifespan
+          speed: { min: 60, max: 140 }, // Reduced speed range
+          scale: { start: 0.5, end: 0 }, // Smaller size
+          quantity: 12, // Reduced from 18
           blendMode: 'ADD',
-          gravityY: 100,
+          gravityY: 80, // Reduced gravity
           tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.fire,
           emitting: false
         });
 
-        // Enhanced fever mode particles (Phaser 3.70 syntax)
+        // Optimized fever mode particles (Phaser 3.70 syntax)
         this.feverParticles = this.add.particles(0, 0, 'star', {
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 4000,
-          speed: { min: 60, max: 120 },
-          scale: { start: 0.5, end: 0 },
-          quantity: 6,
+          lifespan: 3000, // Shorter lifespan
+          speed: { min: 40, max: 80 }, // Reduced speed range
+          scale: { start: 0.4, end: 0 }, // Smaller size
+          quantity: 4, // Reduced from 6
           blendMode: 'ADD',
           tint: colorSystem.convertedPalettes.fire,
-          alpha: { start: 0.8, end: 0 },
+          alpha: { start: 0.6, end: 0 }, // Reduced opacity
           emitting: false
         });
 
-        // Multi-colored confetti system (Phaser 3.70 syntax)
+        // Optimized confetti system with reduced colors (Phaser 3.70 syntax)
         this.confettiParticles = this.add.particles(0, 0, 'diamond', {
           x: { min: 0, max: this.cameras.main.width },
           y: -50,
-          speed: { min: 150, max: 250 },
+          speed: { min: 120, max: 200 }, // Reduced speed range
           angle: { min: 75, max: 105 },
-          scale: { start: 0.8, end: 0 },
-          lifespan: 3500,
+          scale: { start: 0.6, end: 0 }, // Smaller size
+          lifespan: 2500, // Shorter lifespan
           tint: [
-            ...colorSystem.convertedPalettes.neon,
-            ...colorSystem.convertedPalettes.sunset,
-            ...colorSystem.convertedPalettes.cosmic
+            ...colorSystem.convertedPalettes.neon.slice(0, 4), // Reduced color array
+            ...colorSystem.convertedPalettes.sunset.slice(0, 4)
           ],
           emitting: false
         });
@@ -829,8 +828,8 @@
             this.updateBackgroundGlow(time);
           }
 
-          // Batch ring updates - limit to 2 rings per frame for performance
-          const ringsToUpdate = Math.min(2, this.ringStack.length);
+          // Optimized ring updates - limit to 1 ring per frame for better performance
+          const ringsToUpdate = Math.min(1, this.ringStack.length);
           for (let i = 0; i < ringsToUpdate; i++) {
             const ring = this.ringStack[i];
             if (ring.needsUpdate) {
@@ -882,6 +881,11 @@
           if (this.feverTimer <= 0) {
             this.feverMode = false;
             this.feverText.setText('');
+            // Remove fever overlay if still exists
+            const existingFever = document.getElementById('current-fever-overlay');
+            if (existingFever) {
+              existingFever.remove();
+            }
           } else {
             this.feverText.setText('FEVER MODE: ' + Math.ceil(this.feverTimer / 1000) + 's');
           }
@@ -991,12 +995,12 @@
       handleSuccessfulHit() {
         // Flash effect removed for better user experience
 
-        // Trigger break particles at ring position
-        this.breakParticles.explode(30, this.center.x, this.center.y);
+        // Reduce particle count for better performance
+        this.breakParticles.explode(15, this.center.x, this.center.y);
 
-        // Additional spark effects
-        this.sparkEmitter.explode(30, this.center.x, this.center.y);
-        this.cameras.main.shake(150, 0.01);
+        // Additional spark effects with reduced count
+        this.sparkEmitter.explode(12, this.center.x, this.center.y);
+        this.cameras.main.shake(100, 0.008); // Shorter, less intense shake
 
         // Background particles already configured with design colors
 
@@ -1044,72 +1048,36 @@
         if (this.combo >= 5 && !this.feverMode) {
           this.activateFeverMode();
         }
+
+        // Show combo effect for significant combos
+        if (this.combo > 0 && this.combo % 3 === 0) {
+          this.showComboEffect();
+        }
       }
 
-      // Optimized score popup with object pooling (Phaser 3.70 compatible)
+      // Enhanced score popup with CSS integration - performance optimized
       showScorePopup(points, x, y) {
-        let popup = this.getPooledScorePopup();
-        let baseScale = points >= 100 ? 2 : (points >= 50 ? 1.5 : 1);
+        // Throttle score popup creation to prevent spam
+        if (this.lastScorePopupTime && Date.now() - this.lastScorePopupTime < 50) return;
+        this.lastScorePopupTime = Date.now();
 
-        popup.setText('+' + points);
-        popup.setPosition(x, y);
-        popup.setScale(0);
-        popup.setAlpha(1);
-        popup.setVisible(true);
+        // Use CSS score popup effect
+        const scoreDiv = document.createElement('div');
+        scoreDiv.className = 'score-popup';
+        scoreDiv.textContent = '+' + points;
+        scoreDiv.style.left = x + 'px';
+        scoreDiv.style.top = y + 'px';
+        document.body.appendChild(scoreDiv);
 
-        // Chain tweens manually since timeline is not available in Phaser 3.70
-        this.tweens.add({
-          targets: popup,
-          scaleX: baseScale * 1.2,
-          scaleY: baseScale * 0.8,
-          angle: -15,
-          ease: 'Back.easeOut',
-          duration: 400,
-          onComplete: () => {
-            // Second tween: normalize scale
-            this.tweens.add({
-              targets: popup,
-              scaleX: baseScale,
-              scaleY: baseScale,
-              angle: 0,
-              duration: 200,
-              onComplete: () => {
-                // Third tween: fade out and move up
-                this.tweens.add({
-                  targets: popup,
-                  y: y - 80,
-                  alpha: 0,
-                  ease: 'Power2',
-                  duration: 800,
-                  delay: 100,
-                  onComplete: () => this.returnPooledScorePopup(popup)
-                });
-              }
-            });
+        // Remove CSS effect after animation completes
+        setTimeout(() => {
+          if (scoreDiv.parentNode) {
+            scoreDiv.remove();
           }
-        });
+        }, 800); // Reduced timeout to match CSS animation
       }
 
-      getPooledScorePopup() {
-        if (this.scorePopupPool.length > 0) {
-          return this.scorePopupPool.pop();
-        }
-        return this.add.text(0, 0, '', {
-          font: '48px Arial',
-          fill: '#ffdd00',
-          stroke: '#000000',
-          strokeThickness: 4
-        }).setOrigin(0.5).setShadow(4, 4, "#333333", 4, false, true);
-      }
-
-      returnPooledScorePopup(popup) {
-        popup.setVisible(false);
-        if (this.scorePopupPool.length < this.maxPoolSize) {
-          this.scorePopupPool.push(popup);
-        } else {
-          popup.destroy();
-        }
-      }
+      // Removed object pooling methods as we now use CSS effects
 
       handleMiss() {
         this.combo = 0;
@@ -1139,6 +1107,37 @@
         this.feverTimer = this.feverModeDuration;
         this.feverText.setText('FEVER MODE: 5s');
         this.cameras.main.flash(500, 255, 0, 255);
+
+        // Add CSS fever mode overlay
+        const feverDiv = document.createElement('div');
+        feverDiv.className = 'fever-mode';
+        feverDiv.id = 'current-fever-overlay';
+        document.body.appendChild(feverDiv);
+
+        // Remove fever overlay when fever mode ends
+        setTimeout(() => {
+          const existingFever = document.getElementById('current-fever-overlay');
+          if (existingFever) {
+            existingFever.remove();
+          }
+        }, this.feverModeDuration);
+      }
+
+      showComboEffect() {
+        // Throttle combo effect to prevent spam
+        if (this.lastComboEffectTime && Date.now() - this.lastComboEffectTime < 500) return;
+        this.lastComboEffectTime = Date.now();
+
+        const comboDiv = document.createElement('div');
+        comboDiv.className = 'combo-effect';
+        comboDiv.textContent = `COMBO x${this.combo}!`;
+        document.body.appendChild(comboDiv);
+
+        setTimeout(() => {
+          if (comboDiv.parentNode) {
+            comboDiv.remove();
+          }
+        }, 600); // Reduced timeout to match CSS animation
       }
 
       resetRegenTimer() {
@@ -1173,22 +1172,22 @@
       }
 
       levelUp() {
-        this.confettiParticles.explode(50, this.center.x, this.center.y);
-        this.cameras.main.flash(500, 0, 255, 0);
-        let levelUpText = this.add.text(this.center.x, this.center.y, 'LEVEL UP!', {
-          font: '48px Arial',
-          fill: '#00ff00',
-          stroke: '#000000',
-          strokeThickness: 5
-        }).setOrigin(0.5);
-        this.tweens.add({
-          targets: levelUpText,
-          alpha: 0,
-          scale: 2,
-          duration: 1000,
-          ease: 'Power2',
-          onComplete: () => levelUpText.destroy()
-        });
+        // Reduce particle count for better performance
+        this.confettiParticles.explode(25, this.center.x, this.center.y);
+        this.cameras.main.flash(300, 0, 255, 0); // Shorter flash
+
+        // Use CSS level-up effect instead of just Phaser text
+        const levelUpDiv = document.createElement('div');
+        levelUpDiv.className = 'level-up';
+        levelUpDiv.textContent = 'LEVEL UP!';
+        document.body.appendChild(levelUpDiv);
+
+        // Remove CSS effect after animation completes
+        setTimeout(() => {
+          if (levelUpDiv.parentNode) {
+            levelUpDiv.remove();
+          }
+        }, 2000);
         this.level++;
         this.levelText.setText('Level: ' + this.level);
         const design = this.getActiveDesign();
@@ -1270,6 +1269,9 @@
         if (this.regenTimer) this.regenTimer.remove(false);
         this.tweens.killAll();
 
+        // Clean up CSS effects from DOM
+        this.cleanupCSSEffects();
+
         // Clean up ring stack
         if (this.ringStack) {
           this.ringStack.forEach(ring => ring.destroy());
@@ -1303,6 +1305,21 @@
         this.feverText.setText('');
 
         this.startLevel();
+      }
+
+      cleanupCSSEffects() {
+        // Remove any remaining CSS effects from DOM
+        const effectClasses = ['level-up', 'score-popup', 'combo-effect', 'fever-mode'];
+        effectClasses.forEach(className => {
+          const elements = document.querySelectorAll('.' + className);
+          elements.forEach(element => element.remove());
+        });
+
+        // Remove any fever overlay with ID
+        const feverOverlay = document.getElementById('current-fever-overlay');
+        if (feverOverlay) {
+          feverOverlay.remove();
+        }
       }
     }
 

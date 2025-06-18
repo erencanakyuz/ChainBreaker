@@ -1,87 +1,552 @@
-* {
+/* Modern CSS with @property support for advanced animations */
+@property --ring-progress {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 0%;
+}
+
+@property --glow-intensity {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0.5;
+}
+
+@property --hue-rotation {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+/* Modern CSS Custom Properties */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --neon-blue: #4ecdc4;
+    --neon-pink: #ff6b9d;
+    --neon-yellow: #feca57;
+    --neon-purple: #6c5ce7;
+    --cosmic-gradient: conic-gradient(from 45deg, var(--neon-blue), var(--neon-pink), var(--neon-yellow), var(--neon-purple), var(--neon-blue));
+    --ring-thickness: 8px;
+    --glow-size: 20px;
+    --animation-speed: 2s;
+}
+
+/* Universal Reset with Modern Box Sizing */
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Modern Body with Enhanced Gradients */
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    font-family: 'Arial', sans-serif;
+    background:
+        radial-gradient(ellipse at 20% 80%, rgba(120, 119, 198, 0.3), transparent),
+        radial-gradient(ellipse at 80% 20%, rgba(255, 119, 198, 0.3), transparent),
+        radial-gradient(ellipse at 40% 40%, rgba(120, 219, 226, 0.2), transparent),
+        var(--primary-gradient);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     width: 100vw;
     height: 100vh;
+    position: relative;
 }
 
+/* Animated Background Particles using CSS */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(circle at 25% 25%, var(--neon-blue) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, var(--neon-pink) 1px, transparent 1px),
+        radial-gradient(circle at 50% 90%, var(--neon-yellow) 0.5px, transparent 0.5px);
+    background-size: 100px 100px, 150px 150px, 200px 200px;
+    animation: float-particles 20s linear infinite;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes float-particles {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+    }
+}
+
+/* Enhanced Game Container with Modern CSS */
 #game-container {
     width: 100vw;
     height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.9) 100%);
+    background:
+        radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.95) 100%);
+    backdrop-filter: blur(0px);
+    z-index: 2;
 }
 
 #phaser-game {
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
+/* Modern Canvas with Advanced Effects */
 canvas {
     display: block;
     width: 100% !important;
     height: 100% !important;
-    box-shadow: inset 0 0 100px rgba(0, 150, 255, 0.3);
+    box-shadow:
+        inset 0 0 100px rgba(0, 150, 255, 0.3),
+        0 0 50px rgba(108, 92, 231, 0.2);
+    border-radius: 0;
+    filter: contrast(1.1) saturate(1.2);
 }
 
+/* Modern Menu Buttons with Advanced Gradients */
 .menu-button {
-    font-size: 24px;
+    --button-hue: 280deg;
+    font-size: clamp(18px, 3vw, 24px);
     cursor: pointer;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-    border-radius: 12px;
-    padding: 10px 20px;
+    background:
+        linear-gradient(45deg,
+            hsl(var(--button-hue), 70%, 60%),
+            hsl(calc(var(--button-hue) + 60deg), 70%, 60%));
+    border-radius: 16px;
+    padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px);
     border: none;
     color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.menu-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s;
 }
 
 .menu-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(255, 255, 255, 0.1);
+    filter: hue-rotate(20deg) brightness(1.1);
 }
 
-/* Enhanced loading screen with gradient */
+.menu-button:hover::before {
+    left: 100%;
+}
+
+.menu-button:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* Enhanced Loading Screen with Modern Animations */
 #loading {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background:
+        radial-gradient(ellipse at 30% 70%, rgba(108, 92, 231, 0.4), transparent),
+        radial-gradient(ellipse at 70% 30%, rgba(255, 107, 157, 0.4), transparent),
+        linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 24px;
+    font-size: clamp(18px, 4vw, 28px);
+    font-weight: 600;
     z-index: 1000;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(0px);
 }
 
-/* Animated loading indicator */
+/* Modern Loading Spinner with Conic Gradient */
 .loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
+    --progress: 0%;
+    width: clamp(60px, 10vw, 80px);
+    height: clamp(60px, 10vw, 80px);
     border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 1s ease-in-out infinite;
-    margin-right: 20px;
+    background: conic-gradient(from 0deg,
+            var(--neon-blue) var(--progress),
+            var(--neon-pink) calc(var(--progress) + 25%),
+            var(--neon-yellow) calc(var(--progress) + 50%),
+            var(--neon-purple) calc(var(--progress) + 75%),
+            var(--neon-blue) 100%);
+    animation:
+        spin-modern 2s linear infinite,
+        pulse-glow 1.5s ease-in-out infinite alternate;
+    margin-bottom: 30px;
+    position: relative;
+    filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.6));
 }
 
-@keyframes spin {
+.loading-spinner::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 70%;
+    background: #1e3c72;
+    border-radius: 50%;
+}
+
+@keyframes spin-modern {
+    from {
+        transform: rotate(0deg);
+    }
+
     to {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse-glow {
+    from {
+        filter: drop-shadow(0 0 20px rgba(78, 205, 196, 0.6));
+        transform: scale(1);
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px rgba(255, 107, 157, 0.8));
+        transform: scale(1.05);
+    }
+}
+
+/* Modern Ring Progress Indicator */
+.ring-progress {
+    --ring-progress: 0%;
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+            var(--neon-blue) var(--ring-progress),
+            transparent var(--ring-progress));
+    mask: radial-gradient(circle at center, transparent 60%, black 60%);
+    animation: ring-fill 3s ease-out infinite;
+}
+
+@keyframes ring-fill {
+    from {
+        --ring-progress: 0%;
+    }
+
+    to {
+        --ring-progress: 100%;
+    }
+}
+
+/* Enhanced UI Elements with Modern Typography */
+.ui-text {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+}
+
+/* Modern Particle Effects using CSS */
+.css-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--cosmic-gradient);
+    border-radius: 50%;
+    animation: float-up 3s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes float-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-200px) scale(0);
+    }
+}
+
+/* Game Enhancement Classes - Can be applied dynamically */
+.game-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: var(--ring-thickness) solid;
+    border-image: var(--cosmic-gradient) 1;
+    animation: ring-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 var(--glow-size) currentColor);
+}
+
+.game-ring.active {
+    animation: ring-pulse 0.5s ease-in-out infinite, ring-spin 3s linear infinite;
+    filter: drop-shadow(0 0 calc(var(--glow-size) * 2) currentColor);
+}
+
+@keyframes ring-pulse {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+}
+
+@keyframes ring-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Score Animation Effects - Optimized */
+.score-popup {
+    position: absolute;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px currentColor;
+    animation: score-float 0.8s ease-out forwards;
+    pointer-events: none;
+    z-index: 1000;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+@keyframes score-float {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.5);
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.2);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(1);
+    }
+}
+
+/* Combo Effect - Optimized */
+.combo-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    color: var(--neon-pink);
+    text-shadow: 0 0 15px currentColor;
+    animation: combo-burst 0.6s ease-out forwards;
+    pointer-events: none;
+    z-index: 1001;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+@keyframes combo-burst {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) rotate(-15deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.3) rotate(5deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+}
+
+/* Level Up Effect - Optimized for performance */
+.level-up {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(78, 205, 196, 0.2), transparent 60%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: 4rem;
+    color: white;
+    text-shadow: 0 0 20px var(--neon-blue);
+    animation: level-up-flash 1.5s ease-out forwards;
+    pointer-events: none;
+    z-index: 1002;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+@keyframes level-up-flash {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    80% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+}
+
+/* Fever Mode Overlay - Optimized */
+.fever-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 107, 157, 0.15), transparent),
+        radial-gradient(circle at 70% 70%, rgba(254, 202, 87, 0.15), transparent);
+    animation: fever-pulse 0.4s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 10;
+    will-change: opacity;
+    backface-visibility: hidden;
+}
+
+@keyframes fever-pulse {
+    from {
+        opacity: 0.3;
+    }
+
+    to {
+        opacity: 0.7;
+    }
+}
+
+/* Responsive Design for Modern Devices */
+@media (max-width: 768px) {
+    .menu-button {
+        font-size: 18px;
+        padding: 12px 20px;
+    }
+
+    #loading {
+        font-size: 20px;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+    }
+
+    .score-popup {
+        font-size: 1.5rem;
+    }
+
+    .combo-effect {
+        font-size: 2rem;
+    }
+
+    .level-up {
+        font-size: 2.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Modern Focus States for Accessibility */
+.menu-button:focus-visible {
+    outline: 3px solid var(--neon-blue);
+    outline-offset: 2px;
+}
+
+/* Support for @property animations */
+@supports (background: conic-gradient(red, blue)) {
+    .loading-spinner {
+        --progress: 0%;
+        background: conic-gradient(from calc(var(--hue-rotation)),
+                var(--neon-blue) var(--progress),
+                var(--neon-pink) calc(var(--progress) + 25%),
+                var(--neon-yellow) calc(var(--progress) + 50%),
+                var(--neon-purple) calc(var(--progress) + 75%),
+                var(--neon-blue) 100%);
+        animation:
+            spin-modern var(--animation-speed) linear infinite,
+            hue-shift 4s linear infinite,
+            pulse-glow 1.5s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes hue-shift {
+    from {
+        --hue-rotation: 0deg;
+    }
+
+    to {
+        --hue-rotation: 360deg;
     }
 }
