@@ -540,3 +540,137 @@
     background: var(--dark);
     border-radius: 0 0 3px 3px;
 }
+
+/* ===== PLUTO IN LIGHTHOUSE SCENE ===== */
+.scene-lighthouse .pluto {
+    position: absolute;
+    bottom: 60%;
+    left: 10%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 50%, #2c1810 100%);
+    box-shadow:
+        0px 0px 0px 3px rgba(142, 45, 226, 0.7) inset,
+        -20px -15px 35px #4a00e0 inset,
+        0 0 25px rgba(142, 45, 226, 0.5);
+    z-index: 6;
+    animation: pluto-move-to-lighthouse 8s ease-in-out forwards,
+        pluto-hover 4s ease-in-out infinite 8s;
+}
+
+.scene-lighthouse .pluto .eyes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.scene-lighthouse .pluto .eyes .eye {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff1744;
+    border-radius: 50%;
+    top: 30%;
+    animation: pluto-blink 3s infinite ease-in-out;
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.8);
+}
+
+.scene-lighthouse .pluto .eyes .eye.eye--left {
+    left: 35%;
+}
+
+.scene-lighthouse .pluto .eyes .eye.eye--right {
+    left: 65%;
+}
+
+.scene-lighthouse .pluto .mouth {
+    position: absolute;
+    bottom: 28%;
+    left: 55%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50% 50% 60% 60%;
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Pluto animasyonları */
+
+/* Pluto'nun lighthouse'a hareket animasyonu */
+@keyframes pluto-move-to-lighthouse {
+    0% {
+        left: 10%;
+        bottom: 60%;
+        transform: translateY(0px) scale(1);
+    }
+
+    20% {
+        left: 25%;
+        bottom: 58%;
+        transform: translateY(-15px) scale(1.1);
+    }
+
+    40% {
+        left: 35%;
+        bottom: 62%;
+        transform: translateY(-8px) scale(1.05);
+    }
+
+    60% {
+        left: 42%;
+        bottom: 56%;
+        transform: translateY(-20px) scale(1.08);
+    }
+
+    80% {
+        left: 46%;
+        bottom: 58%;
+        transform: translateY(-10px) scale(1.02);
+    }
+
+    100% {
+        left: 45%;
+        bottom: 60%;
+        transform: translateY(0px) scale(1);
+    }
+}
+
+/* Pluto'nun yüzme animasyonu (hareket bittikten sonra) */
+@keyframes pluto-hover {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1);
+    }
+
+    25% {
+        transform: translateY(-10px) scale(1.02);
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1);
+    }
+
+    75% {
+        transform: translateY(-12px) scale(0.98);
+    }
+}
+
+@keyframes pluto-blink {
+
+    0%,
+    20%,
+    24%,
+    70%,
+    74%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    22%,
+    72% {
+        transform: scaleY(0.1);
+    }
+}
