@@ -760,21 +760,38 @@
         // Create simple arrow pointing towards center
         this.needle = this.add.graphics();
         this.drawSimpleArrow();
+
+        // Set up timer for gradient animation
+        this.needleAnimationTimer = 0;
       }
 
       drawSimpleArrow() {
         this.needle.clear();
 
-        // Simple white arrow with black outline
-        this.needle.fillStyle(0xFFFFFF);
-        this.needle.lineStyle(2, 0x000000);
+        // Check if needle is in sweet spot area (collision zone)
+        let needleColor = 0x000000; // Default black
+        if (this.activeRing) {
+          const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
+          const absAngleDiff = Math.abs(angleDiff);
+          const sweetSpotThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
 
-        // Draw arrow pointing inward (towards center)
+          // Turn white when in sweet spot area
+          if (absAngleDiff <= sweetSpotThreshold) {
+            needleColor = 0xFFFFFF; // White when in collision zone
+          }
+        }
+
+        // Bigger arrow with solid color (black or white based on position)
+        this.needle.fillStyle(needleColor);
+        this.needle.lineStyle(2, 0x666666); // Gray outline
+
+        // Draw bigger arrow pointing inward toward center (local coordinate system)
+        // Arrow points to the right in local coordinates, will be rotated to point toward center
         this.needle.beginPath();
-        this.needle.moveTo(0, -8);  // Top point
-        this.needle.lineTo(-6, 8);  // Bottom left
-        this.needle.lineTo(0, 4);   // Middle notch
-        this.needle.lineTo(6, 8);   // Bottom right
+        this.needle.moveTo(15, 0);   // Arrow tip pointing right (toward center when properly rotated)
+        this.needle.lineTo(-10, -8); // Top left of arrow base
+        this.needle.lineTo(-5, 0);   // Middle notch
+        this.needle.lineTo(-10, 8);  // Bottom left of arrow base
         this.needle.closePath();
         this.needle.fillPath();
         this.needle.strokePath();
@@ -927,6 +944,9 @@
         if (this.needleAngle >= Math.PI * 2) this.needleAngle -= Math.PI * 2;
         if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
 
+        // Redraw needle to update color based on position (every frame for accurate color)
+        this.drawSimpleArrow();
+
         // Position needle around the active ring with proper rotation
         if (this.activeRing) {
           const radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15; // Small margin outside ring
@@ -934,8 +954,9 @@
           this.needle.x = this.center.x + Math.cos(this.needleAngle) * radius;
           this.needle.y = this.center.y + Math.sin(this.needleAngle) * radius;
 
-          // Rotate arrow to point towards center
-          this.needle.rotation = this.needleAngle + Math.PI; // +PI to point inward
+          // Rotate arrow to point towards center 
+          // Since needle is positioned at needleAngle, we need it to point 180° back toward center
+          this.needle.rotation = this.needleAngle + Math.PI; // +PI to point back toward center
         }
       }
 
