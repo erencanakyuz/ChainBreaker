@@ -1,5 +1,14 @@
 /* ChainBreaker Pro - Space Scene (Saturn & Pluto/Titan) */
 
+/* ===== CSS VARIABLES ===== */
+:root {
+    --saturn-size: 152px;
+    --saturn-ring-size: 330px;
+    --saturn-ring-width: 50px;
+    --saturn-ring-segments: 50;
+    --titan-size: 84px;
+}
+
 /* ===== SPACE SCENE BASE ===== */
 .scene-space {
     background: radial-gradient(ellipse at center, #1b2735 0%, #090a0f 100%);
@@ -438,11 +447,15 @@
 /* ===== SATURN RINGS ===== */
 .scene_saturn__ring {
     position: absolute;
-    left: -100px;
+    left: 0;
+    right: 0;
+    margin: auto;
     top: 50%;
-    transform: translateY(-50%) rotateX(84deg);
+    transform: translateY(-50%) rotateX(84deg) rotateY(8deg);
+    transform-origin: 50% calc(var(--saturn-ring-size) / 2);
     animation: ring 0.6s infinite linear;
     transform-style: preserve-3d;
+    top: -80px;
 }
 
 .scene_saturn__ring .small {
@@ -503,70 +516,238 @@
 }
 
 .scene_saturn__ring .layer {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+}
+
+.scene_saturn__ring .layer:nth-of-type(2) {
+    top: -10px;
 }
 
 .scene_saturn__ring .layer:nth-of-type(1) .layer_part {
-    width: var(--saturn-ring-width);
-    height: 4px;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 4px;
+    width: 20px;
+    height: var(--saturn-ring-width);
+    background: #08ffff;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(8, 255, 255, 0.5);
 }
 
 .scene_saturn__ring .layer:nth-of-type(2) .layer_part {
-    width: calc(var(--saturn-ring-width) + 40px);
-    height: 2px;
-    background: rgba(255, 255, 255, 0.4);
+    width: 18px;
+    height: calc(var(--saturn-ring-width) - 10px);
+    background: #21ced2;
     border-radius: 2px;
+    box-shadow: 0 0 8px rgba(33, 206, 210, 0.4);
 }
 
 .scene_saturn__ring .layer .layer_part {
     position: absolute;
-    transform-origin: 50% 140px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    transform-origin: 50% calc(var(--saturn-ring-size) / 2);
 }
 
-/* Layer parts - simplified for performance */
+/* Saturn Ring Segments - 50 parts for realistic ring */
 .scene_saturn__ring .layer .layer_part:nth-of-type(1) {
-    transform: rotate(0deg) translateY(-140px);
+    transform: translateY(-50%) rotate(0deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(2) {
-    transform: rotate(36deg) translateY(-140px);
+    transform: translateY(-50%) rotate(7.2deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(3) {
-    transform: rotate(72deg) translateY(-140px);
+    transform: translateY(-50%) rotate(14.4deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(4) {
-    transform: rotate(108deg) translateY(-140px);
+    transform: translateY(-50%) rotate(21.6deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(5) {
-    transform: rotate(144deg) translateY(-140px);
+    transform: translateY(-50%) rotate(28.8deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(6) {
-    transform: rotate(180deg) translateY(-140px);
+    transform: translateY(-50%) rotate(36deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(7) {
-    transform: rotate(216deg) translateY(-140px);
+    transform: translateY(-50%) rotate(43.2deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(8) {
-    transform: rotate(252deg) translateY(-140px);
+    transform: translateY(-50%) rotate(50.4deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(9) {
-    transform: rotate(288deg) translateY(-140px);
+    transform: translateY(-50%) rotate(57.6deg);
 }
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(10) {
-    transform: rotate(324deg) translateY(-140px);
+    transform: translateY(-50%) rotate(64.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(11) {
+    transform: translateY(-50%) rotate(72deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(12) {
+    transform: translateY(-50%) rotate(79.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(13) {
+    transform: translateY(-50%) rotate(86.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(14) {
+    transform: translateY(-50%) rotate(93.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(15) {
+    transform: translateY(-50%) rotate(100.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(16) {
+    transform: translateY(-50%) rotate(108deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(17) {
+    transform: translateY(-50%) rotate(115.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(18) {
+    transform: translateY(-50%) rotate(122.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(19) {
+    transform: translateY(-50%) rotate(129.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(20) {
+    transform: translateY(-50%) rotate(136.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(21) {
+    transform: translateY(-50%) rotate(144deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(22) {
+    transform: translateY(-50%) rotate(151.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(23) {
+    transform: translateY(-50%) rotate(158.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(24) {
+    transform: translateY(-50%) rotate(165.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(25) {
+    transform: translateY(-50%) rotate(172.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(26) {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(27) {
+    transform: translateY(-50%) rotate(187.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(28) {
+    transform: translateY(-50%) rotate(194.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(29) {
+    transform: translateY(-50%) rotate(201.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(30) {
+    transform: translateY(-50%) rotate(208.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(31) {
+    transform: translateY(-50%) rotate(216deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(32) {
+    transform: translateY(-50%) rotate(223.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(33) {
+    transform: translateY(-50%) rotate(230.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(34) {
+    transform: translateY(-50%) rotate(237.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(35) {
+    transform: translateY(-50%) rotate(244.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(36) {
+    transform: translateY(-50%) rotate(252deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(37) {
+    transform: translateY(-50%) rotate(259.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(38) {
+    transform: translateY(-50%) rotate(266.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(39) {
+    transform: translateY(-50%) rotate(273.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(40) {
+    transform: translateY(-50%) rotate(280.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(41) {
+    transform: translateY(-50%) rotate(288deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(42) {
+    transform: translateY(-50%) rotate(295.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(43) {
+    transform: translateY(-50%) rotate(302.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(44) {
+    transform: translateY(-50%) rotate(309.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(45) {
+    transform: translateY(-50%) rotate(316.8deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(46) {
+    transform: translateY(-50%) rotate(324deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(47) {
+    transform: translateY(-50%) rotate(331.2deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(48) {
+    transform: translateY(-50%) rotate(338.4deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(49) {
+    transform: translateY(-50%) rotate(345.6deg);
+}
+
+.scene_saturn__ring .layer .layer_part:nth-of-type(50) {
+    transform: translateY(-50%) rotate(352.8deg);
 }
 
 /* ===== NEW: SHOOTING STARS ===== */
