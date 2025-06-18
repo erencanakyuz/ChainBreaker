@@ -360,7 +360,86 @@
             rgba(var(--yellow-rgb), 0.8) 55%,
             transparent 100%);
     transform-origin: 0 50%;
-    animation: lightRotate var(--light-speed) linear infinite;
+    animation: lightRotate var(--light-speed) linear infinite,
+        perfect-timing-pulse 4s ease-in-out infinite;
+}
+
+/* Enhanced lighthouse light with timing mechanics */
+.scene-lighthouse .lighthouse-holder .top .light-container .light::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(var(--aqua-rgb), 0.6) 45%,
+            rgba(var(--aqua-rgb), 1) 50%,
+            rgba(var(--aqua-rgb), 0.6) 55%,
+            transparent 100%);
+    animation: timing-beam 4s ease-in-out infinite;
+    opacity: 0;
+}
+
+.scene-lighthouse .lighthouse-holder .top .light-container .light::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle,
+            rgba(var(--yellow-rgb), 0.3) 0%,
+            rgba(var(--aqua-rgb), 0.2) 30%,
+            transparent 70%);
+    animation: perfect-glow 3s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+@keyframes perfect-timing-pulse {
+
+    0%,
+    100% {
+        filter: brightness(1) saturate(1);
+    }
+
+    50% {
+        filter: brightness(1.3) saturate(1.5);
+    }
+}
+
+@keyframes timing-beam {
+
+    0%,
+    80% {
+        opacity: 0;
+    }
+
+    85%,
+    95% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes perfect-glow {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+    }
 }
 
 /* ===== LIGHTHOUSE DETAILS ===== */
@@ -672,5 +751,385 @@
     22%,
     72% {
         transform: scaleY(0.1);
+    }
+}
+
+/* ===== PLUTO EMOTIONAL REACTIONS ===== */
+.scene-lighthouse .pluto.realization {
+    animation: pluto-move-to-lighthouse 8s ease-in-out forwards,
+        pluto-realization 6s ease-in-out 10s forwards,
+        pluto-hover 4s ease-in-out infinite 16s;
+}
+
+.scene-lighthouse .pluto.realization .eyes .eye {
+    animation: pluto-blink 3s infinite ease-in-out,
+        eye-realization 4s ease-in-out 12s forwards;
+}
+
+.scene-lighthouse .pluto.realization .mouth {
+    animation: mouth-realization 4s ease-in-out 12s forwards;
+}
+
+/* Thought bubble for Pluto's realization */
+.scene-lighthouse .thought-bubble {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--aqua);
+    border-radius: 20px;
+    padding: 15px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--dark);
+    opacity: 0;
+    animation: thought-appear 3s ease-in-out 14s forwards;
+    z-index: 8;
+    max-width: 150px;
+    text-align: center;
+}
+
+.scene-lighthouse .thought-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 30%;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 12px solid rgba(255, 255, 255, 0.9);
+}
+
+.scene-lighthouse .thought-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 40%;
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+}
+
+/* Progress indicator rings around Pluto */
+.scene-lighthouse .progress-rings {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
+}
+
+.scene-lighthouse .progress-ring {
+    position: absolute;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--aqua);
+    border-radius: 50%;
+    animation: progress-spin 2s linear infinite;
+    opacity: 0;
+}
+
+.scene-lighthouse .progress-ring.ring1 {
+    width: 100px;
+    height: 100px;
+    top: -10px;
+    left: -10px;
+    animation-delay: 15s;
+    animation-duration: 3s;
+}
+
+.scene-lighthouse .progress-ring.ring2 {
+    width: 120px;
+    height: 120px;
+    top: -20px;
+    left: -20px;
+    animation-delay: 15.5s;
+    animation-duration: 2.5s;
+    border-top-color: var(--yellow);
+}
+
+.scene-lighthouse .progress-ring.ring3 {
+    width: 140px;
+    height: 140px;
+    top: -30px;
+    left: -30px;
+    animation-delay: 16s;
+    animation-duration: 2s;
+    border-top-color: rgba(142, 45, 226, 0.8);
+}
+
+@keyframes pluto-realization {
+    0% {
+        filter: brightness(1) saturate(1);
+        transform: scale(1);
+    }
+
+    25% {
+        filter: brightness(1.2) saturate(1.3);
+        transform: scale(1.05);
+    }
+
+    50% {
+        filter: brightness(1.4) saturate(1.5);
+        transform: scale(1.1);
+    }
+
+    75% {
+        filter: brightness(1.2) saturate(1.2);
+        transform: scale(1.05);
+    }
+
+    100% {
+        filter: brightness(1.1) saturate(1.1);
+        transform: scale(1);
+    }
+}
+
+@keyframes eye-realization {
+    0% {
+        background: #ff1744;
+        box-shadow: 0 0 10px rgba(255, 23, 68, 0.8);
+    }
+
+    50% {
+        background: var(--aqua);
+        box-shadow: 0 0 15px rgba(var(--aqua-rgb), 1);
+        transform: scale(1.3);
+    }
+
+    100% {
+        background: var(--yellow);
+        box-shadow: 0 0 20px rgba(var(--yellow-rgb), 1);
+        transform: scale(1.1);
+    }
+}
+
+@keyframes mouth-realization {
+    0% {
+        border-radius: 50% 50% 60% 60%;
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        border-radius: 60% 60% 40% 40%;
+        transform: translateX(-50%) scale(1.2);
+    }
+
+    100% {
+        border-radius: 40% 40% 60% 60%;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+@keyframes thought-appear {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px) scale(0.8);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px) scale(0.9);
+    }
+}
+
+@keyframes progress-spin {
+    0% {
+        transform: rotate(0deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ===== AUDIO VISUALIZATION (SOUND EFFECTS SIMULATION) ===== */
+.scene-lighthouse .sound-waves {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 7;
+    pointer-events: none;
+}
+
+.scene-lighthouse .sound-wave {
+    position: absolute;
+    border: 2px solid rgba(var(--aqua-rgb), 0.4);
+    border-radius: 50%;
+    background: transparent;
+    animation: wave-expand 2s ease-out infinite;
+    opacity: 0;
+}
+
+/* Lighthouse horn sound waves */
+.scene-lighthouse .lighthouse-horn-wave {
+    top: 15%;
+    left: 45%;
+    width: 20px;
+    height: 20px;
+    border-color: rgba(var(--yellow-rgb), 0.6);
+    animation-delay: 5s;
+}
+
+.scene-lighthouse .lighthouse-horn-wave:nth-child(2) {
+    animation-delay: 5.5s;
+}
+
+.scene-lighthouse .lighthouse-horn-wave:nth-child(3) {
+    animation-delay: 6s;
+}
+
+/* Perfect timing "ding" effect */
+.scene-lighthouse .perfect-ding {
+    top: 40%;
+    left: 55%;
+    width: 15px;
+    height: 15px;
+    border-color: rgba(var(--yellow-rgb), 0.8);
+    animation-delay: 12s;
+    animation-duration: 1.5s;
+}
+
+/* Pluto realization "revelation" sound */
+.scene-lighthouse .revelation-wave {
+    top: 55%;
+    left: 40%;
+    width: 25px;
+    height: 25px;
+    border-color: rgba(142, 45, 226, 0.6);
+    animation-delay: 14s;
+    animation-duration: 3s;
+}
+
+/* Ocean wave crashes */
+.scene-lighthouse .ocean-crash {
+    bottom: 5%;
+    left: 10%;
+    width: 30px;
+    height: 30px;
+    border-color: rgba(var(--aqua-rgb), 0.5);
+    animation-delay: 8s;
+    animation-duration: 2.5s;
+}
+
+.scene-lighthouse .ocean-crash:nth-child(6) {
+    left: 60%;
+    animation-delay: 10s;
+}
+
+.scene-lighthouse .ocean-crash:nth-child(7) {
+    left: 35%;
+    animation-delay: 12s;
+}
+
+/* Chain breaking sound */
+.scene-lighthouse .chain-break-sound {
+    top: 25%;
+    left: 20%;
+    width: 20px;
+    height: 20px;
+    border-color: rgba(var(--grey-rgb), 0.7);
+    animation-delay: 15s;
+    animation-duration: 1s;
+}
+
+.scene-lighthouse .chain-break-sound:nth-child(9) {
+    top: 20%;
+    left: 70%;
+    animation-delay: 15.3s;
+}
+
+/* Visual beat/rhythm indicators */
+.scene-lighthouse .beat-indicator {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 20px;
+    z-index: 7;
+}
+
+.scene-lighthouse .beat-bar {
+    position: absolute;
+    width: 4px;
+    background: var(--aqua);
+    border-radius: 2px;
+    animation: beat-pulse 0.8s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+.scene-lighthouse .beat-bar:nth-child(1) {
+    left: 45%;
+    height: 15px;
+    animation-delay: 0s;
+}
+
+.scene-lighthouse .beat-bar:nth-child(2) {
+    left: 48%;
+    height: 20px;
+    animation-delay: 0.1s;
+}
+
+.scene-lighthouse .beat-bar:nth-child(3) {
+    left: 51%;
+    height: 18px;
+    animation-delay: 0.2s;
+}
+
+.scene-lighthouse .beat-bar:nth-child(4) {
+    left: 54%;
+    height: 12px;
+    animation-delay: 0.3s;
+}
+
+@keyframes wave-expand {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(15);
+        opacity: 0;
+    }
+}
+
+@keyframes beat-pulse {
+
+    0%,
+    100% {
+        transform: scaleY(0.5);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scaleY(1.2);
+        opacity: 0.8;
     }
 }
