@@ -2,7 +2,9 @@
 
 /* ===== SPACE SCENE BASE ===== */
 .scene-space {
-    background: #38216b;
+    background: radial-gradient(ellipse at center, #1b2735 0%, #090a0f 100%);
+    overflow: hidden;
+    /* Prevent shooting stars from creating scrollbars */
 }
 
 .scene {
@@ -51,8 +53,40 @@
     background: #a5c6ff;
     transform-style: preserve-3d;
     box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.38823529411764707) inset, -30px -20px 50px #637bff inset;
-    animation: titan 6s infinite ease;
+    animation: pluto-anger 6s infinite ease;
     top: -220px;
+}
+
+/* Pluto's angry aura and shake */
+@keyframes pluto-anger {
+
+    0%,
+    100% {
+        transform: translateY(-50%) translateX(0) rotate(0deg);
+        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
+            -30px -20px 50px #637bff inset,
+            0 0 50px rgba(40, 0, 0, 0.5);
+        /* Dark aura */
+    }
+
+    20% {
+        transform: translateY(-51%) translateX(-2px) rotate(-0.5deg);
+    }
+
+    40% {
+        transform: translateY(-50%) translateX(2px) rotate(0.5deg);
+    }
+
+    60% {
+        box-shadow: 0px 0px 0px 4px rgba(169, 187, 236, 0.4) inset,
+            -30px -20px 50px #637bff inset,
+            0 0 80px rgba(80, 0, 0, 0.8);
+        /* Intense dark aura */
+    }
+
+    80% {
+        transform: translateY(-49%) translateX(-1px) rotate(-0.2deg);
+    }
 }
 
 .scene_titan .eyes {
@@ -71,7 +105,24 @@
     background: #53487a;
     border-radius: 10px;
     bottom: 34px;
-    animation: blink 1s 0s infinite linear;
+    animation: pluto-eyes-glow 3s infinite linear;
+}
+
+@keyframes pluto-eyes-glow {
+
+    0%,
+    100% {
+        background-color: #53487a;
+        box-shadow: 0 0 5px rgba(255, 100, 100, 0);
+        transform: scale(1);
+    }
+
+    50% {
+        background-color: #ff4747;
+        /* Red glow */
+        box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7);
+        transform: scale(1.2);
+    }
 }
 
 .scene_titan .eyes .eye.eye--left {
@@ -190,7 +241,7 @@
 }
 
 .scene_saturn__sparks .spark:nth-of-type(odd) {
-    animation: spin 0.4s infinite linear;
+    animation: sparkle 1.2s infinite linear;
     width: 2px;
     height: 18px;
     background: #ffe082;
@@ -198,45 +249,81 @@
     transform-origin: 50% 120px;
 }
 
+/* More dynamic sparkle animation */
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scaleY(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scaleY(0.3) rotate(180deg);
+        opacity: 0.5;
+    }
+}
+
+/* Make even sparks sparkle too, but differently */
+.scene_saturn__sparks .spark:nth-of-type(even) {
+    animation: sparkle 1.8s infinite linear;
+    animation-delay: 0.6s;
+    width: 2px;
+    height: 18px;
+    background: #ffffff;
+    border-radius: 20px;
+    transform-origin: 50% 120px;
+}
+
 /* Spark individual animations */
 .scene_saturn__sparks .spark:nth-of-type(1) {
-    animation: spark--1 0.6s infinite linear;
+    animation: spark--1 0.6s infinite linear, sparkle 1.5s infinite ease-in-out;
+    animation-delay: 0.1s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(2) {
-    animation: spark--2 0.6s infinite linear;
+    animation: spark--2 0.6s infinite linear, sparkle 1.2s infinite ease-in-out;
+    animation-delay: 0.3s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(3) {
-    animation: spark--3 0.6s infinite linear;
+    animation: spark--3 0.6s infinite linear, sparkle 1.8s infinite ease-in-out;
+    animation-delay: 0.5s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(4) {
-    animation: spark--4 0.6s infinite linear;
+    animation: spark--4 0.6s infinite linear, sparkle 1.4s infinite ease-in-out;
+    animation-delay: 0.2s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(5) {
-    animation: spark--5 0.6s infinite linear;
+    animation: spark--5 0.6s infinite linear, sparkle 1.6s infinite ease-in-out;
+    animation-delay: 0.7s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(6) {
-    animation: spark--6 0.6s infinite linear;
+    animation: spark--6 0.6s infinite linear, sparkle 1.3s infinite ease-in-out;
+    animation-delay: 0.4s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(7) {
-    animation: spark--7 0.6s infinite linear;
+    animation: spark--7 0.6s infinite linear, sparkle 1.7s infinite ease-in-out;
+    animation-delay: 0.8s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(8) {
-    animation: spark--8 0.6s infinite linear;
+    animation: spark--8 0.6s infinite linear, sparkle 1.5s infinite ease-in-out;
+    animation-delay: 0.1s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(9) {
-    animation: spark--9 0.6s infinite linear;
+    animation: spark--9 0.6s infinite linear, sparkle 1.2s infinite ease-in-out;
+    animation-delay: 0.6s;
 }
 
 .scene_saturn__sparks .spark:nth-of-type(10) {
-    animation: spark--10 0.6s infinite linear;
+    animation: spark--10 0.6s infinite linear, sparkle 1.9s infinite ease-in-out;
+    animation-delay: 0.3s;
 }
 
 /* ===== SATURN RINGS ===== */
@@ -371,4 +458,438 @@
 
 .scene_saturn__ring .layer .layer_part:nth-of-type(10) {
     transform: rotate(324deg) translateY(-140px);
+}
+
+/* ===== NEW: SHOOTING STARS ===== */
+.scene-space::before,
+.scene-space::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px white;
+    animation: shooting-star 15s linear infinite;
+}
+
+.scene-space::before {
+    top: 20%;
+    left: -50px;
+    animation-delay: 3s;
+    animation-duration: 10s;
+}
+
+.scene-space::after {
+    top: 60%;
+    left: -50px;
+    animation-delay: 8s;
+    animation-duration: 12s;
+}
+
+@keyframes shooting-star {
+    0% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(120vw) translateY(-150px) scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* ===== NEW: BACKGROUND STARS ===== */
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(45deg);
+    /* Vary the star pattern */
+}
+
+.star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
+    box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes twinkle {
+
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Generate random positions, sizes, and animation delays for stars */
+.star:nth-child(1) {
+    top: 10%;
+    left: 20%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 4s;
+    animation-delay: 1s;
+}
+
+.star:nth-child(2) {
+    top: 80%;
+    left: 30%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 5s;
+    animation-delay: 2s;
+}
+
+.star:nth-child(3) {
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 3s;
+    animation-delay: 0.5s;
+}
+
+.star:nth-child(4) {
+    top: 25%;
+    left: 75%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 6s;
+    animation-delay: 3s;
+}
+
+.star:nth-child(5) {
+    top: 90%;
+    left: 90%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 4.5s;
+    animation-delay: 1.5s;
+}
+
+.star:nth-child(6) {
+    top: 5%;
+    left: 5%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 3.5s;
+    animation-delay: 0s;
+}
+
+.star:nth-child(7) {
+    top: 40%;
+    left: 15%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 5.5s;
+    animation-delay: 2.5s;
+}
+
+.star:nth-child(8) {
+    top: 60%;
+    left: 60%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 2.5s;
+    animation-delay: 0.2s;
+}
+
+.star:nth-child(9) {
+    top: 15%;
+    left: 85%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 7s;
+    animation-delay: 4s;
+}
+
+.star:nth-child(10) {
+    top: 70%;
+    left: 10%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 4s;
+    animation-delay: 1.2s;
+}
+
+/* ... (Add more rules for more stars. This pattern can be extended for all 100) */
+.star:nth-child(11) {
+    top: 22%;
+    left: 48%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 6.2s;
+    animation-delay: 3.1s;
+}
+
+.star:nth-child(12) {
+    top: 88%;
+    left: 63%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.8s;
+    animation-delay: 1.9s;
+}
+
+.star:nth-child(13) {
+    top: 43%;
+    left: 88%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 5.3s;
+    animation-delay: 2.6s;
+}
+
+.star:nth-child(14) {
+    top: 68%;
+    left: 8%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 2.8s;
+    animation-delay: 0.4s;
+}
+
+.star:nth-child(15) {
+    top: 8%;
+    left: 68%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 4.8s;
+    animation-delay: 2.4s;
+}
+
+.star:nth-child(16) {
+    top: 55%;
+    left: 23%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 7.5s;
+    animation-delay: 3.7s;
+}
+
+.star:nth-child(17) {
+    top: 95%;
+    left: 45%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.2s;
+    animation-delay: 1.6s;
+}
+
+.star:nth-child(18) {
+    top: 33%;
+    left: 33%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 4.2s;
+    animation-delay: 2.1s;
+}
+
+.star:nth-child(19) {
+    top: 77%;
+    left: 77%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 5.8s;
+    animation-delay: 2.9s;
+}
+
+.star:nth-child(20) {
+    top: 18%;
+    left: 58%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.6s;
+    animation-delay: 1.8s;
+}
+
+.star:nth-child(21) {
+    top: 95%;
+    left: 5%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 6.5s;
+    animation-delay: 3.2s;
+}
+
+.star:nth-child(22) {
+    top: 5%;
+    left: 95%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 7.2s;
+    animation-delay: 4.1s;
+}
+
+.star:nth-child(23) {
+    top: 50%;
+    left: 98%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 2.9s;
+    animation-delay: 0.8s;
+}
+
+.star:nth-child(24) {
+    top: 98%;
+    left: 50%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 4.3s;
+    animation-delay: 2.3s;
+}
+
+.star:nth-child(25) {
+    top: 2%;
+    left: 2%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 8s;
+    animation-delay: 5s;
+}
+
+.star:nth-child(26) {
+    top: 35%;
+    left: 70%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.1s;
+    animation-delay: 1.1s;
+}
+
+.star:nth-child(27) {
+    top: 70%;
+    left: 35%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 4.9s;
+    animation-delay: 2.7s;
+}
+
+.star:nth-child(28) {
+    top: 85%;
+    left: 15%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 6.8s;
+    animation-delay: 3.9s;
+}
+
+.star:nth-child(29) {
+    top: 15%;
+    left: 85%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.4s;
+    animation-delay: 1.4s;
+}
+
+.star:nth-child(30) {
+    top: 65%;
+    left: 40%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 5.1s;
+    animation-delay: 2.8s;
+}
+
+.star:nth-child(31) {
+    top: 48%;
+    left: 22%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 7.6s;
+    animation-delay: 4.3s;
+}
+
+.star:nth-child(32) {
+    top: 63%;
+    left: 88%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.9s;
+    animation-delay: 1.9s;
+}
+
+.star:nth-child(33) {
+    top: 88%;
+    left: 43%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 5.6s;
+    animation-delay: 3.0s;
+}
+
+.star:nth-child(34) {
+    top: 8%;
+    left: 68%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 2.7s;
+    animation-delay: 0.6s;
+}
+
+.star:nth-child(35) {
+    top: 68%;
+    left: 8%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 4.6s;
+    animation-delay: 2.6s;
+}
+
+.star:nth-child(36) {
+    top: 23%;
+    left: 55%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 7.1s;
+    animation-delay: 3.8s;
+}
+
+.star:nth-child(37) {
+    top: 45%;
+    left: 95%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.3s;
+    animation-delay: 1.7s;
+}
+
+.star:nth-child(38) {
+    top: 33%;
+    left: 33%;
+    width: 3px;
+    height: 3px;
+    animation-duration: 4.5s;
+    animation-delay: 2.2s;
+}
+
+.star:nth-child(39) {
+    top: 77%;
+    left: 77%;
+    width: 1px;
+    height: 1px;
+    animation-duration: 5.9s;
+    animation-delay: 3.1s;
+}
+
+.star:nth-child(40) {
+    top: 58%;
+    left: 18%;
+    width: 2px;
+    height: 2px;
+    animation-duration: 3.7s;
+    animation-delay: 1.8s;
 }

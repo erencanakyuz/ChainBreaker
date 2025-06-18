@@ -26,6 +26,7 @@ class StoryManager {
 
         this.addEventListeners();
         this.showScene(1); // Show the first scene initially
+        this.generateStars(); // Generate stars for the space scene
     }
 
     addEventListeners() {
@@ -157,5 +158,16 @@ class StoryManager {
                 this.loadCSS(url, id).catch(err => console.warn(`Preload failed for ${url}`));
             }, 300);
         }
+    }
+
+    generateStars() {
+        const starsContainer = document.querySelector('#scene-1 .stars');
+        if (!starsContainer) return;
+
+        let starHTML = '';
+        for (let i = 0; i < 100; i++) {
+            starHTML += '<div class="star"></div>';
+        }
+        starsContainer.innerHTML = starHTML;
     }
 } 
