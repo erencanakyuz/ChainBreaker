@@ -183,18 +183,7 @@
 
 
 
-/* Ring Shaping Station */
-.scene-factory .ring-shaper {
-    position: absolute;
-    top: 35%;
-    left: 35%;
-    width: 90px;
-    height: 70px;
-    background: linear-gradient(45deg, #9B59B6, #8E44AD);
-    border-radius: 18px;
-    box-shadow: 0 0 30px rgba(155, 89, 182, 0.6);
-    animation: shaperWork 2.5s ease-in-out infinite;
-}
+
 
 
 
@@ -1135,21 +1124,7 @@
 
 
 
-@keyframes shaperWork {
 
-    0%,
-    100% {
-        transform: scale(1) translateX(0);
-    }
-
-    33% {
-        transform: scale(1.1) translateX(2px);
-    }
-
-    66% {
-        transform: scale(1.15) translateX(-2px);
-    }
-}
 
 
 
