@@ -129,14 +129,14 @@ canvas {
 .game-title {
     color: var(--samurai-gold);
     font-family: "Press Start 2P", monospace;
-    font-size: clamp(4rem, 10vw, 8rem);
+    font-size: clamp(2.5rem, 6vw, 4rem);
     text-align: center;
     text-transform: uppercase;
     text-shadow:
-        0 5px 0 var(--samurai-orange),
-        0 15px 0 var(--samurai-red),
-        0 20px 30px rgba(0, 0, 0, 0.5);
-    margin: 2rem 0;
+        0 3px 0 var(--samurai-orange),
+        0 8px 0 var(--samurai-red),
+        0 12px 20px rgba(0, 0, 0, 0.5);
+    margin: 1rem 0;
     animation: title-glow 3s ease-in-out infinite alternate;
 }
 

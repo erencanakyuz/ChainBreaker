@@ -244,16 +244,17 @@
         titleElement.className = 'game-title';
         titleElement.textContent = 'ChainX';
         titleElement.style.position = 'absolute';
-        titleElement.style.top = '8rem';
+        titleElement.style.top = '1rem';
         titleElement.style.left = '50%';
         titleElement.style.transform = 'translateX(-50%)';
         titleElement.style.zIndex = '1000';
+        titleElement.style.pointerEvents = 'none'; // Don't block clicks
         document.body.appendChild(titleElement);
 
         // Store reference to remove when scene changes
         this.titleElement = titleElement;
 
-        const subtitleText = this.add.text(width / 2, 180, 'Choose Your Path, Warrior', {
+        const subtitleText = this.add.text(width / 2, 200, 'Choose Your Path, Warrior', {
           fontFamily: '"Press Start 2P", monospace',
           fontSize: '16px',
           fill: '#edab50',
@@ -350,7 +351,7 @@
           }
         ];
 
-        let startY = 220, spacing = 70;
+        let startY = 250, spacing = 70;
         this.modeDesigns.forEach((mode, index) => {
           // Create background for each mode button
           const buttonBg = this.add.graphics();
@@ -383,6 +384,12 @@
             }
 
             element.on('pointerdown', () => {
+              // Remove title immediately when starting game
+              if (this.titleElement) {
+                this.titleElement.remove();
+                this.titleElement = null;
+              }
+
               // Add flash effect on selection
               this.tweens.add({
                 targets: buttonBg,
