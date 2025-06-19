@@ -1,60 +1,77 @@
-/* Golden Pluto Skin - Luxurious appearance with golden glow */
+/* Golden Pluto Skin - Luxurious appearance with golden glow (Updated for pluto-base-entity) */
+/* This skin is for the new base entity system only */
 
-.pluto-entity.skin--golden {
+.pluto-base-entity.skin--golden .scene_titan {
     background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
     box-shadow:
-        0 0 0 3px #FFD700 inset,
-        0 0 20px rgba(255, 215, 0, 0.6),
-        0 0 40px rgba(255, 215, 0, 0.3);
+        0 0 0 8px #FFD700 inset,
+        -30px -20px 50px #FFA500 inset,
+        0 0 80px rgba(255, 215, 0, 0.8);
     border: 2px solid #B8860B;
 }
 
-.pluto-entity.skin--golden .eye {
+.pluto-base-entity.skin--golden .scene_titan .eye {
     background: radial-gradient(circle, #FFF8DC, #FFD700);
     box-shadow:
-        0 0 10px rgba(255, 215, 0, 0.8),
-        0 0 20px rgba(255, 215, 0, 0.4);
+        0 0 15px rgba(255, 215, 0, 1),
+        0 0 25px rgba(255, 215, 0, 0.6);
     border: 1px solid #B8860B;
 }
 
-.pluto-entity.skin--golden .mouth {
+.pluto-base-entity.skin--golden .scene_titan .mouth {
     background: #B8860B;
-    box-shadow: 0 0 5px rgba(184, 134, 11, 0.6);
+    box-shadow: 0 0 8px rgba(184, 134, 11, 0.8);
 }
 
-/* Golden glow animation */
-@keyframes golden-pulse {
+/* Golden glow animation for new base structure */
+@keyframes golden-ascension {
 
     0%,
     100% {
+        transform: scale(1.1);
         box-shadow:
-            0 0 0 3px #FFD700 inset,
-            0 0 20px rgba(255, 215, 0, 0.6),
-            0 0 40px rgba(255, 215, 0, 0.3);
+            0 0 0 8px #FFD700 inset,
+            -30px -20px 50px #FFA500 inset,
+            0 0 80px rgba(255, 215, 0, 0.8);
     }
 
     50% {
+        transform: scale(1.25);
         box-shadow:
-            0 0 0 3px #FFD700 inset,
-            0 0 30px rgba(255, 215, 0, 0.8),
-            0 0 60px rgba(255, 215, 0, 0.5);
+            0 0 0 12px #FFD700 inset,
+            -30px -20px 50px #FFA500 inset,
+            0 0 120px 40px rgba(255, 215, 0, 1);
     }
 }
 
-.pluto-entity.skin--golden[data-animation="excited"] {
-    animation: golden-pulse 2s ease-in-out infinite;
+.pluto-base-entity.skin--golden[data-animation="excited"] .scene_titan {
+    animation: golden-ascension 3s ease-in-out infinite;
 }
 
-/* Golden sparkle effect when happy */
-.pluto-entity.skin--golden[data-mood="happy"]::after {
+.pluto-base-entity.skin--golden[data-animation="idle"] .scene_titan {
+    animation: golden-ascension 6s ease-in-out infinite;
+}
+
+/* Golden sparkle effect when happy - updated for new structure */
+.pluto-base-entity.skin--golden[data-mood="happy"] .scene_titan::after {
     content: '';
     position: absolute;
     top: -10px;
     left: -10px;
     right: -10px;
     bottom: -10px;
-    background: radial-gradient(circle, transparent 30%, rgba(255, 215, 0, 0.2) 70%);
+    background: radial-gradient(circle, transparent 30%, rgba(255, 215, 0, 0.3) 70%);
     border-radius: 50%;
     animation: spin 4s linear infinite;
     pointer-events: none;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }

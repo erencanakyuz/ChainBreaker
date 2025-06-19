@@ -19,13 +19,13 @@ export class Pluto {
         // Initialize (async) - the element creation is now handled separately
         this.initialized = this._initialize();
 
-        console.log('Pluto: Component initialization started with skin:', this.skin, this.storyMode ? '(Story Mode)' : '(Game Mode)');
+        console.log('🪐 Pluto: New Base Component initialization started with skin:', this.skin, this.storyMode ? '(Story Mode)' : '(Game Mode)');
     }
 
     // Async initialization method
     async _initialize() {
         try {
-            // Create and initialize the Pluto element
+            // Create and initialize the new Pluto element
             await this._createPlutoElement();
             await this.applySkin(this.skin);
             this.setAnimation('idle');
@@ -34,19 +34,19 @@ export class Pluto {
             // Listen for global game events
             this._setupEventListeners();
 
-            console.log('Pluto: Component fully initialized');
+            console.log('🪐 Pluto: New Base Component fully initialized');
             return true;
         } catch (error) {
-            console.error('Pluto: Initialization failed:', error);
+            console.error('❌ Pluto: Initialization failed:', error);
             return false;
         }
     }
 
-    // Create the main Pluto DOM element
+    // Create the main Pluto DOM element using new base structure
     async _createPlutoElement() {
         try {
             // Use template system instead of hardcoded HTML
-            this.element = await templateManager.createElement('pluto-entity', {
+            this.element = await templateManager.createElement('pluto-base-entity', {
                 mood: this.mood,
                 animation: this.currentAnimation,
                 skin: this.skin
@@ -57,18 +57,30 @@ export class Pluto {
                 this.mount();
             }
 
-            console.log('Pluto: Element created using template system');
+            console.log('🪐 Pluto: New Base Element created using template system');
             return this.element;
         } catch (error) {
-            console.error('Pluto: Failed to create element using template, falling back to manual creation:', error);
+            console.error('❌ Pluto: Failed to create element using template, falling back to manual creation:', error);
             return this._createPlutoElementFallback();
         }
     }
 
-    // Fallback method for manual element creation
+    // Fallback method for manual element creation (new base structure)
     _createPlutoElementFallback() {
         const plutoEntity = document.createElement('div');
-        plutoEntity.className = 'pluto-entity'; // Base class from pluto.css
+        plutoEntity.className = 'pluto-base-entity'; // New base class
+
+        // Create shadow
+        const shadow = document.createElement('div');
+        shadow.className = 'scene_titanShadow';
+
+        // Create t_wrap container
+        const tWrap = document.createElement('div');
+        tWrap.className = 't_wrap';
+
+        // Create main titan body
+        const titan = document.createElement('div');
+        titan.className = 'scene_titan';
 
         // Create eye elements
         const eyes = document.createElement('div');
@@ -87,9 +99,12 @@ export class Pluto {
         const mouth = document.createElement('div');
         mouth.className = 'mouth';
 
-        // Assemble the structure
-        plutoEntity.appendChild(eyes);
-        plutoEntity.appendChild(mouth);
+        // Assemble the new structure
+        titan.appendChild(eyes);
+        titan.appendChild(mouth);
+        tWrap.appendChild(titan);
+        plutoEntity.appendChild(shadow);
+        plutoEntity.appendChild(tWrap);
 
         this.element = plutoEntity;
 
@@ -98,6 +113,7 @@ export class Pluto {
             this.mount();
         }
 
+        console.log('🪐 Pluto: New Base Element created using fallback method');
         return plutoEntity;
     }
 
@@ -105,27 +121,27 @@ export class Pluto {
     _setupEventListeners() {
         // Listen for level completion
         window.addEventListener('levelComplete', (event) => {
-            console.log('Pluto: Level completed, showing happy mood');
+            console.log('🪐 Pluto: Level completed, showing happy mood');
             this.setMood('happy');
             this.setAnimation('excited');
         });
 
         // Listen for player hurt/damage
         window.addEventListener('playerHurt', (event) => {
-            console.log('Pluto: Player hurt, showing sad mood');
+            console.log('🪐 Pluto: Player hurt, showing sad mood');
             this.setMood('sad');
         });
 
         // Listen for game start
         window.addEventListener('gameStart', (event) => {
-            console.log('Pluto: Game started, showing excited mood');
+            console.log('🪐 Pluto: Game started, showing excited mood');
             this.setMood('happy');
             this.setAnimation('excited');
         });
 
         // Listen for game over
         window.addEventListener('gameOver', (event) => {
-            console.log('Pluto: Game over, showing sad mood');
+            console.log('🪐 Pluto: Game over, showing sad mood');
             this.setMood('sad');
             this.setAnimation('idle');
         });
@@ -133,7 +149,7 @@ export class Pluto {
         // Listen for achievement unlocks
         window.addEventListener('itemUnlocked', (event) => {
             const { type, id } = event.detail;
-            console.log(`Pluto: New ${type} unlocked: ${id}, celebrating!`);
+            console.log(`🪐 Pluto: New ${type} unlocked: ${id}, celebrating!`);
             this.celebrate();
         });
 
@@ -141,22 +157,22 @@ export class Pluto {
         window.addEventListener('skinChanged', (event) => {
             const { skinName } = event.detail;
             if (skinName !== this.skin) {
-                console.log(`Pluto: Skin changed to ${skinName}`);
+                console.log(`🪐 Pluto: Skin changed to ${skinName}`);
                 this.applySkin(skinName);
             }
         });
 
         // Listen for progression reset
         window.addEventListener('progressionReset', (event) => {
-            console.log('Pluto: Progression reset, reverting to default skin');
+            console.log('🪐 Pluto: Progression reset, reverting to default skin');
             this.applySkin('default');
         });
     }
 
-    // Apply a skin to Pluto
+    // Apply a skin to Pluto (updated for new base structure)
     async applySkin(skinName) {
         if (!this.storyMode && !this.progression.isUnlocked('skin', skinName)) {
-            console.warn(`Pluto: Skin "${skinName}" is not unlocked, using current skin`);
+            console.warn(`🪐 Pluto: Skin "${skinName}" is not unlocked, using current skin`);
             return false;
         }
 
@@ -166,14 +182,14 @@ export class Pluto {
                 await window.gameManager.loadSkinCSS(skinName);
             }
 
-            // Reset and apply new skin class
-            this.element.className = 'pluto-entity';
+            // Reset and apply new skin class to new base structure
+            this.element.className = 'pluto-base-entity';
             if (skinName !== 'default') {
                 this.element.classList.add(`skin--${skinName}`);
             }
 
             this.skin = skinName;
-            console.log(`Pluto: Applied skin "${skinName}"${this.storyMode ? ' (Story Mode)' : ''}`);
+            console.log(`🪐 Pluto: Applied skin "${skinName}"${this.storyMode ? ' (Story Mode)' : ''}`);
 
             // Dispatch skin applied event
             window.dispatchEvent(new CustomEvent('plutoSkinApplied', {
@@ -182,7 +198,7 @@ export class Pluto {
 
             return true;
         } catch (error) {
-            console.error(`Pluto: Failed to apply skin "${skinName}":`, error);
+            console.error(`❌ Pluto: Failed to apply skin "${skinName}":`, error);
             return false;
         }
     }
@@ -190,14 +206,14 @@ export class Pluto {
     // Set Pluto's mood
     setMood(moodName) {
         if (!this.storyMode && !this.progression.isUnlocked('mood', moodName)) {
-            console.warn(`Pluto: Mood "${moodName}" is locked, keeping current mood`);
+            console.warn(`🪐 Pluto: Mood "${moodName}" is locked, keeping current mood`);
             return false;
         }
 
         this.element.dataset.mood = moodName; // Use data-attributes for CSS state
         this.mood = moodName;
 
-        console.log(`Pluto: Mood changed to "${moodName}"${this.storyMode ? ' (Story Mode)' : ''}`);
+        console.log(`🪐 Pluto: Mood changed to "${moodName}"${this.storyMode ? ' (Story Mode)' : ''}`);
 
         // Dispatch mood change event
         window.dispatchEvent(new CustomEvent('plutoMoodChanged', {
@@ -210,14 +226,14 @@ export class Pluto {
     // Set Pluto's animation
     setAnimation(animationName) {
         if (!this.storyMode && !this.progression.isUnlocked('animation', animationName)) {
-            console.warn(`Pluto: Animation "${animationName}" is locked, keeping current animation`);
+            console.warn(`🪐 Pluto: Animation "${animationName}" is locked, keeping current animation`);
             return false;
         }
 
         this.element.dataset.animation = animationName;
         this.currentAnimation = animationName;
 
-        console.log(`Pluto: Animation changed to "${animationName}"${this.storyMode ? ' (Story Mode)' : ''}`);
+        console.log(`🪐 Pluto: Animation changed to "${animationName}"${this.storyMode ? ' (Story Mode)' : ''}`);
 
         // Dispatch animation change event
         window.dispatchEvent(new CustomEvent('plutoAnimationChanged', {
@@ -227,19 +243,15 @@ export class Pluto {
         return true;
     }
 
-    // Special celebration animation for achievements
+    // Special celebration animation
     celebrate() {
-        const originalAnimation = this.currentAnimation;
-        const originalMood = this.mood;
-
-        // Show excited state
+        console.log('🪐 Pluto: Celebrating! 🎉');
         this.setMood('happy');
         this.setAnimation('excited');
 
-        // Return to previous state after celebration
+        // Return to idle after celebration
         setTimeout(() => {
-            this.setMood(originalMood);
-            this.setAnimation(originalAnimation);
+            this.setAnimation('idle');
         }, 3000);
     }
 
@@ -247,64 +259,50 @@ export class Pluto {
     show() {
         if (this.element) {
             this.element.style.display = 'block';
-            this.element.style.opacity = '1';
             this.isVisible = true;
+            console.log('🪐 Pluto: Shown');
 
-            console.log('Pluto: Shown');
-
-            window.dispatchEvent(new CustomEvent('plutoVisibilityChanged', {
-                detail: { visible: true }
-            }));
+            // Dispatch show event
+            window.dispatchEvent(new CustomEvent('plutoShown'));
         }
     }
 
     // Hide Pluto
     hide() {
         if (this.element) {
-            this.element.style.opacity = '0';
-            setTimeout(() => {
-                if (this.element) {
-                    this.element.style.display = 'none';
-                }
-            }, 300); // Wait for opacity transition
+            this.element.style.display = 'none';
             this.isVisible = false;
+            console.log('🪐 Pluto: Hidden');
 
-            console.log('Pluto: Hidden');
-
-            window.dispatchEvent(new CustomEvent('plutoVisibilityChanged', {
-                detail: { visible: false }
-            }));
+            // Dispatch hide event
+            window.dispatchEvent(new CustomEvent('plutoHidden'));
         }
     }
 
-    // Mount Pluto to the container
+    // Mount Pluto to its container
     mount() {
-        if (this.container && this.element && !this.container.contains(this.element)) {
+        if (this.element && this.container) {
             this.container.appendChild(this.element);
-            console.log('Pluto: Mounted to container');
+            console.log('🪐 Pluto: Mounted to container');
         }
     }
 
-    // Unmount Pluto from the container
+    // Unmount Pluto from its container
     unmount() {
         if (this.element && this.element.parentNode) {
             this.element.parentNode.removeChild(this.element);
-            console.log('Pluto: Unmounted from container');
+            console.log('🪐 Pluto: Unmounted from container');
         }
     }
 
-    // Destroy the Pluto component
+    // Destroy the Pluto instance
     destroy() {
-        // Remove event listeners
-        // Note: Since we're using window.addEventListener, we'd need to store references to remove them
-        // For now, we'll just remove the element
-
         this.unmount();
         this.element = null;
         this.container = null;
+        console.log('🪐 Pluto: Destroyed');
 
-        console.log('Pluto: Component destroyed');
-
+        // Dispatch destroy event
         window.dispatchEvent(new CustomEvent('plutoDestroyed'));
     }
 
@@ -315,65 +313,66 @@ export class Pluto {
             mood: this.mood,
             animation: this.currentAnimation,
             visible: this.isVisible,
-            unlocked: {
-                skins: this.progression.getUnlockedItems('skin'),
-                moods: this.progression.getUnlockedItems('mood'),
-                animations: this.progression.getUnlockedItems('animation')
-            }
+            storyMode: this.storyMode,
+            mounted: !!(this.element && this.element.parentNode)
         };
     }
 
-    // Update Pluto's position (for advanced positioning)
+    // Set position (for positioning in specific scenes)
     setPosition(x, y) {
         if (this.element) {
             this.element.style.left = `${x}px`;
             this.element.style.top = `${y}px`;
-            this.element.style.transform = 'none'; // Override the default centering
+            this.element.style.transform = 'none'; // Remove center transform
+            console.log(`🪐 Pluto: Position set to (${x}, ${y})`);
         }
     }
 
-    // Reset position to center
+    // Reset to center position
     resetPosition() {
         if (this.element) {
             this.element.style.left = '50%';
             this.element.style.top = '50%';
             this.element.style.transform = 'translate(-50%, -50%)';
+            console.log('🪐 Pluto: Position reset to center');
         }
     }
 
-    // Animate to a specific position (with smooth transition)
+    // Animate to position
     animateToPosition(x, y, duration = 1000) {
         if (this.element) {
-            this.element.style.transition = `left ${duration}ms ease-in-out, top ${duration}ms ease-in-out`;
+            this.element.style.transition = `left ${duration}ms ease, top ${duration}ms ease`;
             this.setPosition(x, y);
 
-            // Remove transition after animation completes
+            // Remove transition after animation
             setTimeout(() => {
                 if (this.element) {
                     this.element.style.transition = '';
                 }
             }, duration);
+
+            console.log(`🪐 Pluto: Animating to position (${x}, ${y}) over ${duration}ms`);
         }
     }
 
-    // Utility method to check if Pluto has a specific capability
+    // Check if capability is available
     hasCapability(type, id) {
-        return this.progression.isUnlocked(type, id);
+        return this.storyMode || this.progression.isUnlocked(type, id);
     }
 
-    // Get available options for customization
+    // Get available options based on unlocks
     getAvailableOptions() {
         return {
-            skins: this.progression.getUnlockedItems('skin'),
-            moods: this.progression.getUnlockedItems('mood'),
-            animations: this.progression.getUnlockedItems('animation')
+            skins: this.storyMode ? ['default', 'golden', 'cyborg', 'rainbow'] : this.progression.getUnlockedItems('skin'),
+            moods: this.storyMode ? ['neutral', 'happy', 'sad', 'angry'] : this.progression.getUnlockedItems('mood'),
+            animations: this.storyMode ? ['idle', 'excited'] : this.progression.getUnlockedItems('animation')
         };
     }
 
     // Enable/disable story mode (bypasses unlock restrictions)
     setStoryMode(enabled) {
         this.storyMode = enabled;
-        console.log(`Pluto: Story mode ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`🪐 Pluto: Story mode ${enabled ? 'enabled' : 'disabled'}`);
     }
 
     // Check if in story mode

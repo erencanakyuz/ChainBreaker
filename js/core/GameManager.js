@@ -493,7 +493,7 @@ export class GameManager {
      */
     async preloadTemplates() {
         const commonTemplates = [
-            'pluto-entity',
+            'pluto-base-entity',
             'reward-notification',
             'error-display',
             'test-panel'

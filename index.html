@@ -15,6 +15,7 @@
   <!-- Component Styles -->
   <link rel="stylesheet" href="css/components/animations.css?v=3.0">
   <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
+  <link rel="stylesheet" href="css/components/pluto-base.css?v=3.0">
 
 </head>
 
@@ -264,8 +265,8 @@
         // Store reference to remove when scene changes
         this.titleElement = titleElement;
 
-        // Create unified Pluto on the left side with cute animations
-        this.setupUnifiedPluto();
+        // Create new base Pluto on the left side
+        this.setupNewBasePluto();
 
         const subtitleText = this.add.text(width / 2, 200, 'Choose Your Path, Warrior', {
           fontFamily: '"Press Start 2P", monospace',
@@ -479,11 +480,11 @@
                 this.titleElement = null;
               }
 
-              // Clean up unified Pluto immediately
-              if (this.unifiedPlutoContainer) {
-                this.unifiedPlutoContainer.remove();
-                this.unifiedPlutoContainer = null;
-                this.plutoBody = null;
+              // Clean up menu Pluto immediately
+              if (this.menuPlutoContainer) {
+                this.menuPlutoContainer.remove();
+                this.menuPlutoContainer = null;
+                this.menuPlutoEntity = null;
               }
 
               // Add flash effect on selection
@@ -544,117 +545,72 @@
         });
       }
 
-      setupUnifiedPluto() {
-        // Create unified Pluto that works for both menu and game
-        this.unifiedPlutoContainer = document.createElement('div');
-        this.unifiedPlutoContainer.id = 'unified-pluto-container';
-
-        // Create main Pluto body with unified sizing
-        const plutoMain = document.createElement('div');
-        plutoMain.className = 'unified-pluto-body';
-        plutoMain.style.cssText = `
-          position: relative;
-          width: 55px;
-          height: 55px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 50%, #2c1810 100%);
-          transform-style: preserve-3d;
-          box-shadow: 0px 0px 0px 3px rgba(142, 45, 226, 0.6) inset, 
-                      -20px -15px 40px #4a00e0 inset, 
-                      0 0 18px rgba(142, 45, 226, 0.4);
-          animation: pluto-idle 3s infinite ease-in-out;
-          transition: all 0.5s ease;
+      setupNewBasePluto() {
+        // Create new base Pluto using the new component system
+        const plutoContainer = document.createElement('div');
+        plutoContainer.id = 'menu-pluto-container';
+        plutoContainer.style.cssText = `
+          position: absolute;
+          left: 80px;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 1000;
+          pointer-events: none;
+          width: 100px;
+          height: 100px;
         `;
 
-        // Create eyes container
+        // Create the new base Pluto structure directly
+        const plutoEntity = document.createElement('div');
+        plutoEntity.className = 'pluto-base-entity';
+        plutoEntity.dataset.mood = 'neutral';
+        plutoEntity.dataset.animation = 'idle';
+        plutoEntity.dataset.skin = 'default';
+
+        // Create shadow
+        const shadow = document.createElement('div');
+        shadow.className = 'scene_titanShadow';
+
+        // Create t_wrap container
+        const tWrap = document.createElement('div');
+        tWrap.className = 't_wrap';
+
+        // Create main titan body
+        const titan = document.createElement('div');
+        titan.className = 'scene_titan';
+
+        // Create eyes
         const eyes = document.createElement('div');
-        eyes.className = 'pluto-eyes';
+        eyes.className = 'eyes';
 
         const leftEye = document.createElement('div');
         leftEye.className = 'eye eye--left';
-        leftEye.style.cssText = `
-          position: absolute;
-          left: 15px;
-          top: 15px;
-          width: 7px;
-          height: 7px;
-          background: #ffffff;
-          border-radius: 50%;
-          box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-          animation: pluto-blink 4s infinite linear;
-        `;
 
         const rightEye = document.createElement('div');
         rightEye.className = 'eye eye--right';
-        rightEye.style.cssText = `
-          position: absolute;
-          right: 15px;
-          top: 15px;
-          width: 7px;
-          height: 7px;
-          background: #ffffff;
-          border-radius: 50%;
-          box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
-          animation: pluto-blink 4s infinite linear;
-        `;
 
         eyes.appendChild(leftEye);
         eyes.appendChild(rightEye);
 
         // Create mouth
         const mouth = document.createElement('div');
-        mouth.className = 'pluto-mouth';
-        mouth.style.cssText = `
-          position: absolute;
-          bottom: 18px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 12px;
-          height: 6px;
-          background: rgba(0, 0, 0, 0.3);
-          border-radius: 50% 50% 60% 60%;
-          box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.5);
-        `;
+        mouth.className = 'mouth';
 
-        // Create optional shadow (for game mode)
-        const shadow = document.createElement('div');
-        shadow.className = 'pluto-shadow';
-        shadow.style.cssText = `
-          position: absolute;
-          left: 50%;
-          top: 65px;
-          transform: translateX(-50%);
-          width: 35px;
-          height: 8px;
-          border-radius: 100%;
-          background: rgba(41, 24, 99, 0.6);
-          opacity: 0;
-          transition: opacity 0.5s ease;
-        `;
+        // Assemble the new structure
+        titan.appendChild(eyes);
+        titan.appendChild(mouth);
+        tWrap.appendChild(titan);
+        plutoEntity.appendChild(shadow);
+        plutoEntity.appendChild(tWrap);
+        plutoContainer.appendChild(plutoEntity);
+        document.body.appendChild(plutoContainer);
 
-        // Assemble unified Pluto
-        plutoMain.appendChild(eyes);
-        plutoMain.appendChild(mouth);
-        this.unifiedPlutoContainer.appendChild(plutoMain);
-        this.unifiedPlutoContainer.appendChild(shadow);
-        document.body.appendChild(this.unifiedPlutoContainer);
+        // Store references for the new structure
+        this.menuPlutoContainer = plutoContainer;
+        this.menuPlutoEntity = plutoEntity;
+        this.menuPlutoTitan = titan;
 
-        // Store references
-        this.plutoContainer = this.unifiedPlutoContainer;
-        this.plutoBody = plutoMain;
-        this.plutoShadow = shadow;
-        this.plutoEyes = eyes;
-        this.plutoMouth = mouth;
-
-        // Now set position after all elements are created
-        this.setPlutoPosition('menu');
-
-        // Add unified animations
-        this.addUnifiedPlutoAnimations();
-
-        // Start speech system for menu mode
-        this.plutoMode = 'menu';
-        this.startPlutoSpeech();
+        console.log('🪐 Menu: New Base Pluto created successfully');
       }
 
       setPlutoPosition(mode) {
@@ -960,47 +916,39 @@
         this.frameBudget = 1000 / this.targetFPS;
       }
 
-      switchUnifiedPlutoToGameMode() {
-        // Find unified Pluto from menu scene
-        const unifiedPluto = document.getElementById('unified-pluto-container');
-        if (unifiedPluto) {
+      switchMenuPlutoToGameMode() {
+        // Find menu Pluto from menu scene
+        const menuPluto = document.getElementById('menu-pluto-container');
+        if (menuPluto) {
           // Store reference
-          this.unifiedPlutoContainer = unifiedPluto;
-          this.plutoBody = unifiedPluto.querySelector('.unified-pluto-body');
-          this.plutoShadow = unifiedPluto.querySelector('.pluto-shadow');
+          this.gamePlutoContainer = menuPluto;
+          this.gamePlutoEntity = menuPluto.querySelector('.pluto-base-entity');
 
           // Switch to game position and mode
-          unifiedPluto.style.cssText = `
+          menuPluto.style.cssText = `
             position: absolute;
             left: 50%;
             top: 50%;
             transform: translate(-50%, -50%);
             z-index: 1000;
             pointer-events: none;
+            width: 100px;
+            height: 100px;
           `;
 
-          // Show shadow and change animation
-          if (this.plutoShadow) {
-            this.plutoShadow.style.opacity = '1';
+          // Change to excited animation for game mode
+          if (this.gamePlutoEntity) {
+            this.gamePlutoEntity.dataset.animation = 'excited';
+            this.gamePlutoEntity.dataset.mood = 'happy';
           }
 
-          if (this.plutoBody) {
-            this.plutoBody.style.animation = 'pluto-excited 1s infinite ease-in-out';
-          }
-
-          // Remove speech bubbles
-          const speechBubble = unifiedPluto.querySelector('.pluto-speech-bubble');
-          if (speechBubble) {
-            speechBubble.remove();
-          }
-
-          console.log('🪐 Unified Pluto switched to game mode');
+          console.log('🪐 New Base Pluto switched to game mode');
         }
       }
 
       create() {
-        // Switch unified Pluto to game mode
-        this.switchUnifiedPlutoToGameMode();
+        // Switch menu Pluto to game mode
+        this.switchMenuPlutoToGameMode();
 
         // Enable global speech bubbles for main game
         document.body.classList.add('game-active');

@@ -1,16 +1,16 @@
-/* Cyborg Pluto Skin - Futuristic mechanical appearance */
+/* Cyborg Pluto Skin - Futuristic mechanical appearance (Updated for pluto-base-entity) */
 
-.pluto-entity.skin--cyborg {
+.pluto-base-entity.skin--cyborg .scene_titan {
     background: linear-gradient(135deg, #7F8C8D, #34495E, #2C3E50);
     box-shadow:
-        0 0 0 4px #95A5A6 inset,
-        -20px -15px 40px #2C3E50 inset,
-        0 0 20px rgba(52, 73, 94, 0.5);
+        0 0 0 8px #95A5A6 inset,
+        -30px -20px 50px #2C3E50 inset,
+        0 0 60px rgba(52, 73, 94, 0.7);
     border: 2px solid #BDC3C7;
     position: relative;
 }
 
-.pluto-entity.skin--cyborg .eye {
+.pluto-base-entity.skin--cyborg .scene_titan .eye {
     background: linear-gradient(45deg, #E74C3C, #C0392B);
     box-shadow:
         0 0 15px #C0392B,
@@ -20,14 +20,14 @@
     border: 1px solid #A93226;
 }
 
-.pluto-entity.skin--cyborg .mouth {
+.pluto-base-entity.skin--cyborg .scene_titan .mouth {
     background: linear-gradient(90deg, #34495E, #2C3E50);
     border: 1px solid #95A5A6;
-    box-shadow: 0 0 5px rgba(149, 165, 166, 0.6);
+    box-shadow: 0 0 8px rgba(149, 165, 166, 0.8);
 }
 
-/* Cyborg circuit pattern overlay */
-.pluto-entity.skin--cyborg::before {
+/* Cyborg circuit pattern overlay - updated for new structure */
+.pluto-base-entity.skin--cyborg .scene_titan::before {
     content: '';
     position: absolute;
     top: 0;
@@ -42,7 +42,7 @@
     pointer-events: none;
 }
 
-/* Glowing red eye animation */
+/* Glowing red eye animation - updated for new structure */
 @keyframes cyborg-eye-scan {
 
     0%,
@@ -59,12 +59,41 @@
     }
 }
 
-.pluto-entity.skin--cyborg .eye {
+.pluto-base-entity.skin--cyborg .scene_titan .eye {
     animation: cyborg-eye-scan 2s ease-in-out infinite;
 }
 
-/* Mechanical pulse when angry */
-.pluto-entity.skin--cyborg[data-mood="angry"] {
+/* Cyborg ascension animation - adapted from scene-final.css */
+@keyframes cyborg-ascension {
+
+    0%,
+    100% {
+        transform: scale(1.1);
+        box-shadow:
+            0 0 0 8px #95A5A6 inset,
+            -30px -20px 50px #2C3E50 inset,
+            0 0 60px rgba(52, 73, 94, 0.7);
+    }
+
+    50% {
+        transform: scale(1.2);
+        box-shadow:
+            0 0 0 12px #95A5A6 inset,
+            -30px -20px 50px #2C3E50 inset,
+            0 0 100px 30px rgba(52, 73, 94, 1);
+    }
+}
+
+.pluto-base-entity.skin--cyborg[data-animation="idle"] .scene_titan {
+    animation: cyborg-ascension 8s ease-in-out infinite;
+}
+
+.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_titan {
+    animation: cyborg-ascension 4s ease-in-out infinite;
+}
+
+/* Mechanical malfunction when angry - updated for new structure */
+.pluto-base-entity.skin--cyborg[data-mood="angry"] .scene_titan {
     animation: cyborg-malfunction 1s ease-in-out infinite;
 }
 
@@ -72,28 +101,28 @@
 
     0%,
     100% {
-        transform: translate(0, 0);
+        transform: scale(1.1) translate(0, 0);
         filter: hue-rotate(0deg);
     }
 
     25% {
-        transform: translate(-1px, 0);
+        transform: scale(1.1) translate(-2px, 0);
         filter: hue-rotate(10deg);
     }
 
     50% {
-        transform: translate(1px, 0);
+        transform: scale(1.1) translate(2px, 0);
         filter: hue-rotate(-10deg);
     }
 
     75% {
-        transform: translate(0, -1px);
+        transform: scale(1.1) translate(0, -2px);
         filter: hue-rotate(5deg);
     }
 }
 
-/* Energy discharge effect when excited */
-.pluto-entity.skin--cyborg[data-animation="excited"]::after {
+/* Energy discharge effect when excited - updated for new structure */
+.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_titan::after {
     content: '';
     position: absolute;
     top: -5px;
