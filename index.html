@@ -1024,6 +1024,10 @@
         // Switch menu Pluto to game mode
         this.switchMenuPlutoToGameMode();
 
+        // Initialize game state flags
+        this.justBrokeChain = false;
+        this.levelComplete = false;
+
         // Enable global speech bubbles for main game
         document.body.classList.add('game-active');
 
@@ -1474,6 +1478,95 @@
             );
           }
         }
+
+        // Enhanced game Pluto animations based on game events
+        if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
+          this.updateGamePlutoAnimation();
+        }
+
+        // FPS Update
+        this.updateFPS();
+      }
+
+      updateGamePlutoAnimation() {
+        // Trigger specific animations based on game state
+        if (this.gamePlutoEntity) {
+          const currentAnimation = this.gamePlutoEntity.dataset.animation;
+
+          // Chain break detection
+          if (this.justBrokeChain) {
+            this.gamePlutoEntity.dataset.animation = 'chain-break';
+            this.justBrokeChain = false;
+            setTimeout(() => {
+              if (this.gamePlutoEntity) {
+                this.gamePlutoEntity.dataset.animation = 'idle';
+              }
+            }, 1000);
+          }
+          // Victory condition
+          else if (this.levelComplete && currentAnimation !== 'victory-dance') {
+            this.gamePlutoEntity.dataset.animation = 'victory-dance';
+          }
+          // Power mode
+          else if (this.feverMode && currentAnimation !== 'power-burst') {
+            this.gamePlutoEntity.dataset.animation = 'power-burst';
+          }
+          // High combo
+          else if (this.combo >= 5 && currentAnimation !== 'excited') {
+            this.gamePlutoEntity.dataset.animation = 'excited';
+          }
+          // Low health warning
+          else if (this.lives === 1 && currentAnimation !== 'shake') {
+            this.gamePlutoEntity.dataset.animation = 'shake';
+          }
+          // Default idle with cute animation
+          else if (this.combo === 0 && !this.feverMode && currentAnimation !== 'idle') {
+            this.gamePlutoEntity.dataset.animation = 'idle';
+          }
+        }
+      }
+
+      updateFPS() {
+        const currentTime = performance.now();
+        const deltaTime = currentTime - this.performanceMetrics.lastTime;
+
+        if (deltaTime >= 1000) {
+          const fps = Math.round((this.performanceMetrics.frameCount * 1000) / deltaTime);
+
+          // Update FPS history
+          this.performanceMetrics.fpsHistory.push(fps);
+          if (this.performanceMetrics.fpsHistory.length > 60) {
+            this.performanceMetrics.fpsHistory.shift();
+          }
+
+          // Calculate average FPS
+          const sum = this.performanceMetrics.fpsHistory.reduce((a, b) => a + b, 0);
+          this.performanceMetrics.averageFPS = Math.round(sum / this.performanceMetrics.fpsHistory.length);
+
+          // Update min/max
+          this.performanceMetrics.minFPS = Math.min(this.performanceMetrics.minFPS, fps);
+          this.performanceMetrics.maxFPS = Math.max(this.performanceMetrics.maxFPS, fps);
+
+          // Update FPS display
+          if (this.fpsText) {
+            this.fpsText.setText(`FPS: ${fps}`);
+
+            // Color code based on performance
+            if (fps >= 55) {
+              this.fpsText.setColor('#00ff00'); // Green
+            } else if (fps >= 30) {
+              this.fpsText.setColor('#ffff00'); // Yellow
+            } else {
+              this.fpsText.setColor('#ff0000'); // Red
+            }
+          }
+
+          // Reset counters
+          this.performanceMetrics.frameCount = 0;
+          this.performanceMetrics.lastTime = currentTime;
+        }
+
+        this.performanceMetrics.frameCount++;
       }
 
       updatePerformanceMetrics(delta) {
@@ -1779,6 +1872,9 @@
       handleSuccessfulHit() {
         // Flash effect removed for better user experience
 
+        // Set chain break flag for animation
+        this.justBrokeChain = true;
+
         // Reduce particle count for better performance
         this.breakParticles.explode(15, this.center.x, this.center.y);
 
@@ -1998,6 +2094,14 @@
         // Reduce particle count for better performance
         this.confettiParticles.explode(25, this.center.x, this.center.y);
         this.cameras.main.flash(300, 0, 255, 0); // Shorter flash
+
+        // Set level complete flag for animation
+        this.levelComplete = true;
+
+        // Reset after animation
+        setTimeout(() => {
+          this.levelComplete = false;
+        }, 2500);
 
         // Use CSS level-up effect instead of just Phaser text
         const levelUpDiv = document.createElement('div');

@@ -18,11 +18,11 @@ class PlutoTestPanelController {
         this.isLoaded = false;
         this.isCollapsed = false;
 
-        // Pluto type tracking
-        this.currentPlutoType = 'modern'; // 'modern', 'story', 'scene'
-        this.currentScene = 1;
-        this.storyPluto = null;
-        this.scenePlutos = new Map();
+        // Current state tracking
+        this.currentContext = 'menu'; // 'menu' or 'game'
+        this.currentSkin = 'default';
+        this.currentMood = 'neutral';
+        this.currentAnimation = 'idle';
 
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
@@ -50,6 +50,7 @@ class PlutoTestPanelController {
             // Update status when GameManager is ready
             setTimeout(() => {
                 this.updateStatusDisplay();
+                this.updateActiveButtons();
             }, 500);
         });
 
@@ -57,6 +58,8 @@ class PlutoTestPanelController {
         const checkInterval = setInterval(() => {
             if (window.gameManager && window.gameManager.pluto) {
                 console.log('🎮 GameManager and Pluto detected by test panel');
+                this.updateStatusDisplay();
+                this.updateActiveButtons();
                 clearInterval(checkInterval);
             }
         }, 500);
@@ -77,14 +80,44 @@ class PlutoTestPanelController {
     }
 
     /**
-     * Initialize the test panel
+     * Initialize the test panel system
      */
     async init() {
+        // Load test panel template
         await this.loadTestPanel();
+
+        // Setup event listeners
         this.setupEventListeners();
+
+        // Update initial status
         this.updateStatusDisplay();
+        this.updateActiveButtons();
+
+        // Listen for GameManager ready event
+        window.addEventListener('gameManagerReady', () => {
+            console.log('🧪 PlutoTestPanel: GameManager ready, updating status');
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+        });
+
+        // Listen for Pluto state changes
+        window.addEventListener('plutoStateChanged', () => {
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+        });
+
+        window.addEventListener('plutoAnimationChanged', () => {
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+        });
+
+        window.addEventListener('itemUnlocked', () => {
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+        });
+
         this.isLoaded = true;
-        console.log('🧪 Pluto Test Panel loaded!');
+        console.log('🧪 PlutoTestPanel: New Base System initialization complete');
     }
 
     /**
@@ -231,25 +264,43 @@ class PlutoTestPanelController {
      * Update status display
      */
     updateStatusDisplay() {
-        // Update current status based on active Pluto
-        this.updateStatusElement('current-pluto-type', this.getPlutoTypeName());
-        this.updateStatusElement('current-scene', this.currentPlutoType === 'scene' ? this.currentScene.toString() : '-');
-
-        const pluto = this.getCurrentActivePluto();
-        if (pluto) {
-            // Try to get current states
-            if (pluto.currentSkin) {
-                this.updateStatusElement('current-skin', pluto.currentSkin);
+        const pluto = this.getPluto();
+        if (!this.isPlutoReady()) {
+            const statusElement = document.getElementById('pluto-status');
+            if (statusElement) {
+                statusElement.innerHTML = '<div style="color: #e74c3c;">Pluto: Not Ready</div>';
             }
-            if (pluto.currentMood) {
-                this.updateStatusElement('current-mood', pluto.currentMood);
-            }
-            if (pluto.currentAnimation) {
-                this.updateStatusElement('current-animation', pluto.currentAnimation);
-            }
+            return;
         }
 
-        console.log('📊 Status display updated');
+        const statusElement = document.getElementById('pluto-status');
+        if (statusElement && pluto) {
+            const context = pluto.element?.dataset.context || 'menu';
+            const position = context === 'menu' ? 'left side' : 'center';
+
+            statusElement.innerHTML = `
+                <div style="color: #2ecc71;">✅ Ready (New Base System)</div>
+                <div>Context: ${context.toUpperCase()}</div>
+                <div>Position: ${position}</div>
+                <div>Visible: ${pluto.isVisible ? 'Yes' : 'No'}</div>
+            `;
+        }
+
+        // Update individual status elements and sync current state
+        if (pluto) {
+            this.currentSkin = pluto.skin || 'default';
+            this.currentMood = pluto.mood || 'neutral';
+            this.currentAnimation = pluto.currentAnimation || 'idle';
+            this.currentContext = pluto.element?.dataset.context || 'menu';
+
+            this.updateStatusElement('current-context', this.currentContext);
+            this.updateStatusElement('current-skin', this.currentSkin);
+            this.updateStatusElement('current-mood', this.currentMood);
+            this.updateStatusElement('current-animation', this.currentAnimation);
+            this.updateStatusElement('current-position', this.currentContext === 'menu' ? 'left side' : 'center');
+        }
+
+        console.log('📊 Status display updated for new base system');
     }
 
     /**
@@ -673,137 +724,84 @@ class PlutoTestPanelController {
     }
 
     /**
-     * Test Pluto mood - works with current Pluto type
+     * Test Pluto mood with new base system
      * @param {string} mood - Mood to test
      */
     testPlutoMood(mood) {
-        switch (this.currentPlutoType) {
-            case 'modern':
-                // Call original function directly
-                const pluto = this.getPluto();
-                if (pluto) {
-                    const success = pluto.setMood(mood);
-                    if (success) {
-                        this.updateStatusElement('current-mood', mood);
-                        this.showAnimationIndicator(`Mood: ${mood}`);
-                    }
-                    return success;
-                }
-                break;
-            case 'story':
-                if (this.storyPluto) {
-                    const success = this.storyPluto.setMood(mood);
-                    if (success) {
-                        this.updateStatusElement('current-mood', mood);
-                        this.showAnimationIndicator(`Story Mood: ${mood}`);
-                    }
-                    return success;
-                }
-                break;
-            case 'scene':
-                // Scene Plutos use CSS classes for moods
-                const scenePluto = this.scenePlutos.get(this.currentScene);
-                if (scenePluto) {
-                    scenePluto.titan.setAttribute('data-mood', mood);
-                    this.updateStatusElement('current-mood', mood);
-                    this.showAnimationIndicator(`Scene Mood: ${mood}`);
-                    console.log(`🧪 Scene Pluto mood: ${mood}`);
-                    return true;
-                }
-                break;
+        const pluto = this.getPluto();
+        if (!pluto) {
+            console.warn('🧪 Pluto not available for mood test');
+            this.showAnimationIndicator('⚠️ Pluto not ready');
+            return false;
         }
-        return false;
+
+        console.log(`🧪 Testing Pluto mood: ${mood}`);
+        const success = pluto.setMood(mood);
+
+        if (success) {
+            this.currentMood = mood;
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+            this.showAnimationIndicator(`Mood: ${mood.toUpperCase()}`);
+        } else {
+            this.showAnimationIndicator(`❌ Mood ${mood} failed`);
+        }
+
+        return success;
     }
 
     /**
-     * Test Pluto animation - works with current Pluto type
+     * Test Pluto animation with new base system
      * @param {string} animation - Animation to test
      */
     testPlutoAnimation(animation) {
-        switch (this.currentPlutoType) {
-            case 'modern':
-                // Call original function directly
-                const pluto = this.getPluto();
-                if (pluto) {
-                    const success = pluto.setAnimation(animation);
-                    if (success) {
-                        this.updateStatusElement('current-animation', animation);
-                        this.showAnimationIndicator(`Animation: ${animation}`);
-                    }
-                    return success;
-                }
-                break;
-            case 'story':
-                if (this.storyPluto) {
-                    const success = this.storyPluto.setAnimation(animation);
-                    if (success) {
-                        this.updateStatusElement('current-animation', animation);
-                        this.showAnimationIndicator(`Story Animation: ${animation}`);
-                    }
-                    return success;
-                }
-                break;
-            case 'scene':
-                // Scene Plutos use CSS classes for animations
-                const scenePluto = this.scenePlutos.get(this.currentScene);
-                if (scenePluto) {
-                    scenePluto.titan.setAttribute('data-animation', animation);
-                    this.updateStatusElement('current-animation', animation);
-                    this.showAnimationIndicator(`Scene Animation: ${animation}`);
-                    console.log(`🧪 Scene Pluto animation: ${animation}`);
-                    return true;
-                }
-                break;
+        const pluto = this.getPluto();
+        if (!pluto) {
+            console.warn('🧪 Pluto not available for animation test');
+            this.showAnimationIndicator('⚠️ Pluto not ready');
+            return false;
         }
-        return false;
+
+        console.log(`🧪 Testing Pluto animation: ${animation}`);
+        const success = pluto.setAnimation(animation);
+
+        if (success) {
+            this.currentAnimation = animation;
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+            this.showAnimationIndicator(`Animation: ${animation.toUpperCase()}`);
+        } else {
+            this.showAnimationIndicator(`❌ Animation ${animation} locked or failed`);
+        }
+
+        return success;
     }
 
     /**
-     * Test Pluto skin - works with current Pluto type
+     * Test Pluto skin with new base system
      * @param {string} skin - Skin to test
      */
     testPlutoSkin(skin) {
-        switch (this.currentPlutoType) {
-            case 'modern':
-                // Call original function directly
-                const pluto = this.getPluto();
-                if (pluto) {
-                    const success = pluto.applySkin(skin);
-                    if (success) {
-                        this.updateStatusElement('current-skin', skin);
-                        this.showAnimationIndicator(`Skin: ${skin}`);
-                    }
-                    return success;
-                }
-                break;
-            case 'story':
-                if (this.storyPluto) {
-                    const success = this.storyPluto.applySkin(skin);
-                    if (success) {
-                        this.updateStatusElement('current-skin', skin);
-                        this.showAnimationIndicator(`Story Skin: ${skin}`);
-                    }
-                    return success;
-                }
-                break;
-            case 'scene':
-                // Scene Plutos use CSS classes for skins
-                const scenePluto = this.scenePlutos.get(this.currentScene);
-                if (scenePluto) {
-                    // Remove existing skin classes
-                    scenePluto.titan.className = scenePluto.titan.className.replace(/skin--\w+/g, '');
-                    // Add new skin class
-                    if (skin !== 'default') {
-                        scenePluto.titan.classList.add(`skin--${skin}`);
-                    }
-                    this.updateStatusElement('current-skin', skin);
-                    this.showAnimationIndicator(`Scene Skin: ${skin}`);
-                    console.log(`🧪 Scene Pluto skin: ${skin}`);
-                    return true;
-                }
-                break;
+        const pluto = this.getPluto();
+        if (!pluto) {
+            console.warn('🧪 Pluto not available for skin test');
+            this.showAnimationIndicator('⚠️ Pluto not ready');
+            return false;
         }
-        return false;
+
+        console.log(`🧪 Testing Pluto skin: ${skin}`);
+        const success = pluto.applySkin(skin);
+
+        if (success) {
+            this.currentSkin = skin;
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+            this.showAnimationIndicator(`Skin: ${skin.toUpperCase()}`);
+        } else {
+            this.showAnimationIndicator(`❌ Skin ${skin} locked or failed`);
+        }
+
+        return success;
     }
 
     /**
@@ -848,6 +846,223 @@ class PlutoTestPanelController {
             console.log('🗑️ Template cache cleared!');
             this.showAnimationIndicator('🗑️ Cache cleared');
         }
+    }
+
+    /**
+     * Update animation buttons based on available animations
+     */
+    updateAnimationButtons() {
+        const pluto = this.getPluto();
+        if (!pluto || !pluto.getAvailableAnimations) return;
+
+        const animationGrid = document.querySelector('#pluto-test-panel .test-section:nth-child(3) .button-grid');
+        if (!animationGrid) return;
+
+        const availableAnimations = pluto.getAvailableAnimations();
+
+        // Clear existing buttons
+        animationGrid.innerHTML = '';
+
+        // Create buttons for each available animation
+        availableAnimations.forEach(anim => {
+            const button = document.createElement('button');
+            button.className = 'test-btn';
+            button.onclick = () => this.testPlutoAnimation(anim.id);
+
+            // Add emoji based on animation type
+            let emoji = '⚡';
+            if (anim.id.includes('orbit') || anim.id.includes('fly')) emoji = '🌍';
+            else if (anim.id.includes('dance') || anim.id.includes('spiral')) emoji = '🌀';
+            else if (anim.id.includes('cute') || anim.id.includes('wiggle')) emoji = '💖';
+            else if (anim.id.includes('power') || anim.id.includes('burst')) emoji = '💥';
+            else if (anim.id.includes('victory')) emoji = '🏆';
+            else if (anim.id.includes('shake')) emoji = '😰';
+            else if (anim.id.includes('float')) emoji = '☁️';
+            else if (anim.id.includes('pulse')) emoji = '💫';
+            else if (anim.id.includes('bounce')) emoji = '🏀';
+
+            button.innerHTML = `${emoji} ${anim.name}`;
+
+            // Style active animation
+            if (anim.isActive) {
+                button.style.background = 'linear-gradient(45deg, #4ecdc4, #44a08d)';
+                button.style.color = '#fff';
+            }
+
+            // Style locked animations
+            if (!anim.unlocked && !window.gameManager?.pluto?.storyMode) {
+                button.style.opacity = '0.5';
+                button.innerHTML += ' 🔒';
+            }
+
+            animationGrid.appendChild(button);
+        });
+    }
+
+    /**
+     * Add animation quick test menu
+     */
+    addAnimationQuickMenu() {
+        const quickMenu = document.createElement('div');
+        quickMenu.id = 'animation-quick-menu';
+        quickMenu.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+            z-index: 10001;
+        `;
+
+        quickMenu.innerHTML = `
+            <div style="color: #fff; margin-bottom: 10px; font-size: 12px;">🎮 Quick Animation Test</div>
+            <button onclick="plutoTestPanel.playRandomAnimation()" style="
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 11px;
+                margin: 2px;
+            ">🎲 Random Animation</button>
+            <button onclick="plutoTestPanel.unlockAllAnimations()" style="
+                background: linear-gradient(45deg, #f093fb, #f5576c);
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 11px;
+                margin: 2px;
+            ">🔓 Unlock All</button>
+        `;
+
+        document.body.appendChild(quickMenu);
+    }
+
+    /**
+     * Play random animation
+     */
+    playRandomAnimation() {
+        const pluto = this.getPluto();
+        if (pluto && pluto.playRandomAnimation) {
+            pluto.playRandomAnimation();
+            this.showAnimationIndicator('🎲 Random Animation!');
+            this.updateStatusDisplay();
+            this.updateActiveButtons();
+        }
+    }
+
+    /**
+     * Unlock all animations for testing
+     */
+    unlockAllAnimations() {
+        const pluto = this.getPluto();
+        if (!pluto || !pluto.availableAnimations) return;
+
+        Object.keys(pluto.availableAnimations).forEach(animId => {
+            pluto.unlockAnimation(animId);
+        });
+
+        this.showAnimationIndicator('🔓 All Animations Unlocked!');
+        this.updateAnimationButtons();
+    }
+
+    /**
+     * Switch between menu and game contexts
+     * @param {string} context - 'menu' or 'game'
+     */
+    switchContext(context) {
+        console.log(`🔄 Switching to ${context} context...`);
+        this.currentContext = context;
+
+        const pluto = this.getPluto();
+        if (pluto && pluto.element) {
+            // Update Pluto's context
+            pluto.element.dataset.context = context;
+
+            // Update position based on context
+            if (context === 'menu') {
+                // Move to left side for menu
+                pluto.element.style.left = '80px';
+                pluto.element.style.top = '50%';
+                pluto.element.style.transform = 'translateY(-50%)';
+            } else if (context === 'game') {
+                // Move to center for game
+                pluto.element.style.left = '50%';
+                pluto.element.style.top = '50%';
+                pluto.element.style.transform = 'translate(-50%, -50%)';
+            }
+
+            // Reset to idle animation for new context
+            pluto.setAnimation('idle');
+            this.currentAnimation = 'idle';
+        }
+
+        // Update UI
+        this.updateContextButtons();
+        this.updateAnimationSections();
+        this.updateStatusDisplay();
+        this.updateActiveButtons();
+
+        this.showAnimationIndicator(`Context: ${context.toUpperCase()}`);
+    }
+
+    /**
+     * Update context buttons visual state
+     */
+    updateContextButtons() {
+        const menuBtn = document.getElementById('menu-context-btn');
+        const gameBtn = document.getElementById('game-context-btn');
+
+        if (menuBtn && gameBtn) {
+            menuBtn.classList.toggle('active', this.currentContext === 'menu');
+            gameBtn.classList.toggle('active', this.currentContext === 'game');
+        }
+    }
+
+    /**
+     * Show/hide animation sections based on context
+     */
+    updateAnimationSections() {
+        const menuAnimations = document.querySelector('.menu-animations');
+        const gameAnimations = document.querySelector('.game-animations');
+
+        if (menuAnimations && gameAnimations) {
+            if (this.currentContext === 'menu') {
+                menuAnimations.style.display = 'block';
+                gameAnimations.style.display = 'none';
+            } else {
+                menuAnimations.style.display = 'none';
+                gameAnimations.style.display = 'block';
+            }
+        }
+    }
+
+    /**
+     * Update all active button states
+     */
+    updateActiveButtons() {
+        // Update context buttons
+        this.updateContextButtons();
+
+        // Update skin buttons
+        document.querySelectorAll('.skin-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.skin === this.currentSkin);
+        });
+
+        // Update mood buttons
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mood === this.currentMood);
+        });
+
+        // Update animation buttons
+        document.querySelectorAll('.anim-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.animation === this.currentAnimation);
+        });
     }
 }
 
@@ -953,27 +1168,41 @@ function resetPlutoToDefault() {
     const pluto = window.gameManager?.pluto;
     if (!pluto) {
         console.warn('🧪 Pluto not available for reset');
-        PlutoTestPanel.showAnimationIndicator('⚠️ Pluto not ready');
+        if (window.plutoTestPanel) {
+            window.plutoTestPanel.showAnimationIndicator('⚠️ Pluto not ready');
+        }
         return;
     }
 
-    console.log('🧪 Resetting Pluto to default state');
+    console.log('🧪 Resetting Pluto to default state (New Base System)');
 
     // Reset to default values
     pluto.applySkin('default');
     pluto.setMood('neutral');
     pluto.setAnimation('idle');
     pluto.show();
-    pluto.resetPosition();
 
-    // Update status
-    window.currentPlutoAnimation = 'idle';
-    window.currentPlutoMood = 'neutral';
-    window.currentPlutoSpeech = 'silent';
-    window.currentPlutoFeature = 'none';
+    // Reset context to menu
+    if (pluto.element) {
+        pluto.element.dataset.context = 'menu';
+        // Reset position to menu position
+        pluto.element.style.left = '80px';
+        pluto.element.style.top = '50%';
+        pluto.element.style.transform = 'translateY(-50%)';
+    }
 
-    PlutoTestPanel.showAnimationIndicator('🔄 Reset to default');
-    PlutoTestPanel.updateStatusDisplay();
+    // Update test panel state
+    if (window.plutoTestPanel) {
+        window.plutoTestPanel.currentSkin = 'default';
+        window.plutoTestPanel.currentMood = 'neutral';
+        window.plutoTestPanel.currentAnimation = 'idle';
+        window.plutoTestPanel.currentContext = 'menu';
+
+        window.plutoTestPanel.updateStatusDisplay();
+        window.plutoTestPanel.updateActiveButtons();
+        window.plutoTestPanel.updateAnimationSections();
+        window.plutoTestPanel.showAnimationIndicator('🔄 Reset to Menu Default');
+    }
 }
 
 /**
@@ -1143,8 +1372,8 @@ if (typeof window !== 'undefined') {
         }
     };
 
-    // New Pluto type switching functions
-    window.plutoTestPanel = PlutoTestPanel;
+    // New base system instance
+    window.plutoTestPanel = new PlutoTestPanelController();
 
     // Direct method calls to avoid recursion
     window.testPlutoMoodWrapper = window.testPlutoMood;
@@ -1152,14 +1381,14 @@ if (typeof window !== 'undefined') {
     window.testPlutoSkinWrapper = window.testPlutoSkin;
 
     // Override with new wrapper functions
-    window.testPlutoMood = (mood) => PlutoTestPanel.testPlutoMood(mood);
-    window.testPlutoAnimation = (anim) => PlutoTestPanel.testPlutoAnimation(anim);
-    window.testPlutoSkin = (skin) => PlutoTestPanel.testPlutoSkin(skin);
-    window.testLevel = (level) => PlutoTestPanel.testLevel(level);
-    window.progressionDebug = () => PlutoTestPanel.progressionDebug();
-    window.showRewardNotification = () => PlutoTestPanel.showRewardNotification();
-    window.showErrorDisplay = () => PlutoTestPanel.showErrorDisplay();
-    window.clearTemplateCache = () => PlutoTestPanel.clearTemplateCache();
+    window.testPlutoMood = (mood) => window.plutoTestPanel.testPlutoMood(mood);
+    window.testPlutoAnimation = (anim) => window.plutoTestPanel.testPlutoAnimation(anim);
+    window.testPlutoSkin = (skin) => window.plutoTestPanel.testPlutoSkin(skin);
+    window.testLevel = (level) => window.plutoTestPanel.testLevel(level);
+    window.progressionDebug = () => window.plutoTestPanel.progressionDebug();
+    window.showRewardNotification = () => window.plutoTestPanel.showRewardNotification();
+    window.showErrorDisplay = () => window.plutoTestPanel.showErrorDisplay();
+    window.clearTemplateCache = () => window.plutoTestPanel.clearTemplateCache();
 }
 
-console.log('🧪 Pluto Test Panel Controller loaded! (Component Mode)'); 
+console.log('🧪 Pluto Test Panel Controller loaded! (New Base System)'); 

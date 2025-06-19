@@ -16,6 +16,34 @@ export class Pluto {
         // Story mode bypasses unlock restrictions
         this.storyMode = options.storyMode || false;
 
+        // Available animations registry
+        this.availableAnimations = {
+            // Basic animations
+            'idle': { name: 'Idle', duration: 5000, unlocked: true },
+            'excited': { name: 'Excited', duration: 2000, unlocked: true },
+
+            // Movement animations
+            'orbit': { name: 'Orbit', duration: 8000, unlocked: false },
+            'fly-around': { name: 'Fly Around', duration: 12000, unlocked: false },
+            'spiral-dance': { name: 'Spiral Dance', duration: 6000, unlocked: false },
+            'zoom-out': { name: 'Zoom Out', duration: 4000, unlocked: false },
+
+            // Cute animations (Menu specific)
+            'cute-wiggle': { name: 'Cute Wiggle', duration: 3000, unlocked: true, context: 'menu' },
+            'curious': { name: 'Curious', duration: 4000, unlocked: true, context: 'menu' },
+
+            // Power animations (Game specific)
+            'power-burst': { name: 'Power Burst', duration: 2000, unlocked: false, context: 'game' },
+            'chain-break': { name: 'Chain Break', duration: 1000, unlocked: false, context: 'game' },
+            'victory-dance': { name: 'Victory Dance', duration: 2500, unlocked: false, context: 'game' },
+
+            // Additional animations
+            'bounce': { name: 'Bounce', duration: 2000, unlocked: true },
+            'shake': { name: 'Shake', duration: 1000, unlocked: true },
+            'pulse': { name: 'Pulse', duration: 3000, unlocked: true },
+            'float': { name: 'Float', duration: 6000, unlocked: true }
+        };
+
         // Initialize (async) - the element creation is now handled separately
         this.initialized = this._initialize();
 
@@ -225,7 +253,22 @@ export class Pluto {
 
     // Set Pluto's animation
     setAnimation(animationName) {
-        if (!this.storyMode && !this.progression.isUnlocked('animation', animationName)) {
+        // Check if animation exists
+        const animationInfo = this.availableAnimations[animationName];
+        if (!animationInfo) {
+            console.warn(`🪐 Pluto: Animation "${animationName}" does not exist`);
+            return false;
+        }
+
+        // Check context compatibility
+        const currentContext = this.element?.dataset.context;
+        if (animationInfo.context && animationInfo.context !== currentContext) {
+            console.warn(`🪐 Pluto: Animation "${animationName}" is for ${animationInfo.context} context only`);
+            return false;
+        }
+
+        // Check if unlocked (unless in story mode)
+        if (!this.storyMode && !animationInfo.unlocked && !this.progression.isUnlocked('animation', animationName)) {
             console.warn(`🪐 Pluto: Animation "${animationName}" is locked, keeping current animation`);
             return false;
         }
@@ -237,10 +280,66 @@ export class Pluto {
 
         // Dispatch animation change event
         window.dispatchEvent(new CustomEvent('plutoAnimationChanged', {
-            detail: { animation: animationName }
+            detail: {
+                animation: animationName,
+                duration: animationInfo.duration
+            }
         }));
 
         return true;
+    }
+
+    // Get list of available animations
+    getAvailableAnimations(includeContext = null) {
+        const currentContext = this.element?.dataset.context;
+
+        return Object.entries(this.availableAnimations)
+            .filter(([key, info]) => {
+                // Filter by context if specified
+                if (includeContext && info.context && info.context !== includeContext) {
+                    return false;
+                }
+                // Filter by current context if animation has context requirement
+                if (!includeContext && info.context && info.context !== currentContext) {
+                    return false;
+                }
+                // Check if unlocked (story mode bypasses)
+                if (this.storyMode) return true;
+                return info.unlocked || this.progression.isUnlocked('animation', key);
+            })
+            .map(([key, info]) => ({
+                id: key,
+                ...info,
+                isActive: this.currentAnimation === key
+            }));
+    }
+
+    // Play random animation from available ones
+    playRandomAnimation() {
+        const available = this.getAvailableAnimations();
+        const otherAnimations = available.filter(anim => anim.id !== this.currentAnimation);
+
+        if (otherAnimations.length > 0) {
+            const randomAnim = otherAnimations[Math.floor(Math.random() * otherAnimations.length)];
+            this.setAnimation(randomAnim.id);
+
+            // Return to idle after animation duration
+            if (randomAnim.id !== 'idle') {
+                setTimeout(() => {
+                    this.setAnimation('idle');
+                }, randomAnim.duration);
+            }
+        }
+    }
+
+    // Unlock animation
+    unlockAnimation(animationName) {
+        if (this.availableAnimations[animationName]) {
+            this.availableAnimations[animationName].unlocked = true;
+            console.log(`🎉 Pluto: Animation "${animationName}" unlocked!`);
+            return true;
+        }
+        return false;
     }
 
     // Special celebration animation

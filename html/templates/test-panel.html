@@ -1,9 +1,9 @@
 <div id="pluto-test-panel" class="test-panel"
-    style="position: fixed; top: 10px; left: 10px; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 20px; border-radius: 15px; font-family: 'Press Start 2P', monospace; font-size: 10px; z-index: 1000; max-width: 350px; border: 2px solid #4ecdc4; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+    style="position: fixed; top: 10px; left: 10px; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 20px; border-radius: 15px; font-family: 'Press Start 2P', monospace; font-size: 10px; z-index: 1000; max-width: 380px; border: 2px solid #4ecdc4; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
 
     <div class="panel-header"
         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #4ecdc4; padding-bottom: 15px;">
-        <h3 style="margin: 0; color: #4ecdc4; font-size: 12px;">🚀 PLUTO TEST LAB</h3>
+        <h3 style="margin: 0; color: #4ecdc4; font-size: 12px;">🪐 NEW BASE PLUTO LAB</h3>
         <button id="toggle-panel" class="toggle-btn"
             style="background: #e74c3c; color: white; border: none; border-radius: 5px; width: 25px; height: 25px; font-size: 14px; cursor: pointer;">━</button>
     </div>
@@ -12,35 +12,24 @@
 
         <!-- Status Section -->
         <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">📊 STATUS</div>
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">📊 PLUTO STATUS</div>
             <div id="pluto-status"
                 style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px; font-size: 8px; color: #ecf0f1;">
                 Pluto: Loading...
             </div>
         </div>
 
-        <!-- Pluto Type Selector -->
+        <!-- Context Mode Selector -->
         <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🪐 Pluto Type</div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.switchPlutoType('modern')" class="test-btn active"
-                    id="modern-pluto-btn">🆕 Modern Pluto</button>
-                <button onclick="plutoTestPanel.switchPlutoType('story')" class="test-btn" id="story-pluto-btn">🔮 Story
-                    Pluto</button>
-                <button onclick="plutoTestPanel.switchPlutoType('scene')" class="test-btn" id="scene-pluto-btn">🎭 Scene
-                    Pluto</button>
+            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🎯 CONTEXT MODE</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.switchContext('menu')" class="test-btn context-btn active"
+                    id="menu-context-btn">🏠 Menu Mode</button>
+                <button onclick="plutoTestPanel.switchContext('game')" class="test-btn context-btn"
+                    id="game-context-btn">🎮 Game Mode</button>
             </div>
-        </div>
-
-        <!-- Scene Selector (when scene mode active) -->
-        <div class="test-section" id="scene-selector" style="display: none; margin-bottom: 15px;">
-            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🎬 Scene Type</div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.switchScene(1)" class="test-btn">🌌 Space</button>
-                <button onclick="plutoTestPanel.switchScene(2)" class="test-btn">🏮 Lighthouse</button>
-                <button onclick="plutoTestPanel.switchScene(3)" class="test-btn">🏭 Factory</button>
-                <button onclick="plutoTestPanel.switchScene(4)" class="test-btn">🚀 Journey</button>
-                <button onclick="plutoTestPanel.switchScene(5)" class="test-btn">⭐ Final</button>
+            <div style="font-size: 7px; color: #bdc3c7; margin-top: 5px; text-align: center;">
+                Menu: Cute animations | Game: Dynamic animations
             </div>
         </div>
 
@@ -48,10 +37,14 @@
         <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🎨 SKIN TESTS</div>
             <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testPlutoSkin('default')" class="test-btn">🪐 Default</button>
-                <button onclick="plutoTestPanel.testPlutoSkin('golden')" class="test-btn">✨ Golden</button>
-                <button onclick="plutoTestPanel.testPlutoSkin('rainbow')" class="test-btn">🌈 Rainbow</button>
-                <button onclick="plutoTestPanel.testPlutoSkin('cyborg')" class="test-btn">🤖 Cyborg</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('default')" class="test-btn skin-btn"
+                    data-skin="default">🪐 Default</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('golden')" class="test-btn skin-btn" data-skin="golden">✨
+                    Golden</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('rainbow')" class="test-btn skin-btn"
+                    data-skin="rainbow">🌈 Rainbow</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('cyborg')" class="test-btn skin-btn" data-skin="cyborg">🤖
+                    Cyborg</button>
             </div>
         </div>
 
@@ -59,59 +52,106 @@
         <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #9b59b6; margin-bottom: 8px; font-size: 9px;">😄 MOOD TESTS</div>
             <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testPlutoMood('happy')" class="test-btn">😊 Happy</button>
-                <button onclick="plutoTestPanel.testPlutoMood('sad')" class="test-btn">😢 Sad</button>
-                <button onclick="plutoTestPanel.testPlutoMood('angry')" class="test-btn">😡 Angry</button>
-                <button onclick="plutoTestPanel.testPlutoMood('neutral')" class="test-btn">😐 Neutral</button>
+                <button onclick="plutoTestPanel.testPlutoMood('happy')" class="test-btn mood-btn" data-mood="happy">😊
+                    Happy</button>
+                <button onclick="plutoTestPanel.testPlutoMood('sad')" class="test-btn mood-btn" data-mood="sad">😢
+                    Sad</button>
+                <button onclick="plutoTestPanel.testPlutoMood('angry')" class="test-btn mood-btn" data-mood="angry">😡
+                    Angry</button>
+                <button onclick="plutoTestPanel.testPlutoMood('neutral')" class="test-btn mood-btn"
+                    data-mood="neutral">😐 Neutral</button>
             </div>
         </div>
 
-        <!-- Animation Tests -->
-        <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">⚡ ANIMATION TESTS
-            </div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testPlutoAnimation('excited')" class="test-btn">⚡ Excited</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('orbit')" class="test-btn">🌍 Orbit</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('fly-around')" class="test-btn">🚀 Fly
-                    Around</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('idle')" class="test-btn">⏸️ Idle</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('spiral-dance')" class="test-btn">🌀 Spiral
-                    Dance</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('zoom-out')" class="test-btn">🔍 Zoom Out</button>
-            </div>
-        </div>
-
-        <!-- System Tests -->
-        <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #e74c3c; margin-bottom: 8px; font-size: 9px;">🏆 SYSTEM TESTS</div>
+        <!-- Menu Context Animations -->
+        <div class="test-section menu-animations" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">🏠 MENU ANIMATIONS
+                (Cute)</div>
             <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testLevel(1)" class="test-btn">📈 Complete Level 1</button>
-                <button onclick="plutoTestPanel.testLevel(5)" class="test-btn">🎯 Complete Level 5</button>
-                <button onclick="plutoTestPanel.progressionDebug()" class="test-btn">🔍 Debug Progression</button>
-                <button onclick="plutoTestPanel.resetPlutoToDefault()" class="test-btn">🔄 Reset to Default</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('idle')" class="test-btn anim-btn"
+                    data-animation="idle">💤 Float</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('excited')" class="test-btn anim-btn"
+                    data-animation="excited">⚡ Bounce</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('cute-wiggle')" class="test-btn anim-btn"
+                    data-animation="cute-wiggle">😊 Wiggle</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('curious')" class="test-btn anim-btn"
+                    data-animation="curious">👀 Curious</button>
             </div>
         </div>
 
-        <!-- Template Tests -->
-        <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #f1c40f; margin-bottom: 8px; font-size: 9px;">🛠️ TEMPLATE TESTS
+        <!-- Game Context Animations -->
+        <div class="test-section game-animations" style="margin-bottom: 15px; display: none;">
+            <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">🎮 GAME ANIMATIONS
+                (Dynamic)</div>
+            <div class="button-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('idle')" class="test-btn anim-btn"
+                    data-animation="idle">💤 Cute Idle</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('excited')" class="test-btn anim-btn"
+                    data-animation="excited">🎉 Celebration</button>
             </div>
             <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.showRewardNotification()" class="test-btn">🎁 Reward
-                    Notification</button>
-                <button onclick="plutoTestPanel.showErrorDisplay()" class="test-btn">❌ Error Display</button>
-                <button onclick="plutoTestPanel.clearTemplateCache()" class="test-btn">🧹 Clear Template Cache</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('power-burst')" class="test-btn anim-btn"
+                    data-animation="power-burst">💥 Power Burst</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('chain-break')" class="test-btn anim-btn"
+                    data-animation="chain-break">⛓️ Chain Break</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('victory-dance')" class="test-btn anim-btn"
+                    data-animation="victory-dance">🏆 Victory</button>
+            </div>
+        </div>
+
+        <!-- Legacy Animations (Universal) -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">🌟 LEGACY ANIMATIONS
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('orbit')" class="test-btn anim-btn"
+                    data-animation="orbit">🌍 Orbit</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('fly-around')" class="test-btn anim-btn"
+                    data-animation="fly-around">🚀 Fly Around</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('spiral-dance')" class="test-btn anim-btn"
+                    data-animation="spiral-dance">🌀 Spiral</button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #e74c3c; margin-bottom: 8px; font-size: 9px;">⚡ QUICK ACTIONS</div>
+            <div class="button-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <button onclick="plutoTestPanel.playRandomAnimation()" class="test-btn">🎲 Random Animation</button>
+                <button onclick="plutoTestPanel.unlockAllAnimations()" class="test-btn">🔓 Unlock All</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testLevel(1)" class="test-btn">📈 Level 1</button>
+                <button onclick="plutoTestPanel.testLevel(5)" class="test-btn">🎯 Level 5</button>
+                <button onclick="plutoTestPanel.resetPlutoToDefault()" class="test-btn">🔄 Reset</button>
+            </div>
+        </div>
+
+        <!-- System & Template Tests -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #f1c40f; margin-bottom: 8px; font-size: 9px;">🛠️ SYSTEM TESTS
+            </div>
+            <div class="button-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <button onclick="plutoTestPanel.progressionDebug()" class="test-btn">🔍 Debug Info</button>
+                <button onclick="plutoTestPanel.clearTemplateCache()" class="test-btn">🧹 Clear Cache</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.showRewardNotification()" class="test-btn">🎁 Reward Test</button>
+                <button onclick="plutoTestPanel.showErrorDisplay()" class="test-btn">❌ Error Test</button>
             </div>
         </div>
 
         <!-- Status Display -->
         <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">📊 Status</div>
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">📊 CURRENT STATUS
+            </div>
             <div class="status-display">
                 <div class="status-item">
-                    <strong>Current Pluto:</strong>
-                    <span id="current-pluto-type">Modern</span>
+                    <strong>Context:</strong>
+                    <span id="current-context">menu</span>
                 </div>
                 <div class="status-item">
                     <strong>Skin:</strong>
@@ -126,28 +166,65 @@
                     <span id="current-animation">idle</span>
                 </div>
                 <div class="status-item">
-                    <strong>Scene:</strong>
-                    <span id="current-scene">-</span>
+                    <strong>Position:</strong>
+                    <span id="current-position">center</span>
                 </div>
             </div>
         </div>
 
         <!-- Keyboard Shortcuts -->
         <div class="test-section">
-            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">⌨️ Shortcuts</div>
+            <div class="section-title" style="color: #95a5a6; margin-bottom: 8px; font-size: 9px;">⌨️ SHORTCUTS</div>
             <div class="shortcuts">
-                <small>Ctrl+1: Modern | Ctrl+2: Story | Ctrl+3: Scene | Ctrl+R: Reset</small>
+                <small>Ctrl+1: Menu Mode | Ctrl+2: Game Mode | Ctrl+R: Reset | Ctrl+Space: Random</small>
             </div>
         </div>
 
     </div>
 
-    <!-- Additional CSS for status display -->
+    <!-- Enhanced CSS -->
     <style>
+        .test-btn {
+            background: linear-gradient(45deg, #34495e, #2c3e50);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 8px;
+            transition: all 0.3s ease;
+            font-family: 'Press Start 2P', monospace;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-color: #4ecdc4;
+        }
+
         .test-btn.active {
             background: linear-gradient(45deg, #4ecdc4, #44a08d) !important;
             color: white !important;
             box-shadow: 0 0 10px rgba(78, 205, 196, 0.5) !important;
+            border-color: #4ecdc4 !important;
+        }
+
+        .context-btn.active {
+            background: linear-gradient(45deg, #e67e22, #d35400) !important;
+            box-shadow: 0 0 10px rgba(230, 126, 34, 0.5) !important;
+        }
+
+        .skin-btn.active {
+            background: linear-gradient(45deg, #e67e22, #d35400) !important;
+        }
+
+        .mood-btn.active {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad) !important;
+        }
+
+        .anim-btn.active {
+            background: linear-gradient(45deg, #1abc9c, #16a085) !important;
         }
 
         .status-display {
@@ -156,11 +233,14 @@
             padding: 8px;
             border-radius: 5px;
             margin-top: 5px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
         }
 
         .status-item {
             margin-bottom: 3px;
             color: #ecf0f1;
+            display: flex;
+            justify-content: space-between;
         }
 
         .status-item strong {
@@ -174,6 +254,31 @@
             padding: 5px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 3px;
+            border: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .test-panel.collapsed .panel-content {
+            display: none;
+        }
+
+        .button-grid {
+            gap: 8px;
+        }
+
+        .section-title {
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 

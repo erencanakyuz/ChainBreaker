@@ -175,7 +175,7 @@
 
 /* 🎮 GAME MODE ANIMATIONS (Dynamic & Intense) */
 .pluto-base-entity[data-context="game"][data-animation="idle"] .scene_titan {
-    animation: pluto-game-energy 4s infinite ease-in-out;
+    animation: pluto-game-idle-cute 5s infinite ease-in-out;
 }
 
 .pluto-base-entity[data-context="game"][data-animation="excited"] .scene_titan {
@@ -281,6 +281,79 @@
         box-shadow: 0px 0px 0px 12px rgba(255, 235, 255, 0.9) inset,
             -30px -20px 50px #c2baff inset,
             0 0 140px 20px rgba(200, 180, 255, 1.2);
+    }
+}
+
+/* 🎮 NEW CUTE IDLE FOR GAME MODE */
+@keyframes pluto-game-idle-cute {
+
+    0%,
+    100% {
+        transform: scale(1.05);
+        box-shadow: 0px 0px 0px 6px rgba(200, 220, 255, 0.5) inset,
+            -25px -18px 40px #9a9fff inset,
+            0 0 50px rgba(180, 150, 255, 0.6);
+    }
+
+    30% {
+        transform: scale(1.08) translateY(-3px);
+        box-shadow: 0px 0px 0px 7px rgba(220, 235, 255, 0.6) inset,
+            -25px -18px 40px #a8baff inset,
+            0 0 60px rgba(200, 180, 255, 0.7);
+    }
+
+    60% {
+        transform: scale(1.1) translateY(-5px);
+        box-shadow: 0px 0px 0px 8px rgba(230, 240, 255, 0.7) inset,
+            -25px -18px 40px #b2c2ff inset,
+            0 0 70px rgba(210, 190, 255, 0.8);
+    }
+
+    80% {
+        transform: scale(1.07) translateY(-2px);
+    }
+}
+
+/* Enhanced cute blink animation for game context */
+.pluto-base-entity[data-context="game"] .scene_titan .eyes .eye {
+    animation: cute-blink 4s infinite ease-in-out, eye-sparkle 2s infinite ease-in-out;
+}
+
+@keyframes cute-blink {
+
+    0%,
+    45%,
+    55%,
+    90%,
+    100% {
+        transform: scaleY(1);
+        opacity: 1;
+    }
+
+    48%,
+    52% {
+        transform: scaleY(0.1);
+        opacity: 0.8;
+    }
+
+    /* Double blink */
+    93%,
+    97% {
+        transform: scaleY(0.1);
+        opacity: 0.8;
+    }
+}
+
+@keyframes eye-sparkle {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.9),
+            0 0 3px rgba(255, 255, 255, 1) inset;
     }
 }
 
@@ -428,5 +501,138 @@
 
     50% {
         transform: scale(1.4);
+    }
+}
+
+/* ===== ADDITIONAL ANIMATIONS ===== */
+.pluto-base-entity[data-animation="bounce"] .scene_titan {
+    animation: pluto-bounce 2s infinite ease-in-out;
+}
+
+.pluto-base-entity[data-animation="shake"] .scene_titan {
+    animation: pluto-shake 1s infinite ease-in-out;
+}
+
+.pluto-base-entity[data-animation="pulse"] .scene_titan {
+    animation: pluto-pulse 3s infinite ease-in-out;
+}
+
+.pluto-base-entity[data-animation="float"] .scene_titan {
+    animation: pluto-float 6s infinite ease-in-out;
+}
+
+/* Additional animation keyframes */
+@keyframes pluto-bounce {
+
+    0%,
+    100% {
+        transform: scale(1.05) translateY(0px);
+    }
+
+    20% {
+        transform: scale(1.0) translateY(10px);
+    }
+
+    40% {
+        transform: scale(1.15) translateY(-20px);
+    }
+
+    60% {
+        transform: scale(1.1) translateY(-10px);
+    }
+
+    80% {
+        transform: scale(1.08) translateY(-5px);
+    }
+}
+
+@keyframes pluto-shake {
+
+    0%,
+    100% {
+        transform: scale(1.05) translateX(0px);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: scale(1.05) translateX(-3px) rotate(-1deg);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: scale(1.05) translateX(3px) rotate(1deg);
+    }
+}
+
+@keyframes pluto-pulse {
+
+    0%,
+    100% {
+        transform: scale(1.0);
+        box-shadow: 0px 0px 0px 5px rgba(200, 220, 255, 0.4) inset,
+            -25px -18px 40px #8a9fff inset,
+            0 0 30px rgba(180, 150, 255, 0.5);
+    }
+
+    25% {
+        transform: scale(1.15);
+        box-shadow: 0px 0px 0px 10px rgba(220, 235, 255, 0.7) inset,
+            -25px -18px 40px #b2baff inset,
+            0 0 60px rgba(200, 180, 255, 0.9);
+    }
+
+    50% {
+        transform: scale(1.25);
+        box-shadow: 0px 0px 0px 15px rgba(240, 250, 255, 0.9) inset,
+            -25px -18px 40px #c2caff inset,
+            0 0 100px rgba(220, 200, 255, 1.2);
+    }
+
+    75% {
+        transform: scale(1.15);
+        box-shadow: 0px 0px 0px 10px rgba(220, 235, 255, 0.7) inset,
+            -25px -18px 40px #b2baff inset,
+            0 0 60px rgba(200, 180, 255, 0.9);
+    }
+}
+
+@keyframes pluto-float {
+
+    0%,
+    100% {
+        transform: scale(1.05) translate(0px, 0px);
+    }
+
+    12.5% {
+        transform: scale(1.08) translate(10px, -5px);
+    }
+
+    25% {
+        transform: scale(1.1) translate(15px, -10px);
+    }
+
+    37.5% {
+        transform: scale(1.08) translate(10px, -15px);
+    }
+
+    50% {
+        transform: scale(1.05) translate(0px, -20px);
+    }
+
+    62.5% {
+        transform: scale(1.08) translate(-10px, -15px);
+    }
+
+    75% {
+        transform: scale(1.1) translate(-15px, -10px);
+    }
+
+    87.5% {
+        transform: scale(1.08) translate(-10px, -5px);
     }
 }
