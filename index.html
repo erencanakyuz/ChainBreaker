@@ -20,6 +20,30 @@
 </head>
 
 <body>
+  <!-- Twinkling stars background (same as final scene) -->
+  <div class="menu-stars">
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+    <div class="menu-star"></div>
+  </div>
+
   <div id="loading">
     <div class="loading-spinner"></div>
     <div>Chain Breaker Pro Yükleniyor...</div>
@@ -723,44 +747,7 @@
 
 
 
-      // Show animation indicator overlay for MenuScene
-      showAnimationIndicator(text) {
-        // Remove existing indicator
-        const existing = document.querySelector('.menu-animation-indicator');
-        if (existing) existing.remove();
 
-        // Create indicator
-        const indicator = document.createElement('div');
-        indicator.className = 'menu-animation-indicator';
-        indicator.textContent = text;
-        indicator.style.cssText = `
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background: linear-gradient(45deg, #4ecdc4, #44a08d);
-          color: white;
-          padding: 10px 15px;
-          border-radius: 8px;
-          font-family: "Press Start 2P", monospace;
-          font-size: 8px;
-          z-index: 10000;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-          border: 2px solid rgba(255,255,255,0.3);
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        `;
-
-        document.body.appendChild(indicator);
-
-        // Animate in
-        setTimeout(() => indicator.style.opacity = '1', 10);
-
-        // Auto remove
-        setTimeout(() => {
-          indicator.style.opacity = '0';
-          setTimeout(() => indicator.remove(), 300);
-        }, 2500);
-      }
 
       setPlutoPosition(mode) {
         if (!this.unifiedPlutoContainer) return;
