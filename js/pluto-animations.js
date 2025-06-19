@@ -107,81 +107,81 @@ class PlutoAnimationController {
     getAnimationConfig(animationType) {
         const animations = {
             'orbit': {
-                css: 'pluto-orbit-mode 8s ease-in-out infinite',
-                duration: 8000,
+                css: 'pluto-orbit-mode 5s ease-in-out infinite',
+                duration: 5000,
                 blocking: true
             },
             'fly-around': {
-                css: 'pluto-fly-around 10s ease-in-out infinite',
-                duration: 10000,
-                blocking: true
-            },
-            'zoom-out': {
-                css: 'pluto-zoom-out 6s ease-in-out infinite',
+                css: 'pluto-fly-around 6s ease-in-out infinite',
                 duration: 6000,
                 blocking: true
             },
+            'zoom-out': {
+                css: 'pluto-zoom-out 4s ease-in-out infinite',
+                duration: 4000,
+                blocking: true
+            },
             'spiral-dance': {
-                css: 'pluto-spiral-dance 9s ease-in-out infinite',
-                duration: 9000,
+                css: 'pluto-spiral-dance 5s ease-in-out infinite',
+                duration: 5000,
                 blocking: true
             },
             'excited': {
-                css: 'pluto-excited 1.5s ease-in-out infinite',
+                css: 'pluto-excited 0.8s ease-in-out infinite',
                 blocking: false
             },
             'sad': {
-                css: 'pluto-sad 2s ease-in-out infinite',
+                css: 'pluto-sad 1.5s ease-in-out infinite',
                 blocking: false
             },
             'idle': {
-                css: 'pluto-idle-pulse 4s ease-in-out infinite',
+                css: 'pluto-idle-pulse 3s ease-in-out infinite',
                 blocking: false
             },
             'angry-shake': {
-                css: 'pluto-angry-shake 1s ease-in-out infinite',
+                css: 'pluto-angry-shake 0.6s ease-in-out infinite',
                 blocking: false
             },
             'sleepy-bob': {
-                css: 'pluto-sleepy-bob 3s ease-in-out infinite',
+                css: 'pluto-sleepy-bob 2.5s ease-in-out infinite',
                 blocking: false
             },
             'bounce': {
-                css: 'pluto-bounce 1.2s ease-in-out infinite',
+                css: 'pluto-bounce 0.9s ease-in-out infinite',
                 blocking: false
             },
             'wobble': {
-                css: 'pluto-wobble 2s ease-in-out infinite',
+                css: 'pluto-wobble 1.5s ease-in-out infinite',
                 blocking: false
             },
             'meditation': {
-                css: 'pluto-meditation 5s ease-in-out infinite',
+                css: 'pluto-meditation 4s ease-in-out infinite',
                 blocking: false
             },
-            // Advanced animations
+            // Advanced animations - made faster and more responsive
             'ring-hunter': {
-                css: 'pluto-ring-hunter 12s ease-in-out infinite',
-                duration: 12000,
+                css: 'pluto-ring-hunter 7s ease-in-out infinite',
+                duration: 7000,
                 blocking: true
             },
             'screen-explorer': {
-                css: 'pluto-screen-explorer 15s ease-in-out infinite',
-                duration: 15000,
+                css: 'pluto-screen-explorer 8s ease-in-out infinite',
+                duration: 8000,
                 blocking: true
             },
             'cosmic-drift': {
-                css: 'pluto-cosmic-drift 18s ease-in-out infinite',
-                duration: 18000,
+                css: 'pluto-cosmic-drift 9s ease-in-out infinite',
+                duration: 9000,
                 blocking: true
             },
             'chase-rings': {
-                css: 'pluto-chase-rings 14s ease-in-out infinite',
-                duration: 14000,
+                css: 'pluto-chase-rings 8s ease-in-out infinite',
+                duration: 8000,
                 blocking: true
             },
             'dimensional-travel': {
-                css: 'pluto-dimensional-travel 16s ease-in-out infinite',
-                duration: 16000,
+                css: 'pluto-dimensional-travel 9s ease-in-out infinite',
+                duration: 9000,
                 blocking: true
             }
         };

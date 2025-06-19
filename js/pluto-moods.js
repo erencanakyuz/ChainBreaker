@@ -31,27 +31,27 @@ class PlutoMoodController {
         this.moodBehaviors = {
             happy: {
                 eyes: {
-                    color: '#4CAF50',
-                    glow: '0 0 15px 3px rgba(76, 175, 80, 0.8)'
+                    color: '#ffffff',
+                    glow: '0 0 15px 3px rgba(255, 255, 255, 0.9)'
                 },
                 body: {
                     glow: '0 0 30px rgba(76, 175, 80, 0.5)'
                 },
                 animation: 'pluto-bounce',
                 speech: [
-                    "Çok mutluyum! 😊",
-                    "Harika gidiyor! 🎉",
-                    "Bu muhteşem! ✨",
-                    "Süper! 🌟"
+                    "Çok mutluyum! 😊✨",
+                    "Yippie! Harika gidiyor! 🎉🪐",
+                    "Bu muhteşem! Keşke her zaman böyle olsa! ✨💫",
+                    "Süper! Ben en sevimli gezegenim! 🌟🥰"
                 ]
             },
             angry: {
                 eyes: {
-                    color: '#f44336',
-                    glow: '0 0 20px 5px rgba(244, 67, 54, 0.9)'
+                    color: '#ffffff',
+                    glow: '0 0 20px 5px rgba(255, 255, 255, 0.9)'
                 },
                 body: {
-                    glow: '0 0 40px rgba(244, 67, 54, 0.6)'
+                    glow: '0 0 40px rgba(255, 100, 100, 0.6)'
                 },
                 animation: 'pluto-angry-shake',
                 speech: [
@@ -63,34 +63,34 @@ class PlutoMoodController {
             },
             sleepy: {
                 eyes: {
-                    color: '#9E9E9E',
-                    glow: '0 0 8px 2px rgba(158, 158, 158, 0.6)'
+                    color: '#ffffff',
+                    glow: '0 0 8px 2px rgba(255, 255, 255, 0.6)'
                 },
                 body: {
                     glow: '0 0 20px rgba(158, 158, 158, 0.4)'
                 },
                 animation: 'pluto-sleepy-bob',
                 speech: [
-                    "Uykuluyum... 😴",
-                    "Biraz dinleneyim... 💤",
-                    "Zzzz... 🌙",
-                    "Yorgunum... 😪"
+                    "Uykuluyum... Küçük bir şekerleme... 😴💤",
+                    "Biraz dinleneyim... Rüyamda halkalar görüyorum... 💤🪐",
+                    "Zzzz... Güzel rüyalar... 🌙✨",
+                    "Yorgunum... Ama hala tatlıyım... 😪🥰"
                 ]
             },
             excited: {
                 eyes: {
-                    color: '#FF9800',
-                    glow: '0 0 18px 4px rgba(255, 152, 0, 0.9)'
+                    color: '#ffffff',
+                    glow: '0 0 18px 4px rgba(255, 255, 255, 0.9)'
                 },
                 body: {
                     glow: '0 0 35px rgba(255, 152, 0, 0.7)'
                 },
                 animation: 'pluto-excited',
                 speech: [
-                    "Çok heyecanlıyım! 🤩",
-                    "Bu inanılmaz! 🚀",
-                    "Wohooo! 🎊",
-                    "Fantastik! ⭐"
+                    "Çok heyecanlıyım! Zıplayacağım! 🤩💫",
+                    "Bu inanılmaz! Evrenin en güzel şeyi! 🚀✨",
+                    "Wohooo! Dans etmek istiyorum! 🎊🪐",
+                    "Fantastik! Ben en şanslı küçük gezegenim! ⭐🥰"
                 ]
             },
             confused: {
@@ -127,18 +127,18 @@ class PlutoMoodController {
             },
             neutral: {
                 eyes: {
-                    color: '#53487a',
-                    glow: '0 0 10px 2px rgba(83, 72, 122, 0.6)'
+                    color: '#ffffff',
+                    glow: '0 0 10px 2px rgba(255, 255, 255, 0.6)'
                 },
                 body: {
                     glow: '0 0 20px rgba(83, 72, 122, 0.4)'
                 },
                 animation: 'pluto-idle-pulse',
                 speech: [
-                    "Merhaba! 👋",
-                    "Nasıl gidiyor? 🪐",
-                    "Ben buradayım! 🌌",
-                    "Halka avına hazır! 🎯"
+                    "Merhaba sevgili arkadaşım! 👋✨",
+                    "Nasıl gidiyor? Ben çok iyiyim! 🪐🥰",
+                    "Ben buradayım! En sevimli küçük gezegen! 🌌💫",
+                    "Halka avına hazır! Birlikte eğlenelim! 🎯🪐"
                 ]
             }
         };
