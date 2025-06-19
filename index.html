@@ -259,33 +259,21 @@
       }
 
       create() {
-        console.log('🎮 MenuScene: Starting menu creation...');
+
 
         // Disable global speech bubbles in menu
         document.body.classList.remove('game-active');
 
         const { width, height } = this.cameras.main;
-        console.log('🎮 MenuScene: Screen dimensions:', width, 'x', height);
+
 
         // Create gradient background
         const bgGraphics = this.add.graphics();
         bgGraphics.fillGradientStyle(0x1a1a2e, 0x16213e, 0x0f3460, 0x533483, 1);
         bgGraphics.fillRect(0, 0, width, height);
-        console.log('🎮 MenuScene: Background created');
 
-        // Background particles removed from menu - was causing FPS drops
-        // this.backgroundParticles = this.add.particles(0, 0, 'diamond', {
-        //   x: { min: 0, max: width },
-        //   y: { min: 0, max: height },
-        //   lifespan: 8000,
-        //   speed: { min: 20, max: 60 },
-        //   scale: { start: 0.3, end: 0 },
-        //   quantity: 2,
-        //   blendMode: 'ADD',
-        //   tint: colorSystem.convertedPalettes.cosmic,
-        //   alpha: { start: 0.6, end: 0 }
-        // });
-        console.log('🎮 MenuScene: Background particles removed for performance');
+
+
 
         // Create DOM element for samurai-styled title
         const titleElement = document.createElement('h1');
@@ -298,14 +286,14 @@
         titleElement.style.zIndex = '1000';
         titleElement.style.pointerEvents = 'none'; // Don't block clicks
         document.body.appendChild(titleElement);
-        console.log('🎮 MenuScene: Title element created');
+
 
         // Store reference to remove when scene changes
         this.titleElement = titleElement;
 
         // Create new base Pluto on the left side
         this.setupNewBasePluto();
-        console.log('🎮 MenuScene: Pluto setup completed');
+
 
 
 
@@ -316,7 +304,7 @@
           stroke: '#8c241d',
           strokeThickness: 2
         }).setOrigin(0.5);
-        console.log('🎮 MenuScene: Subtitle created');
+
 
 
 
@@ -333,7 +321,7 @@
           stroke: '#4834D4',
           strokeThickness: 2
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-        console.log('🎮 MenuScene: Story button created');
+
 
         // Story button interactions
         [storyButtonBg, storyText].forEach(element => {
@@ -486,11 +474,11 @@
           }
         ];
 
-        console.log('🎮 MenuScene: Mode designs defined, count:', this.modeDesigns.length);
+
 
         let startY = 180, spacing = 60; // Reduced from 250 and 70 for better visibility
         this.modeDesigns.forEach((mode, index) => {
-          console.log(`🎮 MenuScene: Creating mode ${index}: ${mode.name}`);
+
 
           // Create background for each mode button - make them smaller and more centered
           const buttonBg = this.add.graphics();
@@ -514,7 +502,7 @@
             alpha: 0.8
           }).setOrigin(0, 0.5);
 
-          console.log(`🎮 MenuScene: Mode ${index} UI elements created`);
+
 
           // Add interactive effects
           const buttonElements = [buttonBg, modeText, themeText];
@@ -595,7 +583,7 @@
           });
         });
 
-        console.log('🎮 MenuScene: All menu elements created successfully!');
+
       }
 
       setupNewBasePluto() {
@@ -667,12 +655,12 @@
         // 🎲 Start random animation cycling
         this.setupRandomAnimationCycling();
 
-        console.log('🪐 Menu: New Base Pluto created successfully');
+
       }
 
       // 🎲 RANDOM ANIMATION CYCLING SYSTEM
       setupRandomAnimationCycling() {
-        console.log('🎲 Setting up random animation cycling for menu Pluto');
+
 
         // Start random cycling after 3 seconds
         setTimeout(() => {
@@ -711,13 +699,13 @@
             menuPluto.setAttribute('data-current-random', '1');
           }, 50);
 
-          console.log(`🎲 Orbital dance animation with new random screen positions started (${animationDuration}ms)`);
+
 
           // Return to idle after animation finishes
           setTimeout(() => {
             if (menuPluto.getAttribute('data-current-random') === '1') {
               menuPluto.removeAttribute('data-current-random');
-              console.log(`🎲 Orbital dance finished - returning to idle`);
+
             }
           }, animationDuration);
 
@@ -760,7 +748,7 @@
             element.style.setProperty(property, value);
           });
 
-          console.log('🎲 Full screen random positions set - X range:', maxX + 'px, Y range:', maxY + '%');
+
         };
 
         // Store the function on this object for external access
@@ -1036,7 +1024,7 @@
         // Switch to more active animations for game
         this.setPlutoAnimation('excited');
 
-        console.log('🪐 Pluto switched to game mode');
+
       }
 
       shutdown() {
@@ -1094,7 +1082,7 @@
       switchMenuPlutoToGameMode() {
         // Find menu Pluto from menu scene
         const menuPluto = document.getElementById('menu-pluto-container');
-        console.log('🔍 Looking for menu-pluto-container:', menuPluto);
+
         if (menuPluto) {
           // Store reference
           this.gamePlutoContainer = menuPluto;
@@ -1119,7 +1107,7 @@
             this.gamePlutoEntity.dataset.mood = 'happy';
           }
 
-          console.log('🪐 New Base Pluto switched to game mode');
+
         } else {
           console.warn('❌ Menu Pluto container not found! Creating game Pluto directly...');
           this.createGamePlutoDirectly();
@@ -1191,7 +1179,7 @@
         this.gamePlutoContainer = gamePlutoContainer;
         this.gamePlutoEntity = plutoEntity;
 
-        console.log('🪐 Game Pluto created directly in center position');
+
       }
 
       create() {
@@ -1475,57 +1463,57 @@
       }
 
       setupNeedle() {
-        // Create needle once as a render texture for optimal performance
-        this.createNeedleTexture();
+        // Create ultra-optimized needle system for maximum smoothness
+        this.createOptimizedNeedle();
         this.needleAngle = 0;
         this.originalNeedleSpeed = Phaser.Math.DegToRad(180);
         this.needleSpeed = this.originalNeedleSpeed;
         this.needleReverseProb = 0;
 
-        // Performance optimization variables
-        this.lastNeedleColor = null;
-        this.lastPulseFactor = null;
+        // Remove all unnecessary performance variables
+        this.isInSweetSpot = false;
       }
 
-      createNeedleTexture() {
-        // Create simple arrow pointing towards center
-        this.needle = this.add.graphics();
-        this.drawSimpleArrow();
+      createOptimizedNeedle() {
+        // Create two pre-rendered needle textures for instant swapping
+        const graphics = this.add.graphics();
 
-        // Set up timer for gradient animation
-        this.needleAnimationTimer = 0;
-      }
+        // Create black needle texture
+        graphics.clear();
+        graphics.fillStyle(0x000000);
+        graphics.lineStyle(2, 0x666666);
+        graphics.beginPath();
+        graphics.moveTo(15, 0);
+        graphics.lineTo(-10, -8);
+        graphics.lineTo(-5, 0);
+        graphics.lineTo(-10, 8);
+        graphics.closePath();
+        graphics.fillPath();
+        graphics.strokePath();
 
-      drawSimpleArrow() {
-        this.needle.clear();
+        this.blackNeedleTexture = graphics.generateTexture('blackNeedle', 30, 20);
 
-        // Check if needle is in sweet spot area (collision zone)
-        let needleColor = 0x000000; // Default black
-        if (this.activeRing) {
-          const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
-          const absAngleDiff = Math.abs(angleDiff);
-          const sweetSpotThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
+        // Create white needle texture
+        graphics.clear();
+        graphics.fillStyle(0xFFFFFF);
+        graphics.lineStyle(2, 0x666666);
+        graphics.beginPath();
+        graphics.moveTo(15, 0);
+        graphics.lineTo(-10, -8);
+        graphics.lineTo(-5, 0);
+        graphics.lineTo(-10, 8);
+        graphics.closePath();
+        graphics.fillPath();
+        graphics.strokePath();
 
-          // Turn white when in sweet spot area
-          if (absAngleDiff <= sweetSpotThreshold) {
-            needleColor = 0xFFFFFF; // White when in collision zone
-          }
-        }
+        this.whiteNeedleTexture = graphics.generateTexture('whiteNeedle', 30, 20);
 
-        // Bigger arrow with solid color (black or white based on position)
-        this.needle.fillStyle(needleColor);
-        this.needle.lineStyle(2, 0x666666); // Gray outline
+        // Destroy the temporary graphics object
+        graphics.destroy();
 
-        // Draw bigger arrow pointing inward toward center (local coordinate system)
-        // Arrow points to the right in local coordinates, will be rotated to point toward center
-        this.needle.beginPath();
-        this.needle.moveTo(15, 0);   // Arrow tip pointing right (toward center when properly rotated)
-        this.needle.lineTo(-10, -8); // Top left of arrow base
-        this.needle.lineTo(-5, 0);   // Middle notch
-        this.needle.lineTo(-10, 8);  // Bottom left of arrow base
-        this.needle.closePath();
-        this.needle.fillPath();
-        this.needle.strokePath();
+        // Create the actual needle sprite using black texture initially
+        this.needle = this.add.sprite(0, 0, 'blackNeedle');
+        this.needle.setOrigin(0.5, 0.5);
       }
 
       setupLevelDesigns() {
@@ -1585,27 +1573,40 @@
       update(time, delta) {
         if (this.gameOverFlag) return;
 
-        let dt = delta / 1000;
+        // Initialize frame counter if not exists
+        if (!this.frameCount) this.frameCount = 0;
 
-        // Priority 1: Critical game logic (always runs)
-        this.updateNeedle(dt);
+        // Ultra-smooth needle update gets absolute priority
+        this.updateNeedle(delta * 0.001);
+
+        // Secondary updates with reduced frequency for maximum needle smoothness
         this.updateFeverMode(delta);
-        this.updatePlutoMood(delta);
 
-        // Priority 2: Visual updates
-        this.updateBackgroundGlow(time);
+        // Background glow only every other frame
+        if (this.frameCount % 2 === 0) {
+          this.updateBackgroundGlow(time);
+        }
 
-        // Update all moving rings every frame
-        this.ringStack.forEach(ring => {
-          if (ring.needsUpdate) {
-            ring.update(delta);
-          }
-        });
+        // Pluto mood updates less frequently  
+        if (this.frameCount % 3 === 0) {
+          this.updatePlutoMood(delta);
+        }
 
-        // Enhanced game Pluto animations based on game events
-        if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
+        // Ring updates optimized
+        if (this.ringStack && this.ringStack.length > 0) {
+          this.ringStack.forEach(ring => {
+            if (ring.needsUpdate && ring.graphics) {
+              ring.update(delta);
+            }
+          });
+        }
+
+        // Pluto animations least frequently
+        if (this.frameCount % 4 === 0 && this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
           this.updateGamePlutoAnimation();
         }
+
+        this.frameCount = (this.frameCount + 1) % 12; // Reset every 12 frames
       }
 
       updateGamePlutoAnimation() {
@@ -1665,59 +1666,34 @@
 
       updateNeedle(dt) {
         // Only update needle if it's active (all rings created)
-        if (!this.needleActive) return;
+        if (!this.needleActive || !this.activeRing) return;
 
-        const design = this.getActiveDesign();
-        if (design.needleReverseProb && Math.random() < design.needleReverseProb) {
-          this.needleSpeed = -this.needleSpeed;
-        }
-
+        // Ultra-smooth angle update
         this.needleAngle += this.needleSpeed * dt;
-        if (this.needleAngle >= Math.PI * 2) this.needleAngle -= Math.PI * 2;
+
+        // Optimized angle wrapping (faster than if statements)
+        this.needleAngle = this.needleAngle % (Math.PI * 2);
         if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
 
-        // Check if needle is in sweet spot area (collision zone) - optimized
-        let needleColor = 0x000000; // Default black
-        if (this.activeRing) {
-          const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
-          const absAngleDiff = Math.abs(angleDiff);
-          const sweetSpotThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
+        // Pre-calculate position values for maximum smoothness
+        const radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15;
+        const cosAngle = Math.cos(this.needleAngle);
+        const sinAngle = Math.sin(this.needleAngle);
 
-          // Turn white when in sweet spot area
-          if (absAngleDiff <= sweetSpotThreshold) {
-            needleColor = 0xFFFFFF; // White when in collision zone
-          }
-        }
+        // Ultra-smooth position update
+        this.needle.x = this.center.x + cosAngle * radius;
+        this.needle.y = this.center.y + sinAngle * radius;
+        this.needle.rotation = this.needleAngle + Math.PI;
 
-        // Only redraw needle if color changed to reduce graphics operations
-        if (this.lastNeedleColor !== needleColor) {
-          this.needle.clear();
-          this.needle.fillStyle(needleColor);
-          this.needle.lineStyle(2, 0x666666); // Gray outline
+        // Optimized sweet spot detection (only when needed)
+        const angleDiff = Math.abs(Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle));
+        const sweetSpotThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
+        const inSweetSpot = angleDiff <= sweetSpotThreshold;
 
-          // Draw bigger arrow pointing inward toward center (local coordinate system)
-          this.needle.beginPath();
-          this.needle.moveTo(15, 0);   // Arrow tip pointing right (toward center when properly rotated)
-          this.needle.lineTo(-10, -8); // Top left of arrow base
-          this.needle.lineTo(-5, 0);   // Middle notch
-          this.needle.lineTo(-10, 8);  // Bottom left of arrow base
-          this.needle.closePath();
-          this.needle.fillPath();
-          this.needle.strokePath();
-
-          this.lastNeedleColor = needleColor;
-        }
-
-        // Position needle around the active ring with proper rotation
-        if (this.activeRing) {
-          const radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15; // Small margin outside ring
-
-          this.needle.x = this.center.x + Math.cos(this.needleAngle) * radius;
-          this.needle.y = this.center.y + Math.sin(this.needleAngle) * radius;
-
-          // Rotate arrow to point towards center 
-          // Since needle is positioned at needleAngle, we need it to point 180° back toward center
-          this.needle.rotation = this.needleAngle + Math.PI; // +PI to point back toward center
+        // Instant texture swap for color change (no graphics operations)
+        if (inSweetSpot !== this.isInSweetSpot) {
+          this.needle.setTexture(inSweetSpot ? 'whiteNeedle' : 'blackNeedle');
+          this.isInSweetSpot = inSweetSpot;
         }
       }
 
@@ -1784,7 +1760,7 @@
       changePlutoMood(mood) {
         if (!this.plutoBody) return;
 
-        // console.log('Pluto mood changing to:', mood); // Debug log - disabled for performance
+
         this.plutoMood = mood;
 
         // Remove all mood animations
@@ -1803,7 +1779,7 @@
           case 'orbit':
             this.plutoBody.style.animation = 'pluto-orbit-mode 8s ease-in-out';
             this.plutoIsAnimating = true; // Block other animations
-            console.log('Starting orbit animation (8s)');
+
             // Return to idle after orbit
             setTimeout(() => {
               if (this.plutoMood === 'orbit') {
@@ -1815,12 +1791,12 @@
           case 'fly-around':
             this.plutoBody.style.animation = 'pluto-fly-around 10s ease-in-out';
             this.plutoIsAnimating = true; // Block other animations
-            console.log('Starting fly-around animation (10s)');
+
             // Return to idle after flying around
             setTimeout(() => {
               if (this.plutoMood === 'fly-around') {
                 this.plutoIsAnimating = false;
-                console.log('Fly-around finished, returning to idle');
+
                 this.changePlutoMood('idle');
               }
             }, 10000);
@@ -1828,7 +1804,7 @@
           case 'zoom-out':
             this.plutoBody.style.animation = 'pluto-zoom-out 6s ease-in-out';
             this.plutoIsAnimating = true; // Block other animations
-            console.log('Starting zoom-out animation (6s)');
+
             // Return to idle after zoom
             setTimeout(() => {
               if (this.plutoMood === 'zoom-out') {
@@ -1840,7 +1816,7 @@
           case 'spiral-dance':
             this.plutoBody.style.animation = 'pluto-spiral-dance 8s ease-in-out';
             this.plutoIsAnimating = true; // Block other animations
-            console.log('Starting spiral-dance animation (8s)');
+
             // Return to idle after spiral dance
             setTimeout(() => {
               if (this.plutoMood === 'spiral-dance') {
@@ -2413,72 +2389,10 @@
         }
       }
 
-      runPerformanceTest() {
-        console.log('=== ADVANCED PERFORMANCE TEST STARTED ===');
-        console.log('Press R to reset metrics, P to run test again');
 
-        const startMemory = this.getMemoryUsage();
-        console.log('Start Memory:', startMemory + 'MB');
 
-        // Create stress test - many particles and effects
-        for (let i = 0; i < 15; i++) { // Reduced from 20 to 15 for optimization
-          this.breakParticles.explode(15, // Reduced from 20 to 15
-            this.center.x + Math.random() * 200 - 100,
-            this.center.y + Math.random() * 200 - 100
-          );
-        }
 
-        // Show multiple effects simultaneously
-        this.showScorePopup(9999, this.center.x, this.center.y - 50);
-        this.showComboEffect();
 
-        // Enable fever mode for more particles
-        if (!this.feverMode) {
-          this.activateFeverMode();
-        }
-
-        // Enhanced performance logging
-        setTimeout(() => {
-          const endMemory = this.getMemoryUsage();
-          console.log('Performance Test Results:');
-          console.log('Current FPS:', Math.round(1000 / this.game.loop.delta));
-          console.log('Average FPS:', this.performanceMetrics.averageFPS);
-          console.log('Min FPS:', this.performanceMetrics.minFPS);
-          console.log('Max FPS:', this.performanceMetrics.maxFPS);
-          console.log('Ring Count:', this.ringStack.length);
-          console.log('Start Memory:', startMemory + 'MB');
-          console.log('End Memory:', endMemory + 'MB');
-          console.log('Memory Increase:', Math.round((endMemory - startMemory) * 100) / 100 + 'MB');
-          console.log('Score Popup Pool Size:', this.scorePopupPool.length);
-          console.log('Combo Effect Pool Size:', this.comboEffectPool.length);
-          console.log('=== ADVANCED TEST COMPLETE ===');
-        }, 3000); // Increased to 3 seconds for better measurement
-      }
-
-      resetPerformanceMetrics() {
-        this.performanceMetrics = {
-          frameCount: 0,
-          lastTime: performance.now(),
-          fpsHistory: [],
-          averageFPS: 60,
-          minFPS: 60,
-          maxFPS: 60
-        };
-        console.log('Performance metrics reset');
-      }
-
-      getMemoryUsage() {
-        // Get memory usage information if available (Chrome/modern browsers)
-        if (performance.memory) {
-          return Math.round(performance.memory.usedJSHeapSize / 1024 / 1024 * 100) / 100;
-        }
-        // Fallback estimation based on game objects
-        const ringCount = this.ringStack ? this.ringStack.length : 0;
-        const particleEstimate = 0.1; // Base particle system memory
-        const ringEstimate = ringCount * 0.02; // Each ring ~0.02MB
-        return Math.round((particleEstimate + ringEstimate) * 100) / 100;
-      }
-    }
 
     // Ring sınıfı: Her çemberi, glow, 3D gölge, sweet spot ve ok ile çizer.
     class Ring {
