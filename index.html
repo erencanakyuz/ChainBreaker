@@ -1961,6 +1961,24 @@
         if (absAngleDiff <= this.cachedThreshold) {
           this.handleSuccessfulHit();
         } else {
+          // Wrong place click - add shake effect here too
+          this.cameras.main.shake(200, 0.02); // Medium intensity shake for wrong place
+          this.tweens.add({
+            targets: this.activeRing.graphics,
+            x: this.activeRing.x + 7,
+            y: this.activeRing.y + 7,
+            yoyo: true,
+            duration: 60,
+            repeat: 2,
+            onComplete: () => {
+              this.activeRing.graphics.x = this.activeRing.x;
+              this.activeRing.graphics.y = this.activeRing.y;
+            }
+          });
+
+          // Trigger quick Pluto reaction for wrong place
+          this.triggerPlutoAnimation('confused');
+
           this.handleMiss();
         }
         this.resetRegenTimer();
@@ -2183,6 +2201,31 @@
         let newRadius = lastRadius + this.ringThickness + this.ringGap;
         let ringColor = Phaser.Utils.Array.GetRandom(this.getActiveDesign().ringColors);
         let newRing = new Ring(this, this.center.x, this.center.y, newRadius, this.ringThickness, ringColor, this.getActiveDesign());
+
+        // Start ring invisible and scale it up smoothly
+        newRing.graphics.alpha = 0;
+        newRing.graphics.scaleX = 0.3;
+        newRing.graphics.scaleY = 0.3;
+
+        // Ring is immediately interactive - no delay
+        newRing.inputReceived = false;
+
+        // Smooth spawn animation
+        this.tweens.add({
+          targets: newRing.graphics,
+          alpha: 1,
+          scaleX: 1,
+          scaleY: 1,
+          duration: 300, // Quick but smooth
+          ease: 'Back.easeOut', // Nice bouncy effect
+          onComplete: () => {
+            // Ring is fully visible and ready
+            newRing.graphics.alpha = 1;
+            newRing.graphics.scaleX = 1;
+            newRing.graphics.scaleY = 1;
+          }
+        });
+
         this.ringStack.push(newRing);
         this.activeRing = newRing;
         this.resetRegenTimer();
@@ -2260,6 +2303,28 @@
           const radius = this.baseRadius + i * radiusIncrement;
           const ringColor = colorPool[i % colorPool.length]; // Cycle through colors
           const ring = new Ring(this, this.center.x, this.center.y, radius, this.ringThickness, ringColor, design);
+
+          // Add smooth spawn animation for initial rings too
+          ring.graphics.alpha = 0;
+          ring.graphics.scaleX = 0.5;
+          ring.graphics.scaleY = 0.5;
+
+          // Stagger the animations so rings appear one after another
+          this.tweens.add({
+            targets: ring.graphics,
+            alpha: 1,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 400,
+            ease: 'Back.easeOut',
+            delay: i * 100, // Each ring appears 100ms after the previous one
+            onComplete: () => {
+              ring.graphics.alpha = 1;
+              ring.graphics.scaleX = 1;
+              ring.graphics.scaleY = 1;
+            }
+          });
+
           this.ringStack.push(ring);
         }
 
