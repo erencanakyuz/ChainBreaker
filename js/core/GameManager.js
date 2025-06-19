@@ -425,7 +425,7 @@ export class GameManager {
     }
 
     openStory() {
-        window.location.href = 'story.html';
+        window.location.href = 'index.html';
     }
 
     openSettings() {

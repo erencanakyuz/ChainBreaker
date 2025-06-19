@@ -333,10 +333,10 @@ class StoryManager {
             this.showSceneMessage('Time to start the real adventure! 🚀');
 
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = 'menu.html';
             }, 2000);
         } else {
-            window.location.href = 'index.html';
+            window.location.href = 'menu.html';
         }
     }
 
