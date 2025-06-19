@@ -1086,8 +1086,9 @@
         this.selectedMode = data.selectedMode || null;
         this.level = 1;
         this.lastUpdateTime = 0;
-        this.targetFPS = 60;
+        this.targetFPS = 144; // Updated from 60 to 144
         this.frameBudget = 1000 / this.targetFPS;
+        this.needleActive = false; // Needle starts inactive until all rings are created
       }
 
       switchMenuPlutoToGameMode() {
@@ -1362,7 +1363,7 @@
         });
 
         // FPS Counter - always visible for performance monitoring
-        this.fpsText = this.add.text(this.cameras.main.width - 15, 15, 'FPS: 60', {
+        this.fpsText = this.add.text(this.cameras.main.width - 15, 15, 'FPS: 144', {
           font: '16px Arial',
           fill: '#00ff00',
           stroke: '#000000',
@@ -1376,9 +1377,9 @@
           frameCount: 0,
           lastTime: performance.now(),
           fpsHistory: [],
-          averageFPS: 60,
-          minFPS: 60,
-          maxFPS: 60
+          averageFPS: 144,
+          minFPS: 144,
+          maxFPS: 144
         };
 
         // This timer will now handle the infrequent performance updates.
@@ -1489,9 +1490,9 @@
         );
 
         this.fpsText.setText(`FPS: ${Math.round(fps)}`);
-        if (fps >= 55) this.fpsText.setColor('#00ff00');
-        else if (fps >= 30) this.fpsText.setColor('#ffff00');
-        else this.fpsText.setColor('#ff0000');
+        if (fps >= 120) this.fpsText.setColor('#00ff00'); // Green for 120+ FPS
+        else if (fps >= 60) this.fpsText.setColor('#ffff00'); // Yellow for 60+ FPS
+        else this.fpsText.setColor('#ff0000'); // Red for <60 FPS
       }
 
       // This replaces the old createStarsBackground method and is no longer called from create()
@@ -1715,6 +1716,9 @@
       }
 
       updateNeedle(dt) {
+        // Only update needle if it's active (all rings created)
+        if (!this.needleActive) return;
+
         const design = this.getActiveDesign();
         if (design.needleReverseProb && Math.random() < design.needleReverseProb) {
           this.needleSpeed = -this.needleSpeed;
@@ -2292,6 +2296,9 @@
         this.themeText.setText(design.name + ': ' + design.theme);
         this.ringStack = [];
 
+        // Stop needle during ring creation
+        this.needleActive = false;
+
         // Dynamic ring count based on difficulty
         const numRings = Math.min(8, 6 + Math.floor(this.level / 5));
         const radiusIncrement = this.ringThickness + this.ringGap;
@@ -2304,24 +2311,32 @@
           const ringColor = colorPool[i % colorPool.length]; // Cycle through colors
           const ring = new Ring(this, this.center.x, this.center.y, radius, this.ringThickness, ringColor, design);
 
-          // Add smooth spawn animation for initial rings too
+          // Add smooth spawn animation for initial rings - much slower and more spaced out
           ring.graphics.alpha = 0;
-          ring.graphics.scaleX = 0.5;
-          ring.graphics.scaleY = 0.5;
+          ring.graphics.scaleX = 0.2;
+          ring.graphics.scaleY = 0.2;
 
-          // Stagger the animations so rings appear one after another
+          // Much slower staggered animations - 300ms apart instead of 100ms
           this.tweens.add({
             targets: ring.graphics,
             alpha: 1,
             scaleX: 1,
             scaleY: 1,
-            duration: 400,
+            duration: 600, // Slower animation - 600ms instead of 400ms
             ease: 'Back.easeOut',
-            delay: i * 100, // Each ring appears 100ms after the previous one
+            delay: i * 300, // Much longer delay between rings - 300ms instead of 100ms
             onComplete: () => {
               ring.graphics.alpha = 1;
               ring.graphics.scaleX = 1;
               ring.graphics.scaleY = 1;
+
+              // If this is the last ring, start the needle
+              if (i === numRings - 1) {
+                this.time.delayedCall(200, () => {
+                  this.needleActive = true;
+                  console.log('🎯 All rings created - Needle activated!');
+                });
+              }
             }
           });
 
@@ -2718,6 +2733,11 @@
         height: window.innerHeight
       },
       backgroundColor: '#000000',
+      // FPS Configuration - Set to 144 FPS for smooth high-refresh displays
+      fps: {
+        target: 144,
+        forceSetTimeOut: true
+      },
       // Simplified config to avoid canvas creation issues
       dom: {
         createContainer: true
