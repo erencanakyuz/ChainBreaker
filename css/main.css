@@ -84,15 +84,7 @@ body::before {
     z-index: 1;
 }
 
-@keyframes float-particles {
-    0% {
-        transform: translateY(0) rotate(0deg);
-    }
-
-    100% {
-        transform: translateY(-100vh) rotate(360deg);
-    }
-}
+/* Moved to css/components/animations.css */
 
 /* Enhanced Game Container with Modern CSS */
 #game-container {
@@ -140,22 +132,7 @@ canvas {
     animation: title-glow 3s ease-in-out infinite alternate;
 }
 
-@keyframes title-glow {
-    from {
-        text-shadow:
-            0 5px 0 var(--samurai-orange),
-            0 15px 0 var(--samurai-red),
-            0 20px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    to {
-        text-shadow:
-            0 5px 0 var(--samurai-orange),
-            0 15px 0 var(--samurai-red),
-            0 20px 30px rgba(0, 0, 0, 0.5),
-            0 0 40px var(--samurai-gold);
-    }
-}
+/* Moved to css/components/animations.css */
 
 /* Samurai-styled Menu Buttons */
 .menu-button {

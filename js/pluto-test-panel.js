@@ -1,6 +1,6 @@
 /* ==================================================
    🪐 PLUTO TEST PANEL - CONTROLLER MODULE
-   Extracted from index.html for better organization
+   Updated for new component-based architecture
    ================================================== */
 
 // Global test panel state (avoid redeclaration conflicts)
@@ -11,6 +11,7 @@ window.currentPlutoFeature = window.currentPlutoFeature || 'none';
 
 /**
  * PlutoTestPanelController - Manages the test panel interface
+ * Updated to work with the new GameManager and Pluto component system
  */
 class PlutoTestPanelController {
     constructor() {
@@ -23,6 +24,46 @@ class PlutoTestPanelController {
         } else {
             this.init();
         }
+
+        // Wait for GameManager to be ready
+        this.waitForGameManager();
+    }
+
+    /**
+     * Wait for GameManager to be available
+     */
+    waitForGameManager() {
+        if (window.gameManager && window.gameManager.pluto) {
+            console.log('🎮 GameManager and Pluto ready for test panel');
+            return;
+        }
+
+        // Listen for GameManager ready event
+        window.addEventListener('gameManagerReady', () => {
+            console.log('🎮 GameManager ready event received by test panel');
+        });
+
+        // Also check periodically (fallback)
+        const checkInterval = setInterval(() => {
+            if (window.gameManager && window.gameManager.pluto) {
+                console.log('🎮 GameManager and Pluto detected by test panel');
+                clearInterval(checkInterval);
+            }
+        }, 500);
+    }
+
+    /**
+     * Get Pluto instance from GameManager
+     */
+    getPluto() {
+        return window.gameManager?.pluto || null;
+    }
+
+    /**
+     * Check if Pluto is available
+     */
+    isPlutoReady() {
+        return !!(window.gameManager?.pluto);
     }
 
     /**
@@ -75,16 +116,42 @@ class PlutoTestPanelController {
         panel.className = 'test-panel';
         panel.innerHTML = `
       <div class="panel-header">
-        <h3>🪐 Pluto Test Lab (Fallback)</h3>
+        <h3>🪐 Pluto Test Lab (Component Mode)</h3>
         <button id="toggle-panel" class="toggle-btn">━</button>
       </div>
       <div class="panel-content">
         <div class="test-section">
-          <h4>Basic Controls</h4>
+          <h4>Mood Tests</h4>
           <div class="button-grid">
-            <button onclick="testPlutoAnimation('excited')" class="test-btn">😄 Excited</button>
-            <button onclick="testPlutoSpeech('greeting')" class="test-btn">👋 Greeting</button>
-            <button onclick="stopPlutoAnimation()" class="test-btn stop">⏹️ Stop</button>
+            <button onclick="window.testPlutoMood('happy')" class="test-btn">😄 Happy</button>
+            <button onclick="window.testPlutoMood('sad')" class="test-btn">😢 Sad</button>
+            <button onclick="window.testPlutoMood('angry')" class="test-btn">😠 Angry</button>
+            <button onclick="window.testPlutoMood('neutral')" class="test-btn">😐 Neutral</button>
+          </div>
+        </div>
+        <div class="test-section">
+          <h4>Animation Tests</h4>
+          <div class="button-grid">
+            <button onclick="window.testPlutoAnimation('excited')" class="test-btn">✨ Excited</button>
+            <button onclick="window.testPlutoAnimation('orbit')" class="test-btn">🌍 Orbit</button>
+            <button onclick="window.testPlutoAnimation('fly-around')" class="test-btn">🚀 Fly Around</button>
+            <button onclick="window.testPlutoAnimation('idle')" class="test-btn">⏸️ Idle</button>
+          </div>
+        </div>
+        <div class="test-section">
+          <h4>Skin Tests</h4>
+          <div class="button-grid">
+            <button onclick="window.testPlutoSkin('default')" class="test-btn">🪐 Default</button>
+            <button onclick="window.testPlutoSkin('golden')" class="test-btn">✨ Golden</button>
+            <button onclick="window.testPlutoSkin('cyborg')" class="test-btn">🤖 Cyborg</button>
+          </div>
+        </div>
+        <div class="test-section">
+          <h4>System Tests</h4>
+          <div class="button-grid">
+            <button onclick="window.testLevelComplete(1)" class="test-btn">🏆 Complete Level 1</button>
+            <button onclick="window.testLevelComplete(2)" class="test-btn">🏆 Complete Level 2</button>
+            <button onclick="window.resetPlutoToDefault()" class="test-btn stop">🔄 Reset</button>
           </div>
         </div>
       </div>
@@ -134,19 +201,19 @@ class PlutoTestPanelController {
                     break;
                 case 'h': // Happy
                     e.preventDefault();
-                    if (typeof testPlutoMood === 'function') testPlutoMood('happy');
+                    window.testPlutoMood('happy');
                     break;
                 case 'e': // Excited
                     e.preventDefault();
-                    if (typeof testPlutoAnimation === 'function') testPlutoAnimation('excited');
+                    window.testPlutoAnimation('excited');
                     break;
-                case 's': // Speech
+                case 'o': // Orbit
                     e.preventDefault();
-                    if (typeof testPlutoSpeech === 'function') testPlutoSpeech('greeting');
+                    window.testPlutoAnimation('orbit');
                     break;
-                case 'x': // Stop
+                case 'x': // Reset
                     e.preventDefault();
-                    if (typeof stopPlutoAnimation === 'function') stopPlutoAnimation();
+                    window.resetPlutoToDefault();
                     break;
             }
         }
@@ -186,26 +253,6 @@ class PlutoTestPanelController {
     }
 
     /**
-     * Add custom test button
-     * @param {string} section - Section to add to ('basic', 'advanced', etc.)
-     * @param {string} label - Button label
-     * @param {Function} callback - Click callback
-     */
-    addCustomButton(section, label, callback) {
-        const sectionElement = document.querySelector(`.test-section h4:contains("${section}")`);
-        if (sectionElement) {
-            const buttonGrid = sectionElement.parentElement.querySelector('.button-grid');
-            if (buttonGrid) {
-                const button = document.createElement('button');
-                button.className = 'test-btn';
-                button.textContent = label;
-                button.addEventListener('click', callback);
-                buttonGrid.appendChild(button);
-            }
-        }
-    }
-
-    /**
      * Show animation indicator
      * @param {string} text - Indicator text
      */
@@ -220,16 +267,31 @@ class PlutoTestPanelController {
         const indicator = document.createElement('div');
         indicator.className = 'animation-indicator';
         indicator.textContent = text;
+        indicator.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: "Press Start 2P", monospace;
+            font-size: 10px;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        `;
         document.body.appendChild(indicator);
 
         // Show with animation
         setTimeout(() => {
-            indicator.classList.add('show');
+            indicator.style.opacity = '1';
         }, 10);
 
         // Auto-hide after delay
         setTimeout(() => {
-            indicator.classList.remove('show');
+            indicator.style.opacity = '0';
             setTimeout(() => {
                 if (indicator.parentNode) {
                     indicator.parentNode.removeChild(indicator);
@@ -241,6 +303,147 @@ class PlutoTestPanelController {
 
 // Global instance
 const PlutoTestPanel = new PlutoTestPanelController();
+
+/* ==================================================
+   NEW COMPONENT-BASED TEST FUNCTIONS
+   Updated to work with GameManager and Pluto component
+   ================================================== */
+
+/**
+ * Test Pluto mood using the new component system
+ * @param {string} moodType - Mood to test
+ */
+function testPlutoMood(moodType) {
+    const pluto = window.gameManager?.pluto;
+    if (!pluto) {
+        console.warn('🧪 Pluto not available for mood test');
+        PlutoTestPanel.showAnimationIndicator('⚠️ Pluto not ready');
+        return;
+    }
+
+    console.log(`🧪 Testing Pluto mood: ${moodType}`);
+    const success = pluto.setMood(moodType);
+
+    if (success) {
+        window.currentPlutoMood = moodType;
+        PlutoTestPanel.showAnimationIndicator(`Mood: ${moodType}`);
+        PlutoTestPanel.updateStatusDisplay();
+    } else {
+        PlutoTestPanel.showAnimationIndicator(`❌ Mood ${moodType} locked`);
+    }
+}
+
+/**
+ * Test Pluto animation using the new component system
+ * @param {string} animationType - Animation to test
+ */
+function testPlutoAnimation(animationType) {
+    const pluto = window.gameManager?.pluto;
+    if (!pluto) {
+        console.warn('🧪 Pluto not available for animation test');
+        PlutoTestPanel.showAnimationIndicator('⚠️ Pluto not ready');
+        return;
+    }
+
+    console.log(`🧪 Testing Pluto animation: ${animationType}`);
+    const success = pluto.setAnimation(animationType);
+
+    if (success) {
+        window.currentPlutoAnimation = animationType;
+        PlutoTestPanel.showAnimationIndicator(`Animation: ${animationType}`);
+        PlutoTestPanel.updateStatusDisplay();
+    } else {
+        PlutoTestPanel.showAnimationIndicator(`❌ Animation ${animationType} locked`);
+    }
+}
+
+/**
+ * Test Pluto skin using the new component system
+ * @param {string} skinType - Skin to test
+ */
+function testPlutoSkin(skinType) {
+    const pluto = window.gameManager?.pluto;
+    if (!pluto) {
+        console.warn('🧪 Pluto not available for skin test');
+        PlutoTestPanel.showAnimationIndicator('⚠️ Pluto not ready');
+        return;
+    }
+
+    console.log(`🧪 Testing Pluto skin: ${skinType}`);
+    const success = pluto.applySkin(skinType);
+
+    if (success) {
+        PlutoTestPanel.showAnimationIndicator(`Skin: ${skinType}`);
+    } else {
+        PlutoTestPanel.showAnimationIndicator(`❌ Skin ${skinType} locked`);
+    }
+}
+
+/**
+ * Test level completion using the GameManager
+ * @param {number} levelId - Level to complete
+ */
+function testLevelComplete(levelId) {
+    const gameManager = window.gameManager;
+    if (!gameManager) {
+        console.warn('🧪 GameManager not available for level test');
+        PlutoTestPanel.showAnimationIndicator('⚠️ GameManager not ready');
+        return;
+    }
+
+    console.log(`🧪 Testing level completion: ${levelId}`);
+    gameManager.completeLevel(levelId);
+    PlutoTestPanel.showAnimationIndicator(`🏆 Level ${levelId} completed!`);
+}
+
+/**
+ * Reset Pluto to default state
+ */
+function resetPlutoToDefault() {
+    const pluto = window.gameManager?.pluto;
+    if (!pluto) {
+        console.warn('🧪 Pluto not available for reset');
+        PlutoTestPanel.showAnimationIndicator('⚠️ Pluto not ready');
+        return;
+    }
+
+    console.log('🧪 Resetting Pluto to default state');
+
+    // Reset to default values
+    pluto.applySkin('default');
+    pluto.setMood('neutral');
+    pluto.setAnimation('idle');
+    pluto.show();
+    pluto.resetPosition();
+
+    // Update status
+    window.currentPlutoAnimation = 'idle';
+    window.currentPlutoMood = 'neutral';
+    window.currentPlutoSpeech = 'silent';
+    window.currentPlutoFeature = 'none';
+
+    PlutoTestPanel.showAnimationIndicator('🔄 Reset to default');
+    PlutoTestPanel.updateStatusDisplay();
+}
+
+/**
+ * Show progression debug info
+ */
+function showProgressionDebug() {
+    const progression = window.gameManager?.progression || window.playerProgression;
+    if (!progression) {
+        console.warn('🧪 PlayerProgression not available');
+        return;
+    }
+
+    const stats = progression.getStats();
+    console.log('🧪 Progression Debug:', stats);
+
+    const pluto = window.gameManager?.pluto;
+    if (pluto) {
+        console.log('🧪 Pluto State:', pluto.getState());
+    }
+}
 
 /* ==================================================
    UTILITY FUNCTIONS
@@ -305,133 +508,28 @@ function hideTestPanel() {
 }
 
 /* ==================================================
-   FEATURE IMPLEMENTATIONS
-   Advanced feature test functions
+   EXPORTS & GLOBAL ATTACHMENTS
    ================================================== */
 
-let plutoAutoRoam = false;
-let plutoRingReact = false;
-let plutoWeatherMode = false;
-let plutoPartyMode = false;
-let plutoMeditationMode = false;
-
-/**
- * Test advanced Pluto features
- * @param {string} featureType - Feature type to test
- */
-function testPlutoFeature(featureType) {
-    console.log(`Testing Pluto feature: ${featureType}`);
-    updateStatus('feature', featureType);
-
-    switch (featureType) {
-        case 'roam':
-            toggleAutoRoam();
-            break;
-        case 'react':
-            toggleRingReact();
-            break;
-        case 'weather':
-            toggleWeatherMode();
-            break;
-        case 'party':
-            togglePartyMode();
-            break;
-        case 'meditation':
-            toggleMeditationMode();
-            break;
-        case 'reset':
-            resetPlutoToDefault();
-            break;
-    }
-}
-
-function toggleAutoRoam() {
-    plutoAutoRoam = !plutoAutoRoam;
-    if (typeof showPlutoSpeech === 'function') {
-        showPlutoSpeech(plutoAutoRoam ? "Özgürce dolaşacağım! 🚶‍♂️✨" : "Merkeze dönüyorum! 🏠");
-    }
-}
-
-function toggleRingReact() {
-    plutoRingReact = !plutoRingReact;
-    if (typeof showPlutoSpeech === 'function') {
-        showPlutoSpeech(plutoRingReact ? "Halkalara tepki vereceğim! ⚡" : "Normal moda döndüm! 😌");
-    }
-}
-
-function toggleWeatherMode() {
-    plutoWeatherMode = !plutoWeatherMode;
-    if (typeof showPlutoSpeech === 'function') {
-        showPlutoSpeech(plutoWeatherMode ? "Hava durumu modunda! 🌦️" : "Normal hava! ☀️");
-    }
-}
-
-function togglePartyMode() {
-    plutoPartyMode = !plutoPartyMode;
-    if (typeof showPlutoSpeech === 'function') {
-        showPlutoSpeech(plutoPartyMode ? "PARTİ ZAMANI! 🎊🎉" : "Parti bitti! 😴");
-    }
-}
-
-function toggleMeditationMode() {
-    plutoMeditationMode = !plutoMeditationMode;
-    if (typeof showPlutoSpeech === 'function') {
-        showPlutoSpeech(plutoMeditationMode ? "Meditasyon modunda... 🧘‍♂️" : "Meditasyon tamamlandı! ✨");
-    }
-}
-
-function resetPlutoToDefault() {
-    // Reset all states
-    plutoAutoRoam = false;
-    plutoRingReact = false;
-    plutoWeatherMode = false;
-    plutoPartyMode = false;
-    plutoMeditationMode = false;
-
-    // Reset animations and moods
-    if (typeof stopPlutoAnimation === 'function') {
-        stopPlutoAnimation();
-    }
-
-    // Update status
-    updateStatus('animation', 'idle');
-    updateStatus('mood', 'neutral');
-    updateStatus('speech', 'silent');
-    updateStatus('feature', 'none');
-
-    if (typeof showPlutoSpeech === 'function') {
-        showPlutoSpeech("Varsayılan ayarlara döndüm! 🔄");
-    }
-}
-
-/* ==================================================
-   EXPORTS
-   ================================================== */
-
-// Export for module systems (if needed)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        PlutoTestPanelController,
-        PlutoTestPanel,
-        updateStatus,
-        showAnimationIndicator,
-        toggleTestPanel,
-        showTestPanel,
-        hideTestPanel,
-        testPlutoFeature
-    };
-}
-
-// Also attach to window for global access
+// Attach to window for global access (maintaining backwards compatibility)
 if (typeof window !== 'undefined') {
     window.PlutoTestPanelController = PlutoTestPanelController;
     window.PlutoTestPanel = PlutoTestPanel;
+
+    // New component-based test functions
+    window.testPlutoMood = testPlutoMood;
+    window.testPlutoAnimation = testPlutoAnimation;
+    window.testPlutoSkin = testPlutoSkin;
+    window.testLevelComplete = testLevelComplete;
+    window.resetPlutoToDefault = resetPlutoToDefault;
+    window.showProgressionDebug = showProgressionDebug;
+
+    // Utility functions
     window.updateStatus = updateStatus;
     window.showAnimationIndicator = showAnimationIndicator;
     window.toggleTestPanel = toggleTestPanel;
     window.showTestPanel = showTestPanel;
     window.hideTestPanel = hideTestPanel;
-    window.testPlutoFeature = testPlutoFeature;
 }
 
-console.log('🧪 Pluto Test Panel Controller loaded!'); 
+console.log('🧪 Pluto Test Panel Controller loaded! (Component Mode)'); 

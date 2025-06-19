@@ -1,0 +1,92 @@
+{
+    "1": {
+        "type": "mood",
+        "id": "angry",
+        "name": "Angry Mood",
+        "description": "Pluto can now show anger when things don't go well!"
+    },
+    "2": {
+        "type": "skin",
+        "id": "golden",
+        "name": "Golden Pluto",
+        "description": "A shimmering golden appearance for our cosmic friend!"
+    },
+    "3": {
+        "type": "animation",
+        "id": "fly-around",
+        "name": "Fly Around",
+        "description": "Watch Pluto soar around the screen in excitement!"
+    },
+    "5": {
+        "type": "animation",
+        "id": "orbit",
+        "name": "Orbit Mode",
+        "description": "Pluto performs orbital movements like a real celestial body!"
+    },
+    "7": {
+        "type": "skin",
+        "id": "cyborg",
+        "name": "Cyborg Pluto",
+        "description": "A futuristic metallic appearance with glowing effects!"
+    },
+    "10": {
+        "type": "animation",
+        "id": "zoom-out",
+        "name": "Zoom Out",
+        "description": "Pluto dramatically scales up and down for emphasis!"
+    },
+    "12": {
+        "type": "mood",
+        "id": "sleepy",
+        "name": "Sleepy Mood",
+        "description": "Sometimes even cosmic entities need a nap!"
+    },
+    "15": {
+        "type": "animation",
+        "id": "spiral-dance",
+        "name": "Spiral Dance",
+        "description": "An elegant spiraling dance animation!"
+    },
+    "18": {
+        "type": "skin",
+        "id": "neon",
+        "name": "Neon Pluto",
+        "description": "Bright neon colors that pulse with energy!"
+    },
+    "20": {
+        "type": "animation",
+        "id": "ring-hunter",
+        "name": "Ring Hunter",
+        "description": "Pluto actively hunts for rings to break!"
+    },
+    "25": {
+        "type": "skin",
+        "id": "cosmic",
+        "name": "Cosmic Pluto",
+        "description": "A mystical appearance filled with stars and nebula!"
+    },
+    "30": {
+        "type": "animation",
+        "id": "dimensional-travel",
+        "name": "Dimensional Travel",
+        "description": "Watch Pluto phase in and out of dimensions!"
+    },
+    "35": {
+        "type": "mood",
+        "id": "meditative",
+        "name": "Meditative Mood",
+        "description": "A calm, zen-like state for peaceful moments!"
+    },
+    "40": {
+        "type": "skin",
+        "id": "crystal",
+        "name": "Crystal Pluto",
+        "description": "A beautiful crystalline form that refracts light!"
+    },
+    "50": {
+        "type": "animation",
+        "id": "cosmic-drift",
+        "name": "Cosmic Drift",
+        "description": "Pluto drifts gracefully through space and time!"
+    }
+}

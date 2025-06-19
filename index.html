@@ -10,10 +10,11 @@
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
 
   <!-- Main game styles -->
-  <link rel="stylesheet" href="styles.css?v=1.0">
+  <link rel="stylesheet" href="css/main.css?v=1.0">
 
-  <!-- Pluto Animation System Styles -->
-  <link rel="stylesheet" href="css/pluto-animations.css?v=3.0">
+  <!-- Component Styles -->
+  <link rel="stylesheet" href="css/components/animations.css?v=3.0">
+  <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
   <link rel="stylesheet" href="css/pluto-test-panel.css?v=3.0">
 </head>
 
@@ -27,7 +28,7 @@
     <div id="phaser-game"></div>
   </div>
 
-  <!-- Pluto Test Panel will be loaded dynamically -->
+  <!-- Pluto will be managed by the new component system -->
 
   <!-- Load external color libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
@@ -2796,12 +2797,8 @@
     });
   </script>
 
-  <!-- Pluto Animation System Modules -->
-  <script src="js/pluto-speech.js?v=3.0"></script>
-  <script src="js/pluto-animations.js?v=3.0"></script>
-  <script src="js/pluto-moods.js?v=3.0"></script>
-  <script src="js/pluto-test-panel.js?v=3.0"></script>
-  <script src="js/pluto-animation-library.js?v=3.0"></script>
+  <!-- ChainBreaker Pro - New Modular Application -->
+  <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

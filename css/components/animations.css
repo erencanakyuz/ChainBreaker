@@ -23,6 +23,175 @@
     }
 }
 
+/* ===== GAME UI ANIMATIONS ===== */
+@keyframes float-particles {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+    }
+}
+
+@keyframes title-glow {
+    from {
+        text-shadow:
+            0 5px 0 var(--samurai-orange),
+            0 15px 0 var(--samurai-red),
+            0 20px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    to {
+        text-shadow:
+            0 5px 0 var(--samurai-orange),
+            0 15px 0 var(--samurai-red),
+            0 20px 30px rgba(0, 0, 0, 0.5),
+            0 0 40px var(--samurai-gold);
+    }
+}
+
+@keyframes spin-modern {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes samurai-pulse {
+    from {
+        filter: drop-shadow(0 0 20px rgba(237, 171, 80, 0.6));
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px rgba(237, 171, 80, 0.9));
+    }
+}
+
+@keyframes ring-fill {
+    from {
+        stroke-dashoffset: 251.2;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-50px) scale(1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes ring-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(108, 92, 231, 0.6);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(108, 92, 231, 0.8);
+    }
+}
+
+@keyframes ring-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes score-float {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100px) scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes combo-burst {
+    0% {
+        transform: scale(0.8) rotate(-5deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(2deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0;
+    }
+}
+
+@keyframes level-up-flash {
+
+    0%,
+    100% {
+        background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+        transform: scale(1);
+    }
+
+    25% {
+        background: linear-gradient(45deg, #74b9ff, #0984e3);
+        transform: scale(1.1);
+    }
+
+    50% {
+        background: linear-gradient(45deg, #fd79a8, #e84393);
+        transform: scale(1.05);
+    }
+
+    75% {
+        background: linear-gradient(45deg, #55a3ff, #2d3436);
+        transform: scale(1.08);
+    }
+}
+
+@keyframes fever-pulse {
+
+    0%,
+    100% {
+        filter: hue-rotate(0deg) brightness(1);
+    }
+
+    50% {
+        filter: hue-rotate(30deg) brightness(1.2);
+    }
+}
+
+@keyframes hue-shift {
+    from {
+        filter: hue-rotate(0deg);
+    }
+
+    to {
+        filter: hue-rotate(360deg);
+    }
+}
+
 /* ===== SATURN SCENE ANIMATIONS ===== */
 @keyframes saturn {
     0% {
