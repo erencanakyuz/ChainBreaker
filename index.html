@@ -2259,7 +2259,7 @@
             scaleY: 1,
             duration: 300, // Ultra fast but smooth - 150ms
             ease: 'Sine.easeOut', // Very smooth sine easing
-            delay: i * 480, // Moderate succession - 160ms between rings (half speed)
+            delay: i * 960, // Moderate succession -  between rings (half speed)
             onComplete: () => {
               ring.graphics.alpha = 1;
               ring.graphics.scaleX = 1;
@@ -2269,7 +2269,7 @@
               if (i === numRings - 1) {
                 this.time.delayedCall(300, () => {
                   this.needleActive = true;
-                  // console.log('🎯 All rings created - Needle activated!'); // Removed to reduce console spam
+
                 });
               }
             }

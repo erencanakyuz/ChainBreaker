@@ -280,7 +280,7 @@ class StoryManager {
         const cssId = `story-scene-${sceneNumber}-css`;
 
         if (cssFile) {
-            await this.loadCSS(cssFile, cssId);
+                await this.loadCSS(cssFile, cssId);
         }
     }
 
