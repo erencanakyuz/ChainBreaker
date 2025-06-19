@@ -264,8 +264,8 @@
         // Store reference to remove when scene changes
         this.titleElement = titleElement;
 
-        // Create Menu Pluto on the left side with cute animations
-        this.setupMenuPluto();
+        // Create unified Pluto on the left side with cute animations
+        this.setupUnifiedPluto();
 
         const subtitleText = this.add.text(width / 2, 200, 'Choose Your Path, Warrior', {
           fontFamily: '"Press Start 2P", monospace',
@@ -479,11 +479,11 @@
                 this.titleElement = null;
               }
 
-              // Clean up menu Pluto immediately
-              if (this.menuPlutoContainer) {
-                this.menuPlutoContainer.remove();
-                this.menuPlutoContainer = null;
-                this.menuPlutoBody = null;
+              // Clean up unified Pluto immediately
+              if (this.unifiedPlutoContainer) {
+                this.unifiedPlutoContainer.remove();
+                this.unifiedPlutoContainer = null;
+                this.plutoBody = null;
               }
 
               // Add flash effect on selection
@@ -548,9 +548,6 @@
         // Create unified Pluto that works for both menu and game
         this.unifiedPlutoContainer = document.createElement('div');
         this.unifiedPlutoContainer.id = 'unified-pluto-container';
-
-        // Default to menu position, can be repositioned for game
-        this.setPlutoPosition('menu');
 
         // Create main Pluto body with unified sizing
         const plutoMain = document.createElement('div');
@@ -649,6 +646,9 @@
         this.plutoEyes = eyes;
         this.plutoMouth = mouth;
 
+        // Now set position after all elements are created
+        this.setPlutoPosition('menu');
+
         // Add unified animations
         this.addUnifiedPlutoAnimations();
 
@@ -669,7 +669,9 @@
             z-index: 1000;
             pointer-events: none;
           `;
-          this.plutoShadow.style.opacity = '0';
+          if (this.plutoShadow) {
+            this.plutoShadow.style.opacity = '0';
+          }
         } else if (mode === 'game') {
           this.unifiedPlutoContainer.style.cssText = `
             position: absolute;
@@ -679,7 +681,9 @@
             z-index: 1000;
             pointer-events: none;
           `;
-          this.plutoShadow.style.opacity = '1';
+          if (this.plutoShadow) {
+            this.plutoShadow.style.opacity = '1';
+          }
         }
       }
 
@@ -802,7 +806,9 @@
         }
       }
 
-      startMenuPlutoSpeech() {
+      startPlutoSpeech() {
+        if (this.plutoMode !== 'menu') return;
+
         // Random menu greetings
         const menuGreetings = [
           "Merhaba! 👋✨",
@@ -816,10 +822,10 @@
         ];
 
         const showRandomGreeting = () => {
-          if (!this.menuPlutoContainer) return; // Exit if Pluto is removed
+          if (!this.unifiedPlutoContainer || this.plutoMode !== 'menu') return;
 
           const message = menuGreetings[Math.floor(Math.random() * menuGreetings.length)];
-          this.showMenuPlutoSpeech(message);
+          this.showPlutoSpeech(message);
         };
 
         // Show initial greeting after delay
@@ -827,7 +833,7 @@
 
         // Show random greetings every 8-12 seconds
         const scheduleNextSpeech = () => {
-          if (!this.menuPlutoContainer) return; // Exit if Pluto is removed
+          if (!this.unifiedPlutoContainer || this.plutoMode !== 'menu') return;
 
           const delay = Phaser.Math.Between(8000, 12000);
           this.time.delayedCall(delay, () => {
@@ -839,21 +845,21 @@
         scheduleNextSpeech();
       }
 
-      showMenuPlutoSpeech(message) {
-        if (!this.menuPlutoContainer) return;
+      showPlutoSpeech(message) {
+        if (!this.unifiedPlutoContainer) return;
 
         // Remove existing speech bubble
-        const existingBubble = this.menuPlutoContainer.querySelector('.menu-pluto-speech-bubble');
+        const existingBubble = this.unifiedPlutoContainer.querySelector('.pluto-speech-bubble');
         if (existingBubble) {
           existingBubble.remove();
         }
 
         // Create new speech bubble
         const speechBubble = document.createElement('div');
-        speechBubble.className = 'menu-pluto-speech-bubble';
+        speechBubble.className = 'pluto-speech-bubble';
         speechBubble.textContent = message;
 
-        this.menuPlutoContainer.appendChild(speechBubble);
+        this.unifiedPlutoContainer.appendChild(speechBubble);
 
         // Show with animation
         setTimeout(() => {
@@ -873,6 +879,49 @@
         }, 3000 + message.length * 100);
       }
 
+      // Add simple animation control methods
+      setPlutoAnimation(animationType) {
+        if (!this.plutoBody) return;
+
+        // Remove existing animation classes
+        this.plutoBody.style.animation = '';
+
+        switch (animationType) {
+          case 'idle':
+            this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
+            break;
+          case 'excited':
+            this.plutoBody.style.animation = 'pluto-excited 1s infinite ease-in-out';
+            break;
+          case 'happy':
+            this.plutoBody.style.animation = 'pluto-happy 2s infinite ease-in-out';
+            break;
+          case 'orbit':
+            this.plutoBody.style.animation = 'pluto-orbit 4s infinite linear';
+            break;
+          default:
+            this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
+        }
+      }
+
+      switchPlutoToGameMode() {
+        if (!this.unifiedPlutoContainer) return;
+
+        this.plutoMode = 'game';
+        this.setPlutoPosition('game');
+
+        // Remove any speech bubbles
+        const speechBubble = this.unifiedPlutoContainer.querySelector('.pluto-speech-bubble');
+        if (speechBubble) {
+          speechBubble.remove();
+        }
+
+        // Switch to more active animations for game
+        this.setPlutoAnimation('excited');
+
+        console.log('🪐 Pluto switched to game mode');
+      }
+
       shutdown() {
         // Clean up the DOM title element when leaving menu
         if (this.titleElement) {
@@ -880,11 +929,14 @@
           this.titleElement = null;
         }
 
-        // Clean up menu Pluto
-        if (this.menuPlutoContainer) {
-          this.menuPlutoContainer.remove();
-          this.menuPlutoContainer = null;
-          this.menuPlutoBody = null;
+        // Clean up unified Pluto
+        if (this.unifiedPlutoContainer) {
+          this.unifiedPlutoContainer.remove();
+          this.unifiedPlutoContainer = null;
+          this.plutoBody = null;
+          this.plutoShadow = null;
+          this.plutoEyes = null;
+          this.plutoMouth = null;
         }
       }
     }
@@ -908,9 +960,47 @@
         this.frameBudget = 1000 / this.targetFPS;
       }
 
+      switchUnifiedPlutoToGameMode() {
+        // Find unified Pluto from menu scene
+        const unifiedPluto = document.getElementById('unified-pluto-container');
+        if (unifiedPluto) {
+          // Store reference
+          this.unifiedPlutoContainer = unifiedPluto;
+          this.plutoBody = unifiedPluto.querySelector('.unified-pluto-body');
+          this.plutoShadow = unifiedPluto.querySelector('.pluto-shadow');
+
+          // Switch to game position and mode
+          unifiedPluto.style.cssText = `
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            pointer-events: none;
+          `;
+
+          // Show shadow and change animation
+          if (this.plutoShadow) {
+            this.plutoShadow.style.opacity = '1';
+          }
+
+          if (this.plutoBody) {
+            this.plutoBody.style.animation = 'pluto-excited 1s infinite ease-in-out';
+          }
+
+          // Remove speech bubbles
+          const speechBubble = unifiedPluto.querySelector('.pluto-speech-bubble');
+          if (speechBubble) {
+            speechBubble.remove();
+          }
+
+          console.log('🪐 Unified Pluto switched to game mode');
+        }
+      }
+
       create() {
-        // Clean up any existing menu Pluto before starting game
-        this.cleanupMenuPluto();
+        // Switch unified Pluto to game mode
+        this.switchUnifiedPlutoToGameMode();
 
         // Enable global speech bubbles for main game
         document.body.classList.add('game-active');
@@ -1717,6 +1807,16 @@
         this.scoreText.setText('Score: ' + this.score);
         this.needleSpeed *= 1.03;
         this.regenDelay = Math.max(3000, this.regenDelay * 0.98);
+
+        // Trigger Pluto reactions based on combo
+        if (this.combo >= 10) {
+          this.triggerPlutoAnimation('excited');
+        } else if (this.combo >= 5) {
+          this.triggerPlutoAnimation('happy');
+        } else {
+          this.triggerPlutoAnimation('idle');
+        }
+
         if (this.combo >= 5 && !this.feverMode) {
           this.activateFeverMode();
         }
@@ -1764,6 +1864,10 @@
         this.comboText.setText('Combo: ' + this.combo);
         this.lives--;
         this.livesText.setText('Lives: ' + this.lives);
+
+        // Pluto reacts to miss by going back to idle
+        this.triggerPlutoAnimation('idle');
+
         this.cameras.main.shake(150, 0.015);
         this.tweens.add({
           targets: this.activeRing.graphics,
@@ -1942,7 +2046,7 @@
         this.cachedThreshold = null;
 
         // Create 3D CSS Pluto in the center
-        this.setupPluto();
+        // Pluto is already set up and positioned for game mode
 
         this.resetRegenTimer();
       }
@@ -2158,478 +2262,44 @@
         }
       }
 
-      setupPluto() {
-        // Create 3D CSS Pluto instead of Phaser graphics - matching scene-space.css exactly
+      // Simplified Pluto animation triggers for unified system
+      triggerPlutoAnimation(type) {
+        if (!this.plutoBody) return;
 
-        // Remove any existing game Pluto elements
-        const existingGamePluto = document.getElementById('game-pluto-container');
-        if (existingGamePluto) {
-          existingGamePluto.remove();
+        // Simple animation switching for unified Pluto
+        switch (type) {
+          case 'happy':
+            this.plutoBody.style.animation = 'pluto-happy 2s infinite ease-in-out';
+            break;
+          case 'excited':
+            this.plutoBody.style.animation = 'pluto-excited 1s infinite ease-in-out';
+            break;
+          case 'orbit':
+            this.plutoBody.style.animation = 'pluto-orbit 4s infinite linear';
+            break;
+          default:
+            this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
         }
 
-        // Also ensure menu Pluto is cleaned up
-        const existingMenuPluto = document.getElementById('menu-pluto-container');
-        if (existingMenuPluto) {
-          existingMenuPluto.remove();
-          console.log('🧹 Menu Pluto removed during game Pluto setup');
-        }
-
-        // Create main container for 3D CSS Game Pluto
-        this.cssPlutoContainer = document.createElement('div');
-        this.cssPlutoContainer.id = 'game-pluto-container';
-        this.cssPlutoContainer.style.cssText = `
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 1000;
-          pointer-events: none;
-        `;
-
-        // Create titan shadow (Pluto's shadow) - centered below Pluto
-        const titanShadow = document.createElement('div');
-        titanShadow.className = 'scene_titanShadow';
-        titanShadow.style.cssText = `
-          position: absolute;
-          left: 50%;
-          top: 60%;
-          transform: translate(-50%, -50%);
-          width: 40px;
-          height: 10px;
-          border-radius: 100%;
-          background: rgba(41, 24, 99, 0.6);
-          blur: 2px;
-          z-index: 1;
-        `;
-
-        // Create t_wrap container - NO movement animation, stay centered
-        const tWrap = document.createElement('div');
-        tWrap.className = 't_wrap';
-        tWrap.style.cssText = `
-          position: relative;
-          width: 100%;
-          height: 100%;
-        `;
-
-        // Create main Pluto body (scene_titan) - centered and fixed
-        const plutoMain = document.createElement('div');
-        plutoMain.className = 'scene_titan';
-        plutoMain.style.cssText = `
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: 60px;
-          height: 60px;
-          border-radius: 30px;
-          background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 50%, #2c1810 100%);
-          transform-style: preserve-3d;
-          box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset, 
-                      -30px -20px 50px #4a00e0 inset, 
-                      0 0 20px rgba(142, 45, 226, 0.4);
-          animation: pluto-idle-pulse 4s infinite ease-in-out;
-          z-index: 10;
-        `;
-
-        // Create surface details container
-        const surfaceDetails = document.createElement('div');
-        surfaceDetails.className = 'surface-details';
-        surfaceDetails.style.cssText = `
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          overflow: hidden;
-        `;
-
-        // Create mouth crater
-        const crater = document.createElement('div');
-        crater.className = 'crater';
-        crater.style.cssText = `
-          position: absolute;
-          border-radius: 50%;
-          background: rgba(0, 0, 0, 0.3);
-          box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
-          width: 12px;
-          height: 8px;
-          bottom: 20%;
-          left: 50%;
-          transform: translateX(-50%);
-          border-radius: 50% 50% 60% 60%;
-          animation: pluto-mouth-move 3s infinite linear;
-        `;
-
-        // Create angry glow
-        const angryGlow = document.createElement('div');
-        angryGlow.className = 'angry-glow';
-        angryGlow.style.cssText = `
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          background: radial-gradient(circle,
-            rgba(255, 0, 0, 0.3),
-            rgba(139, 0, 0, 0.1),
-            transparent);
-          animation: angry-pulse 2s infinite ease-in-out;
-        `;
-
-        // Create eyes container
-        const eyes = document.createElement('div');
-        eyes.className = 'eyes';
-        eyes.style.cssText = `
-          animation: titan_eye 6s infinite ease;
-        `;
-
-        // Create left eye - corrected position (top of Pluto)
-        const leftEye = document.createElement('div');
-        leftEye.className = 'eye eye--left';
-        leftEye.style.cssText = `
-          position: absolute;
-          left: 18px;
-          top: 15px;
-          width: 8px;
-          height: 8px;
-          background: #ffffff;
-          border-radius: 50%;
-          animation: blink 1s 0s infinite linear, pluto-eyes-glow 3s infinite ease-in-out;
-          box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-        `;
-
-        // Create right eye - corrected position (top of Pluto)
-        const rightEye = document.createElement('div');
-        rightEye.className = 'eye eye--right';
-        rightEye.style.cssText = `
-          position: absolute;
-          right: 18px;
-          top: 15px;
-          width: 8px;
-          height: 8px;
-          background: #ffffff;
-          border-radius: 50%;
-          animation: blink 1s 0s infinite linear, pluto-eyes-glow 3s infinite ease-in-out;
-          box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-        `;
-
-        // Assemble the Pluto structure
-        surfaceDetails.appendChild(crater);
-        eyes.appendChild(leftEye);
-        eyes.appendChild(rightEye);
-
-        plutoMain.appendChild(surfaceDetails);
-        plutoMain.appendChild(angryGlow);
-        plutoMain.appendChild(eyes);
-
-        tWrap.appendChild(plutoMain);
-
-        this.cssPlutoContainer.appendChild(titanShadow);
-        this.cssPlutoContainer.appendChild(tWrap);
-
-        // Add to game container
-        document.getElementById('phaser-game').appendChild(this.cssPlutoContainer);
-
-        // Add the required CSS animations
-        this.addPlutoAnimations();
-
-        // Store reference for cleanup
-        this.plutoContainer = this.cssPlutoContainer;
-        this.plutoBody = plutoMain;
-
-        // Initialize Pluto behavior system
-        this.plutoMood = 'idle';
-        this.plutoOrbitTimer = 0;
-        this.plutoOrbitInterval = 8000; // Every 8 seconds
-        this.plutoMovementTypes = ['orbit', 'fly-around', 'zoom-out', 'spiral-dance'];
-        this.lastMovementType = -1;
-        this.plutoIsAnimating = false; // Prevents mood changes during animations
+        console.log('🪐 Pluto animation:', type);
       }
 
-      addPlutoAnimations() {
-        // Add CSS keyframes for Pluto animations if not already present
-        if (!document.getElementById('pluto-animations')) {
-          console.log('Creating Pluto animation stylesheet...');
-          const styleSheet = document.createElement('style');
-          styleSheet.id = 'pluto-animations';
-          styleSheet.textContent = `
-                         @keyframes pluto-idle-pulse {
-               0%, 100% {
-                 transform: translate(-50%, -50%) scale(1);
-                 box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
-                     -30px -20px 50px #4a00e0 inset,
-                     0 0 20px rgba(142, 45, 226, 0.4);
-               }
-               50% {
-                 transform: translate(-50%, -50%) scale(1.05);
-                 box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.8) inset,
-                     -30px -20px 50px #4a00e0 inset,
-                     0 0 30px rgba(142, 45, 226, 0.6);
-               }
-             }
-
-             @keyframes pluto-orbit-mode {
-               0% {
-                 transform: translate(-50%, -50%) scale(1);
-                 opacity: 1;
-               }
-               15% {
-                 transform: translate(-800%, -50%) scale(0.6);
-                 opacity: 0.7;
-               }
-               30% {
-                 transform: translate(-800%, -800%) scale(0.4);
-                 opacity: 0.5;
-               }
-               45% {
-                 transform: translate(-50%, -800%) scale(0.3);
-                 opacity: 0.4;
-               }
-               60% {
-                 transform: translate(700%, -800%) scale(0.4);
-                 opacity: 0.5;
-               }
-               75% {
-                 transform: translate(700%, -50%) scale(0.6);
-                 opacity: 0.7;
-               }
-               90% {
-                 transform: translate(700%, 700%) scale(0.8);
-                 opacity: 0.8;
-               }
-               100% {
-                 transform: translate(-50%, -50%) scale(1);
-                 opacity: 1;
-               }
-             }
-
-             @keyframes pluto-fly-around {
-               0% {
-                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
-                 opacity: 1;
-               }
-               8% {
-                 transform: translate(-50%, -1000%) scale(1.3) rotate(45deg);
-                 opacity: 0.9;
-               }
-               16% {
-                 transform: translate(-1200%, -800%) scale(0.8) rotate(90deg);
-                 opacity: 0.6;
-               }
-               24% {
-                 transform: translate(-1500%, -200%) scale(0.5) rotate(135deg);
-                 opacity: 0.4;
-               }
-               32% {
-                 transform: translate(-1200%, 400%) scale(0.6) rotate(180deg);
-                 opacity: 0.5;
-               }
-               40% {
-                 transform: translate(-600%, 800%) scale(0.7) rotate(225deg);
-                 opacity: 0.6;
-               }
-               48% {
-                 transform: translate(200%, 1000%) scale(0.8) rotate(270deg);
-                 opacity: 0.7;
-               }
-               56% {
-                 transform: translate(800%, 600%) scale(0.9) rotate(315deg);
-                 opacity: 0.8;
-               }
-               64% {
-                 transform: translate(1200%, 100%) scale(1.0) rotate(360deg);
-                 opacity: 0.9;
-               }
-               72% {
-                 transform: translate(1000%, -400%) scale(1.1) rotate(405deg);
-                 opacity: 0.8;
-               }
-               80% {
-                 transform: translate(600%, -700%) scale(1.2) rotate(450deg);
-                 opacity: 0.7;
-               }
-               88% {
-                 transform: translate(200%, -900%) scale(1.3) rotate(495deg);
-                 opacity: 0.8;
-               }
-               96% {
-                 transform: translate(-200%, -600%) scale(1.1) rotate(540deg);
-                 opacity: 0.9;
-               }
-               100% {
-                 transform: translate(-50%, -50%) scale(1) rotate(540deg);
-                 opacity: 1;
-               }
-             }
-
-             @keyframes pluto-zoom-out {
-               0% {
-                 transform: translate(-50%, -50%) scale(1);
-                 opacity: 1;
-               }
-               25% {
-                 transform: translate(-50%, -50%) scale(0.1);
-                 opacity: 0.2;
-               }
-               50% {
-                 transform: translate(-50%, -50%) scale(0.05);
-                 opacity: 0.1;
-               }
-               75% {
-                 transform: translate(-50%, -50%) scale(0.1);
-                 opacity: 0.2;
-               }
-               100% {
-                 transform: translate(-50%, -50%) scale(1);
-                 opacity: 1;
-               }
-             }
-
-             @keyframes pluto-spiral-dance {
-               0% {
-                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
-                 opacity: 1;
-               }
-               10% {
-                 transform: translate(-200%, -600%) scale(0.8) rotate(72deg);
-                 opacity: 0.9;
-               }
-               20% {
-                 transform: translate(-600%, -800%) scale(0.6) rotate(144deg);
-                 opacity: 0.7;
-               }
-               30% {
-                 transform: translate(-900%, -400%) scale(0.4) rotate(216deg);
-                 opacity: 0.5;
-               }
-               40% {
-                 transform: translate(-800%, 200%) scale(0.5) rotate(288deg);
-                 opacity: 0.6;
-               }
-               50% {
-                 transform: translate(-400%, 700%) scale(0.7) rotate(360deg);
-                 opacity: 0.8;
-               }
-               60% {
-                 transform: translate(200%, 900%) scale(0.9) rotate(432deg);
-                 opacity: 0.9;
-               }
-               70% {
-                 transform: translate(700%, 500%) scale(0.7) rotate(504deg);
-                 opacity: 0.7;
-               }
-               80% {
-                 transform: translate(1000%, -100%) scale(0.5) rotate(576deg);
-                 opacity: 0.5;
-               }
-               90% {
-                 transform: translate(800%, -600%) scale(0.7) rotate(648deg);
-                 opacity: 0.7;
-               }
-               100% {
-                 transform: translate(-50%, -50%) scale(1) rotate(720deg);
-                 opacity: 1;
-               }
-             }
-
-             @keyframes pluto-excited {
-               0%, 100% {
-                 transform: translate(-50%, -50%) scale(1) rotate(0deg);
-                 box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
-                     -30px -20px 50px #4a00e0 inset,
-                     0 0 40px rgba(255, 215, 0, 0.8);
-               }
-               50% {
-                 transform: translate(-50%, -50%) scale(1.15) rotate(5deg);
-                 box-shadow: 0px 0px 0px 4px rgba(255, 215, 0, 0.8) inset,
-                     -30px -20px 50px #4a00e0 inset,
-                     0 0 60px rgba(255, 215, 0, 1);
-               }
-             }
-
-             @keyframes pluto-sad {
-               0%, 100% {
-                 transform: translate(-50%, -50%) scale(1);
-                 box-shadow: 0px 0px 0px 4px rgba(142, 45, 226, 0.6) inset,
-                     -30px -20px 50px #4a00e0 inset,
-                     0 0 20px rgba(100, 100, 255, 0.4);
-               }
-               50% {
-                 transform: translate(-50%, -45%) scale(0.95);
-                 box-shadow: 0px 0px 0px 4px rgba(100, 100, 255, 0.8) inset,
-                     -30px -20px 50px #4a00e0 inset,
-                     0 0 15px rgba(100, 100, 255, 0.6);
-               }
-             }
-
-            @keyframes pluto-eyes-glow {
-              0%, 100% {
-                background-color: #53487a;
-                box-shadow: 0 0 5px rgba(255, 100, 100, 0);
-                transform: scale(1);
-              }
-              50% {
-                background-color: #ff4747;
-                box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7);
-                transform: scale(1.2);
-              }
-            }
-
-            @keyframes pluto-mouth-move {
-              0%, 100% {
-                background: rgba(0, 0, 0, 0.3);
-                box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
-                transform: translateX(-50%) scale(1);
-              }
-              50% {
-                background: rgba(0, 0, 0, 0.4);
-                box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.7), 0 0 5px rgba(255, 0, 0, 0.3);
-                transform: translateX(-50%) scale(1.05);
-              }
-            }
-
-            @keyframes angry-pulse {
-              0%, 100% {
-                transform: scale(1);
-                opacity: 0.5;
-              }
-              50% {
-                transform: scale(1.3);
-                opacity: 0.8;
-              }
-            }
-
-            @keyframes titan_eye {
-              0%, 100% { transform: translateY(0px); }
-              50% { transform: translateY(-2px); }
-            }
-
-            @keyframes blink {
-              0%, 90%, 100% { height: 6px; }
-              95% { height: 1px; }
-            }
-          `;
-          document.head.appendChild(styleSheet);
-          console.log('Pluto animations stylesheet added to head');
-        } else {
-          console.log('Pluto animations stylesheet already exists');
-        }
-      }
-
-      cleanupMenuPluto() {
-        // Force cleanup of menu Pluto to prevent conflicts
-        const menuPlutoContainer = document.getElementById('menu-pluto-container');
-        if (menuPlutoContainer) {
-          menuPlutoContainer.remove();
-          console.log('🧹 Menu Pluto cleaned up before game start');
+      cleanupUnifiedPluto() {
+        // Clean up unified Pluto if needed (but usually we just reposition it)
+        const unifiedPlutoContainer = document.getElementById('unified-pluto-container');
+        if (unifiedPlutoContainer) {
+          unifiedPlutoContainer.remove();
+          console.log('🧹 Unified Pluto cleaned up');
         }
 
-        // Also clean up any menu speech bubbles
-        const menuSpeechBubbles = document.querySelectorAll('.menu-pluto-speech-bubble');
-        menuSpeechBubbles.forEach(bubble => bubble.remove());
+        // Clean up any speech bubbles
+        const speechBubbles = document.querySelectorAll('.pluto-speech-bubble');
+        speechBubbles.forEach(bubble => bubble.remove());
 
-        // Clean up menu animations stylesheet if exists
-        const menuAnimStyles = document.getElementById('menu-pluto-animations');
-        if (menuAnimStyles) {
-          menuAnimStyles.remove();
+        // Clean up animations stylesheet if exists
+        const animStyles = document.getElementById('unified-pluto-animations');
+        if (animStyles) {
+          animStyles.remove();
         }
       }
 
@@ -2872,8 +2542,8 @@
     });
   </script>
 
-  <!-- ChainBreaker Pro - New Modular Application -->
-  <script type="module" src="js/main.js"></script>
+  <!-- ChainBreaker Pro - New Modular Application (DISABLED TO FIX MENU) -->
+  <!-- <script type="module" src="js/main.js"></script> -->
 </body>
 
 </html>
