@@ -268,8 +268,7 @@
         // Create new base Pluto on the left side
         this.setupNewBasePluto();
 
-        // 🎮 Setup special Pluto animation controls for number keys
-        this.setupPlutoAnimationControls();
+
 
         const subtitleText = this.add.text(width / 2, 200, 'Choose Your Path, Warrior', {
           fontFamily: '"Press Start 2P", monospace',
@@ -279,24 +278,7 @@
           strokeThickness: 2
         }).setOrigin(0.5);
 
-        // Add Pluto animation help text
-        const helpText = this.add.text(20, height - 40, 'Press 1-9,0 for Pluto animations | ESC to reset', {
-          fontFamily: '"Press Start 2P", monospace',
-          fontSize: '8px',
-          fill: '#4ecdc4',
-          stroke: '#2c3e50',
-          strokeThickness: 1,
-          alpha: 0.8
-        }).setOrigin(0, 1);
 
-        // Add pulsing animation to help text
-        this.tweens.add({
-          targets: helpText,
-          alpha: 0.4,
-          duration: 2000,
-          yoyo: true,
-          repeat: -1
-        });
 
         // Story Button
         const storyButtonBg = this.add.graphics();
@@ -633,66 +615,113 @@
         this.menuPlutoEntity = plutoEntity;
         this.menuPlutoTitan = titan;
 
+        // 🎲 Start random animation cycling
+        this.setupRandomAnimationCycling();
+
         console.log('🪐 Menu: New Base Pluto created successfully');
       }
 
-      // 🎮 SPECIAL MENU PLUTO ANIMATIONS - Triggered by number keys
-      setupPlutoAnimationControls() {
-        console.log('🎮 Setting up Pluto animation controls (1-9, 0) for MenuScene');
+      // 🎲 RANDOM ANIMATION CYCLING SYSTEM
+      setupRandomAnimationCycling() {
+        console.log('🎲 Setting up random animation cycling for menu Pluto');
 
-        // Remove existing listener if it exists
-        if (this.keydownHandler) {
-          document.removeEventListener('keydown', this.keydownHandler);
-        }
+        // Start random cycling after 3 seconds
+        setTimeout(() => {
+          this.startRandomAnimationCycle();
+        }, 3000);
+      }
 
-        this.keydownHandler = (event) => {
-          // Only work in menu scene
-          if (this.scene.key !== 'MenuScene') return;
+      startRandomAnimationCycle() {
+        const menuPluto = document.querySelector('#menu-pluto-container .pluto-base-entity');
+        if (!menuPluto) return;
 
-          // Get menu Pluto
-          const menuPluto = document.querySelector('#menu-pluto-container .pluto-base-entity');
-          if (!menuPluto) return;
+        // Enable random mode
+        menuPluto.setAttribute('data-random', 'true');
 
-          // Animation descriptions for display
-          const animationNames = {
-            '1': '🌍 Orbital Dance',
-            '2': '∞ Figure-8 Flight',
-            '3': '🦘 Bouncy Explorer',
-            '4': '🌀 Spiral Vortex',
-            '5': '🌊 Wave Rider',
-            '6': '⚡ Teleport Jump',
-            '7': '🧲 Magnetic Attraction',
-            '8': '🔍 Curious Scanner',
-            '9': '💥 Energy Burst',
-            '0': '🎪 Playful Tumble'
-          };
+        // Single animation only (Orbital Dance)
+        const animationDuration = 5000; // 5 seconds
 
-          // Check if it's a number key (1-9, 0)
-          const key = event.key;
-          if (animationNames[key]) {
-            // Remove previous special animation
-            menuPluto.removeAttribute('data-special');
-
-            // Add new special animation after a brief delay
-            setTimeout(() => {
-              menuPluto.setAttribute('data-special', key);
-              console.log(`🪐 Pluto: ${animationNames[key]} animation activated!`);
-
-              // Show animation indicator
-              this.showAnimationIndicator(`${animationNames[key]} Animation!`);
-            }, 50);
+        const cycleAnimations = () => {
+          // Stop if not in menu scene anymore
+          if (this.scene.key !== 'MenuScene') {
+            return;
           }
 
-          // Reset with ESC key
-          if (event.key === 'Escape') {
-            menuPluto.removeAttribute('data-special');
-            this.showAnimationIndicator('🔄 Reset to Normal Float');
-            console.log('🪐 Pluto: Reset to normal menu float');
-          }
+          // Set random CSS variables for full screen movement
+          this.setRandomMovementRange(menuPluto);
+
+          // Reset animation first to trigger new animation
+          menuPluto.removeAttribute('data-current-random');
+          menuPluto.style.animation = 'none';
+
+          // Force reflow to reset animation
+          menuPluto.offsetHeight;
+
+          // Apply the orbital dance animation after small delay
+          setTimeout(() => {
+            menuPluto.setAttribute('data-current-random', '1');
+          }, 50);
+
+          console.log(`🎲 Orbital dance animation with new random screen positions started (${animationDuration}ms)`);
+
+          // Return to idle after animation finishes
+          setTimeout(() => {
+            if (menuPluto.getAttribute('data-current-random') === '1') {
+              menuPluto.removeAttribute('data-current-random');
+              console.log(`🎲 Orbital dance finished - returning to idle`);
+            }
+          }, animationDuration);
+
+          // Schedule next animation after current one finishes + 3-4 second idle break
+          const nextDelay = animationDuration + Math.random() * 1000 + 3000; // 3-4 second break between animations
+          setTimeout(cycleAnimations, nextDelay);
         };
 
-        document.addEventListener('keydown', this.keydownHandler);
+        const setRandomMovementRange = (element) => {
+          // Generate random movement ranges for entire screen coverage
+          const screenWidth = window.innerWidth;
+          const screenHeight = window.innerHeight;
+
+          // Calculate safe movement ranges (keep Pluto visible)
+          const maxX = Math.min(screenWidth * 0.8, 1000); // Max 80% of screen width
+          const maxY = Math.min(screenHeight * 0.6, 600); // Max 60% of screen height
+
+          const randomValues = {
+            // X coordinates (horizontal movement)
+            '--random-x1': `${Math.random() * maxX + 200}px`,        // Top-right area
+            '--random-x2': `${Math.random() * maxX + 300}px`,        // Far right
+            '--random-x3': `${Math.random() * maxX + 100}px`,        // Right side
+            '--random-x4': `${Math.random() * 400 + 200}px`,         // Center-right
+            '--random-x5': `${-Math.random() * 400 - 100}px`,        // Left side
+            '--random-x6': `${-Math.random() * maxX - 200}px`,       // Far left
+            '--random-x7': `${-Math.random() * 600 - 100}px`,        // Top-left area
+
+            // Y coordinates (vertical movement) - NEW!
+            '--random-y1': `${-Math.random() * maxY - 100}%`,        // Top areas
+            '--random-y2': `${-Math.random() * maxY - 150}%`,        // High top
+            '--random-y3': `${Math.random() * maxY + 50}%`,          // Bottom areas
+            '--random-y4': `${Math.random() * maxY + 100}%`,         // Lower bottom
+            '--random-y5': `${Math.random() * maxY + 150}%`,         // Deep bottom
+            '--random-y6': `${Math.random() * 200 + 50}%`,           // Mid-bottom
+            '--random-y7': `${-Math.random() * 200 - 50}%`           // Mid-top
+          };
+
+          // Apply all random values to the element
+          Object.entries(randomValues).forEach(([property, value]) => {
+            element.style.setProperty(property, value);
+          });
+
+          console.log('🎲 Full screen random positions set - X range:', maxX + 'px, Y range:', maxY + '%');
+        };
+
+        // Store the function on this object for external access
+        this.setRandomMovementRange = setRandomMovementRange;
+
+        // Start the cycle
+        cycleAnimations();
       }
+
+
 
       // Show animation indicator overlay for MenuScene
       showAnimationIndicator(text) {
