@@ -2251,15 +2251,15 @@
           ring.graphics.scaleX = 0.5;
           ring.graphics.scaleY = 0.5;
 
-          // Ultra fast and smooth staggered animations - 80ms apart for near-instant spawning
+          // Smooth staggered animations - 160ms apart for balanced spawning speed
           this.tweens.add({
             targets: ring.graphics,
             alpha: 1,
             scaleX: 1,
             scaleY: 1,
-            duration: 150, // Ultra fast but smooth - 150ms
+            duration: 300, // Ultra fast but smooth - 150ms
             ease: 'Sine.easeOut', // Very smooth sine easing
-            delay: i * 80, // Very fast succession - 80ms between rings
+            delay: i * 480, // Moderate succession - 160ms between rings (half speed)
             onComplete: () => {
               ring.graphics.alpha = 1;
               ring.graphics.scaleX = 1;
