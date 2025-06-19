@@ -12,6 +12,7 @@ export class GameManager {
         this.gameContainer = null;
         this.phaserGame = null;
         this.currentLevel = 1;
+        this.activeListeners = []; // To manage event listeners and prevent duplicates
 
         // Initialize performance tracking
         this.performanceMetrics = {
@@ -37,9 +38,6 @@ export class GameManager {
             // Initialize DOM elements
             this.setupGameContainer();
 
-            // Initialize Pluto
-            await this.initializePluto();
-
             // Setup global event listeners
             this.setupEventListeners();
 
@@ -50,7 +48,7 @@ export class GameManager {
             await this.preloadTemplates();
 
             // Initialize Phaser game (if needed)
-            // await this.initializePhaserGame();
+            await this.initializePhaserGame();
 
             // Transition to menu state
             this.setState('MENU');
@@ -66,35 +64,58 @@ export class GameManager {
         }
     }
 
+    // A reusable fetch utility with timeout and retry logic
+    async fetchWithTimeout(url, options = {}, retries = 3, timeout = 5000) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+
+                clearTimeout(id);
+
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+                return response;
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.error(`GameManager: fetch timed out for ${url} (attempt ${i + 1})`);
+                } else {
+                    console.error(`GameManager: fetch failed for ${url}:`, error.message, `(attempt ${i + 1})`);
+                }
+                if (i === retries - 1) throw new Error(`Failed to fetch ${url} after ${retries} attempts.`);
+            }
+        }
+    }
+
     // Load external game data files
     async loadGameData() {
         console.log('GameManager: Loading game data...');
 
         try {
-            // Load level rewards data
-            const rewardsResponse = await fetch('data/level-rewards.json');
-            if (!rewardsResponse.ok) {
-                throw new Error(`Failed to load level rewards: ${rewardsResponse.status}`);
-            }
+            // Load level rewards data with timeout
+            const rewardsResponse = await this.fetchWithTimeout('data/level-rewards.json');
             this.levelRewards = await rewardsResponse.json();
             console.log('GameManager: Level rewards loaded', this.levelRewards);
 
-            // Load Pluto speeches (optional for future use)
+            // Load Pluto speeches with timeout (optional)
             try {
-                const speechResponse = await fetch('data/pluto-speeches.json');
-                if (speechResponse.ok) {
-                    this.plutoSpeeches = await speechResponse.json();
-                    console.log('GameManager: Pluto speeches loaded');
-                } else {
-                    console.warn('GameManager: Pluto speeches not available');
-                }
+                const speechResponse = await this.fetchWithTimeout('data/pluto-speeches.json');
+                this.plutoSpeeches = await speechResponse.json();
+                console.log('GameManager: Pluto speeches loaded');
             } catch (speechError) {
-                console.warn('GameManager: Failed to load Pluto speeches', speechError);
+                console.warn('GameManager: Failed to load Pluto speeches, will proceed without them.', speechError.message);
             }
 
         } catch (error) {
-            console.error('GameManager: Failed to load game data', error);
-            // Initialize with empty data to continue
+            console.error('GameManager: Failed to load critical game data. Using defaults.', error.message);
+            // Initialize with empty data to allow the game to continue
             this.levelRewards = {};
             this.plutoSpeeches = {};
         }
@@ -132,44 +153,118 @@ export class GameManager {
         }
     }
 
+    // Initialize the Phaser game instance
+    async initializePhaserGame() {
+        if (this.phaserGame) {
+            console.warn('GameManager: Phaser game already initialized.');
+            return;
+        }
+
+        console.log('GameManager: Initializing Phaser game...');
+
+        // Wait for Phaser to be available on the window
+        await new Promise(resolve => {
+            const interval = setInterval(() => {
+                if (window.Phaser) {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 100);
+        });
+
+        const config = {
+            type: window.Phaser.AUTO,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            parent: 'phaser-game',
+            scene: [], // Scenes will be added dynamically
+            scale: {
+                mode: window.Phaser.Scale.RESIZE,
+                autoCenter: window.Phaser.Scale.CENTER_BOTH
+            },
+            backgroundColor: '#000000',
+            dom: {
+                createContainer: true
+            }
+        };
+
+        this.phaserGame = new window.Phaser.Game(config);
+        window.phaserGame = this.phaserGame; // For global access if needed
+
+        console.log('GameManager: Phaser game instance created.');
+
+        // You can add scenes dynamically here if needed, e.g.,
+        // this.phaserGame.scene.add('BootScene', BootScene);
+        // this.phaserGame.scene.start('BootScene');
+    }
+
+    // Managed event listener to prevent duplicates
+    _managedEventListener(target, type, listener) {
+        // First, remove any existing listener of the same type to avoid duplicates
+        this.cleanupEventListeners(type);
+
+        const newListener = { target, type, listener };
+        this.activeListeners.push(newListener);
+        target.addEventListener(type, listener);
+    }
+
     // Setup global event listeners
     setupEventListeners() {
+        // Clean up existing listeners before adding new ones to prevent accumulation
+        this.cleanupEventListeners();
+
         // Listen for level completion events
-        window.addEventListener('levelComplete', (event) => {
+        this._managedEventListener(window, 'levelComplete', (event) => {
             this.handleLevelComplete(event.detail);
         });
 
         // Listen for game state changes
-        window.addEventListener('gameStateChange', (event) => {
+        this._managedEventListener(window, 'gameStateChange', (event) => {
             this.handleGameStateChange(event.detail);
         });
 
         // Listen for player progression events
-        window.addEventListener('itemUnlocked', (event) => {
+        this._managedEventListener(window, 'itemUnlocked', (event) => {
             this.handleItemUnlocked(event.detail);
         });
 
         // Listen for score updates
-        window.addEventListener('scoreUpdated', (event) => {
+        this._managedEventListener(window, 'scoreUpdated', (event) => {
             this.handleScoreUpdate(event.detail);
         });
 
         // Listen for Phaser game events (if Phaser is used)
-        window.addEventListener('phaserGameReady', (event) => {
+        this._managedEventListener(window, 'phaserGameReady', (event) => {
             this.handlePhaserGameReady(event.detail);
         });
 
         // Listen for menu interactions
-        window.addEventListener('menuAction', (event) => {
+        this._managedEventListener(window, 'menuAction', (event) => {
             this.handleMenuAction(event.detail);
         });
 
         // Global error handling
-        window.addEventListener('error', (event) => {
+        this._managedEventListener(window, 'error', (event) => {
             this.handleGlobalError(event);
         });
 
         console.log('GameManager: Event listeners setup complete');
+    }
+
+    // Cleanup specific or all event listeners
+    cleanupEventListeners(type = null) {
+        if (!this.activeListeners.length) return;
+
+        const listenersToKeep = [];
+        this.activeListeners.forEach(listener => {
+            if (!type || listener.type === type) {
+                listener.target.removeEventListener(listener.type, listener.listener);
+            } else {
+                listenersToKeep.push(listener);
+            }
+        });
+
+        this.activeListeners = listenersToKeep;
     }
 
     // Handle level completion
@@ -296,16 +391,14 @@ export class GameManager {
 
     // Set game state
     setState(newState, previousState = null) {
-        const oldState = previousState || this.gameState;
+        if (this.gameState === newState) return;
+
+        console.log(`GameManager: State changing from ${this.gameState} to ${newState}`);
+        const oldState = this.gameState;
         this.gameState = newState;
 
-        console.log(`GameManager: State changed from ${oldState} to ${newState}`);
-
-        // Handle state-specific logic
+        // Perform actions based on new state
         switch (newState) {
-            case 'LOADING':
-                this.hideAllUI();
-                break;
             case 'MENU':
                 this.showMenu();
                 break;
@@ -316,39 +409,22 @@ export class GameManager {
                 this.startStoryMode();
                 break;
             case 'PAUSED':
-                this.pauseGame();
+                // Handle pause logic
                 break;
         }
 
         // Dispatch state change event
         window.dispatchEvent(new CustomEvent('gameStateChanged', {
-            detail: { newState, previousState: oldState }
+            detail: { from: oldState, to: newState }
         }));
     }
 
     // Game flow methods
     startGame() {
-        console.log('GameManager: Starting game...');
-        this.setState('PLAYING');
-
-        // Show Pluto if hidden
-        if (this.pluto) {
-            this.pluto.show();
-            this.pluto.setMood('happy');
-            this.pluto.setAnimation('excited');
-        }
-
-        // Dispatch game start event
-        window.dispatchEvent(new CustomEvent('gameStart', {
-            detail: { level: this.currentLevel }
-        }));
+        this.setState('PLAYING', this.gameState);
     }
 
     openStory() {
-        console.log('GameManager: Opening story mode...');
-        this.setState('STORY');
-
-        // Navigate to story page or show story UI
         window.location.href = 'story.html';
     }
 
@@ -372,27 +448,33 @@ export class GameManager {
 
     // UI state methods
     hideAllUI() {
-        // Hide loading screen, menu, etc.
+        // Example: hide menu, settings, etc.
     }
 
     showMenu() {
-        // Show main menu
-        const loading = document.getElementById('loading');
-        if (loading) {
-            loading.style.display = 'none';
-        }
+        // Logic to display the main menu
+        console.log("GameManager: Showing main menu.");
     }
 
-    startGameplay() {
-        // Initialize gameplay UI and logic
+    async startGameplay() {
+        if (!this.pluto) {
+            await this.initializePluto();
+        }
+        this.hideAllUI();
+        // Additional logic to start the game
+        console.log("GameManager: Starting gameplay.");
     }
 
     startStoryMode() {
-        // Initialize story mode
+        this.hideAllUI();
+        // Logic to start story mode
+        console.log("GameManager: Starting story mode.");
     }
 
     pauseGame() {
-        // Pause current game
+        if (this.gameState !== 'PLAYING') return;
+        // Logic to pause the game
+        console.log("GameManager: Pausing game.");
     }
 
     // Utility methods
@@ -492,14 +574,12 @@ export class GameManager {
      * Preload commonly used templates
      */
     async preloadTemplates() {
-        const commonTemplates = [
-            'pluto-base-entity',
+        await templateManager.preloadTemplates([
+            'pluto-entity',
             'reward-notification',
             'error-display',
             'test-panel'
-        ];
-
-        await templateManager.preloadTemplates(commonTemplates);
+        ]);
     }
 
     async showRewardNotification(reward) {
@@ -616,19 +696,11 @@ export class GameManager {
 
     // Cleanup method
     destroy() {
-        console.log('GameManager: Destroying...');
-
-        if (this.pluto) {
-            this.pluto.destroy();
-            this.pluto = null;
+        this.cleanupEventListeners();
+        if (this.phaserGame) {
+            this.phaserGame.destroy(true);
         }
-
-        // Clean up other resources
-        this.gameContainer = null;
-        this.phaserGame = null;
-        this.levelRewards = null;
-
-        console.log('GameManager: Destroyed');
+        console.log('GameManager: Instance destroyed');
     }
 }
 

@@ -12,6 +12,7 @@ export class Pluto {
         this.mood = 'neutral';
         this.currentAnimation = 'idle';
         this.isVisible = true;
+        this.loadedSkins = new Set(); // Track loaded skin CSS files
 
         // Story mode bypasses unlock restrictions
         this.storyMode = options.storyMode || false;
@@ -127,11 +128,11 @@ export class Pluto {
     // Create the main Pluto DOM element using new base structure
     async _createPlutoElement() {
         try {
-            // Use template system instead of hardcoded HTML
-            this.element = await templateManager.createElement('pluto-base-entity', {
-                mood: this.mood,
-                animation: this.currentAnimation,
-                skin: this.skin
+            // Use template system for cleaner HTML structure
+            this.element = await templateManager.createElement('pluto-entity', {
+                mood: 'neutral',
+                animation: 'idle',
+                skin: 'default'
             });
 
             // Mount to container if provided
@@ -152,41 +153,18 @@ export class Pluto {
         const plutoEntity = document.createElement('div');
         plutoEntity.className = 'pluto-base-entity'; // New base class
 
-        // Create shadow
-        const shadow = document.createElement('div');
-        shadow.className = 'scene_titanShadow';
-
-        // Create t_wrap container
-        const tWrap = document.createElement('div');
-        tWrap.className = 't_wrap';
-
-        // Create main titan body
-        const titan = document.createElement('div');
-        titan.className = 'scene_titan';
-
-        // Create eye elements
-        const eyes = document.createElement('div');
-        eyes.className = 'eyes';
-
-        const leftEye = document.createElement('div');
-        leftEye.className = 'eye eye--left';
-
-        const rightEye = document.createElement('div');
-        rightEye.className = 'eye eye--right';
-
-        eyes.appendChild(leftEye);
-        eyes.appendChild(rightEye);
-
-        // Create mouth element
-        const mouth = document.createElement('div');
-        mouth.className = 'mouth';
-
-        // Assemble the new structure
-        titan.appendChild(eyes);
-        titan.appendChild(mouth);
-        tWrap.appendChild(titan);
-        plutoEntity.appendChild(shadow);
-        plutoEntity.appendChild(tWrap);
+        plutoEntity.innerHTML = `
+            <div class="scene_titanShadow"></div>
+            <div class="t_wrap">
+                <div class="scene_titan">
+                    <div class="eyes">
+                        <div class="eye eye--left"></div>
+                        <div class="eye eye--right"></div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+        `;
 
         this.element = plutoEntity;
 
@@ -195,7 +173,7 @@ export class Pluto {
             this.mount();
         }
 
-        console.log('🪐 Pluto: New Base Element created using fallback method');
+        console.log('🪐 Pluto: New Base Element created using simplified fallback method');
         return plutoEntity;
     }
 
@@ -253,47 +231,80 @@ export class Pluto {
 
     // Apply a skin to Pluto (updated for new base structure)
     async applySkin(skinName) {
+        if (!this.element) return;
+
+        // Check if skin is unlocked (unless in story mode)
         if (!this.storyMode && !this.progression.isUnlocked('skin', skinName)) {
-            console.warn(`🪐 Pluto: Skin "${skinName}" is not unlocked, using current skin`);
-            return false;
+            console.warn(`Pluto: Skin "${skinName}" is not unlocked.`);
+            return;
         }
 
         try {
-            // Load the skin CSS dynamically (skip for default skin)
-            if (skinName !== 'default' && window.gameManager) {
-                await window.gameManager.loadSkinCSS(skinName);
-            }
+            // Load the CSS file for the skin
+            await this.loadSkinCSS(skinName);
 
-            // Reset and apply new skin class to new base structure
-            this.element.className = 'pluto-base-entity';
-            if (skinName !== 'default') {
-                this.element.classList.add(`skin--${skinName}`);
-            }
-
+            // Update the element's skin attribute
+            this.element.dataset.skin = skinName;
             this.skin = skinName;
-            console.log(`🪐 Pluto: Applied skin "${skinName}"${this.storyMode ? ' (Story Mode)' : ''}`);
 
-            // Dispatch skin applied event
-            window.dispatchEvent(new CustomEvent('plutoSkinApplied', {
-                detail: { skinName }
-            }));
+            // Save the new active skin to progression
+            this.progression.setActiveSkin(skinName);
 
-            return true;
+            console.log(`Pluto: Skin applied successfully: ${skinName}`);
         } catch (error) {
-            console.error(`❌ Pluto: Failed to apply skin "${skinName}":`, error);
-            return false;
+            console.error(`Pluto: Failed to apply skin "${skinName}":`, error);
         }
+    }
+
+    // Dynamically load CSS for a skin, preventing duplicates
+    async loadSkinCSS(skinName) {
+        // Don't load if it's already loaded
+        if (this.loadedSkins.has(skinName)) {
+            console.log(`Pluto: Skin CSS for "${skinName}" already loaded.`);
+            return;
+        }
+
+        const cssId = `pluto-skin-${skinName}`;
+        const cssPath = `css/skins/${skinName}.css`;
+
+        // Defensive check if element somehow already exists from a previous session
+        if (document.getElementById(cssId)) {
+            this.loadedSkins.add(skinName); // Mark as loaded
+            return;
+        }
+
+        // Create and append the link tag
+        return new Promise((resolve, reject) => {
+            const link = document.createElement('link');
+            link.id = cssId;
+            link.rel = 'stylesheet';
+            link.href = cssPath;
+
+            link.onload = () => {
+                console.log(`Pluto: Skin CSS loaded: ${cssPath}`);
+                this.loadedSkins.add(skinName); // Add to tracker
+                resolve();
+            };
+            link.onerror = () => {
+                console.error(`Pluto: Failed to load skin CSS: ${cssPath}`);
+                // Don't reject the whole skin application, just warn
+                resolve();
+            };
+            document.head.appendChild(link);
+        });
     }
 
     // Set Pluto's mood
     setMood(moodName) {
+        if (!this.element) return;
+
+        this.mood = moodName;
         if (!this.storyMode && !this.progression.isUnlocked('mood', moodName)) {
             console.warn(`🪐 Pluto: Mood "${moodName}" is locked, keeping current mood`);
             return false;
         }
 
         this.element.dataset.mood = moodName; // Use data-attributes for CSS state
-        this.mood = moodName;
 
         console.log(`🪐 Pluto: Mood changed to "${moodName}"${this.storyMode ? ' (Story Mode)' : ''}`);
 
@@ -525,7 +536,7 @@ export class Pluto {
     // Enable/disable story mode (bypasses unlock restrictions)
     setStoryMode(enabled) {
         this.storyMode = enabled;
-        console.log(`🪐 Pluto: Story mode ${enabled ? 'enabled' : 'disabled'}`);
+        console.log(`🪐 Pluto: Story mode set to ${enabled}`);
     }
 
     // Check if in story mode

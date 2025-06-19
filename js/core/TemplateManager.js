@@ -6,6 +6,7 @@ export class TemplateManager {
     constructor() {
         this.templates = new Map();
         this.templateCache = new Map();
+        this.cacheLimit = 20; // Set a reasonable cache size limit
     }
 
     /**
@@ -18,7 +19,11 @@ export class TemplateManager {
         // Check cache first
         const cacheKey = `${templatePath}${templateName}`;
         if (this.templateCache.has(cacheKey)) {
-            return this.templateCache.get(cacheKey);
+            // Move the accessed template to the end to mark it as recently used
+            const templateContent = this.templateCache.get(cacheKey);
+            this.templateCache.delete(cacheKey);
+            this.templateCache.set(cacheKey, templateContent);
+            return templateContent;
         }
 
         try {
@@ -29,7 +34,15 @@ export class TemplateManager {
 
             const templateContent = await response.text();
 
-            // Cache the template
+            // Enforce cache limit with LRU eviction
+            if (this.templateCache.size >= this.cacheLimit) {
+                // Get the first key (least recently used) and delete it
+                const lruKey = this.templateCache.keys().next().value;
+                this.templateCache.delete(lruKey);
+                console.log(`TemplateManager: Cache limit reached. Evicted: ${lruKey}`);
+            }
+
+            // Cache the new template
             this.templateCache.set(cacheKey, templateContent);
             console.log(`TemplateManager: Template loaded successfully: ${templateName}`);
 
@@ -73,18 +86,13 @@ export class TemplateManager {
      * @returns {string} Template with variables substituted
      */
     substitute(template, variables = {}) {
-        let result = template;
-
-        // Replace {{variable}} patterns
-        for (const [key, value] of Object.entries(variables)) {
-            const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-            result = result.replace(pattern, value || '');
-        }
-
-        // Clean up any remaining unmatched variables
-        result = result.replace(/\{\{[^}]+\}\}/g, '');
-
-        return result;
+        // Use a single regex to find all {{variable}} patterns and replace them
+        return template.replace(/\{\{([^}]+)\}\}/g, (match, key) => {
+            // Trim the key to handle potential whitespace like {{ key }}
+            const trimmedKey = key.trim();
+            // Return the value from the variables object, or an empty string if not found
+            return variables.hasOwnProperty(trimmedKey) ? variables[trimmedKey] : '';
+        });
     }
 
     /**

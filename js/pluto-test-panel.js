@@ -17,6 +17,10 @@ class PlutoTestPanelController {
     constructor() {
         this.isLoaded = false;
         this.isCollapsed = false;
+        this.pluto = null; // Cache the Pluto instance
+
+        // Cache for DOM elements
+        this.statusElements = {};
 
         // Current state tracking
         this.currentContext = 'menu'; // 'menu' or 'game'
@@ -54,13 +58,23 @@ class PlutoTestPanelController {
             }, 500);
         });
 
+        let checkInterval;
+
+        // Set a timeout to prevent infinite loop
+        const timeout = setTimeout(() => {
+            clearInterval(checkInterval);
+            console.warn('⚠️ PlutoTestPanel: GameManager not found after 10 seconds. Aborting wait.');
+        }, 10000); // 10-second timeout
+
         // Also check periodically (fallback)
-        const checkInterval = setInterval(() => {
+        checkInterval = setInterval(() => {
             if (window.gameManager && window.gameManager.pluto) {
                 console.log('🎮 GameManager and Pluto detected by test panel');
+                this.pluto = window.gameManager.pluto; // Cache the instance
                 this.updateStatusDisplay();
                 this.updateActiveButtons();
                 clearInterval(checkInterval);
+                clearTimeout(timeout); // Clear the timeout since we succeeded
             }
         }, 500);
     }
@@ -69,7 +83,11 @@ class PlutoTestPanelController {
      * Get Pluto instance from GameManager
      */
     getPluto() {
-        return window.gameManager?.pluto || null;
+        // Return the cached instance if available
+        if (this.pluto) return this.pluto;
+        // Fallback to query GameManager if not cached
+        this.pluto = window.gameManager?.pluto || null;
+        return this.pluto;
     }
 
     /**
@@ -86,6 +104,16 @@ class PlutoTestPanelController {
         // Load test panel template
         await this.loadTestPanel();
 
+        // Cache status elements after panel is loaded
+        this.statusElements = {
+            status: document.getElementById('pluto-status'),
+            context: document.getElementById('current-context'),
+            skin: document.getElementById('current-skin'),
+            mood: document.getElementById('current-mood'),
+            animation: document.getElementById('current-animation'),
+            position: document.getElementById('current-position')
+        };
+
         // Setup event listeners
         this.setupEventListeners();
 
@@ -96,6 +124,7 @@ class PlutoTestPanelController {
         // Listen for GameManager ready event
         window.addEventListener('gameManagerReady', () => {
             console.log('🧪 PlutoTestPanel: GameManager ready, updating status');
+            this.pluto = window.gameManager?.pluto; // Cache the instance
             this.updateStatusDisplay();
             this.updateActiveButtons();
         });
@@ -261,46 +290,36 @@ class PlutoTestPanelController {
     }
 
     /**
-     * Update status display
+     * Update the status display in the test panel
+     * This is now event-driven and uses cached elements for efficiency
      */
     updateStatusDisplay() {
         const pluto = this.getPluto();
-        if (!this.isPlutoReady()) {
-            const statusElement = document.getElementById('pluto-status');
-            if (statusElement) {
-                statusElement.innerHTML = '<div style="color: #e74c3c;">Pluto: Not Ready</div>';
-            }
+        if (!pluto || !this.isLoaded) {
+            this.updateStatusElement('status', 'Pluto: Not Ready');
             return;
         }
 
-        const statusElement = document.getElementById('pluto-status');
-        if (statusElement && pluto) {
-            const context = pluto.element?.dataset.context || 'menu';
-            const position = context === 'menu' ? 'left side' : 'center';
+        const statusText = `Type: ${pluto.isModern ? 'Modern' : 'Legacy'} | Ready: ${pluto.isReady}`;
+        this.updateStatusElement('status', statusText);
 
-            statusElement.innerHTML = `
-                <div style="color: #2ecc71;">✅ Ready (New Base System)</div>
-                <div>Context: ${context.toUpperCase()}</div>
-                <div>Position: ${position}</div>
-                <div>Visible: ${pluto.isVisible ? 'Yes' : 'No'}</div>
-            `;
+        const state = pluto.getState();
+        this.updateStatusElement('context', state.context);
+        this.updateStatusElement('skin', state.skin);
+        this.updateStatusElement('mood', state.mood);
+        this.updateStatusElement('animation', state.animation);
+        this.updateStatusElement('position', `(${state.position.x}, ${state.position.y})`);
+    }
+
+    /**
+     * Helper to update a single status element's text content
+     * @param {string} key - The key for the cached element
+     * @param {string} value - The new text content
+     */
+    updateStatusElement(key, value) {
+        if (this.statusElements[key]) {
+            this.statusElements[key].textContent = value;
         }
-
-        // Update individual status elements and sync current state
-        if (pluto) {
-            this.currentSkin = pluto.skin || 'default';
-            this.currentMood = pluto.mood || 'neutral';
-            this.currentAnimation = pluto.currentAnimation || 'idle';
-            this.currentContext = pluto.element?.dataset.context || 'menu';
-
-            this.updateStatusElement('current-context', this.currentContext);
-            this.updateStatusElement('current-skin', this.currentSkin);
-            this.updateStatusElement('current-mood', this.currentMood);
-            this.updateStatusElement('current-animation', this.currentAnimation);
-            this.updateStatusElement('current-position', this.currentContext === 'menu' ? 'left side' : 'center');
-        }
-
-        console.log('📊 Status display updated for new base system');
     }
 
     /**
@@ -709,18 +728,6 @@ class PlutoTestPanelController {
             this.switchPlutoType('scene');
         }
         this.switchToScenePluto(sceneNumber);
-    }
-
-    /**
-     * Update status display element
-     * @param {string} elementId - Element ID
-     * @param {string} value - New value
-     */
-    updateStatusElement(elementId, value) {
-        const element = document.getElementById(elementId);
-        if (element) {
-            element.textContent = value;
-        }
     }
 
     /**

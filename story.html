@@ -36,6 +36,28 @@
             /* Show active scene */
             opacity: 1;
         }
+
+        /* Container for scene messages, hidden by default */
+        .scene-message-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-family: "Press Start 2P", monospace;
+            font-size: 10px;
+            text-align: center;
+            max-width: 90%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            /* Non-interactive */
+        }
     </style>
 </head>
 
@@ -290,7 +312,6 @@
         <div class="story-scene scene-lighthouse" id="scene-2">
             <div class="background">
                 <div class="stars">
-                    <div class="star"></div>
                     <div class="star"></div>
                     <div class="star"></div>
                     <div class="star"></div>
@@ -946,6 +967,10 @@
         </div>
     </div>
 
+    <!-- Pre-created container for scene messages -->
+    <div id="scene-message-container" class="scene-message-container"></div>
+
+    <!-- Game Scripts -->
     <script type="module" src="js/scenes/Story.js"></script>
 </body>
 

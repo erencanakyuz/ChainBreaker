@@ -20,6 +20,7 @@ class StoryManager {
         this.prevBtn = document.getElementById('prevBtn');
         this.nextBtn = document.getElementById('nextBtn');
         this.startGameBtn = document.getElementById('startGameBtn');
+        this.messageContainer = document.getElementById('scene-message-container');
 
         // New Pluto component system
         this.pluto = null;
@@ -70,6 +71,9 @@ class StoryManager {
             console.error('Story elements not found. Make sure story.html has the correct structure.');
             return;
         }
+
+        // Preload all scene CSS non-blockingly
+        this.preloadAllSceneCSS();
 
         // Initialize progression system for the story mode
         this.progression = playerProgression;
@@ -149,38 +153,14 @@ class StoryManager {
      * Show a message for the current scene
      */
     showSceneMessage(message) {
-        // Create or update scene message display
-        let messageContainer = document.getElementById('scene-message');
-        if (!messageContainer) {
-            messageContainer = document.createElement('div');
-            messageContainer.id = 'scene-message';
-            messageContainer.style.cssText = `
-                position: fixed;
-                bottom: 80px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: linear-gradient(45deg, #4ecdc4, #44a08d);
-                color: white;
-                padding: 15px 25px;
-                border-radius: 10px;
-                font-family: "Press Start 2P", monospace;
-                font-size: 10px;
-                text-align: center;
-                max-width: 90%;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-                z-index: 1000;
-                opacity: 0;
-                transition: opacity 0.5s ease;
-            `;
-            document.body.appendChild(messageContainer);
-        }
+        if (!this.messageContainer) return;
 
-        messageContainer.textContent = message;
-        messageContainer.style.opacity = '1';
+        this.messageContainer.textContent = message;
+        this.messageContainer.style.opacity = '1';
 
         // Auto-hide after 4 seconds
         setTimeout(() => {
-            messageContainer.style.opacity = '0';
+            this.messageContainer.style.opacity = '0';
         }, 4000);
     }
 
@@ -300,19 +280,7 @@ class StoryManager {
         const cssId = `story-scene-${sceneNumber}-css`;
 
         if (cssFile) {
-            try {
-                await this.loadCSS(cssFile, cssId);
-
-                // Preload CSS for the next scene for a smoother transition
-                const nextSceneNumber = this.currentScene + 1;
-                if (nextSceneNumber <= this.totalScenes) {
-                    const nextCssFile = sceneMap[nextSceneNumber];
-                    const nextCssId = `story-scene-${nextSceneNumber}-css`;
-                    this.preloadCSS(nextCssFile, nextCssId);
-                }
-            } catch (error) {
-                console.error(`Failed to load CSS for scene ${sceneNumber}:`, error);
-            }
+            await this.loadCSS(cssFile, cssId);
         }
     }
 
@@ -346,16 +314,35 @@ class StoryManager {
     }
 
     preloadCSS(url, id) {
-        // Use requestIdleCallback for smarter preloading without affecting performance
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => {
-                this.loadCSS(url, id).catch(err => console.warn(`Preload failed for ${url}`));
-            });
-        } else {
-            // Fallback for older browsers
-            setTimeout(() => {
-                this.loadCSS(url, id).catch(err => console.warn(`Preload failed for ${url}`));
-            }, 300);
+        if (this.loadedCSS.has(url) || document.querySelector(`link[href="${url}"]`)) {
+            return; // Already loaded or preloaded
+        }
+
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'style';
+        link.href = url;
+        link.id = `${id}-preload`; // Unique ID for preload link
+
+        document.head.appendChild(link);
+        console.log(`🚀 Preloading CSS: ${url}`);
+    }
+
+    preloadAllSceneCSS() {
+        const sceneMap = {
+            1: 'css/story/scene-space.css',
+            2: 'css/story/scene-lighthouse.css',
+            3: 'css/story/scene-factory.css',
+            4: 'css/story/scene-journey.css',
+            5: 'css/story/scene-final.css'
+        };
+
+        console.log('🚀 Preloading all scene CSS...');
+        for (let i = 1; i <= this.totalScenes; i++) {
+            const cssFile = sceneMap[i];
+            if (cssFile) {
+                this.preloadCSS(cssFile, `story-scene-${i}-css`);
+            }
         }
     }
 
@@ -381,24 +368,21 @@ class StoryManager {
         // Don't regenerate if stars already exist
         if (starsContainer.children.length > 0) return;
 
-        let starHTML = '';
+        const fragment = document.createDocumentFragment();
         const starCount = sceneNumber === 4 ? 150 : 100; // More stars for journey scene
 
         for (let i = 0; i < starCount; i++) {
-            const left = Math.random() * 100;
-            const top = Math.random() * 100;
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
             const size = Math.random() * 3 + 1;
-            const animationDelay = Math.random() * 3;
-
-            starHTML += `<div class="star" style="
-                left: ${left}%;
-                top: ${top}%;
-                width: ${size}px;
-                height: ${size}px;
-                animation-delay: ${animationDelay}s;
-            "></div>`;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            fragment.appendChild(star);
         }
-        starsContainer.innerHTML = starHTML;
+        starsContainer.appendChild(fragment);
 
         console.log(`✨ Generated ${starCount} stars for scene ${sceneNumber}!`);
     }

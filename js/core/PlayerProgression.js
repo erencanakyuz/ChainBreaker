@@ -12,12 +12,13 @@ class PlayerProgression {
             achievementPoints: 0
         };
         this.load();
+        this.saveTimeout = null; // For debouncing save operations
     }
 
     // Load progression data from localStorage
-    load() {
+    async load() {
         try {
-            const saved = localStorage.getItem('chainbreaker-progression');
+            const saved = await new Promise(resolve => setTimeout(() => resolve(localStorage.getItem('chainbreaker-progression')), 0));
             if (saved) {
                 const savedData = JSON.parse(saved);
                 // Merge saved data with defaults to handle new properties
@@ -32,11 +33,25 @@ class PlayerProgression {
         }
     }
 
-    // Save progression data to localStorage
+    // Debounced save to avoid blocking main thread and frequent writes
     save() {
+        // Clear existing timeout to debounce
+        if (this.saveTimeout) {
+            clearTimeout(this.saveTimeout);
+        }
+
+        // Set a new timeout to save after a short delay
+        this.saveTimeout = setTimeout(() => {
+            this._performSave();
+            this.saveTimeout = null;
+        }, 500); // Debounce for 500ms
+    }
+
+    // Private method to perform the actual save operation
+    _performSave() {
         try {
             localStorage.setItem('chainbreaker-progression', JSON.stringify(this.data));
-            console.log('PlayerProgression: Data saved successfully');
+            console.log('PlayerProgression: Data saved successfully (debounced)');
         } catch (error) {
             console.error('PlayerProgression: Error saving data', error);
         }

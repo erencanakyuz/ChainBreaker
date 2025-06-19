@@ -50,8 +50,6 @@
     <div class="menu-star"></div>
     <div class="menu-star"></div>
     <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
   </div>
 
   <div id="loading">
@@ -261,15 +259,19 @@
       }
 
       create() {
+        console.log('🎮 MenuScene: Starting menu creation...');
+
         // Disable global speech bubbles in menu
         document.body.classList.remove('game-active');
 
         const { width, height } = this.cameras.main;
+        console.log('🎮 MenuScene: Screen dimensions:', width, 'x', height);
 
         // Create gradient background
         const bgGraphics = this.add.graphics();
         bgGraphics.fillGradientStyle(0x1a1a2e, 0x16213e, 0x0f3460, 0x533483, 1);
         bgGraphics.fillRect(0, 0, width, height);
+        console.log('🎮 MenuScene: Background created');
 
         // Add animated background particles (Phaser 3.70 syntax)
         this.backgroundParticles = this.add.particles(0, 0, 'diamond', {
@@ -283,6 +285,7 @@
           tint: colorSystem.convertedPalettes.cosmic,
           alpha: { start: 0.6, end: 0 }
         });
+        console.log('🎮 MenuScene: Background particles created');
 
         // Create DOM element for samurai-styled title
         const titleElement = document.createElement('h1');
@@ -295,12 +298,14 @@
         titleElement.style.zIndex = '1000';
         titleElement.style.pointerEvents = 'none'; // Don't block clicks
         document.body.appendChild(titleElement);
+        console.log('🎮 MenuScene: Title element created');
 
         // Store reference to remove when scene changes
         this.titleElement = titleElement;
 
         // Create new base Pluto on the left side
         this.setupNewBasePluto();
+        console.log('🎮 MenuScene: Pluto setup completed');
 
 
 
@@ -311,22 +316,24 @@
           stroke: '#8c241d',
           strokeThickness: 2
         }).setOrigin(0.5);
+        console.log('🎮 MenuScene: Subtitle created');
 
 
 
         // Story Button
         const storyButtonBg = this.add.graphics();
         storyButtonBg.fillGradientStyle(0x6C5CE7, 0x6C5CE7, 0x4834D4, 0x4834D4, 0.8);
-        storyButtonBg.fillRoundedRect(width / 2 - 100, 150, 200, 40, 10);
+        storyButtonBg.fillRoundedRect(width / 2 - 80, 130, 160, 35, 8); // Moved up and made smaller
         storyButtonBg.lineStyle(2, 0xA29BFE, 0.9);
-        storyButtonBg.strokeRoundedRect(width / 2 - 100, 150, 200, 40, 10);
+        storyButtonBg.strokeRoundedRect(width / 2 - 80, 130, 160, 35, 8);
 
-        const storyText = this.add.text(width / 2, 170, '📖 STORY MODE', {
-          font: '16px Arial',
+        const storyText = this.add.text(width / 2, 147, '📖 STORY MODE', {
+          font: '14px Arial', // Smaller font
           fill: '#ffffff',
           stroke: '#4834D4',
           strokeThickness: 2
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        console.log('🎮 MenuScene: Story button created');
 
         // Story button interactions
         [storyButtonBg, storyText].forEach(element => {
@@ -479,29 +486,35 @@
           }
         ];
 
-        let startY = 250, spacing = 70;
+        console.log('🎮 MenuScene: Mode designs defined, count:', this.modeDesigns.length);
+
+        let startY = 180, spacing = 60; // Reduced from 250 and 70 for better visibility
         this.modeDesigns.forEach((mode, index) => {
-          // Create background for each mode button
+          console.log(`🎮 MenuScene: Creating mode ${index}: ${mode.name}`);
+
+          // Create background for each mode button - make them smaller and more centered
           const buttonBg = this.add.graphics();
           buttonBg.fillGradientStyle(mode.color, mode.color, mode.bgColor, mode.bgColor, 0.3);
-          buttonBg.fillRoundedRect(width / 2 - 250, startY + index * spacing - 20, 500, 50, 15);
+          buttonBg.fillRoundedRect(width / 2 - 200, startY + index * spacing - 15, 400, 40, 10); // Smaller buttons
           buttonBg.lineStyle(2, mode.color, 0.8);
-          buttonBg.strokeRoundedRect(width / 2 - 250, startY + index * spacing - 20, 500, 50, 15);
+          buttonBg.strokeRoundedRect(width / 2 - 200, startY + index * spacing - 15, 400, 40, 10);
 
           // Mode name text with enhanced styling
-          let modeText = this.add.text(width / 2 - 200, startY + index * spacing, mode.name, {
-            font: '24px Arial',
+          let modeText = this.add.text(width / 2 - 150, startY + index * spacing, mode.name, {
+            font: '18px Arial', // Smaller font
             fill: '#ffffff',
             stroke: mode.color,
             strokeThickness: 2
           }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
           // Theme description text - simplified
-          let themeText = this.add.text(width / 2 - 200, startY + index * spacing + 15, mode.theme, {
-            font: '14px Arial',
-            fill: '#cccccc', // Simplified - use fixed light gray
+          let themeText = this.add.text(width / 2 - 150, startY + index * spacing + 12, mode.theme, {
+            font: '12px Arial', // Smaller font
+            fill: '#cccccc',
             alpha: 0.8
           }).setOrigin(0, 0.5);
+
+          console.log(`🎮 MenuScene: Mode ${index} UI elements created`);
 
           // Add interactive effects
           const buttonElements = [buttonBg, modeText, themeText];
@@ -581,6 +594,8 @@
             repeat: -1
           });
         });
+
+        console.log('🎮 MenuScene: All menu elements created successfully!');
       }
 
       setupNewBasePluto() {
@@ -1207,8 +1222,32 @@
         );
         this.ambientLight.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
-        // Add twinkling stars background only
-        this.createStarsBackground();
+        // New efficient particle-based starfield
+        this.stars = this.add.particles(0, 0, 'star', {
+          x: { min: 0, max: this.cameras.main.width },
+          y: { min: 0, max: this.cameras.main.height },
+          lifespan: 8000,
+          speed: 0,
+          scale: { start: 0.1, end: 0.5, ease: 'Quad.out' },
+          alpha: { start: 0.1, end: 1, ease: 'Quad.in' },
+          quantity: 40,
+          blendMode: 'ADD',
+          tint: [0xffffff, 0xffeeaa, 0xaaddff],
+          customEmit: function (particle, emitter) {
+            particle.setAlpha(0);
+            this.scene.tweens.add({
+              targets: particle,
+              alpha: { from: 0, to: Math.random() * 0.7 + 0.1 },
+              scale: { from: 0.1, to: Math.random() * 0.4 + 0.1 },
+              duration: Math.random() * 4000 + 2000,
+              ease: 'Sine.easeInOut',
+              yoyo: true,
+              repeat: -1,
+              delay: Math.random() * 5000
+            });
+            return particle;
+          }
+        });
 
         // Optimized background particles with reduced count (Phaser 3.70 syntax)
         this.backgroundParticles = this.add.particles(0, 0, 'star', {
@@ -1341,6 +1380,14 @@
           maxFPS: 60
         };
 
+        // This timer will now handle the infrequent performance updates.
+        this.time.addEvent({
+          delay: 1000, // Run once per second
+          callback: this.updatePerformanceDisplay,
+          callbackScope: this,
+          loop: true
+        });
+
         this.gameOverFlag = false;
         this.gameOverText = this.add.text(this.center.x, this.center.y, '', {
           font: '48px Arial',
@@ -1359,129 +1406,122 @@
       }
 
       setupUI() {
+        // Initialize game UI elements
         this.score = 0;
         this.combo = 0;
         this.lives = 3;
+        this.level = 1;
+        this.feverMode = false;
+        this.feverTimer = 0;
+        this.feverModeDuration = 5000;
         this.regenDelay = 5000;
 
-        // Get current mode colors for UI theming - simplified
-        const modeColor = this.selectedMode ? '#' + this.selectedMode.color.toString(16).padStart(6, '0') : '#00aaff';
-        const accentColor = this.selectedMode ? '#66ffcc' : '#66ffcc'; // Use fixed accent color
-
-        // Enhanced text styles with dynamic colors
-        const baseTextStyle = {
-          font: '22px Arial',
+        // Create UI text elements
+        this.scoreText = this.add.text(20, 20, 'Score: 0', {
+          font: '24px Arial',
           fill: '#ffffff',
-          stroke: modeColor,
-          strokeThickness: 2,
-          backgroundColor: 'rgba(0,0,0,0.4)',
-          padding: { x: 12, y: 6 }
-        };
-
-        // Level indicator with enhanced styling
-        this.levelText = this.add.text(this.cameras.main.width / 2, 15, 'Level: ' + this.level, {
-          ...baseTextStyle,
-          font: '28px Arial',
-          fill: accentColor
-        }).setOrigin(0.5, 0);
-
-        // Add pulsing effect to level text
-        this.tweens.add({
-          targets: this.levelText,
-          alpha: 0.8,
-          duration: 1500,
-          yoyo: true,
-          repeat: -1
-        });
-
-        // Score with gradient background
-        const scoreBg = this.add.graphics();
-        scoreBg.fillGradientStyle(0x000000, 0x333333, 0x000000, 0x333333, 0.7);
-        scoreBg.fillRoundedRect(5, 5, 150, 35, 8);
-        scoreBg.lineStyle(2, parseInt(modeColor.replace('#', '0x'), 16), 0.8);
-        scoreBg.strokeRoundedRect(5, 5, 150, 35, 8);
-
-        this.scoreText = this.add.text(15, 10, 'Score: 0', {
-          ...baseTextStyle,
-          backgroundColor: 'transparent'
-        });
-
-        // Combo counter with special effects
-        const comboBg = this.add.graphics();
-        comboBg.fillGradientStyle(0x000000, 0x444444, 0x000000, 0x444444, 0.7);
-        comboBg.fillRoundedRect(5, 45, 150, 35, 8);
-
-        this.comboText = this.add.text(15, 50, 'Combo: 0', {
-          ...baseTextStyle,
-          fill: '#ffff00',
-          backgroundColor: 'transparent'
-        });
-
-        // Lives with heart-like styling
-        const livesBg = this.add.graphics();
-        livesBg.fillGradientStyle(0x330000, 0x660000, 0x330000, 0x660000, 0.7);
-        livesBg.fillRoundedRect(5, 85, 120, 35, 8);
-
-        this.livesText = this.add.text(15, 90, 'Lives: 3', {
-          ...baseTextStyle,
-          fill: '#ff6b6b',
-          backgroundColor: 'transparent'
-        });
-
-        // Fever mode setup
-        this.feverMode = false;
-        this.feverModeDuration = 5000;
-        this.feverTimer = 0;
-
-        this.feverText = this.add.text(15, 130, '', {
-          ...baseTextStyle,
-          fill: '#ff00ff',
-          font: '20px Arial'
-        });
-
-        // Theme description with better styling
-        this.themeText = this.add.text(this.cameras.main.width / 2, 60,
-          this.selectedMode ? this.selectedMode.theme : 'Standard Mode', {
-          font: '18px Arial',
-          fill: accentColor,
           stroke: '#000000',
-          strokeThickness: 2,
-          alpha: 0.9
-        }).setOrigin(0.5, 0);
-
-        // Performance test instructions
-        this.perfTestText = this.add.text(15, this.cameras.main.height - 60,
-          'Performance Test: Press P for stress test, R to reset metrics', {
-          font: '12px Arial',
-          fill: '#888888',
-          backgroundColor: 'rgba(0,0,0,0.3)',
-          padding: { x: 6, y: 3 }
+          strokeThickness: 2
         });
 
-        // Add mode name indicator
-        if (this.selectedMode) {
-          this.modeNameText = this.add.text(this.cameras.main.width - 15, 15, this.selectedMode.name, {
-            font: '20px Arial',
-            fill: modeColor,
-            stroke: '#000000',
-            strokeThickness: 2,
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            padding: { x: 10, y: 5 }
-          }).setOrigin(1, 0);
+        this.levelText = this.add.text(20, 50, 'Level: 1', {
+          font: '20px Arial',
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeThickness: 2
+        });
 
-          // Add subtle animation to mode name
-          this.tweens.add({
-            targets: this.modeNameText,
-            alpha: 0.7,
-            duration: 2000,
-            yoyo: true,
-            repeat: -1
-          });
-        }
+        this.livesText = this.add.text(20, 80, 'Lives: 3', {
+          font: '20px Arial',
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeThickness: 2
+        });
+
+        this.comboText = this.add.text(20, 110, 'Combo: 0', {
+          font: '18px Arial',
+          fill: '#ffffff',
+          stroke: '#000000',
+          strokeThickness: 2
+        });
+
+        this.feverText = this.add.text(this.center.x, 50, '', {
+          font: '28px Arial',
+          fill: '#ff6b6b',
+          stroke: '#000000',
+          strokeThickness: 3
+        }).setOrigin(0.5);
+
+        this.themeText = this.add.text(this.center.x, this.cameras.main.height - 30, '', {
+          font: '16px Arial',
+          fill: '#cccccc',
+          stroke: '#000000',
+          strokeThickness: 2
+        }).setOrigin(0.5);
       }
 
       setupParticleEffects() {
-        // Bu bölümde daha önce oluşturduğumuz partikül emitter'leri zaten create() içerisinde ayarlandı.
+        // Initialize particle systems (already done in create method)
+        console.log('Particle effects already initialized');
+      }
+
+      updatePerformanceDisplay() {
+        // This function now runs once per second, not every frame.
+        if (!this.performanceMetrics) return;
+
+        const fps = this.game.loop.actualFps;
+        this.performanceMetrics.fpsHistory.push(fps);
+        if (this.performanceMetrics.fpsHistory.length > 30) {
+          this.performanceMetrics.fpsHistory.shift();
+        }
+
+        const avgFPS = this.performanceMetrics.fpsHistory.reduce((a, b) => a + b, 0) / this.performanceMetrics.fpsHistory.length;
+        this.performanceMetrics.minFPS = Math.min(this.performanceMetrics.minFPS, fps);
+
+        this.debugText.setText(
+          'Rings: ' + this.ringStack.length +
+          '\nCombo: ' + this.combo +
+          '\nLevel: ' + this.level +
+          '\nMin FPS: ' + Math.round(this.performanceMetrics.minFPS) +
+          '\nAvg FPS: ' + Math.round(avgFPS) +
+          '\nMemory: ' + this.getMemoryUsage() + 'MB'
+        );
+
+        this.fpsText.setText(`FPS: ${Math.round(fps)}`);
+        if (fps >= 55) this.fpsText.setColor('#00ff00');
+        else if (fps >= 30) this.fpsText.setColor('#ffff00');
+        else this.fpsText.setColor('#ff0000');
+      }
+
+      // This replaces the old createStarsBackground method and is no longer called from create()
+      createEfficientStarfield() {
+        // This logic is now handled by the particle emitter in create()
+      }
+
+      update(time, delta) {
+        if (this.gameOverFlag) return;
+
+        let dt = delta / 1000;
+
+        // Priority 1: Critical game logic (always runs)
+        this.updateNeedle(dt);
+        this.updateFeverMode(delta);
+        this.updatePlutoMood(delta);
+
+        // Priority 2: Visual updates
+        this.updateBackgroundGlow(time);
+
+        // Update all moving rings every frame
+        this.ringStack.forEach(ring => {
+          if (ring.needsUpdate) {
+            ring.update(delta);
+          }
+        });
+
+        // Enhanced game Pluto animations based on game events
+        if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
+          this.updateGamePlutoAnimation();
+        }
       }
 
       setupNeedle() {
@@ -1595,55 +1635,27 @@
       update(time, delta) {
         if (this.gameOverFlag) return;
 
-        // Performance monitoring with enhanced metrics
-        this.updatePerformanceMetrics(delta);
-
-        // Advanced frame budgeting for consistent performance
-        const startTime = performance.now();
         let dt = delta / 1000;
-        this.frameCount = (this.frameCount || 0) + 1;
 
         // Priority 1: Critical game logic (always runs)
         this.updateNeedle(dt);
         this.updateFeverMode(delta);
         this.updatePlutoMood(delta);
 
-        // Priority 2: Visual updates (skip if frame budget exceeded)
-        if (performance.now() - startTime < this.frameBudget * 0.6) { // Reduced threshold for better performance
-          // Update background glow less frequently (every 5th frame instead of 3rd)
-          if (this.frameCount % 5 === 0) {
-            this.updateBackgroundGlow(time);
-          }
+        // Priority 2: Visual updates
+        this.updateBackgroundGlow(time);
 
-          // Update all moving rings every frame - critical for smooth movement
-          this.ringStack.forEach(ring => {
-            if (ring.needsUpdate) {
-              ring.update(delta);
-            }
-          });
-        }
-
-        // Priority 3: Non-critical updates (skip if running slow)
-        if (performance.now() - startTime < this.frameBudget * 0.8) { // Increased threshold
-          if (this.frameCount % 30 === 0) { // Reduced frequency from 15 to 30 frames
-            this.debugText.setText(
-              'Rings: ' + this.ringStack.length +
-              '\nCombo: ' + this.combo +
-              '\nLevel: ' + this.level +
-              '\nMin FPS: ' + this.performanceMetrics.minFPS +
-              '\nAvg FPS: ' + this.performanceMetrics.averageFPS +
-              '\nMemory: ' + this.getMemoryUsage() + 'MB'
-            );
+        // Update all moving rings every frame
+        this.ringStack.forEach(ring => {
+          if (ring.needsUpdate) {
+            ring.update(delta);
           }
-        }
+        });
 
         // Enhanced game Pluto animations based on game events
         if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
           this.updateGamePlutoAnimation();
         }
-
-        // FPS Update
-        this.updateFPS();
       }
 
       updateGamePlutoAnimation() {
@@ -1681,80 +1693,6 @@
           else if (this.combo === 0 && !this.feverMode && currentAnimation !== 'idle') {
             this.gamePlutoEntity.dataset.animation = 'idle';
           }
-        }
-      }
-
-      updateFPS() {
-        const currentTime = performance.now();
-        const deltaTime = currentTime - this.performanceMetrics.lastTime;
-
-        if (deltaTime >= 1000) {
-          const fps = Math.round((this.performanceMetrics.frameCount * 1000) / deltaTime);
-
-          // Update FPS history
-          this.performanceMetrics.fpsHistory.push(fps);
-          if (this.performanceMetrics.fpsHistory.length > 60) {
-            this.performanceMetrics.fpsHistory.shift();
-          }
-
-          // Calculate average FPS
-          const sum = this.performanceMetrics.fpsHistory.reduce((a, b) => a + b, 0);
-          this.performanceMetrics.averageFPS = Math.round(sum / this.performanceMetrics.fpsHistory.length);
-
-          // Update min/max
-          this.performanceMetrics.minFPS = Math.min(this.performanceMetrics.minFPS, fps);
-          this.performanceMetrics.maxFPS = Math.max(this.performanceMetrics.maxFPS, fps);
-
-          // Update FPS display
-          if (this.fpsText) {
-            this.fpsText.setText(`FPS: ${fps}`);
-
-            // Color code based on performance
-            if (fps >= 55) {
-              this.fpsText.setColor('#00ff00'); // Green
-            } else if (fps >= 30) {
-              this.fpsText.setColor('#ffff00'); // Yellow
-            } else {
-              this.fpsText.setColor('#ff0000'); // Red
-            }
-          }
-
-          // Reset counters
-          this.performanceMetrics.frameCount = 0;
-          this.performanceMetrics.lastTime = currentTime;
-        }
-
-        this.performanceMetrics.frameCount++;
-      }
-
-      updatePerformanceMetrics(delta) {
-        const currentFPS = Math.round(1000 / delta);
-
-        // Update FPS history for averaging
-        this.performanceMetrics.fpsHistory.push(currentFPS);
-        if (this.performanceMetrics.fpsHistory.length > 60) { // Keep last 60 frames
-          this.performanceMetrics.fpsHistory.shift();
-        }
-
-        // Calculate average FPS
-        const sum = this.performanceMetrics.fpsHistory.reduce((a, b) => a + b, 0);
-        this.performanceMetrics.averageFPS = Math.round(sum / this.performanceMetrics.fpsHistory.length);
-
-        // Track min and max FPS
-        this.performanceMetrics.minFPS = Math.min(this.performanceMetrics.minFPS, currentFPS);
-        this.performanceMetrics.maxFPS = Math.max(this.performanceMetrics.maxFPS, currentFPS);
-
-        // Update FPS display with color coding
-        let fpsColor = '#00ff00'; // Green for good FPS
-        if (currentFPS < 30) fpsColor = '#ff0000'; // Red for bad FPS
-        else if (currentFPS < 45) fpsColor = '#ffff00'; // Yellow for moderate FPS
-
-        this.fpsText.setFill(fpsColor);
-        this.fpsText.setText(`FPS: ${currentFPS}`);
-
-        // Performance warning
-        if (currentFPS < 20 && this.frameCount % 120 === 0) {
-          console.warn('Performance Warning: FPS below 20, consider reducing effects');
         }
       }
 
@@ -2512,90 +2450,6 @@
         console.log('Performance metrics reset');
       }
 
-      // ===== SPACE BACKGROUND EFFECTS METHODS =====
-
-      createStarsBackground() {
-        // Create twinkling stars similar to scene-space.css
-        this.starsContainer = this.add.container(0, 0);
-
-        // Generate 40 stars with random positions and twinkling
-        for (let i = 0; i < 40; i++) {
-          const star = this.add.circle(
-            Phaser.Math.Between(0, this.cameras.main.width),
-            Phaser.Math.Between(0, this.cameras.main.height),
-            Phaser.Math.Between(1, 3),
-            0xffffff,
-            Phaser.Math.FloatBetween(0.2, 1)
-          );
-
-          star.setBlendMode(Phaser.BlendModes.ADD);
-
-          // Add twinkling animation
-          this.tweens.add({
-            targets: star,
-            alpha: 0.2,
-            scale: 0.8,
-            duration: Phaser.Math.Between(3000, 6000),
-            ease: 'Sine.easeInOut',
-            yoyo: true,
-            repeat: -1,
-            delay: Phaser.Math.Between(0, 5000)
-          });
-
-          this.starsContainer.add(star);
-        }
-      }
-
-      // 🎮 NEW BASE SYSTEM - Simplified Pluto animation triggers
-      triggerPlutoAnimation(type) {
-        // Use new GameManager's Pluto if available
-        if (window.gameManager?.pluto) {
-          window.gameManager.pluto.setAnimation(type);
-          console.log('🪐 New Base Pluto animation:', type);
-          return;
-        }
-
-        // Legacy fallback for old unified Pluto
-        if (!this.plutoBody) return;
-
-        switch (type) {
-          case 'happy':
-            this.plutoBody.style.animation = 'pluto-happy 2s infinite ease-in-out';
-            break;
-          case 'excited':
-            this.plutoBody.style.animation = 'pluto-excited 1s infinite ease-in-out';
-            break;
-          case 'orbit':
-            this.plutoBody.style.animation = 'pluto-orbit 4s infinite linear';
-            break;
-          default:
-            this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
-        }
-
-        console.log('🪐 Legacy Pluto animation:', type);
-      }
-
-      cleanupUnifiedPluto() {
-        // Clean up unified Pluto if needed (but usually we just reposition it)
-        const unifiedPlutoContainer = document.getElementById('unified-pluto-container');
-        if (unifiedPlutoContainer) {
-          unifiedPlutoContainer.remove();
-          console.log('🧹 Unified Pluto cleaned up');
-        }
-
-        // Clean up any speech bubbles
-        const speechBubbles = document.querySelectorAll('.pluto-speech-bubble');
-        speechBubbles.forEach(bubble => bubble.remove());
-
-        // Clean up animations stylesheet if exists
-        const animStyles = document.getElementById('unified-pluto-animations');
-        if (animStyles) {
-          animStyles.remove();
-        }
-      }
-
-
-
       getMemoryUsage() {
         // Get memory usage information if available (Chrome/modern browsers)
         if (performance.memory) {
@@ -2784,8 +2638,6 @@
       }
     }
 
-    // Removed redundant DOMContentLoaded listener - window.load is sufficient
-
     const config = {
       type: Phaser.AUTO, // Let Phaser choose the best renderer
       width: window.innerWidth,
@@ -2835,7 +2687,7 @@
     });
   </script>
 
-  <!-- ChainBreaker Pro - New Modular Application (DISABLED TO FIX MENU) -->
+  <!-- ChainBreaker Pro - New Modular Application (TEMPORARILY DISABLED TO FIX MENU CONFLICT) -->
   <!-- <script type="module" src="js/main.js"></script> -->
 </body>
 
