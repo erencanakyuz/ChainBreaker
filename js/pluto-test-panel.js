@@ -75,6 +75,7 @@ class PlutoTestPanelController {
                 this.updateActiveButtons();
                 clearInterval(checkInterval);
                 clearTimeout(timeout); // Clear the timeout since we succeeded
+                checkInterval = null; // Prevent memory leak
             }
         }, 500);
     }

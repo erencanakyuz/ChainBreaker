@@ -1298,25 +1298,25 @@
           this.resetPerformanceMetrics();
         });
 
-        // Enhanced debug text with better styling
-        this.debugText = this.add.text(10, 130, '', {
-          font: '14px Arial',
-          fill: '#ffffff',
-          stroke: '#000000',
-          strokeThickness: 1,
-          backgroundColor: 'rgba(0,0,0,0.3)',
-          padding: { x: 8, y: 4 }
-        });
+        // Enhanced debug text - disabled for performance
+        // this.debugText = this.add.text(10, 130, '', {
+        //   font: '14px Arial',
+        //   fill: '#ffffff',
+        //   stroke: '#000000',
+        //   strokeThickness: 1,
+        //   backgroundColor: 'rgba(0,0,0,0.3)',
+        //   padding: { x: 8, y: 4 }
+        // });
 
-        // FPS Counter - always visible for performance monitoring
-        this.fpsText = this.add.text(this.cameras.main.width - 15, 15, 'FPS: 144', {
-          font: '16px Arial',
-          fill: '#00ff00',
-          stroke: '#000000',
-          strokeThickness: 2,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          padding: { x: 8, y: 4 }
-        }).setOrigin(1, 0);
+        // FPS Counter - disabled for performance optimization
+        // this.fpsText = this.add.text(this.cameras.main.width - 15, 15, 'FPS: 144', {
+        //   font: '16px Arial',
+        //   fill: '#00ff00',
+        //   stroke: '#000000',
+        //   strokeThickness: 2,
+        //   backgroundColor: 'rgba(0,0,0,0.5)',
+        //   padding: { x: 8, y: 4 }
+        // }).setOrigin(1, 0);
 
         // Performance metrics
         this.performanceMetrics = {
@@ -1328,13 +1328,13 @@
           maxFPS: 144
         };
 
-        // This timer will now handle the infrequent performance updates.
-        this.time.addEvent({
-          delay: 1000, // Run once per second
-          callback: this.updatePerformanceDisplay,
-          callbackScope: this,
-          loop: true
-        });
+        // Performance monitoring completely disabled for maximum performance
+        // this.time.addEvent({
+        //   delay: 5000, // Much more reduced frequency - Run every 5 seconds instead of 1
+        //   callback: this.updatePerformanceDisplay,
+        //   callbackScope: this,
+        //   loop: true
+        // });
 
         this.gameOverFlag = false;
         this.gameOverText = this.add.text(this.center.x, this.center.y, '', {
@@ -1426,19 +1426,21 @@
         const avgFPS = this.performanceMetrics.fpsHistory.reduce((a, b) => a + b, 0) / this.performanceMetrics.fpsHistory.length;
         this.performanceMetrics.minFPS = Math.min(this.performanceMetrics.minFPS, fps);
 
-        this.debugText.setText(
-          'Rings: ' + this.ringStack.length +
-          '\nCombo: ' + this.combo +
-          '\nLevel: ' + this.level +
-          '\nMin FPS: ' + Math.round(this.performanceMetrics.minFPS) +
-          '\nAvg FPS: ' + Math.round(avgFPS) +
-          '\nMemory: ' + this.getMemoryUsage() + 'MB'
-        );
+        // Debug text disabled for performance
+        // this.debugText.setText(
+        //   'Rings: ' + this.ringStack.length +
+        //   '\nCombo: ' + this.combo +
+        //   '\nLevel: ' + this.level +
+        //   '\nMin FPS: ' + Math.round(this.performanceMetrics.minFPS) +
+        //   '\nAvg FPS: ' + Math.round(avgFPS) +
+        //   '\nMemory: ' + this.getMemoryUsage() + 'MB'
+        // );
 
-        this.fpsText.setText(`FPS: ${Math.round(fps)}`);
-        if (fps >= 120) this.fpsText.setColor('#00ff00'); // Green for 120+ FPS
-        else if (fps >= 60) this.fpsText.setColor('#ffff00'); // Yellow for 60+ FPS
-        else this.fpsText.setColor('#ff0000'); // Red for <60 FPS
+        // FPS display disabled for performance
+        // this.fpsText.setText(`FPS: ${Math.round(fps)}`);
+        // if (fps >= 120) this.fpsText.setColor('#00ff00'); // Green for 120+ FPS
+        // else if (fps >= 60) this.fpsText.setColor('#ffff00'); // Yellow for 60+ FPS
+        // else this.fpsText.setColor('#ff0000'); // Red for <60 FPS
       }
 
       // This replaces the old createStarsBackground method and is no longer called from create()
@@ -1782,7 +1784,7 @@
       changePlutoMood(mood) {
         if (!this.plutoBody) return;
 
-        console.log('Pluto mood changing to:', mood); // Debug log
+        // console.log('Pluto mood changing to:', mood); // Debug log - disabled for performance
         this.plutoMood = mood;
 
         // Remove all mood animations
@@ -2249,15 +2251,15 @@
           ring.graphics.scaleX = 0.5;
           ring.graphics.scaleY = 0.5;
 
-          // Simple and fluid staggered animations - 350ms apart for distinct spawning
+          // Ultra fast and smooth staggered animations - 80ms apart for near-instant spawning
           this.tweens.add({
             targets: ring.graphics,
             alpha: 1,
             scaleX: 1,
             scaleY: 1,
-            duration: 500, // Smooth and quick - 500ms
-            ease: 'Linear', // Very smooth linear transition
-            delay: i * 350, // Longer delay for clear individual spawning - 350ms between rings
+            duration: 150, // Ultra fast but smooth - 150ms
+            ease: 'Sine.easeOut', // Very smooth sine easing
+            delay: i * 80, // Very fast succession - 80ms between rings
             onComplete: () => {
               ring.graphics.alpha = 1;
               ring.graphics.scaleX = 1;
@@ -2267,7 +2269,7 @@
               if (i === numRings - 1) {
                 this.time.delayedCall(300, () => {
                   this.needleActive = true;
-                  console.log('🎯 All rings created - Needle activated!');
+                  // console.log('🎯 All rings created - Needle activated!'); // Removed to reduce console spam
                 });
               }
             }
