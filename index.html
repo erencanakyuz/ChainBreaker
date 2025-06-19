@@ -267,26 +267,39 @@
         const { width, height } = this.cameras.main;
 
 
-        // Create gradient background
+        // Create modern dark gradient background
         const bgGraphics = this.add.graphics();
-        bgGraphics.fillGradientStyle(0x1a1a2e, 0x16213e, 0x0f3460, 0x533483, 1);
+        bgGraphics.fillGradientStyle(0x0f0f23, 0x1a1a2e, 0x16213e, 0x0f3460, 1);
         bgGraphics.fillRect(0, 0, width, height);
 
+        // Add subtle animated stars in background
+        this.createAnimatedStars();
 
-
-
-        // Create DOM element for samurai-styled title
+        // Create modern title
         const titleElement = document.createElement('h1');
         titleElement.className = 'game-title';
-        titleElement.textContent = 'ChainX';
-        titleElement.style.position = 'absolute';
-        titleElement.style.top = '1rem';
-        titleElement.style.left = '50%';
-        titleElement.style.transform = 'translateX(-50%)';
-        titleElement.style.zIndex = '1000';
-        titleElement.style.pointerEvents = 'none'; // Don't block clicks
+        titleElement.textContent = 'CHAINBREAKER PRO';
+        titleElement.style.cssText = `
+          position: absolute;
+          top: 60px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 1000;
+          pointer-events: none;
+          font-family: 'Orbitron', 'Arial Black', sans-serif;
+          font-size: 3.5em;
+          font-weight: 900;
+          color: #ffffff;
+          text-shadow: 
+            0 0 10px #00ffff,
+            0 0 20px #00ffff,
+            0 0 30px #00ffff,
+            0 0 40px #00ffff;
+          letter-spacing: 4px;
+          text-align: center;
+          animation: titleGlow 2s ease-in-out infinite alternate;
+        `;
         document.body.appendChild(titleElement);
-
 
         // Store reference to remove when scene changes
         this.titleElement = titleElement;
@@ -294,32 +307,33 @@
         // Create new base Pluto on the left side
         this.setupNewBasePluto();
 
-
-
-
-        const subtitleText = this.add.text(width / 2, 200, 'Choose Your Path, Warrior', {
-          fontFamily: '"Press Start 2P", monospace',
-          fontSize: '16px',
-          fill: '#edab50',
-          stroke: '#8c241d',
-          strokeThickness: 2
+        // Create modern subtitle
+        const subtitleText = this.add.text(width / 2, 180, 'BREAK THE CHAINS • MASTER THE RINGS', {
+          fontFamily: 'Orbitron, Arial',
+          fontSize: '18px',
+          fill: '#00ffff',
+          stroke: '#0066cc',
+          strokeThickness: 1,
+          alpha: 0.9
         }).setOrigin(0.5);
 
 
 
 
-        // Story Button
+        // Story Button - Modern Design
         const storyButtonBg = this.add.graphics();
-        storyButtonBg.fillGradientStyle(0x6C5CE7, 0x6C5CE7, 0x4834D4, 0x4834D4, 0.8);
-        storyButtonBg.fillRoundedRect(width / 2 - 80, 130, 160, 35, 8); // Moved up and made smaller
-        storyButtonBg.lineStyle(2, 0xA29BFE, 0.9);
-        storyButtonBg.strokeRoundedRect(width / 2 - 80, 130, 160, 35, 8);
+        storyButtonBg.fillGradientStyle(0x00ccff, 0x0099cc, 0x006699, 0x003366, 0.9);
+        storyButtonBg.fillRoundedRect(width / 2 - 100, 220, 200, 45, 12);
+        storyButtonBg.lineStyle(3, 0x00ffff, 0.8);
+        storyButtonBg.strokeRoundedRect(width / 2 - 100, 220, 200, 45, 12);
 
-        const storyText = this.add.text(width / 2, 147, '📖 STORY MODE', {
-          font: '14px Arial', // Smaller font
+        const storyText = this.add.text(width / 2, 242, '🌟 STORY MODE', {
+          fontFamily: 'Orbitron, Arial',
+          fontSize: '16px',
           fill: '#ffffff',
-          stroke: '#4834D4',
-          strokeThickness: 2
+          stroke: '#003366',
+          strokeThickness: 2,
+          fontWeight: 'bold'
         }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
 
@@ -476,36 +490,55 @@
 
 
 
-        let startY = 180, spacing = 60; // Reduced from 250 and 70 for better visibility
+        let startY = 290, spacing = 65; // More spacing for better layout
         this.modeDesigns.forEach((mode, index) => {
 
-
-          // Create background for each mode button - make them smaller and more centered
+          // Create modern background for each mode button
           const buttonBg = this.add.graphics();
-          buttonBg.fillGradientStyle(mode.color, mode.color, mode.bgColor, mode.bgColor, 0.3);
-          buttonBg.fillRoundedRect(width / 2 - 200, startY + index * spacing - 15, 400, 40, 10); // Smaller buttons
-          buttonBg.lineStyle(2, mode.color, 0.8);
-          buttonBg.strokeRoundedRect(width / 2 - 200, startY + index * spacing - 15, 400, 40, 10);
 
-          // Mode name text with enhanced styling
-          let modeText = this.add.text(width / 2 - 150, startY + index * spacing, mode.name, {
-            font: '18px Arial', // Smaller font
+          // Modern glass-morphism style
+          buttonBg.fillStyle(0x000000, 0.2);
+          buttonBg.fillRoundedRect(width / 2 - 250, startY + index * spacing - 20, 500, 50, 15);
+
+          // Colored accent border
+          buttonBg.lineStyle(2, mode.color, 0.9);
+          buttonBg.strokeRoundedRect(width / 2 - 250, startY + index * spacing - 20, 500, 50, 15);
+
+          // Inner glow effect
+          buttonBg.lineStyle(1, mode.color, 0.3);
+          buttonBg.strokeRoundedRect(width / 2 - 248, startY + index * spacing - 18, 496, 46, 13);
+
+          // Mode name text with modern styling
+          let modeText = this.add.text(width / 2 - 220, startY + index * spacing - 8, mode.name, {
+            fontFamily: 'Orbitron, Arial',
+            fontSize: '20px',
             fill: '#ffffff',
             stroke: mode.color,
-            strokeThickness: 2
+            strokeThickness: 1,
+            fontWeight: 'bold'
           }).setOrigin(0, 0.5).setInteractive({ useHandCursor: true });
 
-          // Theme description text - simplified
-          let themeText = this.add.text(width / 2 - 150, startY + index * spacing + 12, mode.theme, {
-            font: '12px Arial', // Smaller font
+          // Theme description text with modern styling
+          let themeText = this.add.text(width / 2 - 220, startY + index * spacing + 10, mode.theme, {
+            fontFamily: 'Orbitron, Arial',
+            fontSize: '12px',
             fill: '#cccccc',
-            alpha: 0.8
+            alpha: 0.9
           }).setOrigin(0, 0.5);
+
+          // Add difficulty indicator
+          const difficultyIcons = ['●', '●●', '●●●', '●●●●', '●●●●●', '●●●●●●'];
+          let difficultyText = this.add.text(width / 2 + 180, startY + index * spacing, difficultyIcons[index] || '●●●', {
+            fontFamily: 'Arial',
+            fontSize: '14px',
+            fill: mode.color,
+            alpha: 0.8
+          }).setOrigin(0.5, 0.5);
 
 
 
           // Add interactive effects
-          const buttonElements = [buttonBg, modeText, themeText];
+          const buttonElements = [buttonBg, modeText, themeText, difficultyText];
 
           buttonElements.forEach(element => {
             if (element !== buttonBg) {
@@ -526,64 +559,115 @@
                 this.menuPlutoEntity = null;
               }
 
-              // Add flash effect on selection
+              // Modern selection effect
               this.tweens.add({
                 targets: buttonBg,
-                alpha: 1,
+                scaleX: 0.98,
+                scaleY: 0.98,
                 duration: 100,
                 yoyo: true,
                 onComplete: () => {
                   this.scene.start('MainScene', { selectedMode: mode });
                 }
               });
+
+              // Flash effect
+              this.tweens.add({
+                targets: [modeText, difficultyText],
+                alpha: 0.5,
+                duration: 100,
+                yoyo: true
+              });
             });
 
             element.on('pointerover', () => {
-              // Hover effects
+              // Modern hover effects
               this.tweens.add({
-                targets: [modeText, themeText],
-                scale: 1.05,
-                duration: 200
+                targets: [modeText, themeText, difficultyText],
+                scale: 1.02,
+                duration: 200,
+                ease: 'Power2.easeOut'
               });
 
+              // Glow effect on hover
               this.tweens.add({
                 targets: buttonBg,
-                alpha: 0.6,
+                alpha: 0.4,
                 duration: 200
               });
 
-              modeText.setFill('#ffffff'); // Simplified - use white on hover
+              // Color enhancement
+              modeText.setFill('#00ffff');
+              difficultyText.setFill('#ffffff');
             });
 
             element.on('pointerout', () => {
               // Reset hover effects
               this.tweens.add({
-                targets: [modeText, themeText],
+                targets: [modeText, themeText, difficultyText],
                 scale: 1,
-                duration: 200
+                duration: 200,
+                ease: 'Power2.easeOut'
               });
 
               this.tweens.add({
                 targets: buttonBg,
-                alpha: 0.3,
+                alpha: 0.2,
                 duration: 200
               });
 
+              // Reset colors
               modeText.setFill('#ffffff');
+              difficultyText.setFill(mode.color);
             });
           });
 
-          // Add subtle pulsing animation to buttons
+          // Add subtle floating animation to buttons
           this.tweens.add({
             targets: buttonBg,
-            alpha: 0.2,
-            duration: 3000 + (index * 500),
+            y: buttonBg.y - 2,
+            duration: 2000 + (index * 300),
             yoyo: true,
-            repeat: -1
+            repeat: -1,
+            ease: 'Sine.easeInOut'
           });
         });
 
 
+      }
+
+      createAnimatedStars() {
+        // Create subtle animated background stars
+        for (let i = 0; i < 15; i++) {
+          const star = this.add.circle(
+            Phaser.Math.Between(50, this.cameras.main.width - 50),
+            Phaser.Math.Between(50, this.cameras.main.height - 50),
+            Phaser.Math.Between(1, 3),
+            0x00ffff,
+            0.3
+          );
+
+          // Random twinkling animation
+          this.tweens.add({
+            targets: star,
+            alpha: 0.8,
+            duration: Phaser.Math.Between(1000, 3000),
+            yoyo: true,
+            repeat: -1,
+            delay: Phaser.Math.Between(0, 2000)
+          });
+
+          // Slow floating movement
+          this.tweens.add({
+            targets: star,
+            x: star.x + Phaser.Math.Between(-50, 50),
+            y: star.y + Phaser.Math.Between(-30, 30),
+            duration: Phaser.Math.Between(8000, 15000),
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+          });
+        }
       }
 
       setupNewBasePluto() {
