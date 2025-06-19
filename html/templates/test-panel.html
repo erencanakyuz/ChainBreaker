@@ -19,41 +19,50 @@
             </div>
         </div>
 
+        <!-- Pluto Type Selector -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🪐 Pluto Type</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.switchPlutoType('modern')" class="test-btn active"
+                    id="modern-pluto-btn">🆕 Modern Pluto</button>
+                <button onclick="plutoTestPanel.switchPlutoType('story')" class="test-btn" id="story-pluto-btn">🔮 Story
+                    Pluto</button>
+                <button onclick="plutoTestPanel.switchPlutoType('scene')" class="test-btn" id="scene-pluto-btn">🎭 Scene
+                    Pluto</button>
+            </div>
+        </div>
+
+        <!-- Scene Selector (when scene mode active) -->
+        <div class="test-section" id="scene-selector" style="display: none; margin-bottom: 15px;">
+            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🎬 Scene Type</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.switchScene(1)" class="test-btn">🌌 Space</button>
+                <button onclick="plutoTestPanel.switchScene(2)" class="test-btn">🏮 Lighthouse</button>
+                <button onclick="plutoTestPanel.switchScene(3)" class="test-btn">🏭 Factory</button>
+                <button onclick="plutoTestPanel.switchScene(4)" class="test-btn">🚀 Journey</button>
+                <button onclick="plutoTestPanel.switchScene(5)" class="test-btn">⭐ Final</button>
+            </div>
+        </div>
+
         <!-- Skin Tests -->
         <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🎨 SKIN TESTS</div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="window.testPlutoSkin('default')" class="test-btn"
-                    style="background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🪐
-                    Default</button>
-                <button onclick="window.testPlutoSkin('golden')" class="test-btn"
-                    style="background: linear-gradient(45deg, #f1c40f, #f39c12); color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">✨
-                    Golden</button>
-                <button onclick="window.testPlutoSkin('cyborg')" class="test-btn"
-                    style="background: linear-gradient(45deg, #34495e, #2c3e50); color: #3498db; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🤖
-                    Cyborg</button>
-                <button onclick="window.testPlutoSkin('rainbow')" class="test-btn"
-                    style="background: linear-gradient(45deg, #e74c3c, #f39c12, #f1c40f, #27ae60, #3498db, #9b59b6); color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🌈
-                    Rainbow</button>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoSkin('default')" class="test-btn">🪐 Default</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('golden')" class="test-btn">✨ Golden</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('rainbow')" class="test-btn">🌈 Rainbow</button>
+                <button onclick="plutoTestPanel.testPlutoSkin('cyborg')" class="test-btn">🤖 Cyborg</button>
             </div>
         </div>
 
         <!-- Mood Tests -->
         <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #9b59b6; margin-bottom: 8px; font-size: 9px;">😄 MOOD TESTS</div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="window.testPlutoMood('happy')" class="test-btn"
-                    style="background: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😄
-                    Happy</button>
-                <button onclick="window.testPlutoMood('sad')" class="test-btn"
-                    style="background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😢
-                    Sad</button>
-                <button onclick="window.testPlutoMood('angry')" class="test-btn"
-                    style="background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😠
-                    Angry</button>
-                <button onclick="window.testPlutoMood('neutral')" class="test-btn"
-                    style="background: #7f8c8d; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😐
-                    Neutral</button>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoMood('happy')" class="test-btn">😊 Happy</button>
+                <button onclick="plutoTestPanel.testPlutoMood('sad')" class="test-btn">😢 Sad</button>
+                <button onclick="plutoTestPanel.testPlutoMood('angry')" class="test-btn">😡 Angry</button>
+                <button onclick="plutoTestPanel.testPlutoMood('neutral')" class="test-btn">😐 Neutral</button>
             </div>
         </div>
 
@@ -61,68 +70,120 @@
         <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">⚡ ANIMATION TESTS
             </div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="window.testPlutoAnimation('excited')" class="test-btn"
-                    style="background: #f39c12; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">✨
-                    Excited</button>
-                <button onclick="window.testPlutoAnimation('orbit')" class="test-btn"
-                    style="background: #9b59b6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🌍
-                    Orbit</button>
-                <button onclick="window.testPlutoAnimation('fly-around')" class="test-btn"
-                    style="background: #e67e22; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🚀
-                    Fly</button>
-                <button onclick="window.testPlutoAnimation('idle')" class="test-btn"
-                    style="background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">⏸️
-                    Idle</button>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('excited')" class="test-btn">⚡ Excited</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('orbit')" class="test-btn">🌍 Orbit</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('fly-around')" class="test-btn">🚀 Fly
+                    Around</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('idle')" class="test-btn">⏸️ Idle</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('spiral-dance')" class="test-btn">🌀 Spiral
+                    Dance</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('zoom-out')" class="test-btn">🔍 Zoom Out</button>
             </div>
         </div>
 
         <!-- System Tests -->
         <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #e74c3c; margin-bottom: 8px; font-size: 9px;">🏆 SYSTEM TESTS</div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="window.testLevelComplete(1)" class="test-btn"
-                    style="background: #16a085; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🏆
-                    Level 1</button>
-                <button onclick="window.testLevelComplete(5)" class="test-btn"
-                    style="background: #2980b9; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🏆
-                    Level 5</button>
-                <button onclick="window.showProgressionDebug()" class="test-btn"
-                    style="background: #8e44ad; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">📊
-                    Debug</button>
-                <button onclick="window.resetPlutoToDefault()" class="test-btn"
-                    style="background: #c0392b; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🔄
-                    Reset</button>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testLevel(1)" class="test-btn">📈 Complete Level 1</button>
+                <button onclick="plutoTestPanel.testLevel(5)" class="test-btn">🎯 Complete Level 5</button>
+                <button onclick="plutoTestPanel.progressionDebug()" class="test-btn">🔍 Debug Progression</button>
+                <button onclick="plutoTestPanel.resetPlutoToDefault()" class="test-btn">🔄 Reset to Default</button>
             </div>
         </div>
 
         <!-- Template Tests -->
-        <div class="test-section">
+        <div class="test-section" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #f1c40f; margin-bottom: 8px; font-size: 9px;">🛠️ TEMPLATE TESTS
             </div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="window.testRewardNotification()" class="test-btn"
-                    style="background: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🎉
-                    Reward</button>
-                <button onclick="window.testErrorDisplay()" class="test-btn"
-                    style="background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">⚠️
-                    Error</button>
-                <button onclick="window.showTemplateStats()" class="test-btn"
-                    style="background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">📈
-                    Stats</button>
-                <button onclick="window.clearTemplateCache()" class="test-btn"
-                    style="background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🗑️
-                    Clear</button>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.showRewardNotification()" class="test-btn">🎁 Reward
+                    Notification</button>
+                <button onclick="plutoTestPanel.showErrorDisplay()" class="test-btn">❌ Error Display</button>
+                <button onclick="plutoTestPanel.clearTemplateCache()" class="test-btn">🧹 Clear Template Cache</button>
+            </div>
+        </div>
+
+        <!-- Status Display -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">📊 Status</div>
+            <div class="status-display">
+                <div class="status-item">
+                    <strong>Current Pluto:</strong>
+                    <span id="current-pluto-type">Modern</span>
+                </div>
+                <div class="status-item">
+                    <strong>Skin:</strong>
+                    <span id="current-skin">default</span>
+                </div>
+                <div class="status-item">
+                    <strong>Mood:</strong>
+                    <span id="current-mood">neutral</span>
+                </div>
+                <div class="status-item">
+                    <strong>Animation:</strong>
+                    <span id="current-animation">idle</span>
+                </div>
+                <div class="status-item">
+                    <strong>Scene:</strong>
+                    <span id="current-scene">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="test-section">
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">⌨️ Shortcuts</div>
+            <div class="shortcuts">
+                <small>Ctrl+1: Modern | Ctrl+2: Story | Ctrl+3: Scene | Ctrl+R: Reset</small>
             </div>
         </div>
 
     </div>
 
-    <!-- Shortcuts Info -->
-    <div class="shortcuts-info"
-        style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #4ecdc4; font-size: 7px; color: #bdc3c7;">
-        🎯 Shortcuts: Ctrl+1 (Toggle), Ctrl+2 (Debug), Ctrl+R (Reset)
-    </div>
+    <!-- Additional CSS for status display -->
+    <style>
+        .test-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d) !important;
+            color: white !important;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.5) !important;
+        }
+
+        .status-display {
+            font-size: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .status-item {
+            margin-bottom: 3px;
+            color: #ecf0f1;
+        }
+
+        .status-item strong {
+            color: #4ecdc4;
+        }
+
+        .shortcuts {
+            font-size: 7px;
+            color: #bdc3c7;
+            text-align: center;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+    </style>
+
+</div>
+
+<!-- Shortcuts Info -->
+<div class="shortcuts-info"
+    style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #4ecdc4; font-size: 7px; color: #bdc3c7;">
+    🎯 Shortcuts: Ctrl+1 (Toggle), Ctrl+2 (Debug), Ctrl+R (Reset)
+</div>
 
 </div>
 

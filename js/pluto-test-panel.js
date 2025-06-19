@@ -18,6 +18,12 @@ class PlutoTestPanelController {
         this.isLoaded = false;
         this.isCollapsed = false;
 
+        // Pluto type tracking
+        this.currentPlutoType = 'modern'; // 'modern', 'story', 'scene'
+        this.currentScene = 1;
+        this.storyPluto = null;
+        this.scenePlutos = new Map();
+
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
@@ -225,33 +231,53 @@ class PlutoTestPanelController {
      * Update status display
      */
     updateStatusDisplay() {
-        // Try template-based status div first
-        const statusDiv = document.getElementById('pluto-status');
-        if (statusDiv) {
-            const pluto = this.getPluto();
-            if (pluto && pluto.element) {
-                statusDiv.innerHTML = `
-                    Pluto: Ready ✅<br>
-                    Skin: ${pluto.skin || 'default'}<br>
-                    Mood: ${pluto.mood}<br>
-                    Animation: ${pluto.currentAnimation}
-                `;
-            } else {
-                statusDiv.innerHTML = 'Pluto: Loading... ⏳';
+        // Update current status based on active Pluto
+        this.updateStatusElement('current-pluto-type', this.getPlutoTypeName());
+        this.updateStatusElement('current-scene', this.currentPlutoType === 'scene' ? this.currentScene.toString() : '-');
+
+        const pluto = this.getCurrentActivePluto();
+        if (pluto) {
+            // Try to get current states
+            if (pluto.currentSkin) {
+                this.updateStatusElement('current-skin', pluto.currentSkin);
             }
-            return;
+            if (pluto.currentMood) {
+                this.updateStatusElement('current-mood', pluto.currentMood);
+            }
+            if (pluto.currentAnimation) {
+                this.updateStatusElement('current-animation', pluto.currentAnimation);
+            }
         }
 
-        // Fallback to old status elements
-        const animationSpan = document.getElementById('current-animation');
-        const moodSpan = document.getElementById('current-mood');
-        const speechSpan = document.getElementById('current-speech');
-        const featureSpan = document.getElementById('current-feature');
+        console.log('📊 Status display updated');
+    }
 
-        if (animationSpan) animationSpan.textContent = window.currentPlutoAnimation;
-        if (moodSpan) moodSpan.textContent = window.currentPlutoMood;
-        if (speechSpan) speechSpan.textContent = window.currentPlutoSpeech;
-        if (featureSpan) featureSpan.textContent = window.currentPlutoFeature;
+    /**
+     * Get display name for current Pluto type
+     */
+    getPlutoTypeName() {
+        const names = {
+            'modern': 'Modern',
+            'story': 'Story',
+            'scene': 'Scene'
+        };
+        return names[this.currentPlutoType] || 'Unknown';
+    }
+
+    /**
+     * Get currently active Pluto instance
+     */
+    getCurrentActivePluto() {
+        switch (this.currentPlutoType) {
+            case 'modern':
+                return this.getPluto();
+            case 'story':
+                return this.storyPluto;
+            case 'scene':
+                return this.scenePlutos.get(this.currentScene);
+            default:
+                return null;
+        }
     }
 
     /**
@@ -318,6 +344,510 @@ class PlutoTestPanelController {
                 }
             }, 300);
         }, 2000);
+    }
+
+    /**
+     * Switch between different Pluto types
+     * @param {string} type - 'modern', 'story', or 'scene'
+     */
+    switchPlutoType(type) {
+        console.log(`🔄 Switching to ${type} Pluto...`);
+        this.currentPlutoType = type;
+
+        // Update UI buttons
+        ['modern', 'story', 'scene'].forEach(t => {
+            const btn = document.getElementById(`${t}-pluto-btn`);
+            if (btn) {
+                btn.classList.toggle('active', t === type);
+            }
+        });
+
+        // Show/hide scene selector
+        const sceneSelector = document.getElementById('scene-selector');
+        if (sceneSelector) {
+            sceneSelector.style.display = type === 'scene' ? 'block' : 'none';
+        }
+
+        // Switch Pluto instance
+        switch (type) {
+            case 'modern':
+                this.switchToModernPluto();
+                break;
+            case 'story':
+                this.switchToStoryPluto();
+                break;
+            case 'scene':
+                this.switchToScenePluto(this.currentScene);
+                break;
+        }
+
+        this.updateStatusDisplay();
+    }
+
+    /**
+     * Switch to modern component-based Pluto
+     */
+    switchToModernPluto() {
+        // Hide other Plutos
+        this.hideAllPlutos();
+
+        // Show modern Pluto
+        const pluto = this.getPluto();
+        if (pluto) {
+            pluto.show();
+            console.log('✅ Modern Pluto activated');
+        }
+
+        this.updateStatusElement('current-pluto-type', 'Modern');
+        this.updateStatusElement('current-scene', '-');
+    }
+
+    /**
+     * Switch to story-mode Pluto
+     */
+    switchToStoryPluto() {
+        this.hideAllPlutos();
+
+        if (!this.storyPluto) {
+            this.createStoryPluto();
+        }
+
+        if (this.storyPluto) {
+            this.storyPluto.show();
+            console.log('✅ Story Pluto activated');
+        }
+
+        this.updateStatusElement('current-pluto-type', 'Story');
+        this.updateStatusElement('current-scene', '-');
+    }
+
+    /**
+     * Switch to scene-specific Pluto
+     * @param {number} sceneNumber - Scene number (1-5)
+     */
+    switchToScenePluto(sceneNumber) {
+        this.hideAllPlutos();
+        this.currentScene = sceneNumber;
+
+        let scenePluto = this.scenePlutos.get(sceneNumber);
+        if (!scenePluto) {
+            scenePluto = this.createScenePluto(sceneNumber);
+            this.scenePlutos.set(sceneNumber, scenePluto);
+        }
+
+        if (scenePluto) {
+            this.showScenePluto(scenePluto, sceneNumber);
+            console.log(`✅ Scene ${sceneNumber} Pluto activated`);
+        }
+
+        this.updateStatusElement('current-pluto-type', 'Scene');
+        this.updateStatusElement('current-scene', sceneNumber.toString());
+    }
+
+    /**
+     * Hide all Pluto instances
+     */
+    hideAllPlutos() {
+        // Hide modern Pluto
+        const modernPluto = this.getPluto();
+        if (modernPluto) {
+            modernPluto.hide();
+        }
+
+        // Hide story Pluto
+        if (this.storyPluto) {
+            this.storyPluto.hide();
+        }
+
+        // Hide scene Plutos
+        document.querySelectorAll('.scene-pluto-container').forEach(el => {
+            el.style.display = 'none';
+        });
+    }
+
+    /**
+     * Create story mode Pluto
+     */
+    createStoryPluto() {
+        try {
+            // Create container for story Pluto
+            let container = document.getElementById('story-pluto-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'story-pluto-container';
+                container.style.cssText = `
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    pointer-events: none;
+                    z-index: 1001;
+                `;
+                document.body.appendChild(container);
+            }
+
+            // Create Pluto instance with story mode
+            this.storyPluto = new Pluto(container, { storyMode: true });
+            console.log('✅ Story Pluto created');
+        } catch (error) {
+            console.error('❌ Failed to create story Pluto:', error);
+        }
+    }
+
+    /**
+     * Create scene-specific Pluto
+     * @param {number} sceneNumber - Scene number
+     */
+    createScenePluto(sceneNumber) {
+        try {
+            // Create container for scene Pluto
+            const container = document.createElement('div');
+            container.className = 'scene-pluto-container';
+            container.id = `scene-${sceneNumber}-pluto-container`;
+            container.style.cssText = `
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 1002;
+                display: none;
+            `;
+            document.body.appendChild(container);
+
+            // Create CSS-based scene Pluto (old style)
+            const scenePluto = this.createCSSScenePluto(container, sceneNumber);
+
+            console.log(`✅ Scene ${sceneNumber} Pluto created`);
+            return scenePluto;
+        } catch (error) {
+            console.error(`❌ Failed to create scene ${sceneNumber} Pluto:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Create CSS-based scene Pluto (old style from story.html)
+     * @param {HTMLElement} container - Container element
+     * @param {number} sceneNumber - Scene number
+     */
+    createCSSScenePluto(container, sceneNumber) {
+        // Create scene structure like in story.html
+        const sceneDiv = document.createElement('div');
+        sceneDiv.className = 'scene';
+        sceneDiv.style.cssText = `
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+            top: 50%;
+            transform: translateY(-50%);
+            perspective: 2600px;
+            width: 500px;
+            height: 500px;
+        `;
+
+        // Create titan shadow
+        const titanShadow = document.createElement('div');
+        titanShadow.className = 'scene_titanShadow';
+
+        // Create t_wrap
+        const tWrap = document.createElement('div');
+        tWrap.className = 't_wrap';
+
+        // Create main titan (Pluto)
+        const sceneTitan = document.createElement('div');
+        sceneTitan.className = 'scene_titan';
+
+        // Create eyes
+        const eyes = document.createElement('div');
+        eyes.className = 'eyes';
+
+        const eyeLeft = document.createElement('div');
+        eyeLeft.className = 'eye eye--left';
+
+        const eyeRight = document.createElement('div');
+        eyeRight.className = 'eye eye--right';
+
+        eyes.appendChild(eyeLeft);
+        eyes.appendChild(eyeRight);
+
+        // Create mouth (for some scenes)
+        const mouth = document.createElement('div');
+        mouth.className = 'mouth';
+
+        // Assemble structure
+        sceneTitan.appendChild(eyes);
+        sceneTitan.appendChild(mouth);
+        tWrap.appendChild(sceneTitan);
+        sceneDiv.appendChild(titanShadow);
+        sceneDiv.appendChild(tWrap);
+        container.appendChild(sceneDiv);
+
+        // Load scene-specific CSS
+        this.loadSceneCSS(sceneNumber);
+
+        return {
+            container: container,
+            scene: sceneDiv,
+            titan: sceneTitan,
+            eyes: eyes,
+            mouth: mouth,
+            show: () => { container.style.display = 'block'; },
+            hide: () => { container.style.display = 'none'; }
+        };
+    }
+
+    /**
+     * Load scene-specific CSS
+     * @param {number} sceneNumber - Scene number
+     */
+    loadSceneCSS(sceneNumber) {
+        const sceneNames = {
+            1: 'space',
+            2: 'lighthouse',
+            3: 'factory',
+            4: 'journey',
+            5: 'final'
+        };
+
+        const sceneName = sceneNames[sceneNumber];
+        if (!sceneName) return;
+
+        const cssId = `scene-${sceneName}-css`;
+        if (document.getElementById(cssId)) return; // Already loaded
+
+        const link = document.createElement('link');
+        link.id = cssId;
+        link.rel = 'stylesheet';
+        link.href = `css/story/scene-${sceneName}.css`;
+        document.head.appendChild(link);
+
+        console.log(`✅ Scene ${sceneName} CSS loaded`);
+    }
+
+    /**
+     * Show scene Pluto with scene-specific styling
+     * @param {Object} scenePluto - Scene Pluto object
+     * @param {number} sceneNumber - Scene number
+     */
+    showScenePluto(scenePluto, sceneNumber) {
+        if (!scenePluto) return;
+
+        scenePluto.show();
+
+        // Apply scene-specific class
+        const sceneNames = {
+            1: 'scene-space',
+            2: 'scene-lighthouse',
+            3: 'scene-factory',
+            4: 'scene-journey',
+            5: 'scene-final'
+        };
+
+        const sceneName = sceneNames[sceneNumber];
+        if (sceneName) {
+            scenePluto.container.className += ` ${sceneName}`;
+        }
+    }
+
+    /**
+     * Switch to specific scene
+     * @param {number} sceneNumber - Scene number (1-5)
+     */
+    switchScene(sceneNumber) {
+        if (this.currentPlutoType !== 'scene') {
+            this.switchPlutoType('scene');
+        }
+        this.switchToScenePluto(sceneNumber);
+    }
+
+    /**
+     * Update status display element
+     * @param {string} elementId - Element ID
+     * @param {string} value - New value
+     */
+    updateStatusElement(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    /**
+     * Test Pluto mood - works with current Pluto type
+     * @param {string} mood - Mood to test
+     */
+    testPlutoMood(mood) {
+        switch (this.currentPlutoType) {
+            case 'modern':
+                // Call original function directly
+                const pluto = this.getPluto();
+                if (pluto) {
+                    const success = pluto.setMood(mood);
+                    if (success) {
+                        this.updateStatusElement('current-mood', mood);
+                        this.showAnimationIndicator(`Mood: ${mood}`);
+                    }
+                    return success;
+                }
+                break;
+            case 'story':
+                if (this.storyPluto) {
+                    const success = this.storyPluto.setMood(mood);
+                    if (success) {
+                        this.updateStatusElement('current-mood', mood);
+                        this.showAnimationIndicator(`Story Mood: ${mood}`);
+                    }
+                    return success;
+                }
+                break;
+            case 'scene':
+                // Scene Plutos use CSS classes for moods
+                const scenePluto = this.scenePlutos.get(this.currentScene);
+                if (scenePluto) {
+                    scenePluto.titan.setAttribute('data-mood', mood);
+                    this.updateStatusElement('current-mood', mood);
+                    this.showAnimationIndicator(`Scene Mood: ${mood}`);
+                    console.log(`🧪 Scene Pluto mood: ${mood}`);
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
+    /**
+     * Test Pluto animation - works with current Pluto type
+     * @param {string} animation - Animation to test
+     */
+    testPlutoAnimation(animation) {
+        switch (this.currentPlutoType) {
+            case 'modern':
+                // Call original function directly
+                const pluto = this.getPluto();
+                if (pluto) {
+                    const success = pluto.setAnimation(animation);
+                    if (success) {
+                        this.updateStatusElement('current-animation', animation);
+                        this.showAnimationIndicator(`Animation: ${animation}`);
+                    }
+                    return success;
+                }
+                break;
+            case 'story':
+                if (this.storyPluto) {
+                    const success = this.storyPluto.setAnimation(animation);
+                    if (success) {
+                        this.updateStatusElement('current-animation', animation);
+                        this.showAnimationIndicator(`Story Animation: ${animation}`);
+                    }
+                    return success;
+                }
+                break;
+            case 'scene':
+                // Scene Plutos use CSS classes for animations
+                const scenePluto = this.scenePlutos.get(this.currentScene);
+                if (scenePluto) {
+                    scenePluto.titan.setAttribute('data-animation', animation);
+                    this.updateStatusElement('current-animation', animation);
+                    this.showAnimationIndicator(`Scene Animation: ${animation}`);
+                    console.log(`🧪 Scene Pluto animation: ${animation}`);
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
+    /**
+     * Test Pluto skin - works with current Pluto type
+     * @param {string} skin - Skin to test
+     */
+    testPlutoSkin(skin) {
+        switch (this.currentPlutoType) {
+            case 'modern':
+                // Call original function directly
+                const pluto = this.getPluto();
+                if (pluto) {
+                    const success = pluto.applySkin(skin);
+                    if (success) {
+                        this.updateStatusElement('current-skin', skin);
+                        this.showAnimationIndicator(`Skin: ${skin}`);
+                    }
+                    return success;
+                }
+                break;
+            case 'story':
+                if (this.storyPluto) {
+                    const success = this.storyPluto.applySkin(skin);
+                    if (success) {
+                        this.updateStatusElement('current-skin', skin);
+                        this.showAnimationIndicator(`Story Skin: ${skin}`);
+                    }
+                    return success;
+                }
+                break;
+            case 'scene':
+                // Scene Plutos use CSS classes for skins
+                const scenePluto = this.scenePlutos.get(this.currentScene);
+                if (scenePluto) {
+                    // Remove existing skin classes
+                    scenePluto.titan.className = scenePluto.titan.className.replace(/skin--\w+/g, '');
+                    // Add new skin class
+                    if (skin !== 'default') {
+                        scenePluto.titan.classList.add(`skin--${skin}`);
+                    }
+                    this.updateStatusElement('current-skin', skin);
+                    this.showAnimationIndicator(`Scene Skin: ${skin}`);
+                    console.log(`🧪 Scene Pluto skin: ${skin}`);
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
+    /**
+     * Test level completion
+     * @param {number} level - Level to complete
+     */
+    testLevel(level) {
+        return testLevelComplete(level);
+    }
+
+    /**
+     * Show progression debug
+     */
+    progressionDebug() {
+        return showProgressionDebug();
+    }
+
+    /**
+     * Show reward notification
+     */
+    showRewardNotification() {
+        if (window.testRewardNotification) {
+            return window.testRewardNotification();
+        }
+    }
+
+    /**
+     * Show error display
+     */
+    showErrorDisplay() {
+        if (window.testErrorDisplay) {
+            return window.testErrorDisplay();
+        }
+    }
+
+    /**
+     * Clear template cache
+     */
+    clearTemplateCache() {
+        if (window.templateManager) {
+            window.templateManager.clearCache();
+            console.log('🗑️ Template cache cleared!');
+            this.showAnimationIndicator('🗑️ Cache cleared');
+        }
     }
 }
 
@@ -612,6 +1142,24 @@ if (typeof window !== 'undefined') {
             console.warn('❌ TemplateManager not available');
         }
     };
+
+    // New Pluto type switching functions
+    window.plutoTestPanel = PlutoTestPanel;
+
+    // Direct method calls to avoid recursion
+    window.testPlutoMoodWrapper = window.testPlutoMood;
+    window.testPlutoAnimationWrapper = window.testPlutoAnimation;
+    window.testPlutoSkinWrapper = window.testPlutoSkin;
+
+    // Override with new wrapper functions
+    window.testPlutoMood = (mood) => PlutoTestPanel.testPlutoMood(mood);
+    window.testPlutoAnimation = (anim) => PlutoTestPanel.testPlutoAnimation(anim);
+    window.testPlutoSkin = (skin) => PlutoTestPanel.testPlutoSkin(skin);
+    window.testLevel = (level) => PlutoTestPanel.testLevel(level);
+    window.progressionDebug = () => PlutoTestPanel.progressionDebug();
+    window.showRewardNotification = () => PlutoTestPanel.showRewardNotification();
+    window.showErrorDisplay = () => PlutoTestPanel.showErrorDisplay();
+    window.clearTemplateCache = () => PlutoTestPanel.clearTemplateCache();
 }
 
 console.log('🧪 Pluto Test Panel Controller loaded! (Component Mode)'); 
