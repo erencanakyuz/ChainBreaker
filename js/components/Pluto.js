@@ -380,4 +380,9 @@ export class Pluto {
     isStoryMode() {
         return this.storyMode;
     }
+}
+
+// Also attach to window for compatibility
+if (typeof window !== 'undefined') {
+    window.Pluto = Pluto;
 } 

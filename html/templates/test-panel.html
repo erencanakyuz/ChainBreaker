@@ -1,1 +1,154 @@
- 
+<div id="pluto-test-panel" class="test-panel"
+    style="position: fixed; top: 10px; left: 10px; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 20px; border-radius: 15px; font-family: 'Press Start 2P', monospace; font-size: 10px; z-index: 1000; max-width: 350px; border: 2px solid #4ecdc4; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+
+    <div class="panel-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #4ecdc4; padding-bottom: 15px;">
+        <h3 style="margin: 0; color: #4ecdc4; font-size: 12px;">🚀 PLUTO TEST LAB</h3>
+        <button id="toggle-panel" class="toggle-btn"
+            style="background: #e74c3c; color: white; border: none; border-radius: 5px; width: 25px; height: 25px; font-size: 14px; cursor: pointer;">━</button>
+    </div>
+
+    <div class="panel-content">
+
+        <!-- Status Section -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">📊 STATUS</div>
+            <div id="pluto-status"
+                style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px; font-size: 8px; color: #ecf0f1;">
+                Pluto: Loading...
+            </div>
+        </div>
+
+        <!-- Skin Tests -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🎨 SKIN TESTS</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="window.testPlutoSkin('default')" class="test-btn"
+                    style="background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🪐
+                    Default</button>
+                <button onclick="window.testPlutoSkin('golden')" class="test-btn"
+                    style="background: linear-gradient(45deg, #f1c40f, #f39c12); color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">✨
+                    Golden</button>
+                <button onclick="window.testPlutoSkin('cyborg')" class="test-btn"
+                    style="background: linear-gradient(45deg, #34495e, #2c3e50); color: #3498db; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🤖
+                    Cyborg</button>
+                <button onclick="window.testPlutoSkin('rainbow')" class="test-btn"
+                    style="background: linear-gradient(45deg, #e74c3c, #f39c12, #f1c40f, #27ae60, #3498db, #9b59b6); color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🌈
+                    Rainbow</button>
+            </div>
+        </div>
+
+        <!-- Mood Tests -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #9b59b6; margin-bottom: 8px; font-size: 9px;">😄 MOOD TESTS</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="window.testPlutoMood('happy')" class="test-btn"
+                    style="background: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😄
+                    Happy</button>
+                <button onclick="window.testPlutoMood('sad')" class="test-btn"
+                    style="background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😢
+                    Sad</button>
+                <button onclick="window.testPlutoMood('angry')" class="test-btn"
+                    style="background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😠
+                    Angry</button>
+                <button onclick="window.testPlutoMood('neutral')" class="test-btn"
+                    style="background: #7f8c8d; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">😐
+                    Neutral</button>
+            </div>
+        </div>
+
+        <!-- Animation Tests -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">⚡ ANIMATION TESTS
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="window.testPlutoAnimation('excited')" class="test-btn"
+                    style="background: #f39c12; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">✨
+                    Excited</button>
+                <button onclick="window.testPlutoAnimation('orbit')" class="test-btn"
+                    style="background: #9b59b6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🌍
+                    Orbit</button>
+                <button onclick="window.testPlutoAnimation('fly-around')" class="test-btn"
+                    style="background: #e67e22; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🚀
+                    Fly</button>
+                <button onclick="window.testPlutoAnimation('idle')" class="test-btn"
+                    style="background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">⏸️
+                    Idle</button>
+            </div>
+        </div>
+
+        <!-- System Tests -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #e74c3c; margin-bottom: 8px; font-size: 9px;">🏆 SYSTEM TESTS</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="window.testLevelComplete(1)" class="test-btn"
+                    style="background: #16a085; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🏆
+                    Level 1</button>
+                <button onclick="window.testLevelComplete(5)" class="test-btn"
+                    style="background: #2980b9; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🏆
+                    Level 5</button>
+                <button onclick="window.showProgressionDebug()" class="test-btn"
+                    style="background: #8e44ad; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">📊
+                    Debug</button>
+                <button onclick="window.resetPlutoToDefault()" class="test-btn"
+                    style="background: #c0392b; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🔄
+                    Reset</button>
+            </div>
+        </div>
+
+        <!-- Template Tests -->
+        <div class="test-section">
+            <div class="section-title" style="color: #f1c40f; margin-bottom: 8px; font-size: 9px;">🛠️ TEMPLATE TESTS
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="window.testRewardNotification()" class="test-btn"
+                    style="background: #27ae60; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🎉
+                    Reward</button>
+                <button onclick="window.testErrorDisplay()" class="test-btn"
+                    style="background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">⚠️
+                    Error</button>
+                <button onclick="window.showTemplateStats()" class="test-btn"
+                    style="background: #3498db; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">📈
+                    Stats</button>
+                <button onclick="window.clearTemplateCache()" class="test-btn"
+                    style="background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 5px; font-size: 8px; cursor: pointer; transition: all 0.3s;">🗑️
+                    Clear</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Shortcuts Info -->
+    <div class="shortcuts-info"
+        style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #4ecdc4; font-size: 7px; color: #bdc3c7;">
+        🎯 Shortcuts: Ctrl+1 (Toggle), Ctrl+2 (Debug), Ctrl+R (Reset)
+    </div>
+
+</div>
+
+<style>
+    .test-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .test-panel.collapsed .panel-content {
+        display: none;
+    }
+
+    .test-panel.collapsed .shortcuts-info {
+        display: none;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+</style>

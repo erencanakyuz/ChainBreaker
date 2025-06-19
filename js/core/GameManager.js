@@ -38,7 +38,7 @@ export class GameManager {
             this.setupGameContainer();
 
             // Initialize Pluto
-            this.initializePluto();
+            await this.initializePluto();
 
             // Setup global event listeners
             this.setupEventListeners();
@@ -112,9 +112,13 @@ export class GameManager {
     }
 
     // Initialize Pluto component
-    initializePluto() {
+    async initializePluto() {
         try {
             this.pluto = new Pluto(this.gameContainer);
+
+            // Wait for async initialization to complete
+            await this.pluto.initialized;
+
             console.log('GameManager: Pluto initialized successfully');
 
             // Dispatch Pluto ready event
@@ -626,4 +630,9 @@ export class GameManager {
 
         console.log('GameManager: Destroyed');
     }
+}
+
+// Also attach to window for compatibility
+if (typeof window !== 'undefined') {
+    window.GameManager = GameManager;
 } 

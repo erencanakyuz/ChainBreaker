@@ -124,4 +124,10 @@ export class TemplateManager {
 }
 
 // Create a singleton instance
-export const templateManager = new TemplateManager(); 
+export const templateManager = new TemplateManager();
+
+// Also attach to window for compatibility
+if (typeof window !== 'undefined') {
+    window.TemplateManager = TemplateManager;
+    window.templateManager = templateManager;
+} 

@@ -41,6 +41,10 @@ class PlutoTestPanelController {
         // Listen for GameManager ready event
         window.addEventListener('gameManagerReady', () => {
             console.log('🎮 GameManager ready event received by test panel');
+            // Update status when GameManager is ready
+            setTimeout(() => {
+                this.updateStatusDisplay();
+            }, 500);
         });
 
         // Also check periodically (fallback)
@@ -82,25 +86,23 @@ class PlutoTestPanelController {
      */
     async loadTestPanel() {
         try {
-            const response = await fetch('html/pluto-test-panel.html');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Try loading with template manager first if available
+            if (window.templateManager) {
+                const panelElement = await window.templateManager.createElement('test-panel');
+
+                // Check if panel already exists
+                const existingPanel = document.getElementById('pluto-test-panel');
+                if (existingPanel) {
+                    existingPanel.remove();
+                }
+
+                document.body.appendChild(panelElement);
+                console.log('✅ Test panel loaded via TemplateManager');
+                return;
             }
 
-            const panelHTML = await response.text();
-
-            // Check if panel already exists
-            const existingPanel = document.getElementById('pluto-test-panel');
-            if (existingPanel) {
-                existingPanel.remove();
-            }
-
-            // Create container and insert HTML
-            const container = document.createElement('div');
-            container.innerHTML = panelHTML;
-            document.body.appendChild(container.firstElementChild);
-
-            console.log('✅ Test panel HTML loaded');
+            // If template manager failed, use fallback
+            throw new Error('TemplateManager not available');
         } catch (error) {
             console.error('❌ Failed to load test panel HTML:', error);
             this.createFallbackPanel();
@@ -223,6 +225,24 @@ class PlutoTestPanelController {
      * Update status display
      */
     updateStatusDisplay() {
+        // Try template-based status div first
+        const statusDiv = document.getElementById('pluto-status');
+        if (statusDiv) {
+            const pluto = this.getPluto();
+            if (pluto && pluto.element) {
+                statusDiv.innerHTML = `
+                    Pluto: Ready ✅<br>
+                    Skin: ${pluto.skin || 'default'}<br>
+                    Mood: ${pluto.mood}<br>
+                    Animation: ${pluto.currentAnimation}
+                `;
+            } else {
+                statusDiv.innerHTML = 'Pluto: Loading... ⏳';
+            }
+            return;
+        }
+
+        // Fallback to old status elements
         const animationSpan = document.getElementById('current-animation');
         const moodSpan = document.getElementById('current-mood');
         const speechSpan = document.getElementById('current-speech');
@@ -530,6 +550,68 @@ if (typeof window !== 'undefined') {
     window.toggleTestPanel = toggleTestPanel;
     window.showTestPanel = showTestPanel;
     window.hideTestPanel = hideTestPanel;
+
+    // Template test functions
+    window.testRewardNotification = async function () {
+        if (window.gameManager && window.gameManager.showRewardNotification) {
+            const testReward = {
+                type: 'skin',
+                name: 'Test Golden Skin',
+                description: 'Bu bir template testi! ✨'
+            };
+            await window.gameManager.showRewardNotification(testReward);
+            console.log('🎉 Template reward notification test completed!');
+        } else {
+            console.warn('❌ GameManager not available for reward test');
+        }
+    };
+
+    window.testErrorDisplay = async function () {
+        if (window.templateManager) {
+            try {
+                const errorElement = await window.templateManager.createElement('error-display', {
+                    errorTitle: 'Test Error',
+                    errorMessage: 'Bu bir template test hatası!',
+                    errorDetails: 'Template sistemi başarıyla çalışıyor.'
+                });
+
+                document.body.appendChild(errorElement);
+
+                // 3 saniye sonra kaldır
+                setTimeout(() => {
+                    if (errorElement.parentNode) {
+                        errorElement.parentNode.removeChild(errorElement);
+                    }
+                }, 3000);
+
+                console.log('⚠️ Template error display test completed!');
+            } catch (error) {
+                console.error('❌ Error template test failed:', error);
+            }
+        } else {
+            console.warn('❌ TemplateManager not available');
+        }
+    };
+
+    window.showTemplateStats = function () {
+        if (window.templateManager) {
+            const stats = window.templateManager.getCacheStats();
+            console.log('📈 Template Cache Stats:', stats);
+            alert(`Template Cache:\n\nSize: ${stats.cacheSize}\nCached: ${stats.cachedTemplates.join(', ')}`);
+        } else {
+            console.warn('❌ TemplateManager not available');
+        }
+    };
+
+    window.clearTemplateCache = function () {
+        if (window.templateManager) {
+            window.templateManager.clearCache();
+            console.log('🗑️ Template cache cleared!');
+            alert('Template cache temizlendi! 🗑️');
+        } else {
+            console.warn('❌ TemplateManager not available');
+        }
+    };
 }
 
 console.log('🧪 Pluto Test Panel Controller loaded! (Component Mode)'); 

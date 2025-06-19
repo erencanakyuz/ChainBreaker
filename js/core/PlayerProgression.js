@@ -233,4 +233,10 @@ class PlayerProgression {
 }
 
 // Export a single instance to ensure all parts of the app use the same data
-export const playerProgression = new PlayerProgression(); 
+export const playerProgression = new PlayerProgression();
+
+// Also attach to window for compatibility
+if (typeof window !== 'undefined') {
+    window.PlayerProgression = PlayerProgression;
+    window.playerProgression = playerProgression;
+} 
