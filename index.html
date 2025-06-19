@@ -268,6 +268,9 @@
         // Create new base Pluto on the left side
         this.setupNewBasePluto();
 
+        // 🎮 Setup special Pluto animation controls for number keys
+        this.setupPlutoAnimationControls();
+
         const subtitleText = this.add.text(width / 2, 200, 'Choose Your Path, Warrior', {
           fontFamily: '"Press Start 2P", monospace',
           fontSize: '16px',
@@ -275,6 +278,25 @@
           stroke: '#8c241d',
           strokeThickness: 2
         }).setOrigin(0.5);
+
+        // Add Pluto animation help text
+        const helpText = this.add.text(20, height - 40, 'Press 1-9,0 for Pluto animations | ESC to reset', {
+          fontFamily: '"Press Start 2P", monospace',
+          fontSize: '8px',
+          fill: '#4ecdc4',
+          stroke: '#2c3e50',
+          strokeThickness: 1,
+          alpha: 0.8
+        }).setOrigin(0, 1);
+
+        // Add pulsing animation to help text
+        this.tweens.add({
+          targets: helpText,
+          alpha: 0.4,
+          duration: 2000,
+          yoyo: true,
+          repeat: -1
+        });
 
         // Story Button
         const storyButtonBg = this.add.graphics();
@@ -614,6 +636,103 @@
         console.log('🪐 Menu: New Base Pluto created successfully');
       }
 
+      // 🎮 SPECIAL MENU PLUTO ANIMATIONS - Triggered by number keys
+      setupPlutoAnimationControls() {
+        console.log('🎮 Setting up Pluto animation controls (1-9, 0) for MenuScene');
+
+        // Remove existing listener if it exists
+        if (this.keydownHandler) {
+          document.removeEventListener('keydown', this.keydownHandler);
+        }
+
+        this.keydownHandler = (event) => {
+          // Only work in menu scene
+          if (this.scene.key !== 'MenuScene') return;
+
+          // Get menu Pluto
+          const menuPluto = document.querySelector('#menu-pluto-container .pluto-base-entity');
+          if (!menuPluto) return;
+
+          // Animation descriptions for display
+          const animationNames = {
+            '1': '🌍 Orbital Dance',
+            '2': '∞ Figure-8 Flight',
+            '3': '🦘 Bouncy Explorer',
+            '4': '🌀 Spiral Vortex',
+            '5': '🌊 Wave Rider',
+            '6': '⚡ Teleport Jump',
+            '7': '🧲 Magnetic Attraction',
+            '8': '🔍 Curious Scanner',
+            '9': '💥 Energy Burst',
+            '0': '🎪 Playful Tumble'
+          };
+
+          // Check if it's a number key (1-9, 0)
+          const key = event.key;
+          if (animationNames[key]) {
+            // Remove previous special animation
+            menuPluto.removeAttribute('data-special');
+
+            // Add new special animation after a brief delay
+            setTimeout(() => {
+              menuPluto.setAttribute('data-special', key);
+              console.log(`🪐 Pluto: ${animationNames[key]} animation activated!`);
+
+              // Show animation indicator
+              this.showAnimationIndicator(`${animationNames[key]} Animation!`);
+            }, 50);
+          }
+
+          // Reset with ESC key
+          if (event.key === 'Escape') {
+            menuPluto.removeAttribute('data-special');
+            this.showAnimationIndicator('🔄 Reset to Normal Float');
+            console.log('🪐 Pluto: Reset to normal menu float');
+          }
+        };
+
+        document.addEventListener('keydown', this.keydownHandler);
+      }
+
+      // Show animation indicator overlay for MenuScene
+      showAnimationIndicator(text) {
+        // Remove existing indicator
+        const existing = document.querySelector('.menu-animation-indicator');
+        if (existing) existing.remove();
+
+        // Create indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'menu-animation-indicator';
+        indicator.textContent = text;
+        indicator.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(45deg, #4ecdc4, #44a08d);
+          color: white;
+          padding: 10px 15px;
+          border-radius: 8px;
+          font-family: "Press Start 2P", monospace;
+          font-size: 8px;
+          z-index: 10000;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          border: 2px solid rgba(255,255,255,0.3);
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        `;
+
+        document.body.appendChild(indicator);
+
+        // Animate in
+        setTimeout(() => indicator.style.opacity = '1', 10);
+
+        // Auto remove
+        setTimeout(() => {
+          indicator.style.opacity = '0';
+          setTimeout(() => indicator.remove(), 300);
+        }, 2500);
+      }
+
       setPlutoPosition(mode) {
         if (!this.unifiedPlutoContainer) return;
 
@@ -886,7 +1005,20 @@
           this.titleElement = null;
         }
 
-        // Clean up unified Pluto
+        // Clean up animation controls
+        if (this.keydownHandler) {
+          document.removeEventListener('keydown', this.keydownHandler);
+          this.keydownHandler = null;
+        }
+
+        // Clean up menu Pluto
+        if (this.menuPlutoContainer) {
+          this.menuPlutoContainer.remove();
+          this.menuPlutoContainer = null;
+          this.menuPlutoEntity = null;
+        }
+
+        // Clean up unified Pluto (legacy)
         if (this.unifiedPlutoContainer) {
           this.unifiedPlutoContainer.remove();
           this.unifiedPlutoContainer = null;
@@ -2435,6 +2567,8 @@
           animStyles.remove();
         }
       }
+
+
 
       getMemoryUsage() {
         // Get memory usage information if available (Chrome/modern browsers)
