@@ -566,6 +566,7 @@
         plutoEntity.dataset.mood = 'neutral';
         plutoEntity.dataset.animation = 'idle';
         plutoEntity.dataset.skin = 'default';
+        plutoEntity.dataset.context = 'menu';
 
         // Create shadow
         const shadow = document.createElement('div');
@@ -919,6 +920,7 @@
       switchMenuPlutoToGameMode() {
         // Find menu Pluto from menu scene
         const menuPluto = document.getElementById('menu-pluto-container');
+        console.log('🔍 Looking for menu-pluto-container:', menuPluto);
         if (menuPluto) {
           // Store reference
           this.gamePlutoContainer = menuPluto;
@@ -936,14 +938,86 @@
             height: 100px;
           `;
 
-          // Change to excited animation for game mode
+          // Change to game context and excited animation for game mode
           if (this.gamePlutoEntity) {
+            this.gamePlutoEntity.dataset.context = 'game';
             this.gamePlutoEntity.dataset.animation = 'excited';
             this.gamePlutoEntity.dataset.mood = 'happy';
           }
 
           console.log('🪐 New Base Pluto switched to game mode');
+        } else {
+          console.warn('❌ Menu Pluto container not found! Creating game Pluto directly...');
+          this.createGamePlutoDirectly();
         }
+      }
+
+      createGamePlutoDirectly() {
+        // Create Pluto directly in game if menu version doesn't exist
+        const gamePlutoContainer = document.createElement('div');
+        gamePlutoContainer.id = 'game-pluto-container';
+        gamePlutoContainer.style.cssText = `
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1000;
+          pointer-events: none;
+          width: 100px;
+          height: 100px;
+        `;
+
+        // Create the new base Pluto structure directly
+        const plutoEntity = document.createElement('div');
+        plutoEntity.className = 'pluto-base-entity';
+        plutoEntity.dataset.mood = 'happy';
+        plutoEntity.dataset.animation = 'excited';
+        plutoEntity.dataset.skin = 'default';
+        plutoEntity.dataset.context = 'game';
+
+        // Create shadow
+        const shadow = document.createElement('div');
+        shadow.className = 'scene_titanShadow';
+
+        // Create t_wrap container
+        const tWrap = document.createElement('div');
+        tWrap.className = 't_wrap';
+
+        // Create main titan body
+        const titan = document.createElement('div');
+        titan.className = 'scene_titan';
+
+        // Create eyes
+        const eyes = document.createElement('div');
+        eyes.className = 'eyes';
+
+        const leftEye = document.createElement('div');
+        leftEye.className = 'eye eye--left';
+
+        const rightEye = document.createElement('div');
+        rightEye.className = 'eye eye--right';
+
+        eyes.appendChild(leftEye);
+        eyes.appendChild(rightEye);
+
+        // Create mouth
+        const mouth = document.createElement('div');
+        mouth.className = 'mouth';
+
+        // Assemble the structure
+        titan.appendChild(eyes);
+        titan.appendChild(mouth);
+        tWrap.appendChild(titan);
+        plutoEntity.appendChild(shadow);
+        plutoEntity.appendChild(tWrap);
+        gamePlutoContainer.appendChild(plutoEntity);
+        document.body.appendChild(gamePlutoContainer);
+
+        // Store references
+        this.gamePlutoContainer = gamePlutoContainer;
+        this.gamePlutoEntity = plutoEntity;
+
+        console.log('🪐 Game Pluto created directly in center position');
       }
 
       create() {
