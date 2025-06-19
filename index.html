@@ -273,19 +273,19 @@
         bgGraphics.fillRect(0, 0, width, height);
         console.log('🎮 MenuScene: Background created');
 
-        // Add animated background particles (Phaser 3.70 syntax)
-        this.backgroundParticles = this.add.particles(0, 0, 'diamond', {
-          x: { min: 0, max: width },
-          y: { min: 0, max: height },
-          lifespan: 8000,
-          speed: { min: 20, max: 60 },
-          scale: { start: 0.3, end: 0 },
-          quantity: 2,
-          blendMode: 'ADD',
-          tint: colorSystem.convertedPalettes.cosmic,
-          alpha: { start: 0.6, end: 0 }
-        });
-        console.log('🎮 MenuScene: Background particles created');
+        // Background particles removed from menu - was causing FPS drops
+        // this.backgroundParticles = this.add.particles(0, 0, 'diamond', {
+        //   x: { min: 0, max: width },
+        //   y: { min: 0, max: height },
+        //   lifespan: 8000,
+        //   speed: { min: 20, max: 60 },
+        //   scale: { start: 0.3, end: 0 },
+        //   quantity: 2,
+        //   blendMode: 'ADD',
+        //   tint: colorSystem.convertedPalettes.cosmic,
+        //   alpha: { start: 0.6, end: 0 }
+        // });
+        console.log('🎮 MenuScene: Background particles removed for performance');
 
         // Create DOM element for samurai-styled title
         const titleElement = document.createElement('h1');
@@ -1222,60 +1222,61 @@
         );
         this.ambientLight.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
-        // New efficient particle-based starfield
-        this.stars = this.add.particles(0, 0, 'star', {
-          x: { min: 0, max: this.cameras.main.width },
-          y: { min: 0, max: this.cameras.main.height },
-          lifespan: 8000,
-          speed: 0,
-          scale: { start: 0.1, end: 0.5, ease: 'Quad.out' },
-          alpha: { start: 0.1, end: 1, ease: 'Quad.in' },
-          quantity: 40,
-          blendMode: 'ADD',
-          tint: [0xffffff, 0xffeeaa, 0xaaddff],
-          customEmit: function (particle, emitter) {
-            particle.setAlpha(0);
-            this.scene.tweens.add({
-              targets: particle,
-              alpha: { from: 0, to: Math.random() * 0.7 + 0.1 },
-              scale: { from: 0.1, to: Math.random() * 0.4 + 0.1 },
-              duration: Math.random() * 4000 + 2000,
-              ease: 'Sine.easeInOut',
-              yoyo: true,
-              repeat: -1,
-              delay: Math.random() * 5000
-            });
-            return particle;
-          }
-        });
+        // Background stars removed - was causing FPS drops due to accumulating tweens
+        // this.stars = this.add.particles(0, 0, 'star', {
+        //   x: { min: 0, max: this.cameras.main.width },
+        //   y: { min: 0, max: this.cameras.main.height },
+        //   lifespan: 8000,
+        //   speed: 0,
+        //   scale: { start: 0.1, end: 0.5, ease: 'Quad.out' },
+        //   alpha: { start: 0.1, end: 1, ease: 'Quad.in' },
+        //   quantity: 40,
+        //   blendMode: 'ADD',
+        //   tint: [0xffffff, 0xffeeaa, 0xaaddff],
+        //   customEmit: function (particle, emitter) {
+        //     particle.setAlpha(0);
+        //     this.scene.tweens.add({
+        //       targets: particle,
+        //       alpha: { from: 0, to: Math.random() * 0.7 + 0.1 },
+        //       scale: { from: 0.1, to: Math.random() * 0.4 + 0.1 },
+        //       duration: Math.random() * 4000 + 2000,
+        //       ease: 'Sine.easeInOut',
+        //       yoyo: true,
+        //       repeat: -1,
+        //       delay: Math.random() * 5000
+        //     });
+        //     return particle;
+        //   }
+        // });
 
-        // Optimized background particles with reduced count (Phaser 3.70 syntax)
-        this.backgroundParticles = this.add.particles(0, 0, 'star', {
-          x: { min: 0, max: this.cameras.main.width },
-          y: 0,
-          lifespan: 8000,
-          speedY: { min: 10, max: 30 },
-          scale: { start: 0.8, end: 0 },
-          quantity: 2, // Reduced from 4
-          blendMode: 'ADD',
-          tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
-          alpha: { start: 0.5, end: 0 } // Reduced opacity
-        });
+        // Background particles removed - was causing FPS drops due to accumulation
+        // this.backgroundParticles = this.add.particles(0, 0, 'star', {
+        //   x: { min: 0, max: this.cameras.main.width },
+        //   y: 0,
+        //   lifespan: 12000,
+        //   speedY: { min: 5, max: 15 },
+        //   scale: { start: 0.4, end: 0 },
+        //   quantity: 1,
+        //   frequency: 3000,
+        //   blendMode: 'ADD',
+        //   tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
+        //   alpha: { start: 0.3, end: 0 }
+        // });
 
-        // Optimized floating particles with reduced frequency (Phaser 3.70 syntax)
-        this.bgParticles = this.add.particles(0, 0, 'diamond', {
-          x: { min: 0, max: this.cameras.main.width },
-          y: { min: 0, max: this.cameras.main.height },
-          lifespan: 10000, // Reduced lifespan
-          speed: { min: 15, max: 35 },
-          angle: { min: 0, max: 360 },
-          scale: { start: 0.3, end: 0 }, // Smaller size
-          quantity: 1,
-          frequency: 1200, // Reduced frequency
-          blendMode: 'ADD',
-          tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
-          alpha: { start: 0.4, end: 0 } // Reduced opacity
-        });
+        // Floating particles also removed - contributing to FPS drops
+        // this.bgParticles = this.add.particles(0, 0, 'diamond', {
+        //   x: { min: 0, max: this.cameras.main.width },
+        //   y: { min: 0, max: this.cameras.main.height },
+        //   lifespan: 15000,
+        //   speed: { min: 8, max: 20 },
+        //   angle: { min: 0, max: 360 },
+        //   scale: { start: 0.2, end: 0 },
+        //   quantity: 1,
+        //   frequency: 2000,
+        //   blendMode: 'ADD',
+        //   tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
+        //   alpha: { start: 0.25, end: 0 }
+        // });
 
         // Optimized spark emitter with reduced count (Phaser 3.70 syntax)
         this.sparkEmitter = this.add.particles(0, 0, 'particle', {
@@ -2082,14 +2083,15 @@
         // Pluto reacts to miss by going back to idle
         this.triggerPlutoAnimation('idle');
 
-        this.cameras.main.shake(150, 0.015);
+        // Stronger shake effect - increased duration and intensity
+        this.cameras.main.shake(300, 0.03); // Increased from 150, 0.015
         this.tweens.add({
           targets: this.activeRing.graphics,
-          x: this.activeRing.x + 5,
-          y: this.activeRing.y + 5,
+          x: this.activeRing.x + 10, // Increased from 5
+          y: this.activeRing.y + 10, // Increased from 5
           yoyo: true,
-          duration: 50,
-          repeat: 2,
+          duration: 80, // Increased from 50
+          repeat: 3,    // Increased from 2
           onComplete: () => {
             this.activeRing.graphics.x = this.activeRing.x;
             this.activeRing.graphics.y = this.activeRing.y;
