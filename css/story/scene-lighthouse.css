@@ -1665,3 +1665,60 @@
         transform: translateY(-2px) rotate(-2deg);
     }
 }
+
+/* ===== LIGHTHOUSE SCENE ANIMATIONS FROM ANIMATIONS.CSS ===== */
+/* These were moved from the consolidated animations.css file */
+
+@keyframes twinkle-generic {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes wave-generic {
+    50% {
+        transform: translateX(-10px);
+    }
+}
+
+@keyframes lightRotate {
+    25% {
+        transform: perspective(500px) rotateY(35deg);
+    }
+
+    75% {
+        transform: perspective(500px) rotateY(-35deg);
+    }
+}
+
+@keyframes lightGlow {
+    50% {
+        opacity: 0;
+    }
+
+    75% {
+        opacity: 1;
+    }
+}
+
+@keyframes boat {
+    0% {
+        transform: translateX(120vw) scale(0.8);
+    }
+
+    80%,
+    100% {
+        transform: translateX(-25vw) scale(0.8);
+    }
+}
+
+@keyframes boatShadow {
+    0% {
+        transform: skewX(35deg) translateX(15px);
+    }
+
+    50%,
+    100% {
+        transform: skewX(-55deg) translateX(-40px);
+    }
+}

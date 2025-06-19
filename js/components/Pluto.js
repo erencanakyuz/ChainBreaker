@@ -1,4 +1,5 @@
 import { playerProgression } from '../core/PlayerProgression.js';
+import { templateManager } from '../core/TemplateManager.js';
 
 export class Pluto {
     constructor(container, options = {}) {
@@ -15,20 +16,57 @@ export class Pluto {
         // Story mode bypasses unlock restrictions
         this.storyMode = options.storyMode || false;
 
-        // Create and initialize the Pluto element
-        this._createPlutoElement();
-        this.applySkin(this.skin);
-        this.setAnimation('idle');
-        this.setMood('neutral');
+        // Initialize (async) - the element creation is now handled separately
+        this.initialized = this._initialize();
 
-        // Listen for global game events
-        this._setupEventListeners();
+        console.log('Pluto: Component initialization started with skin:', this.skin, this.storyMode ? '(Story Mode)' : '(Game Mode)');
+    }
 
-        console.log('Pluto: Component initialized with skin:', this.skin, this.storyMode ? '(Story Mode)' : '(Game Mode)');
+    // Async initialization method
+    async _initialize() {
+        try {
+            // Create and initialize the Pluto element
+            await this._createPlutoElement();
+            await this.applySkin(this.skin);
+            this.setAnimation('idle');
+            this.setMood('neutral');
+
+            // Listen for global game events
+            this._setupEventListeners();
+
+            console.log('Pluto: Component fully initialized');
+            return true;
+        } catch (error) {
+            console.error('Pluto: Initialization failed:', error);
+            return false;
+        }
     }
 
     // Create the main Pluto DOM element
-    _createPlutoElement() {
+    async _createPlutoElement() {
+        try {
+            // Use template system instead of hardcoded HTML
+            this.element = await templateManager.createElement('pluto-entity', {
+                mood: this.mood,
+                animation: this.currentAnimation,
+                skin: this.skin
+            });
+
+            // Mount to container if provided
+            if (this.container) {
+                this.mount();
+            }
+
+            console.log('Pluto: Element created using template system');
+            return this.element;
+        } catch (error) {
+            console.error('Pluto: Failed to create element using template, falling back to manual creation:', error);
+            return this._createPlutoElementFallback();
+        }
+    }
+
+    // Fallback method for manual element creation
+    _createPlutoElementFallback() {
         const plutoEntity = document.createElement('div');
         plutoEntity.className = 'pluto-entity'; // Base class from pluto.css
 
@@ -116,27 +154,37 @@ export class Pluto {
     }
 
     // Apply a skin to Pluto
-    applySkin(skinName) {
+    async applySkin(skinName) {
         if (!this.storyMode && !this.progression.isUnlocked('skin', skinName)) {
             console.warn(`Pluto: Skin "${skinName}" is not unlocked, using current skin`);
             return false;
         }
 
-        // Reset and apply new skin class
-        this.element.className = 'pluto-entity';
-        if (skinName !== 'default') {
-            this.element.classList.add(`skin--${skinName}`);
+        try {
+            // Load the skin CSS dynamically (skip for default skin)
+            if (skinName !== 'default' && window.gameManager) {
+                await window.gameManager.loadSkinCSS(skinName);
+            }
+
+            // Reset and apply new skin class
+            this.element.className = 'pluto-entity';
+            if (skinName !== 'default') {
+                this.element.classList.add(`skin--${skinName}`);
+            }
+
+            this.skin = skinName;
+            console.log(`Pluto: Applied skin "${skinName}"${this.storyMode ? ' (Story Mode)' : ''}`);
+
+            // Dispatch skin applied event
+            window.dispatchEvent(new CustomEvent('plutoSkinApplied', {
+                detail: { skinName }
+            }));
+
+            return true;
+        } catch (error) {
+            console.error(`Pluto: Failed to apply skin "${skinName}":`, error);
+            return false;
         }
-
-        this.skin = skinName;
-        console.log(`Pluto: Applied skin "${skinName}"${this.storyMode ? ' (Story Mode)' : ''}`);
-
-        // Dispatch skin applied event
-        window.dispatchEvent(new CustomEvent('plutoSkinApplied', {
-            detail: { skinName }
-        }));
-
-        return true;
     }
 
     // Set Pluto's mood

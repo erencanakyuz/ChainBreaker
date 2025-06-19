@@ -2,6 +2,7 @@
 
 import { Pluto } from '../components/Pluto.js';
 import { playerProgression } from './PlayerProgression.js';
+import { templateManager } from './TemplateManager.js';
 
 export class GameManager {
     constructor() {
@@ -41,6 +42,12 @@ export class GameManager {
 
             // Setup global event listeners
             this.setupEventListeners();
+
+            // Preload skin CSS files for better performance
+            await this.preloadAvailableSkins();
+
+            // Preload commonly used templates
+            await this.preloadTemplates();
 
             // Initialize Phaser game (if needed)
             // await this.initializePhaserGame();
@@ -385,10 +392,139 @@ export class GameManager {
     }
 
     // Utility methods
-    showRewardNotification(reward) {
+    /**
+     * Dynamically load skin CSS file on demand
+     * @param {string} skinName - Name of the skin to load
+     * @returns {Promise<void>}
+     */
+    async loadSkinCSS(skinName) {
+        const skinId = `skin-css-${skinName}`;
+
+        // Don't reload if it's already in the DOM
+        if (document.getElementById(skinId)) {
+            console.log(`GameManager: Skin CSS already loaded: ${skinName}`);
+            return;
+        }
+
+        try {
+            // Create a new link element
+            const link = document.createElement('link');
+            link.id = skinId;
+            link.rel = 'stylesheet';
+            link.href = `css/skins/${skinName}.css`;
+
+            // Append to head and wait for it to load
+            document.head.appendChild(link);
+
+            await new Promise((resolve, reject) => {
+                link.onload = () => {
+                    console.log(`GameManager: Skin CSS loaded successfully: ${skinName}`);
+                    resolve();
+                };
+                link.onerror = () => {
+                    console.warn(`GameManager: Failed to load skin CSS: ${skinName}`);
+                    // Remove the failed link element
+                    document.head.removeChild(link);
+                    reject(new Error(`Failed to load skin CSS: ${skinName}`));
+                };
+            });
+        } catch (error) {
+            console.error(`GameManager: Error loading skin CSS for ${skinName}:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * Unload skin CSS file to free up memory
+     * @param {string} skinName - Name of the skin to unload
+     */
+    unloadSkinCSS(skinName) {
+        const skinId = `skin-css-${skinName}`;
+        const linkElement = document.getElementById(skinId);
+
+        if (linkElement) {
+            document.head.removeChild(linkElement);
+            console.log(`GameManager: Skin CSS unloaded: ${skinName}`);
+        }
+    }
+
+    /**
+     * Preload multiple skin CSS files for better performance
+     * @param {string[]} skinNames - Array of skin names to preload
+     */
+    async preloadSkinCSS(skinNames) {
+        console.log('GameManager: Preloading skin CSS files...');
+        const loadPromises = skinNames.map(skinName =>
+            this.loadSkinCSS(skinName).catch(error =>
+                console.warn(`Failed to preload skin: ${skinName}`, error)
+            )
+        );
+
+        await Promise.allSettled(loadPromises);
+        console.log('GameManager: Skin CSS preloading completed');
+    }
+
+    /**
+     * Preload available skins based on progression data
+     */
+    async preloadAvailableSkins() {
+        // Get list of known skins from level rewards
+        const knownSkins = new Set(['golden', 'cyborg']); // Add more as you create them
+
+        // Also check what's already unlocked
+        const unlockedSkins = playerProgression.getUnlockedItems('skin');
+        unlockedSkins.forEach(skin => {
+            if (skin !== 'default') knownSkins.add(skin);
+        });
+
+        // Convert to array and preload
+        const skinsToPreload = Array.from(knownSkins);
+        if (skinsToPreload.length > 0) {
+            await this.preloadSkinCSS(skinsToPreload);
+        }
+    }
+
+    /**
+     * Preload commonly used templates
+     */
+    async preloadTemplates() {
+        const commonTemplates = [
+            'pluto-entity',
+            'reward-notification',
+            'error-display',
+            'test-panel'
+        ];
+
+        await templateManager.preloadTemplates(commonTemplates);
+    }
+
+    async showRewardNotification(reward) {
         console.log(`GameManager: Showing reward notification for ${reward.name}`);
 
-        // Create notification element (simplified)
+        try {
+            // Use template system for reward notification
+            const notification = await templateManager.createElement('reward-notification', {
+                rewardType: reward.type.toUpperCase(),
+                rewardName: reward.name,
+                rewardDescription: reward.description || 'New content available!'
+            });
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        } catch (error) {
+            console.error('GameManager: Failed to show reward notification using template, falling back:', error);
+            this._showRewardNotificationFallback(reward);
+        }
+    }
+
+    // Fallback method for reward notifications
+    _showRewardNotificationFallback(reward) {
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -413,7 +549,6 @@ export class GameManager {
 
         document.body.appendChild(notification);
 
-        // Remove after 5 seconds
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);

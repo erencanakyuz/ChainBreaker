@@ -372,3 +372,56 @@
         border-radius: 3px;
     }
 }
+
+/* ===== PLUTO POSITION AND MOVEMENT ANIMATIONS ===== */
+/* These were moved from the consolidated animations.css file */
+
+@keyframes titanWrap {
+
+    0%,
+    33%,
+    73%,
+    100% {
+        transform: translateY(370px);
+    }
+
+    38%,
+    78% {
+        transform: translateY(400px);
+    }
+
+    43%,
+    83% {
+        transform: translateY(370px);
+    }
+}
+
+@keyframes titan {
+
+    0%,
+    33%,
+    83%,
+    100% {
+        left: -400px;
+    }
+
+    43%,
+    73% {
+        left: 400px;
+    }
+}
+
+@keyframes titan_eye {
+
+    0%,
+    33%,
+    83%,
+    100% {
+        transform: rotate(-10deg);
+    }
+
+    43%,
+    73% {
+        transform: rotate(10deg);
+    }
+}

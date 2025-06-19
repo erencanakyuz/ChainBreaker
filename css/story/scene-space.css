@@ -1808,3 +1808,214 @@
                 transparent);
     }
 }
+
+/* ===== SATURN SPECIFIC ANIMATIONS ===== */
+/* These were moved from the consolidated animations.css file */
+
+@keyframes saturn {
+    0% {
+        left: 0;
+    }
+
+    25% {
+        left: -40px;
+    }
+
+    50% {
+        left: 0px;
+    }
+
+    75% {
+        left: 40px;
+    }
+
+    100% {
+        left: 0;
+    }
+}
+
+@keyframes ring {
+    0% {
+        left: 0;
+        transform: rotateX(84deg) rotateY(8deg);
+    }
+
+    25% {
+        left: 70px;
+    }
+
+    50% {
+        left: 0px;
+        transform: rotateX(80deg) rotateY(-8deg);
+    }
+
+    75% {
+        left: -70px;
+    }
+
+    100% {
+        left: 0px;
+        transform: rotateX(84deg) rotateY(8deg);
+    }
+}
+
+@keyframes ringShadow {
+    0% {
+        left: -100px;
+    }
+
+    25% {
+        left: -40px;
+    }
+
+    50% {
+        left: -100px;
+    }
+
+    75% {
+        left: -140px;
+    }
+
+    100% {
+        left: -100px;
+    }
+}
+
+@keyframes face {
+    from {
+        left: -200px;
+    }
+
+    to {
+        left: 200px;
+    }
+}
+
+@keyframes faceTilt {
+    0% {
+        transform: rotate(12deg);
+    }
+
+    50% {
+        transform: rotate(-12deg);
+    }
+
+    100% {
+        transform: rotate(12deg);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    40%,
+    60%,
+    100% {
+        height: 6px;
+    }
+
+    50% {
+        height: 0px;
+    }
+}
+
+/* Saturn spark animations */
+@keyframes spark--1 {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spark--2 {
+    from {
+        transform: rotate(36deg);
+    }
+
+    to {
+        transform: rotate(396deg);
+    }
+}
+
+@keyframes spark--3 {
+    from {
+        transform: rotate(72deg);
+    }
+
+    to {
+        transform: rotate(432deg);
+    }
+}
+
+@keyframes spark--4 {
+    from {
+        transform: rotate(108deg);
+    }
+
+    to {
+        transform: rotate(468deg);
+    }
+}
+
+@keyframes spark--5 {
+    from {
+        transform: rotate(144deg);
+    }
+
+    to {
+        transform: rotate(504deg);
+    }
+}
+
+@keyframes spark--6 {
+    from {
+        transform: rotate(180deg);
+    }
+
+    to {
+        transform: rotate(540deg);
+    }
+}
+
+@keyframes spark--7 {
+    from {
+        transform: rotate(216deg);
+    }
+
+    to {
+        transform: rotate(576deg);
+    }
+}
+
+@keyframes spark--8 {
+    from {
+        transform: rotate(252deg);
+    }
+
+    to {
+        transform: rotate(612deg);
+    }
+}
+
+@keyframes spark--9 {
+    from {
+        transform: rotate(288deg);
+    }
+
+    to {
+        transform: rotate(648deg);
+    }
+}
+
+@keyframes spark--10 {
+    from {
+        transform: rotate(324deg);
+    }
+
+    to {
+        transform: rotate(684deg);
+    }
+}
