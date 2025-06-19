@@ -1223,61 +1223,7 @@
         );
         this.ambientLight.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
-        // Background stars removed - was causing FPS drops due to accumulating tweens
-        // this.stars = this.add.particles(0, 0, 'star', {
-        //   x: { min: 0, max: this.cameras.main.width },
-        //   y: { min: 0, max: this.cameras.main.height },
-        //   lifespan: 8000,
-        //   speed: 0,
-        //   scale: { start: 0.1, end: 0.5, ease: 'Quad.out' },
-        //   alpha: { start: 0.1, end: 1, ease: 'Quad.in' },
-        //   quantity: 40,
-        //   blendMode: 'ADD',
-        //   tint: [0xffffff, 0xffeeaa, 0xaaddff],
-        //   customEmit: function (particle, emitter) {
-        //     particle.setAlpha(0);
-        //     this.scene.tweens.add({
-        //       targets: particle,
-        //       alpha: { from: 0, to: Math.random() * 0.7 + 0.1 },
-        //       scale: { from: 0.1, to: Math.random() * 0.4 + 0.1 },
-        //       duration: Math.random() * 4000 + 2000,
-        //       ease: 'Sine.easeInOut',
-        //       yoyo: true,
-        //       repeat: -1,
-        //       delay: Math.random() * 5000
-        //     });
-        //     return particle;
-        //   }
-        // });
 
-        // Background particles removed - was causing FPS drops due to accumulation
-        // this.backgroundParticles = this.add.particles(0, 0, 'star', {
-        //   x: { min: 0, max: this.cameras.main.width },
-        //   y: 0,
-        //   lifespan: 12000,
-        //   speedY: { min: 5, max: 15 },
-        //   scale: { start: 0.4, end: 0 },
-        //   quantity: 1,
-        //   frequency: 3000,
-        //   blendMode: 'ADD',
-        //   tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
-        //   alpha: { start: 0.3, end: 0 }
-        // });
-
-        // Floating particles also removed - contributing to FPS drops
-        // this.bgParticles = this.add.particles(0, 0, 'diamond', {
-        //   x: { min: 0, max: this.cameras.main.width },
-        //   y: { min: 0, max: this.cameras.main.height },
-        //   lifespan: 15000,
-        //   speed: { min: 8, max: 20 },
-        //   angle: { min: 0, max: 360 },
-        //   scale: { start: 0.2, end: 0 },
-        //   quantity: 1,
-        //   frequency: 2000,
-        //   blendMode: 'ADD',
-        //   tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
-        //   alpha: { start: 0.25, end: 0 }
-        // });
 
         // Optimized spark emitter with reduced count (Phaser 3.70 syntax)
         this.sparkEmitter = this.add.particles(0, 0, 'particle', {
@@ -2206,29 +2152,16 @@
         let ringColor = Phaser.Utils.Array.GetRandom(this.getActiveDesign().ringColors);
         let newRing = new Ring(this, this.center.x, this.center.y, newRadius, this.ringThickness, ringColor, this.getActiveDesign());
 
-        // Start ring invisible and scale it up smoothly
-        newRing.graphics.alpha = 0;
-        newRing.graphics.scaleX = 0.3;
-        newRing.graphics.scaleY = 0.3;
+        // Ring spawns instantly during gameplay - no animation for speed
+        newRing.graphics.alpha = 1;
+        newRing.graphics.scaleX = 1;
+        newRing.graphics.scaleY = 1;
 
         // Ring is immediately interactive - no delay
         newRing.inputReceived = false;
 
-        // Smooth spawn animation
-        this.tweens.add({
-          targets: newRing.graphics,
-          alpha: 1,
-          scaleX: 1,
-          scaleY: 1,
-          duration: 300, // Quick but smooth
-          ease: 'Back.easeOut', // Nice bouncy effect
-          onComplete: () => {
-            // Ring is fully visible and ready
-            newRing.graphics.alpha = 1;
-            newRing.graphics.scaleX = 1;
-            newRing.graphics.scaleY = 1;
-          }
-        });
+        // No animation - instant spawn for fast gameplay
+        // Ring appears immediately without any transition
 
         this.ringStack.push(newRing);
         this.activeRing = newRing;
@@ -2311,20 +2244,20 @@
           const ringColor = colorPool[i % colorPool.length]; // Cycle through colors
           const ring = new Ring(this, this.center.x, this.center.y, radius, this.ringThickness, ringColor, design);
 
-          // Add smooth spawn animation for initial rings - much slower and more spaced out
+          // Add smooth spawn animation for initial rings - simple and fluid
           ring.graphics.alpha = 0;
-          ring.graphics.scaleX = 0.2;
-          ring.graphics.scaleY = 0.2;
+          ring.graphics.scaleX = 0.5;
+          ring.graphics.scaleY = 0.5;
 
-          // Much slower staggered animations - 300ms apart instead of 100ms
+          // Simple and fluid staggered animations - 350ms apart for distinct spawning
           this.tweens.add({
             targets: ring.graphics,
             alpha: 1,
             scaleX: 1,
             scaleY: 1,
-            duration: 600, // Slower animation - 600ms instead of 400ms
-            ease: 'Back.easeOut',
-            delay: i * 300, // Much longer delay between rings - 300ms instead of 100ms
+            duration: 500, // Smooth and quick - 500ms
+            ease: 'Linear', // Very smooth linear transition
+            delay: i * 350, // Longer delay for clear individual spawning - 350ms between rings
             onComplete: () => {
               ring.graphics.alpha = 1;
               ring.graphics.scaleX = 1;
@@ -2332,7 +2265,7 @@
 
               // If this is the last ring, start the needle
               if (i === numRings - 1) {
-                this.time.delayedCall(200, () => {
+                this.time.delayedCall(300, () => {
                   this.needleActive = true;
                   console.log('🎯 All rings created - Needle activated!');
                 });
