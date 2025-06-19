@@ -7,7 +7,7 @@
    SPEECH BUBBLE SYSTEM
    ========================================== */
 
-/* Speech bubble for Pluto */
+/* Global speech bubble for Pluto - DISABLED IN MENU */
 .pluto-speech-bubble {
     position: fixed;
     top: 50%;
@@ -29,6 +29,12 @@
     text-align: center;
     line-height: 1.4;
     backdrop-filter: blur(5px);
+    /* Only show during gameplay, not in menu */
+    display: none;
+}
+
+.game-active .pluto-speech-bubble {
+    display: block;
 }
 
 .pluto-speech-bubble.show {
