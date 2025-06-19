@@ -37,26 +37,58 @@
             opacity: 1;
         }
 
-        /* Container for scene messages, hidden by default */
+        /* Container for scene messages - Sol üst pop-up */
         .scene-message-container {
             position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d, #6c5ce7);
             color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-family: "Press Start 2P", monospace;
-            font-size: 10px;
-            text-align: center;
-            max-width: 90%;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-family: "Orbitron", "Press Start 2P", monospace;
+            font-size: 12px;
+            text-align: left;
+            max-width: 300px;
+            min-width: 200px;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(78, 205, 196, 0.3);
+            z-index: 2000;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transform: translateX(-100px);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             pointer-events: none;
-            /* Non-interactive */
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Pop-up görünür hali */
+        .scene-message-container.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Farklı mesaj türleri için renkler */
+        .scene-message-container.lighthouse {
+            background: linear-gradient(135deg, #74b9ff, #0984e3, #6c5ce7);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(116, 185, 255, 0.4);
+        }
+
+        .scene-message-container.space {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7, #fd79a8);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(162, 155, 254, 0.4);
+        }
+
+        .scene-message-container.journey {
+            background: linear-gradient(135deg, #00b894, #00cec9, #74b9ff);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(0, 184, 148, 0.4);
         }
     </style>
 </head>

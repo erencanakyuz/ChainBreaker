@@ -17,6 +17,11 @@
   <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
   <link rel="stylesheet" href="css/components/pluto-base.css?v=3.0">
 
+  <!-- Direct redirect to story mode -->
+  <script>
+    window.location.href = 'story.html';
+  </script>
+
 </head>
 
 <body>
@@ -357,17 +362,8 @@
               this.menuPlutoBody = null;
             }
 
-            // Add flash effect on selection
-            this.tweens.add({
-              targets: storyButtonBg,
-              alpha: 1,
-              duration: 100,
-              yoyo: true,
-              onComplete: () => {
-                // Redirect to story page
-                window.location.href = 'story.html';
-              }
-            });
+            // Immediate redirect to story page
+            window.location.href = 'story.html';
           });
 
           element.on('pointerover', () => {

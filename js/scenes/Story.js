@@ -26,6 +26,9 @@ class StoryManager {
         this.pluto = null;
         this.progression = null;
 
+        // Random message system
+        this.randomMessageTimer = null;
+
         // Scene-specific Pluto configurations
         this.sceneConfigs = {
             1: { // Space Scene - Introduction
@@ -33,35 +36,40 @@ class StoryManager {
                 animation: 'idle',
                 skin: 'default',
                 position: { x: 150, y: 100 },
-                message: "Welcome to my cosmic journey! 🌌"
+                message: "Welcome to my cosmic journey! 🌌",
+                messageType: "space"
             },
             2: { // Lighthouse Scene - Guidance
                 mood: 'happy',
                 animation: 'excited',
                 skin: 'default',
                 position: { x: 200, y: 150 },
-                message: "The lighthouse guides lost travelers like me! ⚡"
+                message: "The lighthouse guides lost travelers like me! ⚡",
+                messageType: "lighthouse"
             },
             3: { // Factory Scene - Transformation
                 mood: 'angry',
                 animation: 'spiral-dance',
                 skin: 'cyborg',
                 position: { x: 100, y: 200 },
-                message: "Time for some serious cosmic work! 🔧"
+                message: "Time for some serious cosmic work! 🔧",
+                messageType: "default"
             },
             4: { // Journey Scene - Adventure
                 mood: 'excited',
                 animation: 'fly-around',
                 skin: 'golden',
                 position: { x: 250, y: 100 },
-                message: "Flying through the stars is amazing! ✨"
+                message: "Flying through the stars is amazing! ✨",
+                messageType: "journey"
             },
             5: { // Final Scene - Completion
                 mood: 'happy',
                 animation: 'orbit-mode',
                 skin: 'rainbow',
                 position: { x: 200, y: 150 },
-                message: "My journey is complete! Ready for new adventures! 🏆"
+                message: "My journey is complete! Ready for new adventures! 🏆",
+                messageType: "journey"
             }
         };
     }
@@ -139,9 +147,12 @@ class StoryManager {
             // Add a delay before showing the message to let animations settle
             setTimeout(() => {
                 if (config.message) {
-                    this.showSceneMessage(config.message);
+                    this.showSceneMessage(config.message, config.messageType);
                 }
             }, 1000);
+
+            // Start random messages for this scene
+            this.startRandomMessages();
 
             console.log(`🪐 Configured Pluto for scene ${sceneNumber}:`, config);
         } catch (error) {
@@ -150,18 +161,81 @@ class StoryManager {
     }
 
     /**
-     * Show a message for the current scene
+     * Show a pop-up message in top-left corner
      */
-    showSceneMessage(message) {
+    showSceneMessage(message, type = 'default') {
         if (!this.messageContainer) return;
 
-        this.messageContainer.textContent = message;
-        this.messageContainer.style.opacity = '1';
+        // Clear any existing message
+        this.messageContainer.classList.remove('show', 'lighthouse', 'space', 'journey');
 
-        // Auto-hide after 4 seconds
+        // Set message content
+        this.messageContainer.textContent = message;
+
+        // Add type-specific styling
+        if (type !== 'default') {
+            this.messageContainer.classList.add(type);
+        }
+
+        // Show with animation
         setTimeout(() => {
-            this.messageContainer.style.opacity = '0';
-        }, 4000);
+            this.messageContainer.classList.add('show');
+        }, 100);
+
+        // Auto-hide after 5 seconds with smooth animation
+        setTimeout(() => {
+            this.messageContainer.classList.remove('show');
+        }, 5000);
+    }
+
+    /**
+     * Show random pop-up messages during scenes
+     */
+    showRandomMessage() {
+        const messages = [
+            { text: "The lighthouse guides lost travelers like me! ⚡", type: "lighthouse" },
+            { text: "Saturn's rings hold ancient secrets! 🪐", type: "space" },
+            { text: "My cosmic journey continues! ✨", type: "journey" },
+            { text: "Breaking chains, one ring at a time! 💎", type: "default" },
+            { text: "The universe whispers its mysteries! 🌌", type: "space" },
+            { text: "Every star tells a story! ⭐", type: "journey" },
+            { text: "Factory of dreams and metal! 🔧", type: "default" },
+            { text: "Flying through infinity! 🚀", type: "space" },
+            { text: "The beacon calls to wanderers! 💫", type: "lighthouse" }
+        ];
+
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        this.showSceneMessage(randomMessage.text, randomMessage.type);
+    }
+
+    /**
+     * Start showing random messages at intervals
+     */
+    startRandomMessages() {
+        // Clear any existing timer
+        this.stopRandomMessages();
+
+        // Show random messages every 8-15 seconds
+        const showMessage = () => {
+            this.showRandomMessage();
+
+            // Schedule next message
+            const nextDelay = Math.random() * 7000 + 8000; // 8-15 seconds
+            this.randomMessageTimer = setTimeout(showMessage, nextDelay);
+        };
+
+        // Start first message after 3 seconds
+        this.randomMessageTimer = setTimeout(showMessage, 3000);
+    }
+
+    /**
+     * Stop random messages
+     */
+    stopRandomMessages() {
+        if (this.randomMessageTimer) {
+            clearTimeout(this.randomMessageTimer);
+            this.randomMessageTimer = null;
+        }
     }
 
     addEventListeners() {
@@ -280,7 +354,7 @@ class StoryManager {
         const cssId = `story-scene-${sceneNumber}-css`;
 
         if (cssFile) {
-                await this.loadCSS(cssFile, cssId);
+            await this.loadCSS(cssFile, cssId);
         }
     }
 
@@ -402,6 +476,9 @@ class StoryManager {
      * Cleanup method for when leaving the story
      */
     cleanup() {
+        // Stop random messages
+        this.stopRandomMessages();
+
         if (this.pluto) {
             this.pluto.hide();
             this.pluto.unmount();
