@@ -1463,57 +1463,42 @@
       }
 
       setupNeedle() {
-        // Create ultra-optimized needle system for maximum smoothness
-        this.createOptimizedNeedle();
+        // Create simple and visible needle system
         this.needleAngle = 0;
         this.originalNeedleSpeed = Phaser.Math.DegToRad(180);
         this.needleSpeed = this.originalNeedleSpeed;
         this.needleReverseProb = 0;
-
-        // Remove all unnecessary performance variables
         this.isInSweetSpot = false;
+
+        // Create simple graphics needle
+        this.needle = this.add.graphics();
+        this.drawNeedle();
       }
 
-      createOptimizedNeedle() {
-        // Create two pre-rendered needle textures for instant swapping
-        const graphics = this.add.graphics();
+      drawNeedle() {
+        this.needle.clear();
 
-        // Create black needle texture
-        graphics.clear();
-        graphics.fillStyle(0x000000);
-        graphics.lineStyle(2, 0x666666);
-        graphics.beginPath();
-        graphics.moveTo(15, 0);
-        graphics.lineTo(-10, -8);
-        graphics.lineTo(-5, 0);
-        graphics.lineTo(-10, 8);
-        graphics.closePath();
-        graphics.fillPath();
-        graphics.strokePath();
+        // Draw a simple but very visible needle
+        const needleColor = this.isInSweetSpot ? 0xFFFFFF : 0xFF0000; // White in sweet spot, red otherwise
 
-        this.blackNeedleTexture = graphics.generateTexture('blackNeedle', 30, 20);
+        // Draw needle as a thick line with circle
+        this.needle.fillStyle(needleColor);
+        this.needle.fillCircle(0, 0, 6); // Center circle
 
-        // Create white needle texture
-        graphics.clear();
-        graphics.fillStyle(0xFFFFFF);
-        graphics.lineStyle(2, 0x666666);
-        graphics.beginPath();
-        graphics.moveTo(15, 0);
-        graphics.lineTo(-10, -8);
-        graphics.lineTo(-5, 0);
-        graphics.lineTo(-10, 8);
-        graphics.closePath();
-        graphics.fillPath();
-        graphics.strokePath();
+        this.needle.lineStyle(4, needleColor);
+        this.needle.beginPath();
+        this.needle.moveTo(0, 0);
+        this.needle.lineTo(25, 0); // Point outward
+        this.needle.strokePath();
 
-        this.whiteNeedleTexture = graphics.generateTexture('whiteNeedle', 30, 20);
-
-        // Destroy the temporary graphics object
-        graphics.destroy();
-
-        // Create the actual needle sprite using black texture initially
-        this.needle = this.add.sprite(0, 0, 'blackNeedle');
-        this.needle.setOrigin(0.5, 0.5);
+        // Add a triangle tip for better visibility
+        this.needle.fillStyle(needleColor);
+        this.needle.beginPath();
+        this.needle.moveTo(25, 0);   // tip
+        this.needle.lineTo(15, -4);  // top
+        this.needle.lineTo(15, 4);   // bottom
+        this.needle.closePath();
+        this.needle.fillPath();
       }
 
       setupLevelDesigns() {
@@ -1668,32 +1653,32 @@
         // Only update needle if it's active (all rings created)
         if (!this.needleActive || !this.activeRing) return;
 
-        // Ultra-smooth angle update
+        // Update needle angle
         this.needleAngle += this.needleSpeed * dt;
 
-        // Optimized angle wrapping (faster than if statements)
+        // Keep angle in range
         this.needleAngle = this.needleAngle % (Math.PI * 2);
         if (this.needleAngle < 0) this.needleAngle += Math.PI * 2;
 
-        // Pre-calculate position values for maximum smoothness
+        // Calculate needle position on active ring
         const radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15;
-        const cosAngle = Math.cos(this.needleAngle);
-        const sinAngle = Math.sin(this.needleAngle);
+        const x = this.center.x + Math.cos(this.needleAngle) * radius;
+        const y = this.center.y + Math.sin(this.needleAngle) * radius;
 
-        // Ultra-smooth position update
-        this.needle.x = this.center.x + cosAngle * radius;
-        this.needle.y = this.center.y + sinAngle * radius;
-        this.needle.rotation = this.needleAngle + Math.PI;
+        // Update needle position and rotation
+        this.needle.x = x;
+        this.needle.y = y;
+        this.needle.rotation = this.needleAngle + Math.PI; // Point toward center
 
-        // Optimized sweet spot detection (only when needed)
+        // Check sweet spot
         const angleDiff = Math.abs(Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle));
         const sweetSpotThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
-        const inSweetSpot = angleDiff <= sweetSpotThreshold;
+        const wasInSweetSpot = this.isInSweetSpot;
+        this.isInSweetSpot = angleDiff <= sweetSpotThreshold;
 
-        // Instant texture swap for color change (no graphics operations)
-        if (inSweetSpot !== this.isInSweetSpot) {
-          this.needle.setTexture(inSweetSpot ? 'whiteNeedle' : 'blackNeedle');
-          this.isInSweetSpot = inSweetSpot;
+        // Redraw needle if sweet spot status changed
+        if (this.isInSweetSpot !== wasInSweetSpot) {
+          this.drawNeedle();
         }
       }
 
@@ -2235,7 +2220,7 @@
             scaleY: 1,
             duration: 300, // Ultra fast but smooth - 150ms
             ease: 'Sine.easeOut', // Very smooth sine easing
-            delay: i * 960, // Moderate succession -  between rings (half speed)
+            delay: i * 480, // Moderate succession -  between rings (half speed)
             onComplete: () => {
               ring.graphics.alpha = 1;
               ring.graphics.scaleX = 1;
