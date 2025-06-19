@@ -2388,11 +2388,18 @@
         }
       }
 
-      // Simplified Pluto animation triggers for unified system
+      // 🎮 NEW BASE SYSTEM - Simplified Pluto animation triggers
       triggerPlutoAnimation(type) {
+        // Use new GameManager's Pluto if available
+        if (window.gameManager?.pluto) {
+          window.gameManager.pluto.setAnimation(type);
+          console.log('🪐 New Base Pluto animation:', type);
+          return;
+        }
+
+        // Legacy fallback for old unified Pluto
         if (!this.plutoBody) return;
 
-        // Simple animation switching for unified Pluto
         switch (type) {
           case 'happy':
             this.plutoBody.style.animation = 'pluto-happy 2s infinite ease-in-out';
@@ -2407,7 +2414,7 @@
             this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
         }
 
-        console.log('🪐 Pluto animation:', type);
+        console.log('🪐 Legacy Pluto animation:', type);
       }
 
       cleanupUnifiedPluto() {

@@ -5,7 +5,7 @@ class PlayerProgression {
         this.data = {
             activeSkin: 'default',
             unlockedSkins: ['default'],
-            unlockedAnimations: ['idle', 'excited'],
+            unlockedAnimations: ['idle', 'excited', 'cute-wiggle', 'curious'], // Menu context animations unlocked by default
             unlockedMoods: ['neutral', 'happy', 'sad'],
             levelProgress: 0,
             totalScore: 0,

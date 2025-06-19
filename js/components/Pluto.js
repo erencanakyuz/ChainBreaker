@@ -16,32 +16,86 @@ export class Pluto {
         // Story mode bypasses unlock restrictions
         this.storyMode = options.storyMode || false;
 
-        // Available animations registry
+        // 🎮 CLEAN ANIMATION REGISTRY - NEW BASE SYSTEM
         this.availableAnimations = {
-            // Basic animations
-            'idle': { name: 'Idle', duration: 5000, unlocked: true },
-            'excited': { name: 'Excited', duration: 2000, unlocked: true },
+            // 🎯 Core animations (always unlocked)
+            'idle': {
+                name: 'Idle',
+                duration: 5000,
+                unlocked: true,
+                description: 'Peaceful floating state'
+            },
+            'excited': {
+                name: 'Excited',
+                duration: 2000,
+                unlocked: true,
+                description: 'Bouncy excitement animation'
+            },
 
-            // Movement animations
-            'orbit': { name: 'Orbit', duration: 8000, unlocked: false },
-            'fly-around': { name: 'Fly Around', duration: 12000, unlocked: false },
-            'spiral-dance': { name: 'Spiral Dance', duration: 6000, unlocked: false },
-            'zoom-out': { name: 'Zoom Out', duration: 4000, unlocked: false },
+            // 🏠 Menu context animations (cute & gentle)
+            'cute-wiggle': {
+                name: 'Cute Wiggle',
+                duration: 3000,
+                unlocked: true,
+                context: 'menu',
+                description: 'Playful wiggling movement'
+            },
+            'curious': {
+                name: 'Curious',
+                duration: 4000,
+                unlocked: true,
+                context: 'menu',
+                description: 'Curious side-to-side look'
+            },
 
-            // Cute animations (Menu specific)
-            'cute-wiggle': { name: 'Cute Wiggle', duration: 3000, unlocked: true, context: 'menu' },
-            'curious': { name: 'Curious', duration: 4000, unlocked: true, context: 'menu' },
+            // 🎮 Game context animations (dynamic & intense)
+            'power-burst': {
+                name: 'Power Burst',
+                duration: 2000,
+                unlocked: false,
+                context: 'game',
+                description: 'Explosive power release'
+            },
+            'chain-break': {
+                name: 'Chain Break',
+                duration: 1000,
+                unlocked: false,
+                context: 'game',
+                description: 'Chain breaking shake effect'
+            },
+            'victory-dance': {
+                name: 'Victory Dance',
+                duration: 2500,
+                unlocked: false,
+                context: 'game',
+                description: 'Celebration victory dance'
+            },
 
-            // Power animations (Game specific)
-            'power-burst': { name: 'Power Burst', duration: 2000, unlocked: false, context: 'game' },
-            'chain-break': { name: 'Chain Break', duration: 1000, unlocked: false, context: 'game' },
-            'victory-dance': { name: 'Victory Dance', duration: 2500, unlocked: false, context: 'game' },
-
-            // Additional animations
-            'bounce': { name: 'Bounce', duration: 2000, unlocked: true },
-            'shake': { name: 'Shake', duration: 1000, unlocked: true },
-            'pulse': { name: 'Pulse', duration: 3000, unlocked: true },
-            'float': { name: 'Float', duration: 6000, unlocked: true }
+            // 🌟 Legacy universal animations (context-free, unlockable)
+            'orbit': {
+                name: 'Orbit',
+                duration: 8000,
+                unlocked: false,
+                description: 'Planetary orbital movement'
+            },
+            'fly-around': {
+                name: 'Fly Around',
+                duration: 12000,
+                unlocked: false,
+                description: 'Flying around the screen'
+            },
+            'spiral-dance': {
+                name: 'Spiral Dance',
+                duration: 6000,
+                unlocked: false,
+                description: 'Elegant spiraling motion'
+            },
+            'zoom-out': {
+                name: 'Zoom Out',
+                duration: 4000,
+                unlocked: false,
+                description: 'Dramatic zoom effect'
+            }
         };
 
         // Initialize (async) - the element creation is now handled separately

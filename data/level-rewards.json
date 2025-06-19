@@ -49,44 +49,32 @@
     },
     "18": {
         "type": "skin",
-        "id": "neon",
-        "name": "Neon Pluto",
-        "description": "Bright neon colors that pulse with energy!"
+        "id": "rainbow",
+        "name": "Rainbow Pluto",
+        "description": "Vibrant rainbow colors that shift and pulse with energy!"
     },
     "20": {
         "type": "animation",
-        "id": "ring-hunter",
-        "name": "Ring Hunter",
-        "description": "Pluto actively hunts for rings to break!"
+        "id": "power-burst",
+        "name": "Power Burst",
+        "description": "Explosive power release animation for game mode!"
     },
     "25": {
-        "type": "skin",
-        "id": "cosmic",
-        "name": "Cosmic Pluto",
-        "description": "A mystical appearance filled with stars and nebula!"
+        "type": "animation",
+        "id": "chain-break",
+        "name": "Chain Break",
+        "description": "Powerful chain breaking animation with shake effects!"
     },
     "30": {
         "type": "animation",
-        "id": "dimensional-travel",
-        "name": "Dimensional Travel",
-        "description": "Watch Pluto phase in and out of dimensions!"
+        "id": "victory-dance",
+        "name": "Victory Dance",
+        "description": "Elaborate celebration dance for major achievements!"
     },
     "35": {
         "type": "mood",
         "id": "meditative",
         "name": "Meditative Mood",
         "description": "A calm, zen-like state for peaceful moments!"
-    },
-    "40": {
-        "type": "skin",
-        "id": "crystal",
-        "name": "Crystal Pluto",
-        "description": "A beautiful crystalline form that refracts light!"
-    },
-    "50": {
-        "type": "animation",
-        "id": "cosmic-drift",
-        "name": "Cosmic Drift",
-        "description": "Pluto drifts gracefully through space and time!"
     }
 }

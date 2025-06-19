@@ -269,14 +269,27 @@
                 // Initialize PlayerProgression
                 window.playerProgression = playerProgression;
 
-                // Unlock all content for testing
+                // 🧪 UNLOCK ALL CONTENT FOR TESTING (NEW CLEAN SYSTEM)
+                // Skins
                 window.playerProgression.unlock('skin', 'golden');
                 window.playerProgression.unlock('skin', 'cyborg');
                 window.playerProgression.unlock('skin', 'rainbow');
+
+                // Universal animations (context-free)
+                window.playerProgression.unlock('animation', 'orbit');
                 window.playerProgression.unlock('animation', 'fly-around');
-                window.playerProgression.unlock('animation', 'zoom-out');
                 window.playerProgression.unlock('animation', 'spiral-dance');
-                console.log('✅ PlayerProgression initialized and test content unlocked');
+                window.playerProgression.unlock('animation', 'zoom-out');
+
+                // Game context animations
+                window.playerProgression.unlock('animation', 'power-burst');
+                window.playerProgression.unlock('animation', 'chain-break');
+                window.playerProgression.unlock('animation', 'victory-dance');
+
+                // Extra moods
+                window.playerProgression.unlock('mood', 'angry');
+
+                console.log('✅ PlayerProgression initialized - ALL NEW BASE SYSTEM CONTENT UNLOCKED');
 
                 // Initialize GameManager
                 window.gameManager = new GameManager();
