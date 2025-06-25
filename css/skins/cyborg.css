@@ -1,6 +1,6 @@
 /* Cyborg Pluto Skin - Futuristic mechanical appearance (Updated for pluto-base-entity) */
 
-.pluto-base-entity.skin--cyborg .scene_titan {
+.pluto-base-entity.skin--cyborg .scene_pluto {
     background: linear-gradient(135deg, #7F8C8D, #34495E, #2C3E50);
     box-shadow:
         0 0 0 8px #95A5A6 inset,
@@ -10,7 +10,7 @@
     position: relative;
 }
 
-.pluto-base-entity.skin--cyborg .scene_titan .eye {
+.pluto-base-entity.skin--cyborg .scene_pluto .eye {
     background: linear-gradient(45deg, #E74C3C, #C0392B);
     box-shadow:
         0 0 15px #C0392B,
@@ -20,14 +20,14 @@
     border: 1px solid #A93226;
 }
 
-.pluto-base-entity.skin--cyborg .scene_titan .mouth {
+.pluto-base-entity.skin--cyborg .scene_pluto .mouth {
     background: linear-gradient(90deg, #34495E, #2C3E50);
     border: 1px solid #95A5A6;
     box-shadow: 0 0 8px rgba(149, 165, 166, 0.8);
 }
 
 /* Cyborg circuit pattern overlay - updated for new structure */
-.pluto-base-entity.skin--cyborg .scene_titan::before {
+.pluto-base-entity.skin--cyborg .scene_pluto::before {
     content: '';
     position: absolute;
     top: 0;
@@ -59,7 +59,7 @@
     }
 }
 
-.pluto-base-entity.skin--cyborg .scene_titan .eye {
+.pluto-base-entity.skin--cyborg .scene_pluto .eye {
     animation: cyborg-eye-scan 2s ease-in-out infinite;
 }
 
@@ -84,16 +84,16 @@
     }
 }
 
-.pluto-base-entity.skin--cyborg[data-animation="idle"] .scene_titan {
+.pluto-base-entity.skin--cyborg[data-animation="idle"] .scene_pluto {
     animation: cyborg-ascension 8s ease-in-out infinite;
 }
 
-.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_titan {
+.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_pluto {
     animation: cyborg-ascension 4s ease-in-out infinite;
 }
 
 /* Mechanical malfunction when angry - updated for new structure */
-.pluto-base-entity.skin--cyborg[data-mood="angry"] .scene_titan {
+.pluto-base-entity.skin--cyborg[data-mood="angry"] .scene_pluto {
     animation: cyborg-malfunction 1s ease-in-out infinite;
 }
 
@@ -122,7 +122,7 @@
 }
 
 /* Energy discharge effect when excited - updated for new structure */
-.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_titan::after {
+.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_pluto::after {
     content: '';
     position: absolute;
     top: -5px;

@@ -1,6 +1,6 @@
 /* Rainbow Pluto Skin - Colorful and vibrant appearance (Updated for pluto-base-entity) */
 
-.pluto-base-entity.skin--rainbow .scene_titan {
+.pluto-base-entity.skin--rainbow .scene_pluto {
     background: linear-gradient(45deg,
             #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
     background-size: 200% 200%;
@@ -26,7 +26,7 @@
     }
 }
 
-.pluto-base-entity.skin--rainbow .scene_titan .eyes .eye {
+.pluto-base-entity.skin--rainbow .scene_pluto .eyes .eye {
     background: radial-gradient(circle, #ffffff, #ff6b6b);
     box-shadow:
         0 0 15px rgba(255, 107, 107, 1),
@@ -58,13 +58,13 @@
     }
 }
 
-.pluto-base-entity.skin--rainbow .scene_titan .mouth {
+.pluto-base-entity.skin--rainbow .scene_pluto .mouth {
     background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
     box-shadow: 0 0 8px rgba(255, 107, 107, 0.8);
 }
 
 /* Rainbow trail effect when excited */
-.pluto-base-entity.skin--rainbow[data-animation="excited"] .scene_titan::after {
+.pluto-base-entity.skin--rainbow[data-animation="excited"] .scene_pluto::after {
     content: '';
     position: absolute;
     top: -10px;
@@ -91,7 +91,7 @@
 }
 
 /* Special effects for different moods */
-.pluto-base-entity.skin--rainbow[data-mood="happy"] .scene_titan {
+.pluto-base-entity.skin--rainbow[data-mood="happy"] .scene_pluto {
     animation: rainbow-happy-bounce 2s ease-in-out infinite;
 }
 
@@ -109,7 +109,7 @@
     }
 }
 
-.pluto-base-entity.skin--rainbow[data-mood="excited"] .scene_titan {
+.pluto-base-entity.skin--rainbow[data-mood="excited"] .scene_pluto {
     animation: rainbow-excited-pulse 1.5s ease-in-out infinite;
 }
 

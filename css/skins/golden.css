@@ -1,7 +1,7 @@
 /* Golden Pluto Skin - Luxurious appearance with golden glow (Updated for pluto-base-entity) */
 /* This skin is for the new base entity system only */
 
-.pluto-base-entity.skin--golden .scene_titan {
+.pluto-base-entity.skin--golden .scene_pluto {
     background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
     box-shadow:
         0 0 0 8px #FFD700 inset,
@@ -10,7 +10,7 @@
     border: 2px solid #B8860B;
 }
 
-.pluto-base-entity.skin--golden .scene_titan .eye {
+.pluto-base-entity.skin--golden .scene_pluto .eye {
     background: radial-gradient(circle, #FFF8DC, #FFD700);
     box-shadow:
         0 0 15px rgba(255, 215, 0, 1),
@@ -18,7 +18,7 @@
     border: 1px solid #B8860B;
 }
 
-.pluto-base-entity.skin--golden .scene_titan .mouth {
+.pluto-base-entity.skin--golden .scene_pluto .mouth {
     background: #B8860B;
     box-shadow: 0 0 8px rgba(184, 134, 11, 0.8);
 }
@@ -44,16 +44,16 @@
     }
 }
 
-.pluto-base-entity.skin--golden[data-animation="excited"] .scene_titan {
+.pluto-base-entity.skin--golden[data-animation="excited"] .scene_pluto {
     animation: golden-ascension 3s ease-in-out infinite;
 }
 
-.pluto-base-entity.skin--golden[data-animation="idle"] .scene_titan {
+.pluto-base-entity.skin--golden[data-animation="idle"] .scene_pluto {
     animation: golden-ascension 6s ease-in-out infinite;
 }
 
 /* Golden sparkle effect when happy - updated for new structure */
-.pluto-base-entity.skin--golden[data-mood="happy"] .scene_titan::after {
+.pluto-base-entity.skin--golden[data-mood="happy"] .scene_pluto::after {
     content: '';
     position: absolute;
     top: -10px;

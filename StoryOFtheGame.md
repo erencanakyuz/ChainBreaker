@@ -21,7 +21,7 @@
 
 ### **Phase 3: Kronos's Dominance**
 - Saturn's magnificent entrance with rotating rings
-- Text: *"...especially the melody of Kronos, Titan of Time and Order..."*
+- Text: *"...especially the melody of Kronos, pluto of Time and Order..."*
 - **[PRESS TO CONTINUE]**
 
 ### **Phase 4: Pluto's Introduction**
@@ -51,7 +51,7 @@
 
 At the beginning of the universe, the "First Melody" created everything. From this melody arose the ancient celestial beings, forming the "Cosmic Choir." Each contributed to universal harmony by singing their own note. But at the very edge of the choir, in the coldest and darkest corner, there was a being whose voice was never heard: Pluto, the Silent Dwarf.
 
-Pluto felt shame from his own silence whenever he heard the glorious songs of others, especially the melody of Kronos (Saturn's mythological name), the titan of time and order, owner of the magnificent Harmony Rings. His existence was like a void in the great symphony, a moment of silence. This is the legend of how Pluto stopped seeing this silence as a curse and made it his greatest power.
+Pluto felt shame from his own silence whenever he heard the glorious songs of others, especially the melody of Kronos (Saturn's mythological name), the pluto of time and order, owner of the magnificent Harmony Rings. His existence was like a void in the great symphony, a moment of silence. This is the legend of how Pluto stopped seeing this silence as a curse and made it his greatest power.
 
 *"In the vast cosmic choir, I am but a rest note... but perhaps silence has its own power."*
 
@@ -206,7 +206,7 @@ Each danger forces Pluto to focus on the inner rhythm he learned from the Pulsar
 
 ### 🎬 **Chapter 4 Completion Cutscene: "The Great Summoning"**
 *Kronos prepares for direct action*
-- Kronos creates **Titan Rings** - massive, powerful formations
+- Kronos creates **pluto Rings** - massive, powerful formations
 - **Cosmic Beings:** *"This is it, Pluto. He's coming for you directly."*
 - **Pluto:** *"Then I'll be ready. My silence will not be silenced!"*
 - Epic space storm begins as Kronos approaches

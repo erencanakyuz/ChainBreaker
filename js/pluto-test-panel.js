@@ -616,17 +616,17 @@ class PlutoTestPanelController {
             height: 500px;
         `;
 
-        // Create titan shadow
-        const titanShadow = document.createElement('div');
-        titanShadow.className = 'scene_titanShadow';
+        // Create pluto shadow
+        const plutoShadow = document.createElement('div');
+        plutoShadow.className = 'scene_plutoShadow';
 
         // Create t_wrap
         const tWrap = document.createElement('div');
         tWrap.className = 't_wrap';
 
-        // Create main titan (Pluto)
-        const sceneTitan = document.createElement('div');
-        sceneTitan.className = 'scene_titan';
+        // Create main pluto (Pluto)
+        const scenePluto = document.createElement('div');
+        scenePluto.className = 'scene_pluto';
 
         // Create eyes
         const eyes = document.createElement('div');
@@ -646,10 +646,10 @@ class PlutoTestPanelController {
         mouth.className = 'mouth';
 
         // Assemble structure
-        sceneTitan.appendChild(eyes);
-        sceneTitan.appendChild(mouth);
-        tWrap.appendChild(sceneTitan);
-        sceneDiv.appendChild(titanShadow);
+        scenepluto.appendChild(eyes);
+        scenepluto.appendChild(mouth);
+        tWrap.appendChild(scenepluto);
+        sceneDiv.appendChild(plutoShadow);
         sceneDiv.appendChild(tWrap);
         container.appendChild(sceneDiv);
 
@@ -659,7 +659,7 @@ class PlutoTestPanelController {
         return {
             container: container,
             scene: sceneDiv,
-            titan: sceneTitan,
+            pluto: scenepluto,
             eyes: eyes,
             mouth: mouth,
             show: () => { container.style.display = 'block'; },

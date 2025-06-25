@@ -154,9 +154,9 @@ export class Pluto {
         plutoEntity.className = 'pluto-base-entity'; // New base class
 
         plutoEntity.innerHTML = `
-            <div class="scene_titanShadow"></div>
+            <div class="scene_plutoShadow"></div>
             <div class="t_wrap">
-                <div class="scene_titan">
+                <div class="scene_pluto">
                     <div class="eyes">
                         <div class="eye eye--left"></div>
                         <div class="eye eye--right"></div>

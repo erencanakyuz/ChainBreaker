@@ -376,7 +376,7 @@
 /* ===== PLUTO POSITION AND MOVEMENT ANIMATIONS ===== */
 /* These were moved from the consolidated animations.css file */
 
-@keyframes titanWrap {
+@keyframes plutoWrap {
 
     0%,
     33%,
@@ -396,7 +396,7 @@
     }
 }
 
-@keyframes titan {
+@keyframes pluto {
 
     0%,
     33%,
@@ -411,7 +411,7 @@
     }
 }
 
-@keyframes titan_eye {
+@keyframes pluto_eye {
 
     0%,
     33%,

@@ -474,7 +474,7 @@ class StoryManager {
     initializeEnhancedEffects() {
         // Add dynamic CSS variables for responsive sizing
         const root = document.documentElement;
-        root.style.setProperty('--titan-size', '100px');
+        root.style.setProperty('--pluto-size', '100px');
         root.style.setProperty('--saturn-size', '200px');
         root.style.setProperty('--saturn-ring-size', '400px');
         root.style.setProperty('--saturn-ring-width', '300px');

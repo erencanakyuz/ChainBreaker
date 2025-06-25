@@ -13,8 +13,8 @@
     z-index: 10;
 }
 
-/* ===== TITAN SHADOW (FOLLOWS PLUTO) ===== */
-.pluto-base-entity .scene_titanShadow {
+/* ===== PLUTO SHADOW (FOLLOWS PLUTO) ===== */
+.pluto-base-entity .scene_plutoShadow {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -37,8 +37,8 @@
     animation: none;
 }
 
-/* ===== MAIN TITAN BODY ===== */
-.pluto-base-entity .scene_titan {
+/* ===== MAIN PLUTO BODY ===== */
+.pluto-base-entity .scene_pluto {
     position: static;
     transform: none;
     width: 100px;
@@ -51,13 +51,13 @@
 }
 
 /* ===== EYES CONTAINER ===== */
-.pluto-base-entity .scene_titan .eyes {
+.pluto-base-entity .scene_pluto .eyes {
     position: relative;
     width: 100%;
     height: 100%;
 }
 
-.pluto-base-entity .scene_titan .eyes .eye {
+.pluto-base-entity .scene_pluto .eyes .eye {
     position: absolute;
     width: 6px;
     height: 6px;
@@ -67,16 +67,16 @@
     animation: blink 3s infinite ease-in-out;
 }
 
-.pluto-base-entity .scene_titan .eyes .eye.eye--left {
+.pluto-base-entity .scene_pluto .eyes .eye.eye--left {
     left: 35%;
 }
 
-.pluto-base-entity .scene_titan .eyes .eye.eye--right {
+.pluto-base-entity .scene_pluto .eyes .eye.eye--right {
     right: 35%;
 }
 
 /* ===== MOUTH ===== */
-.pluto-base-entity .scene_titan .mouth {
+.pluto-base-entity .scene_pluto .mouth {
     position: absolute;
     left: 50%;
     top: 65%;
@@ -106,7 +106,7 @@
     }
 }
 
-@keyframes titan-base-shadow {
+@keyframes pluto-base-shadow {
 
     0%,
     100% {
@@ -120,7 +120,7 @@
     }
 }
 
-@keyframes titan-base-shadow-gentle {
+@keyframes pluto-base-shadow-gentle {
 
     0%,
     100% {
@@ -137,7 +137,7 @@
 }
 
 /* ===== MOOD VARIATIONS FOR BASE ENTITY ===== */
-.pluto-base-entity[data-mood="happy"] .scene_titan {
+.pluto-base-entity[data-mood="happy"] .scene_pluto {
     background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 50%, #2c3e50 100%);
     box-shadow: 0px 0px 0px 8px rgba(78, 205, 196, 0.5) inset,
         -30px -20px 50px #44a08d inset,
@@ -145,12 +145,12 @@
     animation: pluto-base-happy 3s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-mood="happy"] .scene_titan .eyes .eye {
+.pluto-base-entity[data-mood="happy"] .scene_pluto .eyes .eye {
     background: #ffffff;
     animation: blink 2s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-mood="sad"] .scene_titan {
+.pluto-base-entity[data-mood="sad"] .scene_pluto {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #2c1810 100%);
     box-shadow: 0px 0px 0px 8px rgba(102, 126, 234, 0.3) inset,
         -30px -20px 50px #764ba2 inset,
@@ -158,7 +158,7 @@
     animation: pluto-base-sad 4s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-mood="angry"] .scene_titan {
+.pluto-base-entity[data-mood="angry"] .scene_pluto {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #2c1810 100%);
     box-shadow: 0px 0px 0px 8px rgba(255, 107, 107, 0.6) inset,
         -30px -20px 50px #ee5a24 inset,
@@ -166,7 +166,7 @@
     animation: pluto-base-angry 2s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-mood="angry"] .scene_titan .eyes .eye {
+.pluto-base-entity[data-mood="angry"] .scene_pluto .eyes .eye {
     background: #ff1744;
     box-shadow: 0 0 8px rgba(255, 23, 68, 0.8);
 }
@@ -174,40 +174,40 @@
 /* ===== ANIMATION CONTEXT SYSTEM ===== */
 
 /* 🏠 MENU MODE ANIMATIONS (Cute & Gentle) */
-.pluto-base-entity[data-context="menu"][data-animation="idle"] .scene_titan {
+.pluto-base-entity[data-context="menu"][data-animation="idle"] .scene_pluto {
     animation: pluto-menu-float 6s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="menu"][data-animation="excited"] .scene_titan {
+.pluto-base-entity[data-context="menu"][data-animation="excited"] .scene_pluto {
     animation: pluto-menu-bounce 2s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="menu"][data-animation="cute-wiggle"] .scene_titan {
+.pluto-base-entity[data-context="menu"][data-animation="cute-wiggle"] .scene_pluto {
     animation: pluto-menu-wiggle 3s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="menu"][data-animation="curious"] .scene_titan {
+.pluto-base-entity[data-context="menu"][data-animation="curious"] .scene_pluto {
     animation: pluto-menu-curious 4s infinite ease-in-out;
 }
 
 /* 🎮 GAME MODE ANIMATIONS (Dynamic & Intense) */
-.pluto-base-entity[data-context="game"][data-animation="idle"] .scene_titan {
+.pluto-base-entity[data-context="game"][data-animation="idle"] .scene_pluto {
     animation: pluto-game-idle-cute 5s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="game"][data-animation="excited"] .scene_titan {
+.pluto-base-entity[data-context="game"][data-animation="excited"] .scene_pluto {
     animation: pluto-game-celebration 1.5s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="game"][data-animation="power-burst"] .scene_titan {
+.pluto-base-entity[data-context="game"][data-animation="power-burst"] .scene_pluto {
     animation: pluto-game-power-burst 2s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="game"][data-animation="chain-break"] .scene_titan {
+.pluto-base-entity[data-context="game"][data-animation="chain-break"] .scene_pluto {
     animation: pluto-game-chain-break 1s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-context="game"][data-animation="victory-dance"] .scene_titan {
+.pluto-base-entity[data-context="game"][data-animation="victory-dance"] .scene_pluto {
     animation: pluto-game-victory 2.5s infinite ease-in-out;
 }
 
@@ -332,7 +332,7 @@
 }
 
 /* Enhanced cute blink animation for game context */
-.pluto-base-entity[data-context="game"] .scene_titan .eyes .eye {
+.pluto-base-entity[data-context="game"] .scene_pluto .eyes .eye {
     animation: cute-blink 4s infinite ease-in-out, eye-sparkle 2s infinite ease-in-out;
 }
 
@@ -461,11 +461,11 @@
 }
 
 /* ===== LEGACY ANIMATIONS (Backwards Compatibility) ===== */
-.pluto-base-entity[data-animation="excited"] .scene_titan {
+.pluto-base-entity[data-animation="excited"] .scene_pluto {
     animation: pluto-base-excited 1.5s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-animation="idle"] .scene_titan {
+.pluto-base-entity[data-animation="idle"] .scene_pluto {
     animation: pluto-base-ascension 8s infinite ease-in-out;
 }
 
@@ -522,19 +522,19 @@
 }
 
 /* ===== ADDITIONAL ANIMATIONS ===== */
-.pluto-base-entity[data-animation="bounce"] .scene_titan {
+.pluto-base-entity[data-animation="bounce"] .scene_pluto {
     animation: pluto-bounce 2s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-animation="shake"] .scene_titan {
+.pluto-base-entity[data-animation="shake"] .scene_pluto {
     animation: pluto-shake 1s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-animation="pulse"] .scene_titan {
+.pluto-base-entity[data-animation="pulse"] .scene_pluto {
     animation: pluto-pulse 3s infinite ease-in-out;
 }
 
-.pluto-base-entity[data-animation="float"] .scene_titan {
+.pluto-base-entity[data-animation="float"] .scene_pluto {
     animation: pluto-float 6s infinite ease-in-out;
 }
 
@@ -791,27 +791,27 @@
 
 /* ===== SINGLE ORBITAL ANIMATION SYSTEM ===== */
 /* Base idle state for random mode */
-.pluto-base-entity[data-context="menu"][data-random="true"] .scene_titan {
+.pluto-base-entity[data-context="menu"][data-random="true"] .scene_pluto {
     animation: pluto-menu-float 6s infinite ease-in-out;
     transition: transform 0.5s ease-in-out;
 }
 
-.pluto-base-entity[data-context="menu"][data-random="true"] .scene_titanShadow {
-    animation: titan-base-shadow-gentle 6s infinite ease-in-out;
+.pluto-base-entity[data-context="menu"][data-random="true"] .scene_plutoShadow {
+    animation: pluto-base-shadow-gentle 6s infinite ease-in-out;
     transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
 /* Only orbital dance animation */
-.pluto-base-entity[data-context="menu"][data-random="true"][data-current-random="1"] .scene_titan {
+.pluto-base-entity[data-context="menu"][data-random="true"][data-current-random="1"] .scene_pluto {
     animation: pluto-orbital-dance-single 5s ease-in-out forwards;
 }
 
-.pluto-base-entity[data-context="menu"][data-random="true"][data-current-random="1"] .scene_titanShadow {
+.pluto-base-entity[data-context="menu"][data-random="true"][data-current-random="1"] .scene_plutoShadow {
     animation: pluto-orbital-dance-shadow 5s ease-in-out forwards;
 }
 
 /* Reset to normal when no special animation */
-.pluto-base-entity[data-context="menu"]:not([data-special]):not([data-random]) .scene_titan,
-.pluto-base-entity[data-context="menu"][data-special=""] .scene_titan {
+.pluto-base-entity[data-context="menu"]:not([data-special]):not([data-random]) .scene_pluto,
+.pluto-base-entity[data-context="menu"][data-special=""] .scene_pluto {
     animation: pluto-menu-float 6s infinite ease-in-out;
 }

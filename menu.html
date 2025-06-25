@@ -620,15 +620,15 @@
 
         // Create shadow
         const shadow = document.createElement('div');
-        shadow.className = 'scene_titanShadow';
+        shadow.className = 'scene_plutoShadow';
 
         // Create t_wrap container
         const tWrap = document.createElement('div');
         tWrap.className = 't_wrap';
 
-        // Create main titan body
-        const titan = document.createElement('div');
-        titan.className = 'scene_titan';
+        // Create main pluto body
+        const pluto = document.createElement('div');
+        pluto.className = 'scene_pluto';
 
         // Create eyes
         const eyes = document.createElement('div');
@@ -648,9 +648,9 @@
         mouth.className = 'mouth';
 
         // Assemble the new structure
-        titan.appendChild(eyes);
-        titan.appendChild(mouth);
-        tWrap.appendChild(titan);
+        pluto.appendChild(eyes);
+        pluto.appendChild(mouth);
+        tWrap.appendChild(pluto);
         plutoEntity.appendChild(shadow);
         plutoEntity.appendChild(tWrap);
         plutoContainer.appendChild(plutoEntity);
@@ -659,7 +659,7 @@
         // Store references for the new structure
         this.menuPlutoContainer = plutoContainer;
         this.menuPlutoEntity = plutoEntity;
-        this.menuPlutoTitan = titan;
+        this.menuPlutopluto = pluto;
 
         // 🎲 Start random animation cycling
         this.setupRandomAnimationCycling();
@@ -1148,15 +1148,15 @@
 
         // Create shadow
         const shadow = document.createElement('div');
-        shadow.className = 'scene_titanShadow';
+        shadow.className = 'scene_plutoShadow';
 
         // Create t_wrap container
         const tWrap = document.createElement('div');
         tWrap.className = 't_wrap';
 
-        // Create main titan body
-        const titan = document.createElement('div');
-        titan.className = 'scene_titan';
+        // Create main pluto body
+        const pluto = document.createElement('div');
+        pluto.className = 'scene_pluto';
 
         // Create eyes
         const eyes = document.createElement('div');
@@ -1176,9 +1176,9 @@
         mouth.className = 'mouth';
 
         // Assemble the structure
-        titan.appendChild(eyes);
-        titan.appendChild(mouth);
-        tWrap.appendChild(titan);
+        pluto.appendChild(eyes);
+        pluto.appendChild(mouth);
+        tWrap.appendChild(pluto);
         plutoEntity.appendChild(shadow);
         plutoEntity.appendChild(tWrap);
         gamePlutoContainer.appendChild(plutoEntity);

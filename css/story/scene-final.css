@@ -36,9 +36,9 @@
     height: 500px;
 }
 
-/* ===== TITAN (PLUTO) CENTERED AND ASCENDED ===== */
-.scene-final .scene_titanShadow {
-    animation: titan-ascension-shadow 8s infinite ease-in-out;
+/* ===== PLUTO (PLUTO) CENTERED AND ASCENDED ===== */
+.scene-final .scene_plutoShadow {
+    animation: pluto-ascension-shadow 8s infinite ease-in-out;
 }
 
 .scene-final .t_wrap {
@@ -51,7 +51,7 @@
     /* remove old wrap animation */
 }
 
-.scene-final .scene_titan {
+.scene-final .scene_pluto {
     position: static;
     /* Reset positioning */
     transform: none;
@@ -77,7 +77,7 @@
     }
 }
 
-@keyframes titan-ascension-shadow {
+@keyframes pluto-ascension-shadow {
 
     0%,
     100% {
@@ -92,7 +92,7 @@
 }
 
 
-.scene-final .scene_titan .eyes .eye {
+.scene-final .scene_pluto .eyes .eye {
     background: #53487a;
     animation: blink 3s infinite;
     /* Simple, happy blink */
@@ -227,7 +227,7 @@
 
 /* ===== MOBILE RESPONSIVENESS ===== */
 @media (max-width: 768px) {
-    .scene-final .scene_titan {
+    .scene-final .scene_pluto {
         transform: scale(0.9);
     }
 
@@ -237,7 +237,7 @@
 }
 
 @media (max-width: 480px) {
-    .scene-final .scene_titan {
+    .scene-final .scene_pluto {
         transform: scale(0.7);
     }
 
@@ -253,7 +253,7 @@
 
 /* ===== MOBILE RESPONSIVENESS ===== */
 @media (max-width: 768px) {
-    .scene-final .scene_titan {
+    .scene-final .scene_pluto {
         transform: scale(0.9);
     }
 
@@ -263,7 +263,7 @@
 }
 
 @media (max-width: 480px) {
-    .scene-final .scene_titan {
+    .scene-final .scene_pluto {
         transform: scale(0.7);
     }
 
