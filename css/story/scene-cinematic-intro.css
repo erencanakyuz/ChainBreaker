@@ -1,160 +1,149 @@
 /* =============================================================================
-   CHAINBREAKER PRO - Scene 0: Clean Cinematic Intro
-   "The Composer of Silence" - Minimal Typewriter Experience
+   CHAINBREAKER PRO - Scene 0: Cinematic Intro
+   Final Polish - Dynamic & Immersive Mythological Opening
    ============================================================================= */
 
+/* General Scene Setup */
 .scene-cinematic-intro {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    background: #000;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Press Start 2P', monospace;
-}
-
-/* Phase State Management */
-.scene-cinematic-intro[data-phase="0"] .phase:not(.phase-0) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="1"] .phase:not(.phase-1) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="2"] .phase:not(.phase-2) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="3"] .phase:not(.phase-3) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="4"] .phase:not(.phase-4) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="5"] .phase:not(.phase-5) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="6"] .phase:not(.phase-6) {
-    display: none;
-}
-
-.scene-cinematic-intro[data-phase="7"] .phase:not(.phase-7) {
-    display: none;
+    font-family: 'Georgia', 'Times New Roman', serif;
 }
 
 /* =============================================================================
-   MAIN STORY TEXT - TYPEWRITER EFFECT
+   DYNAMIC BACKGROUND & ANIMATIONS
    ============================================================================= */
 
-.story-text-container {
+.nebula-background {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    max-width: 90%;
-    width: 100%;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100px;
+    width: 200%; height: 200%;
+    top: -50%; left: -50%;
+    background: radial-gradient(ellipse at center, #1B2735 0%, #090A0F 60%);
+    opacity: 0;
+    animation: fadeInNebula 10s ease-in-out forwards, slowSwirl 90s linear infinite;
+    z-index: 1;
 }
 
-.narrative-text {
-    font-size: 16px;
-    color: #fff;
-    line-height: 1.8;
-    margin: 0 auto;
-    opacity: 1;
-    max-width: 90%;
-    width: fit-content;
-    text-align: center;
-    font-family: 'Press Start 2P', monospace;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    border-right: 3px solid #fff;
-    animation: blinkCursor 1s infinite;
-    padding: 0 10px;
+@keyframes fadeInNebula { to { opacity: 0.7; } }
+@keyframes slowSwirl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.subtle-stars {
+    position: absolute;
+    width: 100%; height: 100%;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle fill="%23fff" opacity="0.8" cx="100" cy="100" r="1.5"/><circle fill="%23fff" opacity="0.6" cx="300" cy="400" r="1"/><circle fill="%23fff" opacity="1" cx="500" cy="200" r="2"/><circle fill="%23fff" opacity="0.7" cx="700" cy="600" r="1.2"/><circle fill="%23fff" opacity="0.5" cx="900" cy="300" r="1"/><circle fill="%23fff" opacity="0.9" cx="250" cy="700" r="1.8"/><circle fill="%23fff" opacity="0.6" cx="600" cy="900" r="1"/><circle fill="%23fff" opacity="0.8" cx="850" cy="750" r="1.5"/></svg>');
+    animation: twinkle 30s linear infinite;
+    z-index: 2;
 }
 
-.narrative-text.typing {
-    border-right: 3px solid #fff;
-    animation: blinkCursor 1s infinite;
+@keyframes twinkle { from { background-position: 0 0; } to { background-position: -1000px 500px; } }
+
+.animation-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 4;
 }
 
-.narrative-text.typed {
-    border-right: none;
-    animation: none;
+/* Shooting Stars */
+.shooting-star {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(-45deg, #5D9FFF, rgba(0, 0, 255, 0));
+    border-radius: 999px;
+    filter: drop-shadow(0 0 6px #699BFF);
+    animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
 }
 
-/* Typewriter Cursor Animation */
-@keyframes blinkCursor {
+.shooting-star:nth-child(1) { top: 10%; left: -100%; animation-delay: 5s; }
+.shooting-star:nth-child(2) { top: 40%; left: -100%; animation-delay: 8s; }
+.shooting-star:nth-child(3) { top: 80%; left: -100%; animation-delay: 12s; }
 
-    0%,
-    50% {
-        border-color: #fff;
-    }
+@keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
+@keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(150vw); } }
 
-    51%,
-    100% {
-        border-color: transparent;
-    }
+/* Cosmic Light Rays */
+.light-ray {
+    position: absolute;
+    top: -100%; left: 0;
+    width: 10px;
+    height: 300%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 80%);
+    transform: rotate(20deg);
+    animation: sweep 25s linear infinite;
 }
 
-/* Title Style for Phase 7 */
-.title-text {
-    font-size: 24px;
-    background: linear-gradient(45deg, #ffd700, #ff69b4, #00ffff, #ffd700);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: titleShimmer 3s ease-in-out infinite;
-    font-family: 'Press Start 2P', monospace;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 0 auto;
-    width: fit-content;
-    text-align: center;
-    padding: 0 10px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    border-right: 3px solid #ffd700;
-}
+.light-ray:nth-child(2) { animation-delay: 8s; animation-duration: 35s; }
 
-@keyframes titleShimmer {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
+@keyframes sweep { from { transform: translateX(-20vw) rotate(20deg); } to { transform: translateX(120vw) rotate(20deg); } }
 
 /* =============================================================================
-   BOTTOM CONTROLS - MINIMAL
+   CELESTIAL BODIES (REPOSITIONED & ENHANCED)
+   ============================================================================= */
+
+.celestial-choir {
+    position: absolute;
+    width: 100%; height: 100%;
+    z-index: 3;
+    transition: transform 12s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.scene-cinematic-intro[data-phase="4"] .celestial-choir { transform: translateX(-25vw) translateZ(-200px) scale(0.9); }
+.scene-cinematic-intro[data-phase="5"] .celestial-choir { transform: translateX(-35vw) translateZ(-300px) scale(0.8); }
+
+.planet { position: absolute; opacity: 0; transform: scale(0.5); transition: opacity 4s ease-in-out, transform 4s ease-in-out; }
+.scene-cinematic-intro[data-phase="2"] .planet, .scene-cinematic-intro[data-phase="3"] .planet { opacity: 1; transform: scale(1); }
+
+/* Kronos - Positioned Higher */
+#kronos { top: 15%; left: 45%; width: 120px; height: 120px; transition-delay: 1s; }
+#kronos .surface { width: 100%; height: 100%; background: radial-gradient(circle, #FDEB71, #F8D800, #c5a100); border-radius: 50%; box-shadow: inset 0 0 20px #a08000; }
+#kronos .aura { position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; border-radius: 50%; background: radial-gradient(circle, rgba(253, 235, 113, 0.4) 40%, rgba(253, 255, 113, 0) 70%); animation: pulseAura 4s ease-in-out infinite; }
+@keyframes pulseAura { 50% { transform: scale(1.1); opacity: 0.6; } }
+#kronos .rings-container { position: absolute; width: 100%; height: 100%; transform: rotateX(75deg) rotateY(-10deg); transform-style: preserve-3d; animation: float 10s ease-in-out infinite; }
+#kronos .rings { position: absolute; border-radius: 50%; border-style: solid; border-color: rgba(253, 235, 113, 0.7); animation: rotateRings 20s linear infinite; }
+#kronos .ring-1 { top: -75px; left: -75px; width: 270px; height: 270px; border-width: 2px; animation-duration: 20s; }
+#kronos .ring-2 { top: -90px; left: -90px; width: 300px; height: 300px; border-width: 4px; border-color: rgba(253, 235, 113, 0.4); animation-duration: 25s; }
+#kronos .ring-3 { top: -110px; left: -110px; width: 340px; height: 340px; border-width: 1px; border-color: rgba(253, 235, 113, 0.9); animation-duration: 30s; }
+@keyframes rotateRings { from { transform: rotateZ(0deg); } to { transform: rotateZ(360deg); } }
+
+/* Pluto - Positioned Higher */
+#pluto { top: 40%; left: 90%; width: 25px; height: 25px; opacity: 0; animation: float 8s ease-in-out infinite; }
+#pluto .surface { width: 100%; height: 100%; background: radial-gradient(circle, #A2B2C8, #6F7D91, #4e5663); border-radius: 50%; box-shadow: inset 0 0 5px #333; }
+#pluto .pulse-glow { position: absolute; top: -5px; left: -5px; width: 35px; height: 35px; background: radial-gradient(circle, rgba(116, 185, 255, 0.3) 30%, rgba(116, 185, 255, 0) 70%); border-radius: 50%; animation: pulseGlow 6s ease-in-out infinite 3s; opacity: 0; }
+@keyframes pulseGlow { 50% { opacity: 1; transform: scale(1.1); } }
+.scene-cinematic-intro[data-phase="4"] #pluto, .scene-cinematic-intro[data-phase="5"] #pluto { opacity: 1; transform: scale(1); transition-delay: 3s; }
+
+/* Other celestial beings - Positioned Higher */
+.celestial-being { position: absolute; border-radius: 50%; opacity: 0; animation: fadeInBeing 5s ease-in-out forwards, float 15s ease-in-out infinite alternate; }
+.scene-cinematic-intro[data-phase="2"] .celestial-being { animation-play-state: running; }
+.being-1 { top: 10%; left: 15%; width: 50px; height: 50px; background: radial-gradient(circle, #ffafbd, #ffc3a0); animation-delay: 2s; }
+.being-2 { top: 30%; left: 25%; width: 80px; height: 80px; background: radial-gradient(circle, #2193b0, #6dd5ed); animation-delay: 3s; }
+.being-3 { top: 45%; left: 75%; width: 30px; height: 30px; background: radial-gradient(circle, #cc2b5e, #753a88); animation-delay: 4s; }
+@keyframes fadeInBeing { to { opacity: 0.7; } }
+@keyframes float { to { transform: translateY(20px); } }
+
+/* =============================================================================
+   TEXT & TYPOGRAPHY (NO OVERLAY)
+   ============================================================================= */
+
+.story-text-container { position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); text-align: center; max-width: 800px; width: 90%; z-index: 10; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+.narrative-text { font-size: 24px; color: #e0e0e0; line-height: 1.8; text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 10px #699BFF; white-space: pre-wrap; }
+.narrative-text.typing::after { content: '_'; animation: blinkCursor 0.8s infinite; }
+@keyframes blinkCursor { 50% { opacity: 0; } }
+.title-text { font-size: 52px; background: linear-gradient(45deg, #ffd700, #ff94c2, #89ffff, #ffd700); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: titleShimmer 4s ease-in-out infinite; font-family: 'Georgia', serif; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+@keyframes titleShimmer { 50% { background-position: 100% 50%; } }
+
+/* =============================================================================
+   CONTROLS & RESPONSIVENESS
    ============================================================================= */
 
 .bottom-controls {
     position: absolute;
-    bottom: 40px;
+    top: 85%;
     left: 50%;
     transform: translateX(-50%);
-    text-align: center;
     z-index: 20;
 }
 
@@ -163,201 +152,37 @@
     color: white;
     border: none;
     padding: 10px 20px;
+    margin: 0 5px;
     border-radius: 5px;
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    animation: gentlePulse 2s ease-in-out infinite;
+    transition: background 0.3s ease;
 }
 
 .press-continue:hover {
     background: #A29BFE;
 }
 
-@keyframes gentlePulse {
-    0% {
-        opacity: 0.7;
-    }
+/* Phase Management */
+.phase { display: none; }
+.scene-cinematic-intro[data-phase="0"] .phase-0, .scene-cinematic-intro[data-phase="1"] .phase-1, .scene-cinematic-intro[data-phase="2"] .phase-2, .scene-cinematic-intro[data-phase="3"] .phase-3, .scene-cinematic-intro[data-phase="4"] .phase-4, .scene-cinematic-intro[data-phase="5"] .phase-5, .scene-cinematic-intro[data-phase="6"] .phase-6, .scene-cinematic-intro[data-phase="7"] .phase-7 { display: block; }
 
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0.7;
-    }
-}
-
-.skip-option {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: rgba(255, 255, 255, 0.7);
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: color 0.3s ease;
-}
-
-.skip-option:hover {
-    color: #A29BFE;
-}
-
-/* =============================================================================
-   SUBTLE BACKGROUND EFFECTS
-   ============================================================================= */
-
-.subtle-stars {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.star {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    animation: twinkle 3s ease-in-out infinite;
-}
-
-@keyframes twinkle {
-
-    0%,
-    100% {
-        opacity: 0.3;
-    }
-
-    50% {
-        opacity: 1;
-    }
-}
-
-/* Generate random star positions */
-.star:nth-child(1) {
-    left: 10%;
-    top: 20%;
-    animation-delay: 0s;
-}
-
-.star:nth-child(2) {
-    left: 20%;
-    top: 40%;
-    animation-delay: 1s;
-}
-
-.star:nth-child(3) {
-    left: 30%;
-    top: 10%;
-    animation-delay: 2s;
-}
-
-.star:nth-child(4) {
-    left: 40%;
-    top: 60%;
-    animation-delay: 0.5s;
-}
-
-.star:nth-child(5) {
-    left: 50%;
-    top: 30%;
-    animation-delay: 1.5s;
-}
-
-.star:nth-child(6) {
-    left: 60%;
-    top: 80%;
-    animation-delay: 2.5s;
-}
-
-.star:nth-child(7) {
-    left: 70%;
-    top: 15%;
-    animation-delay: 3s;
-}
-
-.star:nth-child(8) {
-    left: 80%;
-    top: 50%;
-    animation-delay: 0.8s;
-}
-
-.star:nth-child(9) {
-    left: 90%;
-    top: 35%;
-    animation-delay: 1.8s;
-}
-
-.star:nth-child(10) {
-    left: 15%;
-    top: 70%;
-    animation-delay: 2.8s;
-}
-
-/* =============================================================================
-   RESPONSIVE DESIGN
-   ============================================================================= */
-
+/* Mobile & Tablet Adjustments */
 @media (max-width: 768px) {
-    .narrative-text {
-        font-size: 13px;
-        max-width: 95%;
-        padding: 0 15px;
-        line-height: 1.6;
-    }
-
-    .title-text {
-        font-size: 18px;
-        letter-spacing: 1px;
-        max-width: 95%;
-        padding: 0 15px;
-    }
-
-    .press-continue {
-        font-size: 9px;
-        padding: 8px 16px;
-    }
-
-    .story-text-container {
-        max-width: 95%;
-        padding: 0 10px;
-    }
+    .story-text-container { top: 70%; }
+    .narrative-text { font-size: 18px; }
+    .title-text { font-size: 32px; }
+    #kronos { top: 10%; }
 }
 
 @media (max-width: 480px) {
-    .narrative-text {
-        font-size: 11px;
-        line-height: 1.5;
-        max-width: 98%;
-        padding: 0 10px;
-    }
-
-    .title-text {
-        font-size: 14px;
-        letter-spacing: 0.5px;
-        max-width: 98%;
-        padding: 0 10px;
-    }
-
-    .press-continue {
-        font-size: 8px;
-        padding: 6px 12px;
-    }
-
-    .skip-option {
-        font-size: 7px;
-    }
-
-    .story-text-container {
-        max-width: 98%;
-        padding: 0 5px;
-    }
-
-    .bottom-controls {
-        bottom: 20px;
-        padding: 0 10px;
-    }
+    .story-text-container { top: 65%; }
+    .narrative-text { font-size: 16px; }
+    .title-text { font-size: 24px; }
+    .press-continue { padding: 10px 20px; font-size: 12px; }
+    #kronos { top: 5%; width: 80px; height: 80px; }
+    #kronos .ring-1 { top: -55px; left: -55px; width: 190px; height: 190px; }
+    #kronos .ring-2 { top: -65px; left: -65px; width: 210px; height: 210px; }
+    #kronos .ring-3 { top: -75px; left: -75px; width: 230px; height: 230px; }
 }
