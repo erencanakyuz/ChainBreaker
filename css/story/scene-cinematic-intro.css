@@ -69,7 +69,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10;
+    z-index: 1;
+    /* Behind clockwork to look like halos */
 }
 
 .energy-pillar {
@@ -196,6 +197,90 @@
     border: 2px solid #FFD700;
     border-radius: 50%;
     z-index: 10;
+}
+
+/* ===== ANGRY EYE FOR CHRONOS ===== */
+.chronos-eye {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 20px;
+    background: radial-gradient(ellipse, #FF4136 20%, #85144b 100%);
+    border-radius: 50%;
+    box-shadow:
+        0 0 15px #FF4136,
+        0 0 30px #85144b,
+        inset 0 0 10px rgba(0, 0, 0, 0.5);
+    animation: chronos-eye-glow 3s ease-in-out infinite;
+    z-index: 15;
+}
+
+.chronos-eye::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 12px;
+    background: #000;
+    border-radius: 50%;
+    animation: chronos-pupil-scan 4s ease-in-out infinite;
+}
+
+/* Angry eyebrow */
+.chronos-eye::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-15deg);
+    width: 35px;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #FF8C00);
+    border-radius: 2px;
+    box-shadow: 0 0 8px #FFD700;
+}
+
+@keyframes chronos-eye-glow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 15px #FF4136,
+            0 0 30px #85144b,
+            inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    50% {
+        box-shadow:
+            0 0 25px #FF4136,
+            0 0 50px #85144b,
+            0 0 70px #FF8C00,
+            inset 0 0 15px rgba(0, 0, 0, 0.7);
+    }
+}
+
+@keyframes chronos-pupil-scan {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) translateX(-5px);
+    }
+
+    25% {
+        transform: translate(-50%, -50%) translateX(5px);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateX(0px);
+    }
+
+    75% {
+        transform: translate(-50%, -50%) translateX(-3px);
+    }
 }
 
 .clock-hand {
@@ -928,6 +1013,17 @@
 
     .number {
         font-size: 6px;
+    }
+
+    .chronos-eye {
+        width: 20px;
+        height: 14px;
+    }
+
+    .chronos-eye::after {
+        top: -5px;
+        width: 25px;
+        height: 2px;
     }
 
     .large-gear {
