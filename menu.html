@@ -1071,11 +1071,11 @@
     class MainScene extends Phaser.Scene {
       constructor() {
         super('MainScene');
-        // Object pools for memory efficiency
+        // Expanded object pools for maximum efficiency
         this.scorePopupPool = [];
         this.comboEffectPool = [];
         this.ringPool = [];
-        this.maxPoolSize = 20;
+        this.maxPoolSize = 50; // Increased from 20 to 50
       }
 
       init(data) {
@@ -1221,54 +1221,55 @@
 
 
 
-        // Optimized spark emitter with reduced count (Phaser 3.70 syntax)
+        // Ultra-optimized spark emitter (performance focused)
         this.sparkEmitter = this.add.particles(0, 0, 'particle', {
-          lifespan: 300, // Shorter lifespan
-          speed: { min: -80, max: 80 }, // Reduced speed range
-          scale: { start: 0.8, end: 0 }, // Smaller size
-          quantity: 8, // Reduced from 12
+          lifespan: 200, // Even shorter lifespan
+          speed: { min: -60, max: 60 }, // Further reduced speed
+          scale: { start: 0.6, end: 0 }, // Smaller size
+          quantity: 4, // Reduced from 8 to 4
           blendMode: 'ADD',
           tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.neon,
           emitting: false
         });
 
-        // Optimized break particles (Phaser 3.70 syntax)
+        // Ultra-optimized break particles (performance focused)
         this.breakParticles = this.add.particles(0, 0, 'diamond', {
-          lifespan: 600, // Shorter lifespan
-          speed: { min: 60, max: 140 }, // Reduced speed range
-          scale: { start: 0.5, end: 0 }, // Smaller size
-          quantity: 12, // Reduced from 18
+          lifespan: 400, // Shorter lifespan
+          speed: { min: 50, max: 100 }, // Reduced speed range
+          scale: { start: 0.4, end: 0 }, // Smaller size
+          quantity: 6, // Reduced from 12 to 6
           blendMode: 'ADD',
-          gravityY: 80, // Reduced gravity
+          gravityY: 60, // Reduced gravity
           tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.fire,
           emitting: false
         });
 
-        // Optimized fever mode particles (Phaser 3.70 syntax)
+        // Ultra-optimized fever mode particles (minimal count)
         this.feverParticles = this.add.particles(0, 0, 'star', {
           x: { min: 0, max: this.cameras.main.width },
           y: { min: 0, max: this.cameras.main.height },
-          lifespan: 3000, // Shorter lifespan
-          speed: { min: 40, max: 80 }, // Reduced speed range
-          scale: { start: 0.4, end: 0 }, // Smaller size
-          quantity: 4, // Reduced from 6
+          lifespan: 2000, // Shorter lifespan
+          speed: { min: 30, max: 60 }, // Reduced speed range
+          scale: { start: 0.3, end: 0 }, // Smaller size
+          quantity: 2, // Reduced from 4 to 2
           blendMode: 'ADD',
           tint: colorSystem.convertedPalettes.fire,
-          alpha: { start: 0.6, end: 0 }, // Reduced opacity
+          alpha: { start: 0.5, end: 0 }, // Reduced opacity
           emitting: false
         });
 
-        // Optimized confetti system with reduced colors (Phaser 3.70 syntax)
+        // Ultra-optimized confetti system (minimal setup)
         this.confettiParticles = this.add.particles(0, 0, 'diamond', {
           x: { min: 0, max: this.cameras.main.width },
           y: -50,
-          speed: { min: 120, max: 200 }, // Reduced speed range
-          angle: { min: 75, max: 105 },
-          scale: { start: 0.6, end: 0 }, // Smaller size
-          lifespan: 2500, // Shorter lifespan
+          speed: { min: 100, max: 150 }, // Reduced speed range
+          angle: { min: 80, max: 100 },
+          scale: { start: 0.4, end: 0 }, // Smaller size
+          lifespan: 1500, // Much shorter lifespan
+          quantity: 8, // Heavily reduced from 25
           tint: [
-            ...colorSystem.convertedPalettes.neon.slice(0, 4), // Reduced color array
-            ...colorSystem.convertedPalettes.sunset.slice(0, 4)
+            ...colorSystem.convertedPalettes.neon.slice(0, 2), // Only 2 colors
+            ...colorSystem.convertedPalettes.sunset.slice(0, 2)
           ],
           emitting: false
         });
@@ -1569,34 +1570,36 @@
         // Initialize frame counter if not exists
         if (!this.frameCount) this.frameCount = 0;
 
-        // Ultra-smooth needle update gets absolute priority
+        // PRIORITY 1: Critical needle update (every frame)
         this.updateNeedle(delta * 0.001);
 
-        // Secondary updates with reduced frequency for maximum needle smoothness
-        this.updateFeverMode(delta);
-
-        // Background glow only every other frame
+        // PRIORITY 2: Essential updates (every other frame)
         if (this.frameCount % 2 === 0) {
+          this.updateFeverMode(delta);
+        }
+
+        // PRIORITY 3: Visual updates (every 4th frame)
+        if (this.frameCount % 4 === 0) {
           this.updateBackgroundGlow(time);
         }
 
-        // Pluto mood updates less frequently  
-        if (this.frameCount % 3 === 0) {
-          this.updatePlutoMood(delta);
-        }
-
-        // Ring updates optimized
-        if (this.ringStack && this.ringStack.length > 0) {
+        // PRIORITY 4: Ring updates (every 2nd frame, only moving rings)
+        if (this.frameCount % 2 === 0 && this.ringStack && this.ringStack.length > 0) {
           this.ringStack.forEach(ring => {
-            if (ring.needsUpdate && ring.graphics) {
+            if (ring.needsUpdate && ring.graphics && ring.movementEnabled) {
               ring.update(delta);
             }
           });
         }
 
-        // Pluto animations least frequently
-        if (this.frameCount % 4 === 0 && this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
-          this.updateGamePlutoAnimation();
+        // PRIORITY 5: Non-critical updates (every 6th frame)
+        if (this.frameCount % 6 === 0) {
+          this.updatePlutoMood(delta);
+
+          // Pluto animations
+          if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
+            this.updateGamePlutoAnimation();
+          }
         }
 
         this.frameCount = (this.frameCount + 1) % 12; // Reset every 12 frames
@@ -1641,18 +1644,23 @@
       }
 
       updateBackgroundGlow(time) {
-        // Only update if intensity actually changed to reduce expensive graphics operations
+        // Ultra-conservative update - only when significant change
         const newIntensity = this.feverMode ? 0.3 : 0.1;
-        const newPulseFactor = Math.sin(time / 500) * 0.05 + newIntensity;
+        const newPulseFactor = Math.sin(time / 800) * 0.03 + newIntensity; // Slower, smaller pulse
 
-        // Skip update if change is too small (performance optimization)
-        if (this.lastPulseFactor && Math.abs(newPulseFactor - this.lastPulseFactor) < 0.01) {
+        // Skip update if change is tiny (increased threshold for performance)
+        if (this.lastPulseFactor && Math.abs(newPulseFactor - this.lastPulseFactor) < 0.02) {
           return;
         }
 
+        // Cache design color to avoid repeated calls
+        if (!this.cachedGlowColor || this.frameCount % 60 === 0) {
+          this.cachedGlowColor = this.getActiveDesign().color;
+        }
+
         this.backgroundGlow.clear();
-        this.backgroundGlow.fillStyle(this.getActiveDesign().color, newPulseFactor);
-        this.backgroundGlow.fillCircle(this.center.x, this.center.y, this.baseRadius * 3);
+        this.backgroundGlow.fillStyle(this.cachedGlowColor, newPulseFactor);
+        this.backgroundGlow.fillCircle(this.center.x, this.center.y, this.baseRadius * 2.5); // Smaller glow
 
         this.lastPulseFactor = newPulseFactor;
       }
@@ -1684,8 +1692,8 @@
         const wasInSweetSpot = this.isInSweetSpot;
         this.isInSweetSpot = angleDiff <= sweetSpotThreshold;
 
-        // Redraw needle if sweet spot status changed
-        if (this.isInSweetSpot !== wasInSweetSpot) {
+        // Redraw needle only when absolutely necessary (performance optimization)
+        if (this.isInSweetSpot !== wasInSweetSpot || this.frameCount % 10 === 0) {
           this.drawNeedle();
         }
       }
@@ -1944,11 +1952,11 @@
         // Set chain break flag for animation
         this.justBrokeChain = true;
 
-        // Reduce particle count for better performance
-        this.breakParticles.explode(15, this.center.x, this.center.y);
+        // Ultra-reduced particle count for maximum performance
+        this.breakParticles.explode(6, this.center.x, this.center.y);
 
-        // Additional spark effects with reduced count
-        this.sparkEmitter.explode(12, this.center.x, this.center.y);
+        // Minimal spark effects
+        this.sparkEmitter.explode(4, this.center.x, this.center.y);
         this.cameras.main.shake(100, 0.008); // Shorter, less intense shake
 
         // Background particles already configured with design colors
@@ -2177,8 +2185,8 @@
       }
 
       levelUp() {
-        // Reduce particle count for better performance
-        this.confettiParticles.explode(25, this.center.x, this.center.y);
+        // Ultra-reduced confetti for performance
+        this.confettiParticles.explode(8, this.center.x, this.center.y);
         this.cameras.main.flash(300, 0, 255, 0); // Shorter flash
 
         // Set level complete flag for animation
@@ -2537,112 +2545,80 @@
       }
 
       draw() {
-        // Only clear if necessary - check if ring actually changed
+        // Enhanced caching system - skip if no changes
         if (!this.isDirty && this.hasDrawn) return;
 
-        this.graphics.clear();
+        // Skip clear if graphics hasn't changed significantly
+        if (this.isDirty || !this.hasDrawn) {
+          this.graphics.clear();
+        }
 
-        // Professional cartoon-style ring drawing with gradients and effects
+        // Simplified ring drawing for performance - remove excessive gradients
+        const coreColor = this.ringColor;
+        const glowColor = this.proximityEffect ? 0xffd700 : coreColor;
 
-        // Simplified color variations without Chroma.js
-        const brightColorInt = this.ringColor | 0x444444; // Simple brightening
-        const darkColorInt = this.ringColor & 0xBBBBBB; // Simple darkening
+        // Single shadow layer (removed multiple shadows)
+        this.graphics.fillStyle(0x000000, 0.2);
+        this.graphics.fillCircle(2, 2, this.radius + 1);
 
-        // Draw shadow/depth effect
-        this.graphics.fillStyle(0x000000, 0.4);
-        this.graphics.fillCircle(4, 4, this.radius + 2);
-
-        // Draw outer glow (enhanced if proximity effect is active)
-        const glowAlpha = this.proximityEffect ? 0.4 : 0.15;
-        const glowColor = this.proximityEffect ? 0xffd700 : this.ringColor;
-        this.graphics.lineStyle(this.thickness + 8, glowColor, glowAlpha);
+        // Simplified glow (single layer instead of multiple)
+        const glowAlpha = this.proximityEffect ? 0.3 : 0.1;
+        this.graphics.lineStyle(this.thickness + 4, glowColor, glowAlpha);
         this.graphics.strokeCircle(0, 0, this.radius);
 
-        // Draw gradient ring with cartoon style
-        this.graphics.lineStyle(this.thickness + 2, darkColorInt, 0.8);
+        // Main ring (single layer instead of 4 layers)
+        this.graphics.lineStyle(this.thickness, coreColor, 1.0);
         this.graphics.strokeCircle(0, 0, this.radius);
 
-        // Inner bright highlight
-        this.graphics.lineStyle(this.thickness - 4, brightColorInt, 0.9);
-        this.graphics.strokeCircle(0, 0, this.radius);
+        // Simplified sweet spot (2 layers instead of multiple)
+        const sweetSpotColor = 0xFFFFFF;
 
-        // Core ring color
-        this.graphics.lineStyle(this.thickness - 8, this.ringColor, 1.0);
-        this.graphics.strokeCircle(0, 0, this.radius);
-
-        // Draw sweet spot with enhanced cartoon style - simplified
-        const sweetSpotColorInt = 0xFFFFFF;
-
-        // Sweet spot outer glow
-        this.graphics.lineStyle(this.thickness + 4, sweetSpotColorInt, 0.3);
+        // Sweet spot glow
+        this.graphics.lineStyle(this.thickness + 2, sweetSpotColor, 0.4);
         this.graphics.beginPath();
         this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
         this.graphics.strokePath();
 
-        // Sweet spot main area
-        this.graphics.lineStyle(this.thickness, sweetSpotColorInt, 0.9);
+        // Sweet spot main
+        this.graphics.lineStyle(this.thickness - 2, sweetSpotColor, 1.0);
         this.graphics.beginPath();
         this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
         this.graphics.strokePath();
 
-        // Enhanced cartoon arrow with 3D effect
-        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 8);
-        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 8);
+        // Simplified arrow (removed shadows and excessive details)
+        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 6);
+        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 6);
 
-        // Arrow shadow
-        this.graphics.fillStyle(0x000000, 0.4);
+        // Simple arrow (single layer)
+        this.graphics.fillStyle(sweetSpotColor, 1);
         this.graphics.beginPath();
-        this.graphics.moveTo(arrowX + 2, arrowY + 2);
+        this.graphics.moveTo(arrowX, arrowY);
         this.graphics.lineTo(arrowX - 6, arrowY - 8);
-        this.graphics.lineTo(arrowX + 10, arrowY - 8);
+        this.graphics.lineTo(arrowX + 6, arrowY - 8);
         this.graphics.closePath();
         this.graphics.fillPath();
 
-        // Arrow main body with gradient effect
-        this.graphics.fillStyle(sweetSpotColorInt, 1);
-        this.graphics.beginPath();
-        this.graphics.moveTo(arrowX, arrowY);
-        this.graphics.lineTo(arrowX - 8, arrowY - 12);
-        this.graphics.lineTo(arrowX + 8, arrowY - 12);
-        this.graphics.closePath();
-        this.graphics.fillPath();
-
-        // Arrow highlight
-        this.graphics.fillStyle(0xFFFFAA, 0.8);
-        this.graphics.beginPath();
-        this.graphics.moveTo(arrowX, arrowY);
-        this.graphics.lineTo(arrowX - 4, arrowY - 8);
-        this.graphics.lineTo(arrowX + 4, arrowY - 8);
-        this.graphics.closePath();
-        this.graphics.fillPath();
-
-        // Arrow outline for definition
-        this.graphics.lineStyle(2, 0x000000, 0.6);
-        this.graphics.beginPath();
-        this.graphics.moveTo(arrowX, arrowY);
-        this.graphics.lineTo(arrowX - 8, arrowY - 12);
-        this.graphics.lineTo(arrowX + 8, arrowY - 12);
-        this.graphics.closePath();
-        this.graphics.strokePath();
-
+        // Cache state
         this.hasDrawn = true;
         this.isDirty = false;
 
-        if (this.debugText) {
-          this.debugText.setText('Angle: ' + Math.round(Phaser.Math.RadToDeg(this.sweetSpotAngle)));
+        // Debug text only if enabled
+        if (this.debugText && this.scene.debugMode) {
+          this.debugText.setText('A:' + Math.round(Phaser.Math.RadToDeg(this.sweetSpotAngle)));
         }
       }
 
       update(delta) {
         let needsRedraw = false;
 
+        // Movement optimization - higher threshold to reduce unnecessary updates
         if (this.movementEnabled) {
           const oldAngle = this.sweetSpotAngle;
           this.sweetSpotAngle += this.movementSpeed * delta;
           if (this.sweetSpotAngle > Math.PI * 2) this.sweetSpotAngle -= Math.PI * 2;
 
-          // Only redraw if angle changed significantly
-          if (Math.abs(oldAngle - this.sweetSpotAngle) > 0.005) {
+          // Higher threshold for redraw (performance optimization)
+          if (Math.abs(oldAngle - this.sweetSpotAngle) > 0.01) {
             // Update cached trigonometric values
             this.arrowCosCache = Math.cos(this.sweetSpotAngle);
             this.arrowSinCache = Math.sin(this.sweetSpotAngle);
@@ -2651,23 +2627,25 @@
           }
         }
 
+        // Pulse optimization - less sensitive updates
         if (this.design.pulsingRings) {
           const oldMagnitude = this.pulseMagnitude;
-          this.pulseMagnitude += this.pulseDirection * 0.001 * delta;
-          if (this.pulseMagnitude > 0.05 || this.pulseMagnitude < -0.05) this.pulseDirection *= -1;
+          this.pulseMagnitude += this.pulseDirection * 0.0008 * delta; // Slower pulse
+          if (this.pulseMagnitude > 0.03 || this.pulseMagnitude < -0.03) this.pulseDirection *= -1; // Smaller pulse
 
-          // Only update scale if magnitude changed significantly
-          if (Math.abs(oldMagnitude - this.pulseMagnitude) > 0.001) {
+          // Higher threshold for scale update (performance optimization)
+          if (Math.abs(oldMagnitude - this.pulseMagnitude) > 0.003) {
             this.graphics.scaleX = 1 + this.pulseMagnitude;
             this.graphics.scaleY = 1 + this.pulseMagnitude;
           }
         }
 
+        // Only redraw if absolutely necessary
         if (needsRedraw) {
           this.draw();
         }
 
-        // Set needsUpdate flag for next frame
+        // Update needsUpdate flag more conservatively
         this.needsUpdate = this.movementEnabled || this.design.pulsingRings;
       }
 
