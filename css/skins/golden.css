@@ -1,26 +1,29 @@
-/* Golden Pluto Skin - Luxurious appearance with golden glow (Updated for pluto-base-entity) */
-/* This skin is for the new base entity system only */
+:root {
+    --pluto-golden-gradient: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+    --pluto-golden-shadow: 0 0 0 8px #FFD700 inset, -30px -20px 50px #FFA500 inset, 0 0 80px rgba(255, 215, 0, 0.8);
+    --pluto-golden-border: 2px solid #B8860B;
+    --pluto-golden-eye-background: radial-gradient(circle, #FFF8DC, #FFD700);
+    --pluto-golden-eye-shadow: 0 0 15px rgba(255, 215, 0, 1), 0 0 25px rgba(255, 215, 0, 0.6);
+    --pluto-golden-eye-border: 1px solid #B8860B;
+    --pluto-golden-mouth-background: #B8860B;
+    --pluto-golden-mouth-shadow: 0 0 8px rgba(184, 134, 11, 0.8);
+}
 
 .pluto-base-entity.skin--golden .scene_pluto {
-    background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
-    box-shadow:
-        0 0 0 8px #FFD700 inset,
-        -30px -20px 50px #FFA500 inset,
-        0 0 80px rgba(255, 215, 0, 0.8);
-    border: 2px solid #B8860B;
+    background: var(--pluto-golden-gradient);
+    box-shadow: var(--pluto-golden-shadow);
+    border: var(--pluto-golden-border);
 }
 
 .pluto-base-entity.skin--golden .scene_pluto .eye {
-    background: radial-gradient(circle, #FFF8DC, #FFD700);
-    box-shadow:
-        0 0 15px rgba(255, 215, 0, 1),
-        0 0 25px rgba(255, 215, 0, 0.6);
-    border: 1px solid #B8860B;
+    background: var(--pluto-golden-eye-background);
+    box-shadow: var(--pluto-golden-eye-shadow);
+    border: var(--pluto-golden-eye-border);
 }
 
 .pluto-base-entity.skin--golden .scene_pluto .mouth {
-    background: #B8860B;
-    box-shadow: 0 0 8px rgba(184, 134, 11, 0.8);
+    background: var(--pluto-golden-mouth-background);
+    box-shadow: var(--pluto-golden-mouth-shadow);
 }
 
 /* Golden glow animation for new base structure */
@@ -29,18 +32,12 @@
     0%,
     100% {
         transform: scale(1.1);
-        box-shadow:
-            0 0 0 8px #FFD700 inset,
-            -30px -20px 50px #FFA500 inset,
-            0 0 80px rgba(255, 215, 0, 0.8);
+        box-shadow: var(--pluto-golden-shadow);
     }
 
     50% {
         transform: scale(1.25);
-        box-shadow:
-            0 0 0 12px #FFD700 inset,
-            -30px -20px 50px #FFA500 inset,
-            0 0 120px 40px rgba(255, 215, 0, 1);
+        box-shadow: 0 0 0 12px #FFD700 inset, -30px -20px 50px #FFA500 inset, 0 0 120px 40px rgba(255, 215, 0, 1);
     }
 }
 

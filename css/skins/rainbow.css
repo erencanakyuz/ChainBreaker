@@ -1,15 +1,19 @@
-/* Rainbow Pluto Skin - Colorful and vibrant appearance (Updated for pluto-base-entity) */
+:root {
+    --pluto-rainbow-gradient: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
+    --pluto-rainbow-shadow: 0 0 0 8px rgba(255, 107, 107, 0.5) inset, -30px -20px 50px #4ecdc4 inset, 0 0 80px rgba(255, 107, 107, 0.6);
+    --pluto-rainbow-border: 2px solid #fff;
+    --pluto-rainbow-eye-background: radial-gradient(circle, #ffffff, #ff6b6b);
+    --pluto-rainbow-eye-shadow: 0 0 15px rgba(255, 107, 107, 1), 0 0 25px rgba(78, 205, 196, 0.6);
+    --pluto-rainbow-mouth-background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+    --pluto-rainbow-mouth-shadow: 0 0 8px rgba(255, 107, 107, 0.8);
+}
 
 .pluto-base-entity.skin--rainbow .scene_pluto {
-    background: linear-gradient(45deg,
-            #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
+    background: var(--pluto-rainbow-gradient);
     background-size: 200% 200%;
     animation: rainbow-pulse 3s ease-in-out infinite;
-    box-shadow:
-        0 0 0 8px rgba(255, 107, 107, 0.5) inset,
-        -30px -20px 50px #4ecdc4 inset,
-        0 0 80px rgba(255, 107, 107, 0.6);
-    border: 2px solid #fff;
+    box-shadow: var(--pluto-rainbow-shadow);
+    border: var(--pluto-rainbow-border);
 }
 
 @keyframes rainbow-pulse {
@@ -27,10 +31,8 @@
 }
 
 .pluto-base-entity.skin--rainbow .scene_pluto .eyes .eye {
-    background: radial-gradient(circle, #ffffff, #ff6b6b);
-    box-shadow:
-        0 0 15px rgba(255, 107, 107, 1),
-        0 0 25px rgba(78, 205, 196, 0.6);
+    background: var(--pluto-rainbow-eye-background);
+    box-shadow: var(--pluto-rainbow-eye-shadow);
     animation: rainbow-eye-glow 2s ease-in-out infinite;
 }
 
@@ -59,8 +61,8 @@
 }
 
 .pluto-base-entity.skin--rainbow .scene_pluto .mouth {
-    background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
-    box-shadow: 0 0 8px rgba(255, 107, 107, 0.8);
+    background: var(--pluto-rainbow-mouth-background);
+    box-shadow: var(--pluto-rainbow-mouth-shadow);
 }
 
 /* Rainbow trail effect when excited */

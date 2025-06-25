@@ -88,8 +88,8 @@ class StoryManager {
             return;
         }
 
-        // Load only the initial scene CSS, preload next scene for smoother transitions
-        // Removed bulk preloading to fix browser warnings
+        // Preload all scene CSS files
+        await this.preloadAllSceneCSS();
 
         // Initialize progression system for the story mode
         this.progression = playerProgression;
@@ -245,6 +245,27 @@ class StoryManager {
             clearTimeout(this.randomMessageTimer);
             this.randomMessageTimer = null;
         }
+    }
+
+    async preloadAllSceneCSS() {
+        console.log('Preloading all scene CSS files...');
+        const sceneMap = {
+            0: 'css/story/scene-cinematic-intro.css',
+            1: 'css/story/scene-space.css',
+            2: 'css/story/scene-lighthouse.css',
+            3: 'css/story/scene-factory.css',
+            4: 'css/story/scene-journey.css',
+            5: 'css/story/scene-final.css'
+        };
+
+        const loadPromises = Object.keys(sceneMap).map(sceneNumber => {
+            const cssFile = sceneMap[sceneNumber];
+            const cssId = `story-scene-${sceneNumber}-css`;
+            return this.loadCSS(cssFile, cssId);
+        });
+
+        await Promise.allSettled(loadPromises);
+        console.log('All scene CSS files preloaded.');
     }
 
     addEventListeners() {
@@ -487,21 +508,46 @@ class StoryManager {
         // Don't regenerate if stars already exist
         if (starsContainer.children.length > 0) return;
 
-        const fragment = document.createDocumentFragment();
+        const canvas = document.createElement('canvas');
+        starsContainer.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = starsContainer.offsetWidth;
+        canvas.height = starsContainer.offsetHeight;
+
+        const stars = [];
         const starCount = sceneNumber === 4 ? 150 : 100; // More stars for journey scene
 
         for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            const size = Math.random() * 3 + 1;
-            star.style.width = `${size}px`;
-            star.style.height = `${size}px`;
-            star.style.animationDelay = `${Math.random() * 3}s`;
-            fragment.appendChild(star);
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5 + 0.5,
+                alpha: Math.random(),
+                delta: Math.random() * 0.02 - 0.01
+            });
         }
-        starsContainer.appendChild(fragment);
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+
+            for (const star of stars) {
+                ctx.beginPath();
+                ctx.globalAlpha = star.alpha;
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                star.alpha += star.delta;
+                if (star.alpha <= 0 || star.alpha >= 1) {
+                    star.delta *= -1;
+                }
+            }
+
+            requestAnimationFrame(drawStars);
+        }
+
+        drawStars();
 
         console.log(`✨ Generated ${starCount} stars for scene ${sceneNumber}!`);
     }

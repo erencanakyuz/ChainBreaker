@@ -1,5 +1,150 @@
 /* Cyborg Pluto Skin - Futuristic mechanical appearance (Updated for pluto-base-entity) */
 
+:root {
+    --pluto-cyborg-gradient: linear-gradient(135deg, #7F8C8D, #34495E, #2C3E50);
+    --pluto-cyborg-shadow: 0 0 0 8px #95A5A6 inset, -30px -20px 50px #2C3E50 inset, 0 0 60px rgba(52, 73, 94, 0.7);
+    --pluto-cyborg-border: 2px solid #BDC3C7;
+    --pluto-cyborg-eye-background: linear-gradient(45deg, #E74C3C, #C0392B);
+    --pluto-cyborg-eye-shadow: 0 0 15px #C0392B, 0 0 5px #E74C3C inset;
+    --pluto-cyborg-eye-border: 1px solid #A93226;
+    --pluto-cyborg-mouth-background: linear-gradient(90deg, #34495E, #2C3E50);
+    --pluto-cyborg-mouth-border: 1px solid #95A5A6;
+    --pluto-cyborg-mouth-shadow: 0 0 8px rgba(149, 165, 166, 0.8);
+}
+
+.pluto-base-entity.skin--cyborg .scene_pluto {
+    background: var(--pluto-cyborg-gradient);
+    box-shadow: var(--pluto-cyborg-shadow);
+    border: var(--pluto-cyborg-border);
+    position: relative;
+}
+
+.pluto-base-entity.skin--cyborg .scene_pluto .eye {
+    background: var(--pluto-cyborg-eye-background);
+    box-shadow: var(--pluto-cyborg-eye-shadow);
+    border-radius: 2px;
+    border: var(--pluto-cyborg-eye-border);
+}
+
+.pluto-base-entity.skin--cyborg .scene_pluto .mouth {
+    background: var(--pluto-cyborg-mouth-background);
+    border: var(--pluto-cyborg-mouth-border);
+    box-shadow: var(--pluto-cyborg-mouth-shadow);
+}
+
+/* Cyborg circuit pattern overlay - updated for new structure */
+.pluto-base-entity.skin--cyborg .scene_pluto::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(45deg, transparent 40%, rgba(189, 195, 199, 0.1) 42%, rgba(189, 195, 199, 0.1) 58%, transparent 60%),
+        linear-gradient(-45deg, transparent 40%, rgba(189, 195, 199, 0.1) 42%, rgba(189, 195, 199, 0.1) 58%, transparent 60%);
+    background-size: 20px 20px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Glowing red eye animation - updated for new structure */
+@keyframes cyborg-eye-scan {
+
+    0%,
+    100% {
+        box-shadow: var(--pluto-cyborg-eye-shadow);
+    }
+
+    50% {
+        box-shadow: 0 0 25px #E74C3C, 0 0 10px #C0392B inset;
+    }
+}
+
+.pluto-base-entity.skin--cyborg .scene_pluto .eye {
+    animation: cyborg-eye-scan 2s ease-in-out infinite;
+}
+
+/* Cyborg ascension animation - adapted from scene-final.css */
+@keyframes cyborg-ascension {
+
+    0%,
+    100% {
+        transform: scale(1.1);
+        box-shadow: var(--pluto-cyborg-shadow);
+    }
+
+    50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 12px #95A5A6 inset, -30px -20px 50px #2C3E50 inset, 0 0 100px 30px rgba(52, 73, 94, 1);
+    }
+}
+
+.pluto-base-entity.skin--cyborg[data-animation="idle"] .scene_pluto {
+    animation: cyborg-ascension 8s ease-in-out infinite;
+}
+
+.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_pluto {
+    animation: cyborg-ascension 4s ease-in-out infinite;
+}
+
+/* Mechanical malfunction when angry - updated for new structure */
+.pluto-base-entity.skin--cyborg[data-mood="angry"] .scene_pluto {
+    animation: cyborg-malfunction 1s ease-in-out infinite;
+}
+
+@keyframes cyborg-malfunction {
+
+    0%,
+    100% {
+        transform: scale(1.1) translate(0, 0);
+        filter: hue-rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.1) translate(-2px, 0);
+        filter: hue-rotate(10deg);
+    }
+
+    50% {
+        transform: scale(1.1) translate(2px, 0);
+        filter: hue-rotate(-10deg);
+    }
+
+    75% {
+        transform: scale(1.1) translate(0, -2px);
+        filter: hue-rotate(5deg);
+    }
+}
+
+/* Energy discharge effect when excited - updated for new structure */
+.pluto-base-entity.skin--cyborg[data-animation="excited"] .scene_pluto::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 2px solid #3498DB;
+    border-radius: 50%;
+    animation: cyborg-energy-pulse 1.5s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes cyborg-energy-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        border-color: #3498DB;
+    }
+
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+        border-color: #85C1E9;
+    }
+}
+
 .pluto-base-entity.skin--cyborg .scene_pluto {
     background: linear-gradient(135deg, #7F8C8D, #34495E, #2C3E50);
     box-shadow:

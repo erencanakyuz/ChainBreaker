@@ -189,6 +189,24 @@ function waitForDOMReady() {
     });
 }
 
+function generateStars() {
+    const menuStars = document.createElement('div');
+    menuStars.className = 'menu-stars';
+    document.body.appendChild(menuStars);
+
+    for (let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'menu-star';
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.width = `${Math.random() * 2 + 1}px`;
+        star.style.height = star.style.width;
+        star.style.animationDelay = `${Math.random() * 4}s`;
+        star.style.animationDuration = `${Math.random() * 2 + 3}s`;
+        menuStars.appendChild(star);
+    }
+}
+
 // Main application startup sequence
 async function startup() {
     console.log('⏳ ChainBreaker Pro: Waiting for DOM...');
@@ -196,6 +214,9 @@ async function startup() {
     // Wait for DOM to be ready
     await waitForDOMReady();
     console.log('✅ ChainBreaker Pro: DOM ready');
+
+    // Generate stars
+    generateStars();
 
     // Setup global event listeners
     setupGlobalEventListeners();

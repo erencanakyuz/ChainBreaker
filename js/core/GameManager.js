@@ -47,9 +47,6 @@ export class GameManager {
             // Preload commonly used templates
             await this.preloadTemplates();
 
-            // Initialize Phaser game (if needed)
-            await this.initializePhaserGame();
-
             // Transition to menu state
             this.setState('MENU');
 
@@ -457,6 +454,10 @@ export class GameManager {
     }
 
     async startGameplay() {
+        if (!this.phaserGame) {
+            await this.initializePhaserGame();
+        }
+
         if (!this.pluto) {
             await this.initializePluto();
         }

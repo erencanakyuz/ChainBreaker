@@ -108,6 +108,10 @@ export class Pluto {
     // Async initialization method
     async _initialize() {
         try {
+            // Preload all available skins
+            const skinsToPreload = Object.keys(this.progression.getUnlockedItems('skin'));
+            await this.preloadSkinCSS(skinsToPreload);
+
             // Create and initialize the new Pluto element
             await this._createPlutoElement();
             await this.applySkin(this.skin);
@@ -256,6 +260,19 @@ export class Pluto {
         }
     }
 
+    // Preload multiple skin CSS files for better performance
+    async preloadSkinCSS(skinNames) {
+        console.log('Pluto: Preloading skin CSS files...');
+        const loadPromises = skinNames.map(skinName =>
+            this.loadSkinCSS(skinName).catch(error =>
+                console.warn(`Failed to preload skin: ${skinName}`, error)
+            )
+        );
+
+        await Promise.allSettled(loadPromises);
+        console.log('Pluto: Skin CSS preloading completed');
+    }
+
     // Dynamically load CSS for a skin, preventing duplicates
     async loadSkinCSS(skinName) {
         // Don't load if it's already loaded
@@ -350,6 +367,13 @@ export class Pluto {
                 duration: animationInfo.duration
             }
         }));
+
+        // Return to idle after animation duration
+        if (animationName !== 'idle') {
+            this.element.addEventListener('animationend', () => {
+                this.setAnimation('idle');
+            }, { once: true });
+        }
 
         return true;
     }

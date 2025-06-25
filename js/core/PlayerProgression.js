@@ -16,9 +16,9 @@ class PlayerProgression {
     }
 
     // Load progression data from localStorage
-    async load() {
+    load() {
         try {
-            const saved = await new Promise(resolve => setTimeout(() => resolve(localStorage.getItem('chainbreaker-progression')), 0));
+            const saved = localStorage.getItem('chainbreaker-progression');
             if (saved) {
                 const savedData = JSON.parse(saved);
                 // Merge saved data with defaults to handle new properties
@@ -44,7 +44,7 @@ class PlayerProgression {
         this.saveTimeout = setTimeout(() => {
             this._performSave();
             this.saveTimeout = null;
-        }, 500); // Debounce for 500ms
+        }, 100); // Debounce for 100ms
     }
 
     // Private method to perform the actual save operation
