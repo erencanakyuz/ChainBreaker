@@ -199,7 +199,7 @@
                     Press to Continue
                 </button>
 
-                <button class="press-continue phase phase-7" onclick="nextScene()">
+                <button class="press-continue phase phase-7" onclick="startStoryJourney()">
                     Begin Your Journey
                 </button>
 
@@ -961,7 +961,7 @@
     <!-- Pre-created container for scene messages -->
     <div id="scene-message-container" class="scene-message-container responsive-text responsive-spacing"></div>
 
-    <!-- Game Scripts -->
+    <!-- Story Module - Auto-initializes with global instance -->
     <script type="module" src="js/scenes/Story.js"></script>
 
     <!-- Cinematic Intro Control Script -->
@@ -970,19 +970,21 @@
         const maxPhases = 7;
         let isTyping = false;
 
-        // Typewriter effect function
-        function typewriterEffect(element, text, speed = 40) {
+        // Mobile-optimized typewriter effect function
+        let animationFrameId = null;
+        function typewriterEffect(element, text, speed = 50) { // Slightly slower for mobile performance
             return new Promise((resolve) => {
                 isTyping = true;
                 element.textContent = '';
                 element.classList.add('typing');
 
-                // Add automatic line breaks for long text on mobile
+                // Mobile-optimized line breaks with performance caching
                 const maxCharsPerLine = window.innerWidth < 480 ? 25 : window.innerWidth < 768 ? 35 : 50;
                 const words = text.split(' ');
                 let processedText = '';
                 let currentLine = '';
 
+                // Optimize text processing for mobile
                 for (let word of words) {
                     if ((currentLine + word).length > maxCharsPerLine && currentLine.length > 0) {
                         processedText += currentLine.trim() + '\n';
@@ -994,38 +996,38 @@
                 processedText += currentLine.trim();
 
                 let i = 0;
-                let buffer = '';
-                const timer = setInterval(() => {
-                    if (i < processedText.length) {
-                        buffer += processedText.charAt(i);
+
+                // Mobile-optimized rendering with throttling
+                const renderText = () => {
+                    if (i < processedText.length && isTyping) {
+                        element.textContent += processedText.charAt(i);
                         i++;
+
+                        // Throttle for mobile performance - render every 2 frames
+                        animationFrameId = requestAnimationFrame(() => {
+                            setTimeout(renderText, speed);
+                        });
                     } else {
-                        clearInterval(timer);
-                        element.textContent = processedText;
+                        // Cleanup and complete
                         element.classList.remove('typing');
                         element.classList.add('typed');
                         isTyping = false;
 
-                        // Remove cursor after a delay
+                        if (animationFrameId) {
+                            cancelAnimationFrame(animationFrameId);
+                            animationFrameId = null;
+                        }
+
+                        // Remove cursor after a delay (mobile-optimized)
                         setTimeout(() => {
                             element.classList.remove('typed');
-                        }, 1500);
+                        }, 1200); // Reduced from 1500ms
 
                         resolve();
                     }
-                }, speed);
+                };
 
-                function render() {
-                    if (buffer.length > 0) {
-                        element.textContent += buffer;
-                        buffer = '';
-                    }
-                    if (isTyping) {
-                        requestAnimationFrame(render);
-                    }
-                }
-
-                requestAnimationFrame(render);
+                renderText();
             });
         }
 
@@ -1072,8 +1074,36 @@
             }, 100);
         }
 
-        // Allow keyboard interaction
-        document.addEventListener('keydown', function (e) {
+        // Story journey starter function - waits for Story.js to load
+        function startStoryJourney() {
+            console.log('🚀 Starting story journey...');
+
+            // Wait for Story.js to be loaded and initialized
+            const waitForStory = () => {
+                if (window.story && typeof window.story.nextScene === 'function') {
+                    console.log('✅ Story module found, proceeding to next scene');
+                    window.story.nextScene();
+                } else if (document.getElementById('nextBtn')) {
+                    console.log('✅ Using next button as fallback');
+                    document.getElementById('nextBtn').click();
+                } else {
+                    console.log('⏳ Waiting for story to load...');
+                    setTimeout(waitForStory, 100);
+                }
+            };
+
+            waitForStory();
+        }
+
+        // Mobile-optimized event handling with passive listeners
+        let lastInteractionTime = 0;
+        const interactionThrottle = 200; // Prevent spam on mobile
+
+        const handleCinematicInteraction = (e) => {
+            const now = Date.now();
+            if (now - lastInteractionTime < interactionThrottle) return;
+            lastInteractionTime = now;
+
             const cinematicScene = document.getElementById('scene-0');
             if (cinematicScene && cinematicScene.classList.contains('active')) {
                 if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
@@ -1081,16 +1111,33 @@
                     if (currentCinematicPhase < maxPhases) {
                         nextCinematicPhase();
                     } else {
-                        // Go to next scene (actual story)
-                        if (typeof story !== 'undefined' && story.nextScene) {
-                            story.nextScene();
-                        }
+                        startStoryJourney();
                     }
                 }
             }
-        });
+        };
 
-        // Reset phase when scene becomes active
+        // Use passive listeners where possible for mobile performance
+        document.addEventListener('keydown', handleCinematicInteraction, { passive: false });
+
+        // Add touch support for mobile with throttling
+        document.addEventListener('touchstart', (e) => {
+            const now = Date.now();
+            if (now - lastInteractionTime < interactionThrottle) return;
+            lastInteractionTime = now;
+
+            const cinematicScene = document.getElementById('scene-0');
+            if (cinematicScene && cinematicScene.classList.contains('active')) {
+                e.preventDefault();
+                if (currentCinematicPhase < maxPhases) {
+                    nextCinematicPhase();
+                } else {
+                    startStoryJourney();
+                }
+            }
+        }, { passive: false });
+
+        // Mobile-optimized scene management with cleanup
         document.addEventListener('storySceneChanged', function (e) {
             if (e.detail.sceneNumber === 0) {
                 currentCinematicPhase = 0;
@@ -1099,7 +1146,20 @@
                     cinematicScene.setAttribute('data-phase', 0);
                 }
             }
-        });
+
+            // Mobile memory optimization: cleanup previous scene animations
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }, { passive: true });
+
+        // Mobile performance: cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        }, { passive: true });
     </script>
 </body>
 

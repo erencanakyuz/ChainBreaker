@@ -587,7 +587,23 @@ class StoryManager {
     }
 }
 
-// Attach to window for debugging
+// Initialize the story automatically when script loads
 if (typeof window !== 'undefined') {
     window.StoryManager = StoryManager;
+
+    // Create and initialize story instance when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', async () => {
+            window.story = new StoryManager();
+            await window.story.init();
+            console.log('📖 Global story instance created and initialized');
+        });
+    } else {
+        // DOM already loaded
+        setTimeout(async () => {
+            window.story = new StoryManager();
+            await window.story.init();
+            console.log('📖 Global story instance created and initialized');
+        }, 100);
+    }
 } 
