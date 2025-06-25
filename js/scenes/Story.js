@@ -94,8 +94,9 @@ class StoryManager {
         // Initialize progression system for the story mode
         this.progression = playerProgression;
 
-        // Create Pluto instance for story mode
-        await this.createPlutoForStory();
+        // NOTE: Pluto instances are handled by static HTML in story scenes
+        // JavaScript Pluto system is disabled for story mode
+        // await this.createPlutoForStory();
 
         this.addEventListeners();
         this.showScene(0); // Show the cinematic intro initially
@@ -283,8 +284,8 @@ class StoryManager {
         // Generate stars for scenes that need them
         this.generateStarsForScene(sceneNumber);
 
-        // Configure Pluto for this scene
-        this.configureScenePluto(sceneNumber);
+        // NOTE: Pluto configuration handled by static HTML, not JavaScript
+        // this.configureScenePluto(sceneNumber);
 
         this.updateControls();
 
@@ -307,45 +308,25 @@ class StoryManager {
 
     async nextScene() {
         if (this.currentScene < this.totalScenes) {
-            // Add transition animation for Pluto
-            if (this.pluto) {
-                this.pluto.setAnimation('excited');
-                setTimeout(() => {
-                    this.showScene(this.currentScene + 1);
-                }, 500);
-            } else {
-                await this.showScene(this.currentScene + 1);
-            }
+            // Static HTML Pluto handles its own animations
+            await this.showScene(this.currentScene + 1);
         }
     }
 
     async previousScene() {
         if (this.currentScene > 0) {
-            // Add transition animation for Pluto
-            if (this.pluto) {
-                this.pluto.setAnimation('spiral-dance');
-                setTimeout(() => {
-                    this.showScene(this.currentScene - 1);
-                }, 500);
-            } else {
-                await this.showScene(this.currentScene - 1);
-            }
+            // Static HTML Pluto handles its own animations  
+            await this.showScene(this.currentScene - 1);
         }
     }
 
     startGame() {
-        // Show completion celebration before transitioning
-        if (this.pluto) {
-            this.pluto.setAnimation('excited');
-            this.pluto.setMood('happy');
-            this.showSceneMessage('Time to start the real adventure! 🚀');
+        // Show completion message and transition to game
+        this.showSceneMessage('Time to start the real adventure! 🚀');
 
-            setTimeout(() => {
-                window.location.href = 'menu.html';
-            }, 2000);
-        } else {
+        setTimeout(() => {
             window.location.href = 'menu.html';
-        }
+        }, 2000);
     }
 
     async loadSceneCSS(sceneNumber) {
@@ -489,10 +470,8 @@ class StoryManager {
         // Stop random messages
         this.stopRandomMessages();
 
-        if (this.pluto) {
-            this.pluto.hide();
-            this.pluto.unmount();
-        }
+        // Static HTML Pluto cleanup is handled automatically by scene transitions
+        // No JavaScript Pluto instances to clean up
 
         // Remove scene message if it exists
         const messageContainer = document.getElementById('scene-message');
