@@ -467,8 +467,9 @@
     width: 280px;
     height: 280px;
     border-radius: 50%;
-    animation: orbital-rotation 15s linear infinite;
+    /* animation: orbital-rotation 15s linear infinite; */ /* This was the issue */
     z-index: 2;
+    transform-style: preserve-3d; /* This is important for 3D children */
 }
 
 .ring-segment {
@@ -478,40 +479,19 @@
     background: linear-gradient(90deg, #DAA520 0%, #FFD700 50%, #B8860B 100%);
     border-radius: 4px;
     box-shadow: 0 0 8px rgba(218, 165, 32, 0.6);
-    transform-origin: 140px 0px;
+    transform-origin: 140px center; /* Use center for the y-origin of the transform */
+    animation: segment-3d-rotation 5s linear infinite;
+    /* The transform property is now part of the animation keyframes */
 }
 
-.ring-segment:nth-child(1) {
-    transform: rotate(0deg);
-}
-
-.ring-segment:nth-child(2) {
-    transform: rotate(45deg);
-}
-
-.ring-segment:nth-child(3) {
-    transform: rotate(90deg);
-}
-
-.ring-segment:nth-child(4) {
-    transform: rotate(135deg);
-}
-
-.ring-segment:nth-child(5) {
-    transform: rotate(180deg);
-}
-
-.ring-segment:nth-child(6) {
-    transform: rotate(225deg);
-}
-
-.ring-segment:nth-child(7) {
-    transform: rotate(270deg);
-}
-
-.ring-segment:nth-child(8) {
-    transform: rotate(315deg);
-}
+.ring-segment:nth-child(1) { --rotation-z: 0deg;   animation-delay: 0s; }
+.ring-segment:nth-child(2) { --rotation-z: 45deg;  animation-delay: -0.6s; }
+.ring-segment:nth-child(3) { --rotation-z: 90deg;  animation-delay: -1.2s; }
+.ring-segment:nth-child(4) { --rotation-z: 135deg; animation-delay: -1.8s; }
+.ring-segment:nth-child(5) { --rotation-z: 180deg; animation-delay: -2.4s; }
+.ring-segment:nth-child(6) { --rotation-z: 225deg; animation-delay: -3.0s; }
+.ring-segment:nth-child(7) { --rotation-z: 270deg; animation-delay: -3.6s; }
+.ring-segment:nth-child(8) { --rotation-z: 315deg; animation-delay: -4.2s; }
 
 @keyframes orbital-rotation {
     from {
@@ -520,6 +500,18 @@
 
     to {
         transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg);
+    }
+}
+
+/* New animation for the segments to spin in 3D */
+@keyframes segment-3d-rotation {
+    from {
+        /* Combine the positioning rotation with the start of the spin */
+        transform: rotate(var(--rotation-z, 0deg)) rotateY(0deg);
+    }
+    to {
+        /* Combine the positioning rotation with the end of the spin */
+        transform: rotate(var(--rotation-z, 0deg)) rotateY(360deg);
     }
 }
 
@@ -982,7 +974,7 @@
 @media (max-width: 480px) {
     #kronos {
         top: 40%;
-        transform: translate(-50%, -50%) scale(0.4);
+        transform: translate(-50%, -50%) scale(0.6); /* Increased scale for better visibility */
         width: 250px;
         height: 250px;
     }

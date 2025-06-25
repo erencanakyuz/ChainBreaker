@@ -69,7 +69,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
 
   <!-- Load latest Phaser 3 from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
   <script>
     // Simplified Color Palettes - No overengineering
     const Palettes = {
@@ -1862,48 +1862,81 @@
       }
 
       handleInput() {
-        if (this.gameOverFlag || !this.activeRing) return;
+        try {
+          // Enhanced null checks for touch stability
+          if (this.gameOverFlag || !this.activeRing || !this.activeRing.graphics || this.activeRing.graphics.destroyed) {
+            return;
+          }
 
-        // Prevent input spam - minimum 100ms between inputs
-        const now = performance.now();
-        if (this.lastInputTime && now - this.lastInputTime < 100) return;
-        this.lastInputTime = now;
+          // Prevent input spam - minimum 100ms between inputs
+          const now = performance.now();
+          if (this.lastInputTime && now - this.lastInputTime < 100) return;
+          this.lastInputTime = now;
 
-        this.activeRing.inputReceived = true;
+          // Verify activeRing properties exist before using them
+          if (typeof this.needleAngle === 'undefined' || typeof this.activeRing.sweetSpotAngle === 'undefined') {
+            console.warn('Touch event received with undefined angle values');
+            return;
+          }
 
-        // Cached angle difference calculation
-        const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
-        const absAngleDiff = Math.abs(angleDiff);
+          this.activeRing.inputReceived = true;
 
-        // Pre-calculate threshold to avoid repeated calculations
-        if (!this.cachedThreshold) {
-          this.cachedThreshold = Phaser.Math.DegToRad(this.getActiveDesign().sweetSpotSize);
-        }
+          // Cached angle difference calculation with safety checks
+          const angleDiff = Phaser.Math.Angle.Wrap(this.needleAngle - this.activeRing.sweetSpotAngle);
+          const absAngleDiff = Math.abs(angleDiff);
 
-        if (absAngleDiff <= this.cachedThreshold) {
-          this.handleSuccessfulHit();
-        } else {
-          // Wrong place click - add shake effect here too
-          this.cameras.main.shake(200, 0.02); // Medium intensity shake for wrong place
-          this.tweens.add({
-            targets: this.activeRing.graphics,
-            x: this.activeRing.x + 7,
-            y: this.activeRing.y + 7,
-            yoyo: true,
-            duration: 60,
-            repeat: 2,
-            onComplete: () => {
-              this.activeRing.graphics.x = this.activeRing.x;
-              this.activeRing.graphics.y = this.activeRing.y;
+          // Pre-calculate threshold to avoid repeated calculations
+          if (!this.cachedThreshold) {
+            const design = this.getActiveDesign();
+            if (design && typeof design.sweetSpotSize !== 'undefined') {
+              this.cachedThreshold = Phaser.Math.DegToRad(design.sweetSpotSize);
+            } else {
+              this.cachedThreshold = Phaser.Math.DegToRad(15); // Default fallback
             }
-          });
+          }
 
-          // Trigger quick Pluto reaction for wrong place
-          this.triggerPlutoAnimation('confused');
+          if (absAngleDiff <= this.cachedThreshold) {
+            this.handleSuccessfulHit();
+          } else {
+            // Wrong place click - add shake effect here too
+            if (this.cameras && this.cameras.main) {
+              this.cameras.main.shake(200, 0.02); // Medium intensity shake for wrong place
+            }
 
-          this.handleMiss();
+            // Safety check before animating
+            if (this.activeRing && this.activeRing.graphics && !this.activeRing.graphics.destroyed) {
+              this.tweens.add({
+                targets: this.activeRing.graphics,
+                x: this.activeRing.x + 7,
+                y: this.activeRing.y + 7,
+                yoyo: true,
+                duration: 60,
+                repeat: 2,
+                onComplete: () => {
+                  // Double-check ring still exists
+                  if (this.activeRing && this.activeRing.graphics && !this.activeRing.graphics.destroyed) {
+                    this.activeRing.graphics.x = this.activeRing.x;
+                    this.activeRing.graphics.y = this.activeRing.y;
+                  }
+                }
+              });
+            }
+
+            // Trigger quick Pluto reaction for wrong place
+            if (typeof this.triggerPlutoAnimation === 'function') {
+              this.triggerPlutoAnimation('confused');
+            }
+
+            this.handleMiss();
+          }
+          this.resetRegenTimer();
+        } catch (error) {
+          console.error('Touch input error:', error);
+          // Gracefully continue - don't crash the game
+          if (this.activeRing) {
+            this.activeRing.inputReceived = true;
+          }
         }
-        this.resetRegenTimer();
       }
 
       handleSuccessfulHit() {
@@ -1964,12 +1997,14 @@
         this.regenDelay = Math.max(3000, this.regenDelay * 0.98);
 
         // Trigger Pluto reactions based on combo
-        if (this.combo >= 10) {
-          this.triggerPlutoAnimation('excited');
-        } else if (this.combo >= 5) {
-          this.triggerPlutoAnimation('happy');
-        } else {
-          this.triggerPlutoAnimation('idle');
+        if (typeof this.triggerPlutoAnimation === 'function') {
+          if (this.combo >= 10) {
+            this.triggerPlutoAnimation('excited');
+          } else if (this.combo >= 5) {
+            this.triggerPlutoAnimation('happy');
+          } else {
+            this.triggerPlutoAnimation('idle');
+          }
         }
 
         if (this.combo >= 5 && !this.feverMode) {
@@ -2021,7 +2056,9 @@
         this.livesText.setText('Lives: ' + this.lives);
 
         // Pluto reacts to miss by going back to idle
-        this.triggerPlutoAnimation('idle');
+        if (typeof this.triggerPlutoAnimation === 'function') {
+          this.triggerPlutoAnimation('idle');
+        }
 
         // Stronger shake effect - increased duration and intensity
         this.cameras.main.shake(300, 0.03); // Increased from 150, 0.015
@@ -2363,7 +2400,9 @@
         this.feverText.setText('');
 
         // Recreate space background effects
-        this.createStarsBackground();
+        if (typeof this.createStarsBackground === 'function') {
+          this.createStarsBackground();
+        }
 
         this.startLevel();
       }
@@ -2383,7 +2422,83 @@
         }
       }
 
+      // Missing function: Pluto animation trigger
+      triggerPlutoAnimation(mood) {
+        // Safety check to prevent errors
+        if (!this.cssPlutoContainer || !this.plutoBody) {
+          return;
+        }
 
+        try {
+          // Simple CSS class-based mood system
+          this.plutoBody.className = 'pluto-body ' + mood;
+          this.plutoMood = mood;
+
+          // Optional: Add some basic animation effects
+          switch (mood) {
+            case 'excited':
+              this.plutoBody.style.transform = 'scale(1.1)';
+              break;
+            case 'happy':
+              this.plutoBody.style.transform = 'scale(1.05)';
+              break;
+            case 'confused':
+              this.plutoBody.style.transform = 'scale(0.95) rotate(5deg)';
+              break;
+            case 'idle':
+            default:
+              this.plutoBody.style.transform = 'scale(1)';
+              break;
+          }
+
+          // Reset transform after animation
+          setTimeout(() => {
+            if (this.plutoBody) {
+              this.plutoBody.style.transform = 'scale(1)';
+            }
+          }, 300);
+        } catch (error) {
+          console.warn('Pluto animation error:', error);
+        }
+      }
+
+      // Missing function: Stars background creation
+      createStarsBackground() {
+        // Safety check - don't create if already exists
+        if (this.starsContainer) {
+          return;
+        }
+
+        try {
+          // Create simple stars background
+          this.starsContainer = this.add.group();
+
+          // Create fewer stars for better performance
+          for (let i = 0; i < 50; i++) {
+            const star = this.add.circle(
+              Phaser.Math.Between(0, this.cameras.main.width),
+              Phaser.Math.Between(0, this.cameras.main.height),
+              Phaser.Math.FloatBetween(0.5, 2),
+              0xffffff,
+              Phaser.Math.FloatBetween(0.3, 0.8)
+            );
+
+            // Simple twinkling effect
+            this.tweens.add({
+              targets: star,
+              alpha: Phaser.Math.FloatBetween(0.2, 1),
+              duration: Phaser.Math.Between(1000, 3000),
+              yoyo: true,
+              repeat: -1,
+              ease: 'Sine.easeInOut'
+            });
+
+            this.starsContainer.add(star);
+          }
+        } catch (error) {
+          console.warn('Stars background creation error:', error);
+        }
+      }
 
     }
 

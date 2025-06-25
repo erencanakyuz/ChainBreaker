@@ -88,8 +88,8 @@ class StoryManager {
             return;
         }
 
-        // Preload all scene CSS non-blockingly
-        this.preloadAllSceneCSS();
+        // Load only the initial scene CSS, preload next scene for smoother transitions
+        // Removed bulk preloading to fix browser warnings
 
         // Initialize progression system for the story mode
         this.progression = playerProgression;
@@ -252,11 +252,36 @@ class StoryManager {
         this.nextBtn.addEventListener('click', () => this.nextScene());
         this.startGameBtn.addEventListener('click', () => this.startGame());
 
+        // Preload on hover for instant transitions
+        this.nextBtn.addEventListener('mouseenter', () => {
+            if (this.currentScene < this.totalScenes) {
+                this.preloadNextSceneCSS(this.currentScene + 1);
+            }
+        });
+
+        this.prevBtn.addEventListener('mouseenter', () => {
+            if (this.currentScene > 0) {
+                this.preloadNextSceneCSS(this.currentScene - 1);
+            }
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowRight' || e.key === ' ') {
-                if (this.nextBtn.style.display !== 'none') this.nextScene();
+                if (this.nextBtn.style.display !== 'none') {
+                    // Preload next scene before transition
+                    if (this.currentScene < this.totalScenes) {
+                        this.preloadNextSceneCSS(this.currentScene + 1);
+                    }
+                    this.nextScene();
+                }
             } else if (e.key === 'ArrowLeft') {
-                if (!this.prevBtn.disabled) this.previousScene();
+                if (!this.prevBtn.disabled) {
+                    // Preload previous scene before transition
+                    if (this.currentScene > 0) {
+                        this.preloadNextSceneCSS(this.currentScene - 1);
+                    }
+                    this.previousScene();
+                }
             } else if (e.key === 'Enter' && this.currentScene === this.totalScenes) {
                 this.startGame();
             }
@@ -308,15 +333,25 @@ class StoryManager {
 
     async nextScene() {
         if (this.currentScene < this.totalScenes) {
+            // Preload next scene CSS just before transition for smooth loading
+            const nextSceneNumber = this.currentScene + 1;
+            if (nextSceneNumber <= this.totalScenes) {
+                this.preloadNextSceneCSS(nextSceneNumber);
+            }
+
             // Static HTML Pluto handles its own animations
-            await this.showScene(this.currentScene + 1);
+            await this.showScene(nextSceneNumber);
         }
     }
 
     async previousScene() {
         if (this.currentScene > 0) {
+            // Preload previous scene CSS just before transition
+            const prevSceneNumber = this.currentScene - 1;
+            this.preloadNextSceneCSS(prevSceneNumber);
+
             // Static HTML Pluto handles its own animations  
-            await this.showScene(this.currentScene - 1);
+            await this.showScene(prevSceneNumber);
         }
     }
 
@@ -351,8 +386,7 @@ class StoryManager {
     loadCSS(url, id) {
         return new Promise((resolve, reject) => {
             if (this.loadedCSS.has(url) || document.getElementById(id)) {
-                // If this exact URL has been loaded (even under a different ID, like for scene 4),
-                // or if an element with this ID already exists, resolve immediately.
+                // If this exact URL has been loaded, resolve immediately
                 if (!this.loadedCSS.has(url)) {
                     this.loadedCSS.add(url);
                 }
@@ -360,6 +394,19 @@ class StoryManager {
                 return;
             }
 
+            // Check if there's a preloaded version we can convert
+            const preloadedLink = document.querySelector(`link[href="${url}"][rel="preload"]`);
+            if (preloadedLink) {
+                // Convert preloaded link to stylesheet
+                preloadedLink.rel = 'stylesheet';
+                preloadedLink.id = id;
+                this.loadedCSS.add(url);
+                console.log(`✅ Converted preloaded CSS to stylesheet: ${url}`);
+                resolve();
+                return;
+            }
+
+            // Create new stylesheet link
             const link = document.createElement('link');
             link.id = id;
             link.rel = 'stylesheet';
@@ -377,22 +424,7 @@ class StoryManager {
         });
     }
 
-    preloadCSS(url, id) {
-        if (this.loadedCSS.has(url) || document.querySelector(`link[href="${url}"]`)) {
-            return; // Already loaded or preloaded
-        }
-
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'style';
-        link.href = url;
-        link.id = `${id}-preload`; // Unique ID for preload link
-
-        document.head.appendChild(link);
-        console.log(`🚀 Preloading CSS: ${url}`);
-    }
-
-    preloadAllSceneCSS() {
+    preloadNextSceneCSS(sceneNumber) {
         const sceneMap = {
             0: 'css/story/scene-cinematic-intro.css',
             1: 'css/story/scene-space.css',
@@ -402,13 +434,35 @@ class StoryManager {
             5: 'css/story/scene-final.css'
         };
 
-        console.log('🚀 Preloading all scene CSS...');
-        for (let i = 0; i <= this.totalScenes; i++) {
-            const cssFile = sceneMap[i];
-            if (cssFile) {
-                this.preloadCSS(cssFile, `story-scene-${i}-css`);
-            }
+        const cssFile = sceneMap[sceneNumber];
+        if (!cssFile) return;
+
+        // Check if already loaded or preloaded
+        if (this.loadedCSS.has(cssFile) || document.querySelector(`link[href="${cssFile}"]`)) {
+            return;
         }
+
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'style';
+        link.href = cssFile;
+        link.id = `story-scene-${sceneNumber}-css-preload`;
+
+        // Convert preload to stylesheet after it loads to avoid browser warnings
+        link.onload = () => {
+            console.log(`🚀 Preloaded CSS for scene ${sceneNumber}: ${cssFile}`);
+            // Auto-convert to stylesheet after a short delay to prevent warnings
+            setTimeout(() => {
+                if (link.rel === 'preload') {
+                    link.rel = 'stylesheet';
+                    link.id = `story-scene-${sceneNumber}-css`;
+                    this.loadedCSS.add(cssFile);
+                    console.log(`✅ Auto-converted preloaded CSS to stylesheet: ${cssFile}`);
+                }
+            }, 100);
+        };
+
+        document.head.appendChild(link);
     }
 
     generateStars() {

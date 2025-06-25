@@ -74,8 +74,12 @@
 .story-controls {
     position: absolute;
     bottom: 20px;
-    right: 20px;
+    left: 20px; /* Changed from right */
+    right: 20px; /* Added for spacing */
     z-index: 101;
+    display: flex; /* Added for alignment */
+    justify-content: space-between; /* Added for alignment */
+    align-items: center; /* Added for alignment */
 }
 
 .story-controls button {
@@ -88,6 +92,20 @@
     font-family: 'Press Start 2P', monospace;
     font-size: 10px;
     cursor: pointer;
+}
+
+#prevBtn {
+    /* No specific styles needed here anymore */
+}
+
+#nextBtn {
+    /* No specific styles needed here anymore */
+}
+
+#startGameBtn {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .story-controls button:hover {
@@ -111,10 +129,10 @@
 
     .story-controls {
         bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        right: auto;
-        width: 100%;
+        left: 10px; /* Adjusted for mobile */
+        right: 10px; /* Adjusted for mobile */
+        width: auto; /* Let flexbox handle the width */
+        transform: none; /* Removed transform */
         text-align: center;
     }
 
