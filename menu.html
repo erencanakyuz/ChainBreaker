@@ -746,10 +746,10 @@
       setupRandomAnimationCycling() {
 
 
-        // Start random cycling after 3 seconds
-        setTimeout(() => {
+        // Start random cycling after 3 seconds (Phaser timing optimization)
+        this.time.delayedCall(3000, () => {
           this.startRandomAnimationCycle();
-        }, 3000);
+        });
       }
 
       startRandomAnimationCycle() {
@@ -793,9 +793,9 @@
             }
           }, animationDuration);
 
-          // Schedule next animation after current one finishes + 3-4 second idle break
+          // Schedule next animation after current one finishes + 3-4 second idle break (Phaser timing)
           const nextDelay = animationDuration + Math.random() * 1000 + 3000; // 3-4 second break between animations
-          setTimeout(cycleAnimations, nextDelay);
+          this.time.delayedCall(nextDelay, cycleAnimations);
         };
 
         const setRandomMovementRange = (element) => {
@@ -1050,22 +1050,22 @@
 
         this.unifiedPlutoContainer.appendChild(speechBubble);
 
-        // Show with animation
-        setTimeout(() => {
+        // Show with animation (Phaser timing optimization)
+        this.time.delayedCall(10, () => {
           speechBubble.classList.add('show');
-        }, 10);
+        });
 
-        // Hide after delay
-        setTimeout(() => {
+        // Hide after delay (Phaser timing optimization)  
+        this.time.delayedCall(3000 + message.length * 100, () => {
           if (speechBubble && speechBubble.parentNode) {
             speechBubble.classList.remove('show');
-            setTimeout(() => {
+            this.time.delayedCall(300, () => {
               if (speechBubble && speechBubble.parentNode) {
                 speechBubble.remove();
               }
-            }, 300);
+            });
           }
-        }, 3000 + message.length * 100);
+        });
       }
 
       // Add simple animation control methods
@@ -1151,7 +1151,7 @@
         this.scorePopupPool = [];
         this.comboEffectPool = [];
         this.ringPool = [];
-        this.maxPoolSize = 50; // Increased from 20 to 50
+        this.maxPoolSize = 80; // Hybrit optimization: Increased from 50 to 80 for better DOM pooling
       }
 
       init(data) {
@@ -1956,9 +1956,10 @@
             return;
           }
 
-          // Prevent input spam - minimum 100ms between inputs
+          // Dynamic input throttling - Hybrid optimization (faster in fever mode)
           const now = performance.now();
-          if (this.lastInputTime && now - this.lastInputTime < 100) return;
+          const dynamicThrottle = this.feverMode ? 60 : 85; // 85ms normal, 60ms fever (was 100ms fixed)
+          if (this.lastInputTime && now - this.lastInputTime < dynamicThrottle) return;
           this.lastInputTime = now;
 
           // Verify activeRing properties exist before using them
@@ -2124,8 +2125,8 @@
         scoreDiv.style.display = 'block';
         document.body.appendChild(scoreDiv);
 
-        // Return to pool after animation completes
-        setTimeout(() => {
+        // Return to pool after animation completes (Phaser timing optimization)
+        this.time.delayedCall(800, () => {
           if (scoreDiv.parentNode) {
             scoreDiv.remove();
             scoreDiv.style.display = 'none';
@@ -2134,7 +2135,7 @@
               this.scorePopupPool.push(scoreDiv);
             }
           }
-        }, 800); // Reduced timeout to match CSS animation
+        }); // Reduced timeout to match CSS animation
       }
 
       handleMiss() {
@@ -2204,8 +2205,8 @@
         comboDiv.style.display = 'block';
         document.body.appendChild(comboDiv);
 
-        // Return to pool after animation completes
-        setTimeout(() => {
+        // Return to pool after animation completes (Phaser timing optimization)
+        this.time.delayedCall(600, () => {
           if (comboDiv.parentNode) {
             comboDiv.remove();
             comboDiv.style.display = 'none';
@@ -2214,7 +2215,7 @@
               this.comboEffectPool.push(comboDiv);
             }
           }
-        }, 600); // Reduced timeout to match CSS animation
+        }); // Reduced timeout to match CSS animation
       }
 
       resetRegenTimer() {
@@ -2273,10 +2274,10 @@
         // Set level complete flag for animation
         this.levelComplete = true;
 
-        // Reset after animation
-        setTimeout(() => {
+        // Reset after animation (Phaser timing optimization)
+        this.time.delayedCall(2500, () => {
           this.levelComplete = false;
-        }, 2500);
+        });
 
         // Use CSS level-up effect instead of just Phaser text
         const levelUpDiv = document.createElement('div');
@@ -2284,12 +2285,12 @@
         levelUpDiv.textContent = 'LEVEL UP!';
         document.body.appendChild(levelUpDiv);
 
-        // Remove CSS effect after animation completes
-        setTimeout(() => {
+        // Remove CSS effect after animation completes (Phaser timing optimization)
+        this.time.delayedCall(2000, () => {
           if (levelUpDiv.parentNode) {
             levelUpDiv.remove();
           }
-        }, 2000);
+        });
         this.level++;
         this.levelText.setText('Level: ' + this.level);
         const design = this.getActiveDesign();
@@ -2539,12 +2540,12 @@
               break;
           }
 
-          // Reset transform after animation
-          setTimeout(() => {
+          // Reset transform after animation (Phaser timing optimization)
+          this.time.delayedCall(300, () => {
             if (this.plutoBody) {
               this.plutoBody.style.transform = 'scale(1)';
             }
-          }, 300);
+          });
         } catch (error) {
           console.warn('Pluto animation error:', error);
         }
@@ -2977,6 +2978,32 @@
 
   <!-- ChainBreaker Pro - New Modular Application (TEMPORARILY DISABLED TO FIX MENU CONFLICT) -->
   <!-- <script type="module" src="js/main.js"></script> -->
+
+  <!-- 🔗 HYBRID OPTIMIZATION: GameManager Helper Integration (Phase 1) -->
+  <script type="module">
+    // Import GameManager for helper functions only - Does NOT replace current system
+    let gameManagerHelper = null;
+
+    try {
+      import('./js/core/GameManager.js').then(({ GameManager }) => {
+        gameManagerHelper = new GameManager();
+        console.log('🔗 Hybrid: GameManager helper loaded (non-interfering mode)');
+
+        // Store helper globally for current system to optionally use
+        window.gameManagerHelper = gameManagerHelper;
+
+        // Optional: Initialize helper utilities only (performance and rewards)
+        gameManagerHelper.loadGameData().catch(err => {
+          console.log('ℹ️ Hybrid: GameManager data loading optional');
+        });
+
+      }).catch(err => {
+        console.log('ℹ️ Hybrid: GameManager helper optional, main system continues normally');
+      });
+    } catch (err) {
+      console.log('ℹ️ Hybrid: GameManager helper not available, main system unaffected');
+    }
+  </script>
 </body>
 
 </html>
