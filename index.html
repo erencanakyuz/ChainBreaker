@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/story/base.css" id="story-base-css">
     <link rel="stylesheet" href="css/components/animations.css" id="story-animations-css">
     <link rel="stylesheet" href="css/components/pluto.css" id="story-pluto-css">
+    <link rel="stylesheet" href="css/story/scene-cinematic-intro.css" id="story-cinematic-css">
 
     <!-- Scene-specific CSS is loaded dynamically by story.js -->
 
@@ -95,6 +96,87 @@
 
 <body>
     <div class="story-container">
+        <!-- Scene 0: Cinematic Intro - The Composer of Silence -->
+        <div class="story-scene scene-cinematic-intro" id="scene-0" data-phase="0">
+
+            <!-- Subtle Background Stars -->
+            <div class="subtle-stars">
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+            </div>
+
+            <!-- Main Story Text Container -->
+            <div class="story-text-container">
+
+                <!-- Phase 0 Text (Welcome) -->
+                <p class="narrative-text phase phase-0">
+                    Welcome to the legend of ChainBreaker Pro
+                </p>
+
+                <!-- Phase 1 Text -->
+                <p class="narrative-text phase phase-1">
+                    In the beginning, there was the First Melody
+                </p>
+
+                <!-- Phase 2 Text -->
+                <p class="narrative-text phase phase-2">
+                    From this melody arose the ancient celestial beings, forming the Cosmic Choir
+                </p>
+
+                <!-- Phase 3 Text -->
+                <p class="narrative-text phase phase-3">
+                    Especially the glorious melody of Kronos, Titan of Time and Order
+                </p>
+
+                <!-- Phase 4 Text -->
+                <p class="narrative-text phase phase-4">
+                    But at the very edge of the choir, in the coldest corner, there was silence
+                </p>
+
+                <!-- Phase 5 Text -->
+                <p class="narrative-text phase phase-5">
+                    Pluto felt shame from his own silence whenever he heard the glorious songs of others
+                </p>
+
+                <!-- Phase 6 Text -->
+                <p class="narrative-text phase phase-6">
+                    But deep in the cosmic void, something ancient stirred
+                </p>
+
+                <!-- Phase 7 Text (Title) -->
+                <h1 class="title-text phase phase-7">
+                    ChainBreaker Pro
+                </h1>
+
+            </div>
+
+            <!-- Bottom Controls -->
+            <div class="bottom-controls">
+                <button class="press-continue phase phase-0 phase-1 phase-2 phase-3 phase-4 phase-5 phase-6"
+                    onclick="nextCinematicPhase()">
+                    Press to Continue
+                </button>
+
+                <button class="press-continue phase phase-7" onclick="nextScene()">
+                    Begin Your Journey
+                </button>
+
+                <div class="skip-option phase phase-0 phase-1 phase-2 phase-3 phase-4 phase-5 phase-6"
+                    onclick="skipCinematic()">
+                    Press SPACE to skip
+                </div>
+            </div>
+
+        </div>
+
         <!-- Scene 1: Space - Saturn and Pluto (Titan) -->
         <div class="story-scene scene-space" id="scene-1">
             <!-- Background Effects -->
@@ -341,7 +423,7 @@
         </div>
 
         <!-- Scene 2: Lighthouse - Signal to Earth -->
-        <div class="story-scene scene-lighthouse" id="scene-2">
+        <div class="story-scene scene-lighthouse" id="scene-3">
             <div class="background">
                 <div class="stars">
                     <div class="star"></div>
@@ -587,7 +669,7 @@
         </div>
 
         <!-- Scene 3: Factory - Ring Production -->
-        <div class="story-scene scene-factory" id="scene-3">
+        <div class="story-scene scene-factory" id="scene-4">
             <!-- Day/Night Cycle Overlay -->
             <div class="day-night-overlay"></div>
 
@@ -721,7 +803,7 @@
         </div>
 
         <!-- Scene 4: Space Journey - Ring Adventure -->
-        <div class="story-scene scene-journey" id="scene-4">
+        <div class="story-scene scene-journey" id="scene-5">
             <!-- Deep Space Background -->
             <div class="deep-space-bg">
                 <div class="stars"></div>
@@ -950,7 +1032,7 @@
         </div>
 
         <!-- Scene 5: Final - Game Connection -->
-        <div class="story-scene scene-final" id="scene-5">
+        <div class="story-scene scene-final" id="scene-6">
             <!-- The star background from scene-space will be reused via CSS -->
             <div class="stars"></div>
             <div class="scene">
@@ -1004,6 +1086,134 @@
 
     <!-- Game Scripts -->
     <script type="module" src="js/scenes/Story.js"></script>
+
+    <!-- Cinematic Intro Control Script -->
+    <script>
+        let currentCinematicPhase = 0;
+        const maxPhases = 7;
+        let isTyping = false;
+
+        // Typewriter effect function
+        function typewriterEffect(element, text, speed = 40) {
+            return new Promise((resolve) => {
+                isTyping = true;
+                element.textContent = '';
+                element.classList.add('typing');
+
+                // Add automatic line breaks for long text on mobile
+                const maxCharsPerLine = window.innerWidth < 480 ? 25 : window.innerWidth < 768 ? 35 : 50;
+                const words = text.split(' ');
+                let processedText = '';
+                let currentLine = '';
+
+                for (let word of words) {
+                    if ((currentLine + word).length > maxCharsPerLine && currentLine.length > 0) {
+                        processedText += currentLine.trim() + '\n';
+                        currentLine = word + ' ';
+                    } else {
+                        currentLine += word + ' ';
+                    }
+                }
+                processedText += currentLine.trim();
+
+                let i = 0;
+                const timer = setInterval(() => {
+                    if (i < processedText.length) {
+                        if (processedText.charAt(i) === '\n') {
+                            element.textContent += '\n';
+                        } else {
+                            element.textContent += processedText.charAt(i);
+                        }
+                        i++;
+                    } else {
+                        clearInterval(timer);
+                        element.classList.remove('typing');
+                        element.classList.add('typed');
+                        isTyping = false;
+
+                        // Remove cursor after a delay
+                        setTimeout(() => {
+                            element.classList.remove('typed');
+                        }, 1500);
+
+                        resolve();
+                    }
+                }, speed);
+            });
+        }
+
+        async function nextCinematicPhase() {
+            if (currentCinematicPhase < maxPhases) {
+                currentCinematicPhase++;
+                const cinematicScene = document.getElementById('scene-0');
+                if (cinematicScene) {
+                    cinematicScene.setAttribute('data-phase', currentCinematicPhase);
+                    console.log(`🎬 Cinematic phase: ${currentCinematicPhase}`);
+
+                    // Start typewriter effect for current phase
+                    const currentText = cinematicScene.querySelector('.narrative-text.phase-' + currentCinematicPhase);
+                    if (currentText) {
+                        const text = currentText.textContent.trim().replace(/['"]/g, '');
+                        await typewriterEffect(currentText, text);
+                    }
+                }
+            }
+        }
+
+        // Initialize first phase on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const firstText = document.querySelector('.narrative-text.phase-0');
+                if (firstText) {
+                    const text = firstText.textContent.trim().replace(/['"]/g, '');
+                    typewriterEffect(firstText, text);
+                }
+            }, 1000);
+        });
+
+        function skipCinematic() {
+            // Jump directly to the next scene (skip cinematic)
+            const event = new CustomEvent('skipToNextScene');
+            document.dispatchEvent(event);
+
+            // If Story.js is available, call nextScene directly
+            setTimeout(() => {
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextBtn) {
+                    nextBtn.click();
+                }
+            }, 100);
+        }
+
+        // Allow keyboard interaction
+        document.addEventListener('keydown', function (e) {
+            const cinematicScene = document.getElementById('scene-0');
+            if (cinematicScene && cinematicScene.classList.contains('active')) {
+                if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    if (currentCinematicPhase < maxPhases) {
+                        nextCinematicPhase();
+                    } else {
+                        // Go to next scene (actual story)
+                        if (typeof story !== 'undefined' && story.nextScene) {
+                            story.nextScene();
+                        }
+                    }
+                }
+            }
+        });
+
+        // Reset phase when scene becomes active
+        document.addEventListener('storySceneChanged', function (e) {
+            if (e.detail.sceneNumber === 0) {
+                currentCinematicPhase = 0;
+                const cinematicScene = document.getElementById('scene-0');
+                if (cinematicScene) {
+                    cinematicScene.setAttribute('data-phase', 0);
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

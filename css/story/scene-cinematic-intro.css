@@ -1,641 +1,134 @@
 /* =============================================================================
-   CHAINBREAKER PRO - Scene 1: Cinematic Intro
-   "The Composer of Silence" - Epic Opening Sequence
+   CHAINBREAKER PRO - Scene 0: Clean Cinematic Intro
+   "The Composer of Silence" - Minimal Typewriter Experience
    ============================================================================= */
 
 .scene-cinematic-intro {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background: radial-gradient(ellipse at center, #0a0a1a 0%, #000 70%);
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     overflow: hidden;
-    cursor: pointer;
-    animation: cosmicAwakening 100s linear infinite;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Press Start 2P', monospace;
+}
+
+/* Phase State Management */
+.scene-cinematic-intro[data-phase="0"] .phase:not(.phase-0) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="1"] .phase:not(.phase-1) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="2"] .phase:not(.phase-2) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="3"] .phase:not(.phase-3) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="4"] .phase:not(.phase-4) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="5"] .phase:not(.phase-5) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="6"] .phase:not(.phase-6) {
+    display: none;
+}
+
+.scene-cinematic-intro[data-phase="7"] .phase:not(.phase-7) {
+    display: none;
 }
 
 /* =============================================================================
-   PHASE 1: THE FIRST MELODY (0-10s)
+   MAIN STORY TEXT - TYPEWRITER EFFECT
    ============================================================================= */
 
-.cosmic-void {
+.story-text-container {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    animation: voidToLight 10s ease-in-out forwards;
-}
-
-@keyframes voidToLight {
-    0% {
-        background: #000;
-    }
-
-    50% {
-        background: radial-gradient(circle, #000511 0%, #000 100%);
-    }
-
-    100% {
-        background: radial-gradient(circle, #0a0a2e 0%, #000 100%);
-    }
-}
-
-.cosmic-particles {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: #4a9eff;
-    border-radius: 50%;
-    animation: particleFloat 15s ease-in-out infinite;
-    opacity: 0;
-}
-
-.cosmic-particles:nth-child(1) {
-    left: 10%;
-    top: 20%;
-    animation-delay: 2s;
-}
-
-.cosmic-particles:nth-child(2) {
-    left: 80%;
-    top: 60%;
-    animation-delay: 4s;
-}
-
-.cosmic-particles:nth-child(3) {
-    left: 30%;
-    top: 80%;
-    animation-delay: 6s;
-}
-
-.cosmic-particles:nth-child(4) {
-    left: 70%;
-    top: 30%;
-    animation-delay: 8s;
-}
-
-@keyframes particleFloat {
-    0% {
-        opacity: 0;
-        transform: scale(0) translate(0, 0);
-    }
-
-    20% {
-        opacity: 1;
-        transform: scale(1) translate(20px, -30px);
-    }
-
-    80% {
-        opacity: 0.8;
-        transform: scale(1.5) translate(-40px, 50px);
-    }
-
-    100% {
-        opacity: 0;
-        transform: scale(2) translate(80px, -80px);
-    }
-}
-
-.sound-waves {
-    position: absolute;
-    left: 50%;
     top: 50%;
-    width: 100px;
-    height: 100px;
-    border: 2px solid #00ffff;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: soundWaveExpansion 8s ease-out forwards;
-    animation-delay: 3s;
-    opacity: 0;
-}
-
-@keyframes soundWaveExpansion {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0);
-    }
-
-    20% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    60% {
-        opacity: 0.6;
-        transform: translate(-50%, -50%) scale(5);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(15);
-    }
-}
-
-/* =============================================================================
-   PHASE 2: COSMIC CHOIR FORMATION (10-25s)
-   ============================================================================= */
-
-.planet {
-    position: absolute;
-    border-radius: 50%;
-    animation: planetFormation 3s ease-out forwards;
-    opacity: 0;
-    transform: scale(0);
-}
-
-.planet-jupiter {
-    width: 60px;
-    height: 60px;
-    background: radial-gradient(circle, #d8ca9d 0%, #fab81e 100%);
-    left: 20%;
-    top: 30%;
-    animation-delay: 10s;
-    box-shadow: 0 0 20px #fab81e;
-}
-
-.planet-mars {
-    width: 30px;
-    height: 30px;
-    background: radial-gradient(circle, #cd5c5c 0%, #8b0000 100%);
-    left: 35%;
-    top: 45%;
-    animation-delay: 12s;
-    box-shadow: 0 0 15px #cd5c5c;
-}
-
-.planet-venus {
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, #ffc649 0%, #ff9500 100%);
-    left: 60%;
-    top: 35%;
-    animation-delay: 14s;
-    box-shadow: 0 0 18px #ffc649;
-}
-
-@keyframes planetFormation {
-    0% {
-        opacity: 0;
-        transform: scale(0) rotate(0deg);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.2) rotate(180deg);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1) rotate(360deg);
-    }
-}
-
-.musical-note {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #00ffff;
-    border-radius: 50% 0;
-    transform: rotate(45deg);
-    animation: noteRise 2s ease-out forwards;
-    opacity: 0;
-}
-
-@keyframes noteRise {
-    0% {
-        opacity: 0;
-        transform: translateY(0) rotate(45deg) scale(0);
-    }
-
-    50% {
-        opacity: 1;
-        transform: translateY(-50px) rotate(45deg) scale(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-100px) rotate(45deg) scale(1.5);
-    }
-}
-
-/* =============================================================================
-   PHASE 3: KRONOS'S DOMINANCE (25-40s)
-   ============================================================================= */
-
-.kronos-saturn {
-    position: absolute;
-    left: 70%;
-    top: 20%;
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, #ffd700 0%, #daa520 100%);
-    border-radius: 50%;
-    animation: kronosEntrance 5s ease-out forwards;
-    animation-delay: 25s;
-    opacity: 0;
-    box-shadow: 0 0 30px #ffd700;
-}
-
-@keyframes kronosEntrance {
-    0% {
-        opacity: 0;
-        transform: scale(0) rotate(0deg);
-    }
-
-    30% {
-        opacity: 1;
-        transform: scale(1.5) rotate(120deg);
-    }
-
-    70% {
-        opacity: 1;
-        transform: scale(1.2) rotate(240deg);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1) rotate(360deg);
-    }
-}
-
-.saturn-rings {
-    position: absolute;
-    left: 70%;
-    top: 20%;
-    width: 120px;
-    height: 120px;
-    border: 3px solid transparent;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: ringRotation 8s linear infinite, ringGlow 3s ease-in-out infinite alternate;
-    animation-delay: 26s;
-    opacity: 0;
-}
-
-.saturn-rings::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 2px solid #ffd700;
-    border-radius: 50%;
-    top: -2px;
-    left: -2px;
-}
-
-.saturn-rings::after {
-    content: '';
-    position: absolute;
-    width: 140px;
-    height: 140px;
-    border: 1px solid #ffeb3b;
-    border-radius: 50%;
-    top: -12px;
-    left: -12px;
-}
-
-@keyframes ringRotation {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg);
-        opacity: 0;
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    100% {
-        transform: translate(-50%, -50%) rotate(360deg);
-        opacity: 1;
-    }
-}
-
-@keyframes ringGlow {
-    0% {
-        box-shadow: 0 0 20px #ffd700;
-    }
-
-    100% {
-        box-shadow: 0 0 40px #ffd700, 0 0 60px #ffeb3b;
-    }
-}
-
-.ring-particles {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #ffd700;
-    border-radius: 50%;
-    animation: ringParticleDance 6s ease-in-out infinite;
-    animation-delay: 28s;
-    opacity: 0;
-}
-
-@keyframes ringParticleDance {
-    0% {
-        opacity: 0;
-        transform: translateX(0) translateY(0);
-    }
-
-    25% {
-        opacity: 1;
-        transform: translateX(20px) translateY(-10px);
-    }
-
-    50% {
-        opacity: 1;
-        transform: translateX(0) translateY(-20px);
-    }
-
-    75% {
-        opacity: 1;
-        transform: translateX(-20px) translateY(-10px);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateX(0) translateY(0);
-    }
-}
-
-/* =============================================================================
-   PHASE 4: PLUTO'S INTRODUCTION (40-55s)
-   ============================================================================= */
-
-.pluto-lonely {
-    position: absolute;
-    right: 5%;
-    bottom: 10%;
-    width: 25px;
-    height: 25px;
-    background: radial-gradient(circle, #4a4a4a 0%, #2a2a2a 100%);
-    border-radius: 50%;
-    animation: plutoIntro 5s ease-out forwards;
-    animation-delay: 40s;
-    opacity: 0;
-    box-shadow: 0 0 10px #4a4a4a;
-}
-
-@keyframes plutoIntro {
-    0% {
-        opacity: 0;
-        transform: scale(0);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.5);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.isolation-glow {
-    position: absolute;
-    right: 5%;
-    bottom: 10%;
-    width: 60px;
-    height: 60px;
-    border: 1px solid #333;
-    border-radius: 50%;
-    transform: translate(50%, 50%);
-    animation: isolationPulse 4s ease-in-out infinite;
-    animation-delay: 42s;
-    opacity: 0;
-}
-
-@keyframes isolationPulse {
-    0% {
-        opacity: 0;
-        transform: translate(50%, 50%) scale(1);
-    }
-
-    50% {
-        opacity: 0.3;
-        transform: translate(50%, 50%) scale(1.5);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translate(50%, 50%) scale(2);
-    }
-}
-
-/* =============================================================================
-   PHASE 5: THE SHAME & YEARNING (55-70s)
-   ============================================================================= */
-
-.distant-melodies {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    animation: melodiesFade 5s ease-in-out forwards;
-    animation-delay: 55s;
-    opacity: 0;
-}
-
-@keyframes melodiesFade {
-    0% {
-        opacity: 0;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-
-    100% {
-        opacity: 0.3;
-    }
-}
-
-.sadness-particles {
-    position: absolute;
-    right: 5%;
-    bottom: 10%;
-    width: 3px;
-    height: 3px;
-    background: #6495ed;
-    border-radius: 50%;
-    animation: tearFloat 8s ease-out infinite;
-    animation-delay: 58s;
-    opacity: 0;
-}
-
-.sadness-particles:nth-child(1) {
-    animation-delay: 58s;
-}
-
-.sadness-particles:nth-child(2) {
-    animation-delay: 60s;
-}
-
-.sadness-particles:nth-child(3) {
-    animation-delay: 62s;
-}
-
-@keyframes tearFloat {
-    0% {
-        opacity: 0;
-        transform: translateY(0);
-    }
-
-    20% {
-        opacity: 1;
-        transform: translateY(-20px);
-    }
-
-    80% {
-        opacity: 0.5;
-        transform: translateY(-60px);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-100px);
-    }
-}
-
-/* =============================================================================
-   PHASE 6: THE DISCOVERY (70-85s)
-   ============================================================================= */
-
-.pulsar-light {
-    position: absolute;
-    left: 10%;
-    top: 60%;
-    width: 15px;
-    height: 15px;
-    background: radial-gradient(circle, #ff69b4 0%, #8a2be2 100%);
-    border-radius: 50%;
-    animation: pulsarBeat 2s ease-in-out infinite;
-    animation-delay: 70s;
-    opacity: 0;
-    box-shadow: 0 0 20px #ff69b4;
-}
-
-@keyframes pulsarBeat {
-    0% {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.5);
-        box-shadow: 0 0 30px #ff69b4, 0 0 50px #8a2be2;
-    }
-
-    100% {
-        opacity: 0.7;
-        transform: scale(1);
-    }
-}
-
-.pulsar-waves {
-    position: absolute;
-    left: 10%;
-    top: 60%;
-    width: 50px;
-    height: 50px;
-    border: 2px solid #ff69b4;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: pulsarWaveExpansion 3s ease-out infinite;
-    animation-delay: 71s;
-    opacity: 0;
-}
-
-@keyframes pulsarWaveExpansion {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0);
-    }
-
-    30% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(4);
-    }
-}
-
-/* =============================================================================
-   PHASE 7: THE CALL TO ACTION (85-100s)
-   ============================================================================= */
-
-.pluto-determined {
-    position: absolute;
-    right: 5%;
-    bottom: 10%;
-    width: 25px;
-    height: 25px;
-    background: radial-gradient(circle, #87ceeb 0%, #4682b4 100%);
-    border-radius: 50%;
-    animation: determinationGlow 5s ease-out forwards;
-    animation-delay: 85s;
-    opacity: 0;
-    box-shadow: 0 0 15px #87ceeb;
-}
-
-@keyframes determinationGlow {
-    0% {
-        opacity: 0;
-        transform: scale(1);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1.3);
-        box-shadow: 0 0 25px #87ceeb, 0 0 40px #4682b4;
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-        box-shadow: 0 0 20px #87ceeb;
-    }
-}
-
-.title-emergence {
-    position: absolute;
     left: 50%;
-    top: 40%;
     transform: translate(-50%, -50%);
-    font-family: 'Arial Black', sans-serif;
-    font-size: 3em;
-    font-weight: bold;
-    color: transparent;
+    text-align: center;
+    max-width: 90%;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.narrative-text {
+    font-size: 16px;
+    color: #fff;
+    line-height: 1.8;
+    margin: 0 auto;
+    opacity: 1;
+    max-width: 90%;
+    width: fit-content;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border-right: 3px solid #fff;
+    animation: blinkCursor 1s infinite;
+    padding: 0 10px;
+}
+
+.narrative-text.typing {
+    border-right: 3px solid #fff;
+    animation: blinkCursor 1s infinite;
+}
+
+.narrative-text.typed {
+    border-right: none;
+    animation: none;
+}
+
+/* Typewriter Cursor Animation */
+@keyframes blinkCursor {
+
+    0%,
+    50% {
+        border-color: #fff;
+    }
+
+    51%,
+    100% {
+        border-color: transparent;
+    }
+}
+
+/* Title Style for Phase 7 */
+.title-text {
+    font-size: 24px;
     background: linear-gradient(45deg, #ffd700, #ff69b4, #00ffff, #ffd700);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
-    animation: titleReveal 8s ease-out forwards, titleShimmer 3s ease-in-out infinite;
-    animation-delay: 90s, 95s;
-    opacity: 0;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-}
-
-@keyframes titleReveal {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0);
-    }
-
-    30% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.2);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
+    color: transparent;
+    animation: titleShimmer 3s ease-in-out infinite;
+    font-family: 'Press Start 2P', monospace;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0 auto;
+    width: fit-content;
+    text-align: center;
+    padding: 0 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border-right: 3px solid #ffd700;
 }
 
 @keyframes titleShimmer {
@@ -652,113 +145,156 @@
     }
 }
 
-.tap-to-begin {
+/* =============================================================================
+   BOTTOM CONTROLS - MINIMAL
+   ============================================================================= */
+
+.bottom-controls {
     position: absolute;
+    bottom: 40px;
     left: 50%;
-    bottom: 15%;
     transform: translateX(-50%);
-    font-family: Arial, sans-serif;
-    font-size: 1.2em;
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px 30px;
-    border: 2px solid #00ffff;
-    border-radius: 25px;
-    animation: tapPrompt 2s ease-in-out infinite;
-    animation-delay: 97s;
-    opacity: 0;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
+    text-align: center;
+    z-index: 20;
 }
 
-@keyframes tapPrompt {
+.press-continue {
+    background: #6C5CE7;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: gentlePulse 2s ease-in-out infinite;
+}
+
+.press-continue:hover {
+    background: #A29BFE;
+}
+
+@keyframes gentlePulse {
     0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(0);
+        opacity: 0.7;
     }
 
     50% {
         opacity: 1;
-        transform: translateX(-50%) translateY(-10px);
     }
 
     100% {
         opacity: 0.7;
-        transform: translateX(-50%) translateY(0);
     }
+}
+
+.skip-option {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: color 0.3s ease;
+}
+
+.skip-option:hover {
+    color: #A29BFE;
 }
 
 /* =============================================================================
-   TEXT OVERLAYS & NARRATION
+   SUBTLE BACKGROUND EFFECTS
    ============================================================================= */
 
-.narrative-text {
+.subtle-stars {
     position: absolute;
-    left: 50%;
-    top: 85%;
-    transform: translateX(-50%);
-    font-family: 'Times New Roman', serif;
-    font-size: 1.1em;
-    color: #fff;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 15px 25px;
-    border-radius: 10px;
-    max-width: 80%;
-    animation: textFadeInOut 8s ease-in-out forwards;
-    opacity: 0;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+    height: 100%;
+    z-index: 1;
 }
 
-@keyframes textFadeInOut {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(20px);
-    }
+.star {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+}
 
-    15% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
+@keyframes twinkle {
 
-    85% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-
+    0%,
     100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
     }
 }
 
-.text-phase-1 {
+/* Generate random star positions */
+.star:nth-child(1) {
+    left: 10%;
+    top: 20%;
+    animation-delay: 0s;
+}
+
+.star:nth-child(2) {
+    left: 20%;
+    top: 40%;
+    animation-delay: 1s;
+}
+
+.star:nth-child(3) {
+    left: 30%;
+    top: 10%;
     animation-delay: 2s;
 }
 
-.text-phase-2 {
-    animation-delay: 12s;
+.star:nth-child(4) {
+    left: 40%;
+    top: 60%;
+    animation-delay: 0.5s;
 }
 
-.text-phase-3 {
-    animation-delay: 27s;
+.star:nth-child(5) {
+    left: 50%;
+    top: 30%;
+    animation-delay: 1.5s;
 }
 
-.text-phase-4 {
-    animation-delay: 42s;
+.star:nth-child(6) {
+    left: 60%;
+    top: 80%;
+    animation-delay: 2.5s;
 }
 
-.text-phase-5 {
-    animation-delay: 57s;
+.star:nth-child(7) {
+    left: 70%;
+    top: 15%;
+    animation-delay: 3s;
 }
 
-.text-phase-6 {
-    animation-delay: 72s;
+.star:nth-child(8) {
+    left: 80%;
+    top: 50%;
+    animation-delay: 0.8s;
 }
 
-.text-phase-7 {
-    animation-delay: 87s;
+.star:nth-child(9) {
+    left: 90%;
+    top: 35%;
+    animation-delay: 1.8s;
+}
+
+.star:nth-child(10) {
+    left: 15%;
+    top: 70%;
+    animation-delay: 2.8s;
 }
 
 /* =============================================================================
@@ -766,29 +302,62 @@
    ============================================================================= */
 
 @media (max-width: 768px) {
-    .title-emergence {
-        font-size: 2em;
-    }
-
     .narrative-text {
-        font-size: 0.9em;
-        max-width: 90%;
-        padding: 10px 15px;
+        font-size: 13px;
+        max-width: 95%;
+        padding: 0 15px;
+        line-height: 1.6;
     }
 
-    .tap-to-begin {
-        font-size: 1em;
-        padding: 12px 25px;
+    .title-text {
+        font-size: 18px;
+        letter-spacing: 1px;
+        max-width: 95%;
+        padding: 0 15px;
+    }
+
+    .press-continue {
+        font-size: 9px;
+        padding: 8px 16px;
+    }
+
+    .story-text-container {
+        max-width: 95%;
+        padding: 0 10px;
     }
 }
 
 @media (max-width: 480px) {
-    .title-emergence {
-        font-size: 1.5em;
+    .narrative-text {
+        font-size: 11px;
+        line-height: 1.5;
+        max-width: 98%;
+        padding: 0 10px;
     }
 
-    .narrative-text {
-        font-size: 0.8em;
-        padding: 8px 12px;
+    .title-text {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        max-width: 98%;
+        padding: 0 10px;
+    }
+
+    .press-continue {
+        font-size: 8px;
+        padding: 6px 12px;
+    }
+
+    .skip-option {
+        font-size: 7px;
+    }
+
+    .story-text-container {
+        max-width: 98%;
+        padding: 0 5px;
+    }
+
+    .bottom-controls {
+        bottom: 20px;
+        padding: 0 10px;
     }
 }

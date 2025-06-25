@@ -4,8 +4,50 @@
 
 ---
 
+## 🎬 **Scene 0: Cinematic Intro - "The Composer of Silence"**
+*(Interactive cinematic opening)*
+
+**Epic cinematic opening with 7 phases - User controlled progression:**
+
+### **Phase 1: The First Melody**
+- Cosmic void transforms into swirling particles
+- Text: *"In the beginning, there was the First Melody..."*
+- **[PRESS TO CONTINUE]**
+
+### **Phase 2: Cosmic Choir Formation**  
+- Planets appear with musical note effects
+- Text: *"From this melody arose the ancient celestial beings, forming the Cosmic Choir..."*
+- **[PRESS TO CONTINUE]**
+
+### **Phase 3: Kronos's Dominance**
+- Saturn's magnificent entrance with rotating rings
+- Text: *"...especially the melody of Kronos, Titan of Time and Order..."*
+- **[PRESS TO CONTINUE]**
+
+### **Phase 4: Pluto's Introduction**
+- Small, lonely Pluto appears at screen edge
+- Text: *"But at the very edge of the choir, in the coldest corner, there was silence..."*
+- **[PRESS TO CONTINUE]**
+
+### **Phase 5: The Shame & Yearning**
+- Sadness particles, isolation effects
+- Text: *"Pluto felt shame from his own silence whenever he heard the glorious songs of others..."*
+- **[PRESS TO CONTINUE]**
+
+### **Phase 6: The Discovery**
+- Ancient Pulsar appears with rhythmic beats
+- Text: *"But deep in the cosmic void, something ancient stirred..."*
+- **[PRESS TO CONTINUE]**
+
+### **Phase 7: The Call to Action**
+- Epic title emergence, "TAP TO BEGIN" button
+- Text: *"Perhaps silence itself could become the greatest symphony..."*
+- **[TAP TO BEGIN STORY]**
+
+---
+
 ## 🎭 **Scene 1: The Composer of Silence - Pluto's Awakening**
-*(Opening Cinematic)*
+*(Story Scene)*
 
 At the beginning of the universe, the "First Melody" created everything. From this melody arose the ancient celestial beings, forming the "Cosmic Choir." Each contributed to universal harmony by singing their own note. But at the very edge of the choir, in the coldest and darkest corner, there was a being whose voice was never heard: Pluto, the Silent Dwarf.
 

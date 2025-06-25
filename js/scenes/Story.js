@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class StoryManager {
     constructor() {
-        this.currentScene = 1;
-        this.totalScenes = 5;
+        this.currentScene = 0;
+        this.totalScenes = 6;
         this.loadedCSS = new Set();
 
         // DOM Elements
@@ -31,6 +31,14 @@ class StoryManager {
 
         // Scene-specific Pluto configurations
         this.sceneConfigs = {
+            0: { // Cinematic Intro - Epic Opening
+                mood: 'neutral',
+                animation: 'idle',
+                skin: 'default',
+                position: { x: 200, y: 150 },
+                message: "The legendary story begins... 🌌",
+                messageType: "space"
+            },
             1: { // Space Scene - Introduction
                 mood: 'neutral',
                 animation: 'idle',
@@ -90,7 +98,7 @@ class StoryManager {
         await this.createPlutoForStory();
 
         this.addEventListeners();
-        this.showScene(1); // Show the first scene initially
+        this.showScene(0); // Show the cinematic intro initially
         this.generateStars(); // Generate stars for the space scene
     }
 
@@ -255,7 +263,7 @@ class StoryManager {
     }
 
     async showScene(sceneNumber) {
-        if (sceneNumber < 1 || sceneNumber > this.totalScenes) {
+        if (sceneNumber < 0 || sceneNumber > this.totalScenes) {
             return;
         }
         this.currentScene = sceneNumber;
@@ -292,7 +300,7 @@ class StoryManager {
     }
 
     updateControls() {
-        this.prevBtn.disabled = this.currentScene === 1;
+        this.prevBtn.disabled = this.currentScene === 0;
         this.nextBtn.style.display = this.currentScene === this.totalScenes ? 'none' : 'inline-block';
         this.startGameBtn.style.display = this.currentScene === this.totalScenes ? 'inline-block' : 'none';
     }
@@ -312,7 +320,7 @@ class StoryManager {
     }
 
     async previousScene() {
-        if (this.currentScene > 1) {
+        if (this.currentScene > 0) {
             // Add transition animation for Pluto
             if (this.pluto) {
                 this.pluto.setAnimation('spiral-dance');
@@ -342,6 +350,7 @@ class StoryManager {
 
     async loadSceneCSS(sceneNumber) {
         const sceneMap = {
+            0: 'css/story/scene-cinematic-intro.css',
             1: 'css/story/scene-space.css',
             2: 'css/story/scene-lighthouse.css',
             3: 'css/story/scene-factory.css',
@@ -404,6 +413,7 @@ class StoryManager {
 
     preloadAllSceneCSS() {
         const sceneMap = {
+            0: 'css/story/scene-cinematic-intro.css',
             1: 'css/story/scene-space.css',
             2: 'css/story/scene-lighthouse.css',
             3: 'css/story/scene-factory.css',
@@ -412,7 +422,7 @@ class StoryManager {
         };
 
         console.log('🚀 Preloading all scene CSS...');
-        for (let i = 1; i <= this.totalScenes; i++) {
+        for (let i = 0; i <= this.totalScenes; i++) {
             const cssFile = sceneMap[i];
             if (cssFile) {
                 this.preloadCSS(cssFile, `story-scene-${i}-css`);
@@ -429,8 +439,8 @@ class StoryManager {
     }
 
     generateStarsForScene(sceneNumber) {
-        // Scenes that need stars: 1 (space), 4 (journey), 5 (final)
-        const scenesWithStars = [1, 4, 5];
+        // Scenes that need stars: 0 (cinematic), 1 (space), 4 (journey), 5 (final)
+        const scenesWithStars = [0, 1, 4, 5];
 
         if (!scenesWithStars.includes(sceneNumber)) {
             return;
