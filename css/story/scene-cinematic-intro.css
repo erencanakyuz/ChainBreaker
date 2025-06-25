@@ -1,188 +1,243 @@
 /* =============================================================================
    CHAINBREAKER PRO - Scene 0: Cinematic Intro
-   Final Polish - Dynamic & Immersive Mythological Opening
+   The Great Terror - A Divine & Menacing Opening
    ============================================================================= */
 
-/* General Scene Setup */
+/* ===== SCENE SETUP & ATMOSPHERE ===== */
 .scene-cinematic-intro {
     position: relative;
-    width: 100vw;
-    height: 100vh;
+    width: 100vw; height: 100vh;
     background: #000;
     overflow: hidden;
     font-family: 'Georgia', 'Times New Roman', serif;
 }
 
+.stars {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1500"><circle fill="%23fff" opacity="0.7" cx="200" cy="300" r="1.2"/><circle fill="%23fff" opacity="0.5" cx="500" cy="600" r="0.8"/><circle fill="%23fff" opacity="0.9" cx="900" cy="400" r="1.5"/><circle fill="%23fff" opacity="0.6" cx="1200" cy="800" r="1"/></svg>');
+    animation: twinkle 60s linear infinite;
+}
+
+@keyframes twinkle { from { background-position: 0 0; } to { background-position: -1500px 750px; } }
+
 /* =============================================================================
-   DYNAMIC BACKGROUND & ANIMATIONS
+   KRONOS - THE GOD-FIGURE
    ============================================================================= */
 
-.nebula-background {
-    position: absolute;
-    width: 200%; height: 200%;
-    top: -50%; left: -50%;
-    background: radial-gradient(ellipse at center, #1B2735 0%, #090A0F 60%);
+.celestial-choir { 
+    position: absolute; width: 100%; height: 100%; 
+    z-index: 3; transition: transform 10s ease-out; 
+    transform-style: preserve-3d; 
+}
+
+#kronos {
+    position: absolute; top: 50%; left: 50%;
+    width: 250px; height: 250px;
+    transform: translate(-50%, -50%);
+    opacity: 0; transition: opacity 5s ease-in-out;
+}
+
+.scene-cinematic-intro[data-phase="2"] #kronos, .scene-cinematic-intro[data-phase="3"] #kronos { opacity: 1; }
+
+#kronos .surface {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, #2c3e50 0%, #000000 70%);
+    box-shadow: inset 0 0 50px #000;
+}
+
+/* The Great Eye */
+#kronos .eye-container {
+    position: absolute; top: 50%; left: 50%;
+    width: 150px; height: 100px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse, #ff4136 20%, #85144b 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 30px #ff4136;
+    animation: eyeGlow 5s infinite alternate;
+}
+
+@keyframes eyeGlow { from { box-shadow: 0 0 30px #ff4136; } to { box-shadow: 0 0 60px #ff4136, 0 0 100px #85144b; } }
+
+#kronos .eye-pupil {
+    position: absolute; top: 50%; left: 50%;
+    width: 20px; height: 60px;
+    background: #000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: scan 10s infinite alternate ease-in-out;
+}
+
+@keyframes scan { from { transform: translate(-50%, -50%) translateX(-30px); } to { transform: translate(-50%, -50%) translateX(30px); } }
+
+/* Rings of Power */
+#kronos .rings-container {
+    position: absolute; top: 50%; left: 50%;
+    width: 100%; height: 100%;
+    transform: translate(-50%, -50%) rotateX(85deg);
+}
+
+#kronos .ring {
+    position: absolute; width: 100%; height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 65, 54, 0.5);
+    animation: rotateRings 15s linear infinite;
+}
+
+#kronos .ring:nth-child(2) { transform: scale(1.3); border-color: rgba(255, 65, 54, 0.3); animation-duration: 20s; }
+#kronos .ring:nth-child(3) { transform: scale(1.6); border-color: rgba(255, 65, 54, 0.2); animation-duration: 25s; }
+
+@keyframes rotateRings { from { transform: scale(var(--s, 1)) rotate(0deg); } to { transform: scale(var(--s, 1)) rotate(360deg); } }
+
+/* Cosmic Lightning Storm */
+.lightning-storm { display: none; }
+.scene-cinematic-intro[data-phase="3"] .lightning-storm { display: block; }
+
+.lightning-bolt {
+    position: absolute; top: 50%; left: 50%;
+    width: 4px; height: 100%;
+    background: #fff;
+    transform-origin: top;
     opacity: 0;
-    animation: fadeInNebula 10s ease-in-out forwards, slowSwirl 90s linear infinite;
-    z-index: 1;
+    animation: lightningStrike 7s infinite ease-out;
 }
 
-@keyframes fadeInNebula { to { opacity: 0.7; } }
-@keyframes slowSwirl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.lightning-bolt:nth-child(1) { transform: rotate(20deg) translateY(-50%); animation-delay: 1s; }
+.lightning-bolt:nth-child(2) { transform: rotate(-15deg) translateY(-50%); animation-delay: 3s; }
+.lightning-bolt:nth-child(3) { transform: rotate(45deg) translateY(-50%); animation-delay: 5s; }
 
-.subtle-stars {
-    position: absolute;
-    width: 100%; height: 100%;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle fill="%23fff" opacity="0.8" cx="100" cy="100" r="1.5"/><circle fill="%23fff" opacity="0.6" cx="300" cy="400" r="1"/><circle fill="%23fff" opacity="1" cx="500" cy="200" r="2"/><circle fill="%23fff" opacity="0.7" cx="700" cy="600" r="1.2"/><circle fill="%23fff" opacity="0.5" cx="900" cy="300" r="1"/><circle fill="%23fff" opacity="0.9" cx="250" cy="700" r="1.8"/><circle fill="%23fff" opacity="0.6" cx="600" cy="900" r="1"/><circle fill="%23fff" opacity="0.8" cx="850" cy="750" r="1.5"/></svg>');
-    animation: twinkle 30s linear infinite;
-    z-index: 2;
+@keyframes lightningStrike {
+    0% { opacity: 0; transform: scaleY(0); }
+    5% { opacity: 1; transform: scaleY(1); }
+    10% { opacity: 0; }
 }
 
-@keyframes twinkle { from { background-position: 0 0; } to { background-position: -1000px 500px; } }
-
-.animation-layer {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 4;
+.lightning-flash-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #fff; opacity: 0; z-index: 100;
+    pointer-events: none;
 }
 
-/* Shooting Stars */
-.shooting-star {
-    position: absolute;
-    height: 2px;
-    background: linear-gradient(-45deg, #5D9FFF, rgba(0, 0, 255, 0));
-    border-radius: 999px;
-    filter: drop-shadow(0 0 6px #699BFF);
-    animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
+.scene-cinematic-intro[data-phase="3"] .lightning-flash-overlay {
+    animation: flash 7s infinite ease-out;
 }
 
-.shooting-star:nth-child(1) { top: 10%; left: -100%; animation-delay: 5s; }
-.shooting-star:nth-child(2) { top: 40%; left: -100%; animation-delay: 8s; }
-.shooting-star:nth-child(3) { top: 80%; left: -100%; animation-delay: 12s; }
-
-@keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
-@keyframes shooting { 0% { transform: translateX(0); } 100% { transform: translateX(150vw); } }
-
-/* Cosmic Light Rays */
-.light-ray {
-    position: absolute;
-    top: -100%; left: 0;
-    width: 10px;
-    height: 300%;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 80%);
-    transform: rotate(20deg);
-    animation: sweep 25s linear infinite;
-}
-
-.light-ray:nth-child(2) { animation-delay: 8s; animation-duration: 35s; }
-
-@keyframes sweep { from { transform: translateX(-20vw) rotate(20deg); } to { transform: translateX(120vw) rotate(20deg); } }
+@keyframes flash { 0%, 100% { opacity: 0; } 5% { opacity: 0.3; } 6% { opacity: 0; } }
 
 /* =============================================================================
-   CELESTIAL BODIES (REPOSITIONED & ENHANCED)
+   PLUTO & OTHER BEINGS
    ============================================================================= */
 
-.celestial-choir {
-    position: absolute;
-    width: 100%; height: 100%;
-    z-index: 3;
-    transition: transform 12s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-style: preserve-3d;
+#pluto {
+    position: absolute; top: 15%; left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0;
+    transition: opacity 3s ease-in-out 2s;
 }
 
-.scene-cinematic-intro[data-phase="4"] .celestial-choir { transform: translateX(-25vw) translateZ(-200px) scale(0.9); }
-.scene-cinematic-intro[data-phase="5"] .celestial-choir { transform: translateX(-35vw) translateZ(-300px) scale(0.8); }
+.scene-cinematic-intro[data-phase="4"] #pluto, .scene-cinematic-intro[data-phase="5"] #pluto { opacity: 1; }
 
-.planet { position: absolute; opacity: 0; transform: scale(0.5); transition: opacity 4s ease-in-out, transform 4s ease-in-out; }
-.scene-cinematic-intro[data-phase="2"] .planet, .scene-cinematic-intro[data-phase="3"] .planet { opacity: 1; transform: scale(1); }
+.scene-cinematic-intro[data-phase="5"] #pluto {
+    animation: tremble 0.5s infinite, pluto-sad-visuals 3s forwards;
+}
 
-/* Kronos - Positioned Higher */
-#kronos { top: 15%; left: 45%; width: 120px; height: 120px; transition-delay: 1s; }
-#kronos .surface { width: 100%; height: 100%; background: radial-gradient(circle, #FDEB71, #F8D800, #c5a100); border-radius: 50%; box-shadow: inset 0 0 20px #a08000; }
-#kronos .aura { position: absolute; top: -30px; left: -30px; right: -30px; bottom: -30px; border-radius: 50%; background: radial-gradient(circle, rgba(253, 235, 113, 0.4) 40%, rgba(253, 255, 113, 0) 70%); animation: pulseAura 4s ease-in-out infinite; }
-@keyframes pulseAura { 50% { transform: scale(1.1); opacity: 0.6; } }
-#kronos .rings-container { position: absolute; width: 100%; height: 100%; transform: rotateX(75deg) rotateY(-10deg); transform-style: preserve-3d; animation: float 10s ease-in-out infinite; }
-#kronos .rings { position: absolute; border-radius: 50%; border-style: solid; border-color: rgba(253, 235, 113, 0.7); animation: rotateRings 20s linear infinite; }
-#kronos .ring-1 { top: -75px; left: -75px; width: 270px; height: 270px; border-width: 2px; animation-duration: 20s; }
-#kronos .ring-2 { top: -90px; left: -90px; width: 300px; height: 300px; border-width: 4px; border-color: rgba(253, 235, 113, 0.4); animation-duration: 25s; }
-#kronos .ring-3 { top: -110px; left: -110px; width: 340px; height: 340px; border-width: 1px; border-color: rgba(253, 235, 113, 0.9); animation-duration: 30s; }
-@keyframes rotateRings { from { transform: rotateZ(0deg); } to { transform: rotateZ(360deg); } }
-
-/* Pluto - Positioned Higher */
-#pluto { top: 40%; left: 90%; width: 25px; height: 25px; opacity: 0; animation: float 8s ease-in-out infinite; }
-#pluto .surface { width: 100%; height: 100%; background: radial-gradient(circle, #A2B2C8, #6F7D91, #4e5663); border-radius: 50%; box-shadow: inset 0 0 5px #333; }
-#pluto .pulse-glow { position: absolute; top: -5px; left: -5px; width: 35px; height: 35px; background: radial-gradient(circle, rgba(116, 185, 255, 0.3) 30%, rgba(116, 185, 255, 0) 70%); border-radius: 50%; animation: pulseGlow 6s ease-in-out infinite 3s; opacity: 0; }
-@keyframes pulseGlow { 50% { opacity: 1; transform: scale(1.1); } }
-.scene-cinematic-intro[data-phase="4"] #pluto, .scene-cinematic-intro[data-phase="5"] #pluto { opacity: 1; transform: scale(1); transition-delay: 3s; }
-
-/* Other celestial beings - Positioned Higher */
-.celestial-being { position: absolute; border-radius: 50%; opacity: 0; animation: fadeInBeing 5s ease-in-out forwards, float 15s ease-in-out infinite alternate; }
-.scene-cinematic-intro[data-phase="2"] .celestial-being { animation-play-state: running; }
-.being-1 { top: 10%; left: 15%; width: 50px; height: 50px; background: radial-gradient(circle, #ffafbd, #ffc3a0); animation-delay: 2s; }
-.being-2 { top: 30%; left: 25%; width: 80px; height: 80px; background: radial-gradient(circle, #2193b0, #6dd5ed); animation-delay: 3s; }
-.being-3 { top: 45%; left: 75%; width: 30px; height: 30px; background: radial-gradient(circle, #cc2b5e, #753a88); animation-delay: 4s; }
-@keyframes fadeInBeing { to { opacity: 0.7; } }
-@keyframes float { to { transform: translateY(20px); } }
+@keyframes tremble { 0%, 100% { transform: translateX(-50%) scale(0.8) translate(0, 0); } 50% { transform: translateX(-50%) scale(0.8) translate(1px, -1px); } }
+@keyframes pluto-sad-visuals { to { filter: brightness(0.6); } }
 
 /* =============================================================================
-   TEXT & TYPOGRAPHY (NO OVERLAY)
+   TEXT & CONTROLS
    ============================================================================= */
 
-.story-text-container { position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); text-align: center; max-width: 800px; width: 90%; z-index: 10; min-height: 150px; display: flex; align-items: center; justify-content: center; }
-.narrative-text { font-size: 24px; color: #e0e0e0; line-height: 1.8; text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 10px #699BFF; white-space: pre-wrap; }
+.story-text-container { position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); text-align: center; max-width: 800px; width: 90%; z-index: 10; }
+.narrative-text { font-size: 24px; color: #e0e0e0; line-height: 1.8; text-shadow: 2px 2px 8px rgba(0,0,0,1); white-space: pre-wrap; }
 .narrative-text.typing::after { content: '_'; animation: blinkCursor 0.8s infinite; }
 @keyframes blinkCursor { 50% { opacity: 0; } }
-.title-text { font-size: 52px; background: linear-gradient(45deg, #ffd700, #ff94c2, #89ffff, #ffd700); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: titleShimmer 4s ease-in-out infinite; font-family: 'Georgia', serif; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+.title-text { font-size: 52px; background: linear-gradient(45deg, #ff4136, #ff851b, #ffdc00); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: titleShimmer 4s ease-in-out infinite; font-family: 'Georgia', serif; text-transform: uppercase; letter-spacing: 5px; }
 @keyframes titleShimmer { 50% { background-position: 100% 50%; } }
 
-/* =============================================================================
-   CONTROLS & RESPONSIVENESS
-   ============================================================================= */
-
-.bottom-controls {
-    position: absolute;
-    top: 85%;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
-}
-
-.press-continue {
-    background: #6C5CE7;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 5px;
-    border-radius: 5px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.press-continue:hover {
-    background: #A29BFE;
-}
+.bottom-controls { position: absolute; top: 90%; left: 50%; transform: translateX(-50%); z-index: 20; }
+.press-continue { background: #85144b; color: white; border: 1px solid #ff4136; padding: 10px 20px; border-radius: 5px; font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; transition: background 0.3s ease; }
+.press-continue:hover { background: #ff4136; }
 
 /* Phase Management */
 .phase { display: none; }
 .scene-cinematic-intro[data-phase="0"] .phase-0, .scene-cinematic-intro[data-phase="1"] .phase-1, .scene-cinematic-intro[data-phase="2"] .phase-2, .scene-cinematic-intro[data-phase="3"] .phase-3, .scene-cinematic-intro[data-phase="4"] .phase-4, .scene-cinematic-intro[data-phase="5"] .phase-5, .scene-cinematic-intro[data-phase="6"] .phase-6, .scene-cinematic-intro[data-phase="7"] .phase-7 { display: block; }
 
-/* Mobile & Tablet Adjustments */
+/* =============================================================================
+   RESPONSIVE DESIGN - MOBILE FIRST OVERHAUL
+   ============================================================================= */
+
+/* Tablet Devices (max-width: 768px) */
 @media (max-width: 768px) {
-    .story-text-container { top: 70%; }
-    .narrative-text { font-size: 18px; }
-    .title-text { font-size: 32px; }
-    #kronos { top: 10%; }
+    #kronos {
+        transform: translate(-50%, -50%) scale(0.75);
+    }
+
+    #pluto {
+        top: 10%;
+        transform: translateX(-50%) scale(0.7);
+    }
+
+    .story-text-container {
+        top: 78%;
+        width: 95%;
+    }
+
+    .narrative-text {
+        font-size: 18px;
+    }
+
+    .title-text {
+        font-size: 36px;
+    }
+
+    .bottom-controls {
+        top: 92%;
+    }
 }
 
+/* Mobile Devices (max-width: 480px) */
 @media (max-width: 480px) {
-    .story-text-container { top: 65%; }
-    .narrative-text { font-size: 16px; }
-    .title-text { font-size: 24px; }
-    .press-continue { padding: 10px 20px; font-size: 12px; }
-    #kronos { top: 5%; width: 80px; height: 80px; }
-    #kronos .ring-1 { top: -55px; left: -55px; width: 190px; height: 190px; }
-    #kronos .ring-2 { top: -65px; left: -65px; width: 210px; height: 210px; }
-    #kronos .ring-3 { top: -75px; left: -75px; width: 230px; height: 230px; }
+    #kronos {
+        top: 45%; /* Move Kronos up slightly on mobile to give text more room */
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+
+    #kronos .eye-container {
+        width: 120px;
+        height: 80px;
+    }
+
+    #pluto {
+        top: 8%;
+        transform: translateX(-50%) scale(0.6);
+    }
+
+    .story-text-container {
+        top: 75%;
+    }
+
+    .narrative-text {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .title-text {
+        font-size: 28px;
+    }
+
+    .bottom-controls {
+        top: 90%;
+        width: 100%;
+    }
+
+    .press-continue {
+        padding: 12px 24px; /* Make button easier to tap */
+        font-size: 12px;
+    }
+
+    /* Simplify lightning on small screens for clarity */
+    .lightning-bolt:nth-child(3) {
+        display: none;
+    }
 }

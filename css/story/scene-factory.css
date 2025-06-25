@@ -1649,3 +1649,65 @@
         transform: scale(1.2);
     }
 }
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(0.8);
+    }
+
+    /* Hide less important details */
+    .scene-factory .worker-3, .scene-factory .engineer-1, .scene-factory .delivery-truck, .scene-factory .cargo-vehicle, .scene-factory .particle-3, .scene-factory .particle-4, .scene-factory .particle-5 {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(0.6);
+    }
+
+    /* Hide even more details on small screens */
+    .scene-factory .factory-building-6, .scene-factory .factory-building-7, .scene-factory .factory-building-8, .scene-factory .factory-building-9, .scene-factory .factory-building-10, .scene-factory .multi-level-complex, .scene-factory .ring-crystal, .scene-factory .ring-diamond, .scene-factory .ring-exotic, .scene-factory .smoke-3, .scene-factory .worker-2, .scene-factory .day-night-overlay, .scene-factory .rain-effect {
+        display: none;
+    }
+
+    .scene-factory .ring-conveyor-main {
+        height: 30px;
+    }
+
+    .scene-factory .new-ring-1, .scene-factory .new-ring-2, .scene-factory .new-ring-3, .scene-factory .new-ring-4 {
+        animation-duration: 12s; /* Slow down animation on mobile */
+    }
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(0.8);
+    }
+
+    /* Hide less important details */
+    .scene-factory .worker-3, .scene-factory .engineer-1, .scene-factory .delivery-truck, .scene-factory .cargo-vehicle, .scene-factory .particle-3, .scene-factory .particle-4, .scene-factory .particle-5 {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(0.6);
+    }
+
+    /* Hide even more details on small screens */
+    .scene-factory .factory-building-6, .scene-factory .factory-building-7, .scene-factory .factory-building-8, .scene-factory .factory-building-9, .scene-factory .factory-building-10, .scene-factory .multi-level-complex, .scene-factory .ring-crystal, .scene-factory .ring-diamond, .scene-factory .ring-exotic, .scene-factory .smoke-3, .scene-factory .worker-2, .scene-factory .day-night-overlay, .scene-factory .rain-effect {
+        display: none;
+    }
+
+    .scene-factory .ring-conveyor-main {
+        height: 30px;
+    }
+
+    .scene-factory .new-ring-1, .scene-factory .new-ring-2, .scene-factory .new-ring-3, .scene-factory .new-ring-4 {
+        animation-duration: 12s; /* Slow down animation on mobile */
+    }
+}

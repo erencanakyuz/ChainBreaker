@@ -886,3 +886,55 @@
     border: 2px solid rgba(255, 215, 0, 0.3);
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
 }
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-journey .ring-convoy {
+        transform: translateY(-50%) scale(0.8);
+    }
+
+    .scene-journey .asteroid.medium, .scene-journey .solar-flares {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-journey .ring-convoy {
+        transform: translateY(-50%) scale(0.6);
+        left: 10%;
+    }
+
+    .scene-journey .asteroid-field {
+        display: none; /* Hide all asteroids on small screens */
+    }
+
+    .scene-journey .planet.uranus, .scene-journey .planet.neptune {
+        display: none; /* Hide distant planets */
+    }
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-journey .ring-convoy {
+        transform: translateY(-50%) scale(0.8);
+    }
+
+    .scene-journey .asteroid.medium, .scene-journey .solar-flares {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-journey .ring-convoy {
+        transform: translateY(-50%) scale(0.6);
+        left: 10%;
+    }
+
+    .scene-journey .asteroid-field {
+        display: none; /* Hide all asteroids on small screens */
+    }
+
+    .scene-journey .planet.uranus, .scene-journey .planet.neptune {
+        display: none; /* Hide distant planets */
+    }
+}

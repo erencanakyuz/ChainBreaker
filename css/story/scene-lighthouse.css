@@ -1722,3 +1722,83 @@
         transform: skewX(-55deg) translateX(-40px);
     }
 }
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-lighthouse .lighthouse-group {
+        transform: scale(0.8);
+        right: 10%;
+    }
+
+    .scene-lighthouse .pluto {
+        transform: scale(0.8);
+        left: 5%;
+    }
+
+    .scene-lighthouse .boat {
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-lighthouse .lighthouse-group {
+        transform: scale(0.6);
+        right: 5%;
+        bottom: 50%;
+    }
+
+    .scene-lighthouse .pluto {
+        transform: scale(0.6);
+        left: 2%;
+        bottom: 65%;
+    }
+
+    .scene-lighthouse .boat {
+        display: none; /* Hide boat on very small screens */
+    }
+
+    .scene-lighthouse .dialogue {
+        font-size: 6px;
+        max-width: 120px;
+    }
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-lighthouse .lighthouse-group {
+        transform: scale(0.8);
+        right: 10%;
+    }
+
+    .scene-lighthouse .pluto {
+        transform: scale(0.8);
+        left: 5%;
+    }
+
+    .scene-lighthouse .boat {
+        transform: scale(0.7);
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-lighthouse .lighthouse-group {
+        transform: scale(0.6);
+        right: 5%;
+        bottom: 50%;
+    }
+
+    .scene-lighthouse .pluto {
+        transform: scale(0.6);
+        left: 2%;
+        bottom: 65%;
+    }
+
+    .scene-lighthouse .boat {
+        display: none; /* Hide boat on very small screens */
+    }
+
+    .scene-lighthouse .dialogue {
+        font-size: 6px;
+        max-width: 120px;
+    }
+}

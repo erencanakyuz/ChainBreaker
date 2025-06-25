@@ -99,6 +99,30 @@
     cursor: not-allowed;
 }
 
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .story-text {
+        font-size: 12px;
+        padding: 15px;
+        max-width: 90%;
+        bottom: 80px; /* Move text up to make space for controls */
+    }
+
+    .story-controls {
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        width: 100%;
+        text-align: center;
+    }
+
+    .story-controls button {
+        padding: 12px 24px;
+        font-size: 12px;
+    }
+}
+
 /* ===== COMMON UTILITY CLASSES ===== */
 
 /* Absolute positioning utility (replaces %absPosition) */

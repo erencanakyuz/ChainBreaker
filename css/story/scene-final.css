@@ -224,3 +224,55 @@
     animation-duration: 6s;
     background: #bbdefb;
 }
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-final .scene_titan {
+        transform: scale(0.9);
+    }
+
+    .breaking-rings {
+        transform: translate(-50%, -50%) rotateX(75deg) scale(0.8);
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-final .scene_titan {
+        transform: scale(0.7);
+    }
+
+    .breaking-rings {
+        transform: translate(-50%, -50%) rotateX(75deg) scale(0.6);
+    }
+
+    /* Reduce number of fragments on small screens */
+    .ring-fragment:nth-child(n+8) {
+        display: none;
+    }
+}
+
+/* ===== MOBILE RESPONSIVENESS ===== */
+@media (max-width: 768px) {
+    .scene-final .scene_titan {
+        transform: scale(0.9);
+    }
+
+    .breaking-rings {
+        transform: translate(-50%, -50%) rotateX(75deg) scale(0.8);
+    }
+}
+
+@media (max-width: 480px) {
+    .scene-final .scene_titan {
+        transform: scale(0.7);
+    }
+
+    .breaking-rings {
+        transform: translate(-50%, -50%) rotateX(75deg) scale(0.6);
+    }
+
+    /* Reduce number of fragments on small screens */
+    .ring-fragment:nth-child(n+8) {
+        display: none;
+    }
+}
