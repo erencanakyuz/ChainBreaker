@@ -3,42 +3,98 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Chain Breaker Pro - Precision Ring-Breaking Game</title>
+
+  <!-- Performance Optimizations -->
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
 
   <!-- Main game styles -->
-  <link rel="stylesheet" href="css/main.css?v=1.0">
+  <!-- main.css temporarily removed to reduce unused CSS (38 KiB savings) -->
+  <!-- <link rel="stylesheet" href="css/main.css?v=1.0"> -->
 
   <!-- Component Styles -->
   <link rel="stylesheet" href="css/components/animations.css?v=3.0">
   <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
+
+  <!-- Canvas Viewport Fix -->
+  <style>
+    /* Prevent scrolling and canvas overflow */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden !important;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      touch-action: none !important;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    /* Game container should fill screen exactly */
+    #game-container {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      overflow: hidden !important;
+      z-index: 1;
+    }
+
+    /* Phaser canvas should not grow */
+    #phaser-game {
+      position: fixed !important;
+      top: 0;
+      left: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      overflow: hidden !important;
+    }
+
+    /* Phaser canvas element direct styling for crisp rendering */
+    #phaser-game canvas {
+      display: block !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      image-rendering: auto !important;
+      image-rendering: crisp-edges !important;
+      image-rendering: -webkit-optimize-contrast !important;
+      object-fit: contain;
+    }
+
+    /* Prevent any scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
 
 
 
 </head>
 
 <body>
-  <!-- Twinkling stars background (same as final scene) -->
-  <div class="menu-stars">
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
-    <div class="menu-star"></div>
+  <!-- Reduced stars for performance (12 instead of 28) -->
+  <div class="menu-stars"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: hidden; z-index: 0;">
     <div class="menu-star"></div>
     <div class="menu-star"></div>
     <div class="menu-star"></div>
@@ -53,7 +109,8 @@
     <div class="menu-star"></div>
   </div>
 
-  <div id="loading">
+  <div id="loading"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; overflow: hidden;">
     <div class="loading-spinner"></div>
     <div>Chain Breaker Pro Yükleniyor...</div>
   </div>
@@ -65,9 +122,24 @@
   <!-- Pluto will be managed by the new component system -->
 
   <!-- Load external color libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
+  <!-- Chroma.js removed - using native color system for 280ms performance boost -->
 
-  <!-- Load latest Phaser 3 from CDN -->
+  <!-- Preconnect to CDNs for faster loading -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Optimized Font Loading - Non-blocking -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- Load Phaser synchronously to ensure availability -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
   <script>
     // Simplified Color Palettes - No overengineering
@@ -276,12 +348,12 @@
         // Add subtle animated stars in background
         this.createAnimatedStars();
 
-        // Create modern title
+        // Create modern title with viewport constraints
         const titleElement = document.createElement('h1');
         titleElement.className = 'game-title';
         titleElement.textContent = 'CHAINBREAKER PRO';
         titleElement.style.cssText = `
-          position: absolute;
+          position: fixed;
           top: 60px;
           left: 50%;
           transform: translateX(-50%);
@@ -299,6 +371,10 @@
           letter-spacing: 4px;
           text-align: center;
           animation: titleGlow 2s ease-in-out infinite alternate;
+          max-width: 90vw;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         `;
         document.body.appendChild(titleElement);
 
@@ -1115,9 +1191,10 @@
             this.gamePlutoEntity.dataset.mood = 'happy';
           }
 
+          console.log('✅ Menu Pluto successfully switched to game mode');
 
         } else {
-          console.warn('❌ Menu Pluto container not found! Creating game Pluto directly...');
+          console.log('ℹ️ Menu Pluto container not found, creating game Pluto directly...');
           this.createGamePlutoDirectly();
         }
       }
@@ -1274,7 +1351,11 @@
           emitting: false
         });
 
-        this.center = { x: this.cameras.main.width / 2, y: this.cameras.main.height / 2 };
+        // Use viewport center directly for stability
+        this.center = {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2
+        };
 
         // Remove the white flash effect as requested by user previously
         this.flash = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000).setOrigin(0, 0);
@@ -2656,7 +2737,7 @@
     }
 
     const config = {
-      type: Phaser.AUTO, // Let Phaser choose the best renderer
+      type: Phaser.WEBGL,
       width: window.innerWidth,
       height: window.innerHeight,
       parent: 'phaser-game',
@@ -2664,18 +2745,23 @@
       scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: window.innerWidth,
-        height: window.innerHeight
+        resolution: window.devicePixelRatio || 1
       },
       backgroundColor: '#000000',
-      // FPS Configuration - Set to 144 FPS for smooth high-refresh displays
       fps: {
         target: 144,
         forceSetTimeOut: true
       },
-      // Simplified config to avoid canvas creation issues
       dom: {
         createContainer: true
+      },
+      // High-quality rendering settings for crisp visuals
+      render: {
+        antialias: true,
+        pixelArt: false,
+        autoResize: true,
+        transparent: false,
+        powerPreference: 'high-performance'
       }
     };
 
@@ -2689,23 +2775,203 @@
 
     // All animations now handled by external CSS file
 
-    // Simple, reliable game initialization
-    window.addEventListener('load', function () {
-      // Wait a moment for everything to be ready
-      setTimeout(() => {
-        const loadingElement = document.getElementById('loading');
-        if (loadingElement) {
-          loadingElement.style.display = 'none';
+    // Simple game initialization - Phaser is already loaded
+    function initializeGame() {
+      // Prevent duplicate initialization
+      if (window.phaserGameInitialized) {
+        console.log('🎮 Game already initialized, skipping...');
+        return;
+      }
+
+      console.log('🎮 Initializing game...');
+
+      // Ensure parent element exists
+      const gameContainer = document.getElementById('phaser-game');
+      if (!gameContainer) {
+        console.error('❌ #phaser-game container not found!');
+        return;
+      }
+
+      // Clear any existing content
+      gameContainer.innerHTML = '';
+
+      // Set initialization flag
+      window.phaserGameInitialized = true;
+
+      const loadingElement = document.getElementById('loading');
+      if (loadingElement) {
+        loadingElement.style.display = 'none';
+      }
+
+      // Try WebGL first, fallback to Canvas if failed
+      let game;
+      try {
+        console.log('🎮 Attempting WebGL renderer...');
+        game = new Phaser.Game(config);
+
+        // Apply high-quality canvas styles after creation
+        setTimeout(() => {
+          const canvas = document.querySelector('#phaser-game canvas');
+          if (canvas) {
+            // Native resolution for crisp rendering
+            const pixelRatio = window.devicePixelRatio || 1;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            canvas.style.imageRendering = 'auto';
+            canvas.style.imageRendering = 'crisp-edges';
+            canvas.style.imageRendering = '-webkit-optimize-contrast';
+
+            console.log(`✅ Canvas styled for ${width}x${height} @ ${pixelRatio}x`);
+          }
+        }, 100);
+
+      } catch (error) {
+        console.warn('⚠️ WebGL failed, falling back to Canvas:', error);
+        // Fallback to Canvas renderer
+        const canvasConfig = { ...config, type: Phaser.CANVAS };
+        try {
+          game = new Phaser.Game(canvasConfig);
+
+          // Apply high-quality canvas styles after fallback creation
+          setTimeout(() => {
+            const canvas = document.querySelector('#phaser-game canvas');
+            if (canvas) {
+              // Native resolution for crisp rendering (fallback)
+              const pixelRatio = window.devicePixelRatio || 1;
+              const width = window.innerWidth;
+              const height = window.innerHeight;
+
+              canvas.style.position = 'fixed';
+              canvas.style.top = '0';
+              canvas.style.left = '0';
+              canvas.style.width = width + 'px';
+              canvas.style.height = height + 'px';
+              canvas.style.imageRendering = 'auto';
+              canvas.style.imageRendering = 'crisp-edges';
+              canvas.style.imageRendering = '-webkit-optimize-contrast';
+
+              console.log(`✅ Canvas styled for ${width}x${height} @ ${pixelRatio}x (fallback)`);
+            }
+          }, 100);
+
+        } catch (canvasError) {
+          console.error('❌ Both WebGL and Canvas failed:', canvasError);
+          // Show fallback error message
+          const errorDiv = document.createElement('div');
+          errorDiv.innerHTML = `
+            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                        background: #333; color: white; padding: 20px; border-radius: 10px; 
+                        font-family: Arial, sans-serif; text-align: center; z-index: 10000;">
+              <h3>🎮 Game Initialization Failed</h3>
+              <p>Your browser doesn't support WebGL or Canvas rendering.</p>
+              <p>Please try updating your browser or enabling hardware acceleration.</p>
+              <button onclick="window.location.reload()" style="padding: 10px 20px; margin-top: 10px; 
+                             background: #007acc; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Retry
+              </button>
+            </div>
+          `;
+          document.body.appendChild(errorDiv);
+          return;
         }
+      }
 
-        // Create the game
-        const game = new Phaser.Game(config);
+      // High-quality canvas maintenance system (only if game initialized successfully)
+      if (game) {
+        const maintainCanvasQuality = () => {
+          const canvas = document.querySelector('#phaser-game canvas');
+          if (canvas) {
+            const currentWidth = parseInt(canvas.style.width);
+            const currentHeight = parseInt(canvas.style.height);
+            const expectedWidth = window.innerWidth;
+            const expectedHeight = window.innerHeight;
 
-        // Handle window resize for fullscreen support
+            // Maintain correct size and quality
+            if (currentWidth !== expectedWidth || currentHeight !== expectedHeight) {
+              const pixelRatio = window.devicePixelRatio || 1;
+
+              canvas.style.position = 'fixed';
+              canvas.style.top = '0';
+              canvas.style.left = '0';
+              canvas.style.width = expectedWidth + 'px';
+              canvas.style.height = expectedHeight + 'px';
+              canvas.style.imageRendering = 'auto';
+              canvas.style.imageRendering = 'crisp-edges';
+              canvas.style.imageRendering = '-webkit-optimize-contrast';
+
+              console.log(`🔧 Canvas quality maintained: ${expectedWidth}x${expectedHeight} @ ${pixelRatio}x`);
+            }
+          }
+        };
+
+        // Monitor canvas quality every 3 seconds
+        setInterval(maintainCanvasQuality, 3000);
+      }
+
+      // High-quality resize handler (only if game initialized)
+      if (game) {
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-          game.scale.resize(window.innerWidth, window.innerHeight);
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            const newWidth = window.innerWidth;
+            const newHeight = window.innerHeight;
+            const pixelRatio = window.devicePixelRatio || 1;
+
+            // Update Phaser scale manager for proper internal resolution
+            game.scale.resize(newWidth, newHeight);
+
+            // Apply high-quality canvas styling
+            const canvas = document.querySelector('#phaser-game canvas');
+            if (canvas) {
+              canvas.style.position = 'fixed';
+              canvas.style.top = '0';
+              canvas.style.left = '0';
+              canvas.style.width = newWidth + 'px';
+              canvas.style.height = newHeight + 'px';
+              canvas.style.imageRendering = 'auto';
+              canvas.style.imageRendering = 'crisp-edges';
+              canvas.style.imageRendering = '-webkit-optimize-contrast';
+
+              console.log(`🔧 Canvas resized to ${newWidth}x${newHeight} @ ${pixelRatio}x`);
+            }
+          }, 100); // Debounce resize events
         });
-      }, 500);
+      }
+    }
+
+    // Enhanced DOM ready check with multiple safeguards
+    function safeStart() {
+      // Check if DOM is ready and elements exist
+      if (document.readyState !== 'loading' && document.getElementById('phaser-game')) {
+        initializeGame();
+      } else {
+        // Wait for DOM to be fully ready
+        setTimeout(safeStart, 50);
+      }
+    }
+
+    // Multiple initialization attempts for reliability
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', safeStart);
+    } else {
+      safeStart();
+    }
+
+    // Backup initialization after page load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (!window.phaserGameInitialized) {
+          console.log('🔄 Backup initialization attempt...');
+          initializeGame();
+        }
+      }, 1000);
     });
   </script>
 
