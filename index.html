@@ -18,6 +18,9 @@
     <!-- External Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
+    <!-- 🌍 UNIFIED RESPONSIVE SYSTEM - PHASE 3 -->
+    <link rel="stylesheet" href="css/responsive-unified.css">
+
     <style>
         /* Simple transition for scene changes */
         .story-scene {
@@ -95,7 +98,7 @@
 </head>
 
 <body>
-    <div class="story-container">
+    <div class="story-container responsive-container">
         <!-- Scene 0: Cinematic Intro - The Composer of Silence -->
         <div class="story-scene scene-cinematic-intro" id="scene-0" data-phase="0">
 
@@ -104,12 +107,12 @@
             <div class="subtle-stars"></div>
 
             <!-- Dynamic Animations -->
-            <div class="animation-layer">
+            <div class="animation-layer reduce-on-mobile">
                 <div class="shooting-star"></div>
-                <div class="shooting-star"></div>
-                <div class="shooting-star"></div>
+                <div class="shooting-star hide-on-mobile"></div>
+                <div class="shooting-star hide-on-mobile"></div>
                 <div class="light-ray"></div>
-                <div class="light-ray"></div>
+                <div class="light-ray hide-on-mobile"></div>
             </div>
 
             <!-- Celestial Bodies (Rebuilt with new steampunk Chronos) -->
@@ -121,7 +124,7 @@
                 </div>
 
                 <!-- Pluto - Detailed Model from pluto.css -->
-                <div id="pluto" class="pluto-entity" data-mood="neutral">
+                <div id="pluto" class="pluto-entity responsive-element" data-mood="neutral">
                     <div class="eyes">
                         <div class="eye eye--left"></div>
                         <div class="eye eye--right"></div>
@@ -138,10 +141,10 @@
             <div class="lightning-flash-overlay"></div>
 
             <!-- Pluto's Sadness -->
-            <div class="sadness-particles">
+            <div class="sadness-particles reduce-on-mobile">
                 <div class="sadness-mote"></div>
-                <div class="sadness-mote"></div>
-                <div class="sadness-mote"></div>
+                <div class="sadness-mote hide-on-mobile"></div>
+                <div class="sadness-mote hide-on-mobile"></div>
             </div>
 
             <!-- Main Story Text Container -->
@@ -289,7 +292,7 @@
                     <div class="light-beam"></div>
                 </div>
             </div>
-            <div class="story-text">
+            <div class="story-text responsive-text responsive-spacing">
                 Uzayın derinliklerinde, Saturnus'un muhteşem halkaları tüm gezegenin kıskançlığına neden oluyordu...
                 Pluton, artık gezegen sayılmadığı için daha da öfkeliydi ve bu güzel halkalara sahip olmayı çok
                 istiyordu.
@@ -948,15 +951,15 @@
         </div>
 
         <!-- Story Controls -->
-        <div class="story-controls">
-            <button id="prevBtn">◀ Önceki</button>
-            <button id="nextBtn">Sonraki ▶</button>
-            <button id="startGameBtn" style="display: none;">Oyunu Başlat</button>
+        <div class="story-controls responsive-spacing">
+            <button id="prevBtn" class="responsive-text">◀ Önceki</button>
+            <button id="nextBtn" class="responsive-text">Sonraki ▶</button>
+            <button id="startGameBtn" class="responsive-text" style="display: none;">Oyunu Başlat</button>
         </div>
     </div>
 
     <!-- Pre-created container for scene messages -->
-    <div id="scene-message-container" class="scene-message-container"></div>
+    <div id="scene-message-container" class="scene-message-container responsive-text responsive-spacing"></div>
 
     <!-- Game Scripts -->
     <script type="module" src="js/scenes/Story.js"></script>

@@ -1,0 +1,527 @@
+/* 🌍 CHAINBREAKER PRO - UNIFIED RESPONSIVE SYSTEM */
+/* Mobile-First Approach for Optimal Performance */
+
+/* ===== RESPONSIVE VARIABLES ===== */
+:root {
+    /* Unified Breakpoints - Mobile First */
+    --breakpoint-xs: 375px;
+    /* Small phones */
+    --breakpoint-sm: 480px;
+    /* Large phones */
+    --breakpoint-md: 768px;
+    /* Tablets */
+    --breakpoint-lg: 1024px;
+    /* Small laptops */
+    --breakpoint-xl: 1440px;
+    /* Large screens */
+
+    /* Responsive Scaling Factors */
+    --mobile-scale: 0.6;
+    /* 60% on mobile */
+    --tablet-scale: 0.8;
+    /* 80% on tablet */
+    --desktop-scale: 1.0;
+    /* 100% on desktop */
+
+    /* Responsive Typography */
+    --text-xs: 12px;
+    /* Mobile base */
+    --text-sm: 14px;
+    /* Tablet base */
+    --text-md: 16px;
+    /* Desktop base */
+    --text-lg: 18px;
+    /* Large screens */
+
+    /* Responsive Spacing */
+    --spacing-xs: 8px;
+    /* Mobile spacing */
+    --spacing-sm: 12px;
+    /* Tablet spacing */
+    --spacing-md: 16px;
+    /* Desktop spacing */
+    --spacing-lg: 24px;
+    /* Large spacing */
+
+    /* Game Element Responsive Sizes */
+    --game-element-mobile: 60%;
+    --game-element-tablet: 80%;
+    --game-element-desktop: 100%;
+
+    /* Animation Performance Scaling */
+    --animation-mobile: 0.8;
+    /* Slower animations on mobile */
+    --animation-tablet: 0.9;
+    /* Medium speed on tablet */
+    --animation-desktop: 1.0;
+    /* Full speed on desktop */
+}
+
+/* ===== GLOBAL RESPONSIVE RESET ===== */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: fixed;
+}
+
+/* ===== UNIFIED RESPONSIVE MIXINS (via classes) ===== */
+
+/* Mobile-First Base (Default) */
+.responsive-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.responsive-element {
+    transform: scale(var(--mobile-scale));
+    transition: transform 0.3s ease;
+}
+
+.responsive-text {
+    font-size: var(--text-xs);
+    line-height: 1.4;
+}
+
+.responsive-spacing {
+    padding: var(--spacing-xs);
+    margin: var(--spacing-xs);
+}
+
+/* ===== RESPONSIVE BREAKPOINTS - MOBILE FIRST ===== */
+
+/* Small Phones (375px+) */
+@media (min-width: 375px) {
+    .responsive-text {
+        font-size: 13px;
+    }
+}
+
+/* Large Phones (480px+) */
+@media (min-width: 480px) {
+    .responsive-element {
+        transform: scale(0.65);
+    }
+
+    .responsive-text {
+        font-size: var(--text-sm);
+    }
+
+    .responsive-spacing {
+        padding: var(--spacing-sm);
+        margin: var(--spacing-sm);
+    }
+}
+
+/* Tablets (768px+) */
+@media (min-width: 768px) {
+    .responsive-element {
+        transform: scale(var(--tablet-scale));
+    }
+
+    .responsive-text {
+        font-size: var(--text-md);
+    }
+
+    .responsive-spacing {
+        padding: var(--spacing-md);
+        margin: var(--spacing-md);
+    }
+}
+
+/* Small Laptops (1024px+) */
+@media (min-width: 1024px) {
+    .responsive-element {
+        transform: scale(0.9);
+    }
+
+    .responsive-text {
+        font-size: 17px;
+    }
+}
+
+/* Desktops (1440px+) */
+@media (min-width: 1440px) {
+    .responsive-element {
+        transform: scale(var(--desktop-scale));
+    }
+
+    .responsive-text {
+        font-size: var(--text-lg);
+    }
+
+    .responsive-spacing {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-lg);
+    }
+}
+
+/* ===== GAME-SPECIFIC RESPONSIVE ELEMENTS ===== */
+
+/* Pluto Entity Responsive */
+.pluto-entity {
+    /* Mobile First */
+    width: 60px;
+    height: 60px;
+    transform: translate(-50%, -50%) scale(var(--mobile-scale));
+}
+
+@media (min-width: 480px) {
+    .pluto-entity {
+        width: 70px;
+        height: 70px;
+        transform: translate(-50%, -50%) scale(0.7);
+    }
+}
+
+@media (min-width: 768px) {
+    .pluto-entity {
+        width: 84px;
+        height: 84px;
+        transform: translate(-50%, -50%) scale(var(--tablet-scale));
+    }
+}
+
+@media (min-width: 1024px) {
+    .pluto-entity {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+@media (min-width: 1440px) {
+    .pluto-entity {
+        transform: translate(-50%, -50%) scale(var(--desktop-scale));
+    }
+}
+
+/* Story Scene Responsive */
+.story-scene {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    overflow: hidden;
+}
+
+/* Story Text Responsive */
+.story-text {
+    /* Mobile First */
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 90%;
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 12px;
+    text-align: center;
+}
+
+@media (min-width: 480px) {
+    .story-text {
+        width: 90%;
+        max-width: 85%;
+        font-size: 14px;
+        padding: 16px;
+        bottom: 80px;
+    }
+}
+
+@media (min-width: 768px) {
+    .story-text {
+        width: 80%;
+        max-width: 600px;
+        font-size: 16px;
+        padding: 20px;
+        bottom: 100px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .story-text {
+        width: 70%;
+        max-width: 700px;
+        font-size: 18px;
+        bottom: 120px;
+    }
+}
+
+/* Control Buttons Responsive */
+.story-controls {
+    /* Mobile First */
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.story-controls button {
+    /* Mobile First */
+    padding: 10px 16px;
+    font-size: 10px;
+    border-radius: 8px;
+    min-width: 80px;
+}
+
+@media (min-width: 480px) {
+    .story-controls {
+        bottom: 20px;
+        gap: 15px;
+    }
+
+    .story-controls button {
+        padding: 12px 20px;
+        font-size: 12px;
+        min-width: 100px;
+    }
+}
+
+@media (min-width: 768px) {
+    .story-controls {
+        bottom: 30px;
+        gap: 20px;
+    }
+
+    .story-controls button {
+        padding: 15px 25px;
+        font-size: 14px;
+        min-width: 120px;
+    }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Reduce animations on mobile for performance */
+@media (max-width: 768px) {
+    * {
+        animation-duration: calc(1s * var(--animation-mobile)) !important;
+        transition-duration: calc(0.3s * var(--animation-mobile)) !important;
+    }
+
+    /* Hide complex animations on mobile */
+    .complex-animation {
+        display: none;
+    }
+
+    /* Simplify particle effects */
+    .particle-effect {
+        opacity: 0.6;
+        transform: scale(0.8);
+    }
+}
+
+/* Optimize for touch devices */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Touch-friendly button sizes */
+    button,
+    .button,
+    .clickable {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px;
+    }
+
+    /* Remove hover effects on touch */
+    *:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== SCENE-SPECIFIC UNIFIED RESPONSIVE ===== */
+
+/* Cinematic Intro Scene */
+.scene-cinematic-intro #kronos {
+    /* Mobile First */
+    width: 200px;
+    height: 200px;
+    transform: translate(-50%, -50%) scale(var(--mobile-scale));
+}
+
+@media (min-width: 480px) {
+    .scene-cinematic-intro #kronos {
+        width: 250px;
+        height: 250px;
+        transform: translate(-50%, -50%) scale(0.65);
+    }
+}
+
+@media (min-width: 768px) {
+    .scene-cinematic-intro #kronos {
+        width: 350px;
+        height: 350px;
+        transform: translate(-50%, -50%) scale(var(--tablet-scale));
+    }
+}
+
+@media (min-width: 1024px) {
+    .scene-cinematic-intro #kronos {
+        width: 400px;
+        height: 400px;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+@media (min-width: 1440px) {
+    .scene-cinematic-intro #kronos {
+        width: 450px;
+        height: 450px;
+        transform: translate(-50%, -50%) scale(var(--desktop-scale));
+    }
+}
+
+/* Factory Scene Responsive */
+.scene-factory .illustration {
+    /* Mobile First */
+    transform: translateY(-50%) scale(var(--mobile-scale));
+}
+
+@media (min-width: 480px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(0.65);
+    }
+}
+
+@media (min-width: 768px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(var(--tablet-scale));
+    }
+}
+
+@media (min-width: 1024px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(0.9);
+    }
+}
+
+@media (min-width: 1440px) {
+    .scene-factory .illustration {
+        transform: translateY(-50%) scale(var(--desktop-scale));
+    }
+}
+
+/* Lighthouse Scene Responsive */
+.scene-lighthouse .lighthouse-group {
+    /* Mobile First */
+    right: 5%;
+    bottom: 45%;
+    transform: scale(var(--mobile-scale));
+}
+
+@media (min-width: 480px) {
+    .scene-lighthouse .lighthouse-group {
+        right: 8%;
+        bottom: 50%;
+        transform: scale(0.7);
+    }
+}
+
+@media (min-width: 768px) {
+    .scene-lighthouse .lighthouse-group {
+        right: 12%;
+        bottom: 55%;
+        transform: scale(var(--tablet-scale));
+    }
+}
+
+@media (min-width: 1024px) {
+    .scene-lighthouse .lighthouse-group {
+        right: 15%;
+        bottom: 60%;
+        transform: scale(0.9);
+    }
+}
+
+@media (min-width: 1440px) {
+    .scene-lighthouse .lighthouse-group {
+        right: 20%;
+        bottom: 65%;
+        transform: scale(var(--desktop-scale));
+    }
+}
+
+/* ===== UTILITY CLASSES FOR RESPONSIVE DESIGN ===== */
+
+/* Show/Hide based on screen size */
+.mobile-only {
+    display: block;
+}
+
+.tablet-only {
+    display: none;
+}
+
+.desktop-only {
+    display: none;
+}
+
+@media (min-width: 480px) {
+    .mobile-only {
+        display: none;
+    }
+
+    .tablet-only {
+        display: block;
+    }
+}
+
+@media (min-width: 1024px) {
+    .tablet-only {
+        display: none;
+    }
+
+    .desktop-only {
+        display: block;
+    }
+}
+
+/* Performance Classes */
+.reduce-on-mobile {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .reduce-on-mobile {
+        opacity: 0.7;
+        transform: scale(0.8);
+    }
+
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+/* ===== PRINT AND ACCESSIBILITY ===== */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== HIGH DPI DISPLAYS ===== */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+    .high-dpi-optimize {
+        image-rendering: -webkit-optimize-contrast;
