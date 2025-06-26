@@ -89,6 +89,23 @@
       scrollbar-width: none;
     }
 
+    /* GLOBAL PLUTO CENTERING - Force center on all devices */
+    #game-pluto-container {
+      position: fixed !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .pluto-entity {
+      position: relative !important;
+      left: 0 !important;
+      top: 0 !important;
+      transform: none !important;
+    }
+
     /* MOBILE RESPONSIVE OPTIMIZATIONS */
     @media screen and (max-width: 768px) {
 
@@ -138,15 +155,22 @@
         top: 25% !important;
       }
 
-      /* Mobile Pluto optimizations */
+      /* Mobile Pluto optimizations - behind rings */
       #game-pluto-container {
-        pointer-events: none !important;
         z-index: 1 !important;
+        opacity: 0.85 !important;
       }
 
       .pluto-entity {
-        max-width: 120px !important;
-        max-height: 120px !important;
+        max-width: 45px !important;
+        max-height: 45px !important;
+      }
+
+      /* Slow down Pluto animations on mobile */
+      #game-pluto-container *,
+      .pluto-entity * {
+        animation-duration: 3s !important;
+        transition-duration: 0.8s !important;
       }
     }
 
@@ -173,8 +197,15 @@
 
       /* Small mobile Pluto optimizations */
       .pluto-entity {
-        max-width: 80px !important;
-        max-height: 80px !important;
+        max-width: 30px !important;
+        max-height: 30px !important;
+      }
+
+      /* Extra slow animations for very small screens */
+      #game-pluto-container *,
+      .pluto-entity * {
+        animation-duration: 5s !important;
+        transition-duration: 1.2s !important;
       }
     }
 
@@ -384,9 +415,9 @@
             INPUT_THROTTLE_NORMAL: 120,
             INPUT_THROTTLE_FEVER: 90,
             // Pluto responsive settings
-            PLUTO_SCALE: 0.6,
+            PLUTO_SCALE: 0.2,
             PLUTO_POSITION_OFFSET: 0,
-            PLUTO_ANIMATION_SPEED: 0.8
+            PLUTO_ANIMATION_SPEED: 0.4
           };
 
         case 'mobile':
@@ -404,9 +435,9 @@
             INPUT_THROTTLE_NORMAL: 100,
             INPUT_THROTTLE_FEVER: 75,
             // Pluto responsive settings
-            PLUTO_SCALE: 0.75,
+            PLUTO_SCALE: 0.25,
             PLUTO_POSITION_OFFSET: 0,
-            PLUTO_ANIMATION_SPEED: 0.9
+            PLUTO_ANIMATION_SPEED: 0.6
           };
 
         case 'tablet':
@@ -421,9 +452,9 @@
             DOM_POOL_SIZE: 70,
             ANIM_RING_SPAWN_DELAY: 420,
             // Pluto responsive settings
-            PLUTO_SCALE: 0.9,
+            PLUTO_SCALE: 0.3,
             PLUTO_POSITION_OFFSET: 0,
-            PLUTO_ANIMATION_SPEED: 1.0
+            PLUTO_ANIMATION_SPEED: 0.8
           };
 
         default: // desktop
@@ -431,7 +462,7 @@
             ...baseConstants,
             BASE_RADIUS: Math.min(100, maxRingRadius * 0.6),
             // Pluto responsive settings
-            PLUTO_SCALE: 1.0,
+            PLUTO_SCALE: 0.35,
             PLUTO_POSITION_OFFSET: 0,
             PLUTO_ANIMATION_SPEED: 1.0
           };
@@ -1250,8 +1281,8 @@
 
         // Device debug info (for testing mobile responsiveness)
         const deviceType = DeviceDetector.getDeviceType();
-        this.deviceDebugText = this.add.text(10, this.cameras.main.height - 80,
-          `Device: ${deviceType}\nScreen: ${window.innerWidth}x${window.innerHeight}\nRadius: ${RESPONSIVE_CONSTANTS.BASE_RADIUS}\nPluto Scale: ${RESPONSIVE_CONSTANTS.PLUTO_SCALE}x`, {
+        this.deviceDebugText = this.add.text(10, this.cameras.main.height - 100,
+          `Device: ${deviceType}\nScreen: ${window.innerWidth}x${window.innerHeight}\nRadius: ${RESPONSIVE_CONSTANTS.BASE_RADIUS}\nPluto Scale: ${RESPONSIVE_CONSTANTS.PLUTO_SCALE}x\nAnim Speed: ${RESPONSIVE_CONSTANTS.PLUTO_ANIMATION_SPEED}x`, {
           font: '12px Arial',
           fill: '#ffff00',
           stroke: '#000000',
@@ -2428,33 +2459,35 @@
         if (!this.pluto || !this.pluto.element) return;
 
         const scale = RESPONSIVE_CONSTANTS.PLUTO_SCALE;
-        const positionOffset = RESPONSIVE_CONSTANTS.PLUTO_POSITION_OFFSET;
-
-        // Apply scaling with CSS transform
-        this.pluto.element.style.transform = `scale(${scale}) translate(-50%, -50%)`;
-        this.pluto.element.style.transformOrigin = 'center center';
-
-        // Adjust position if needed (for very small screens)
-        if (positionOffset !== 0) {
-          const currentTop = parseFloat(this.pluto.element.style.top) || 50;
-          this.pluto.element.style.top = `${currentTop + positionOffset}%`;
-        }
-
-        // Ensure Pluto doesn't interfere with gameplay on mobile
         const deviceType = DeviceDetector.getDeviceType();
-        if (deviceType === 'small-mobile' || deviceType === 'mobile') {
-          // Make sure Pluto is behind rings and needle
-          this.pluto.element.style.zIndex = '1';
 
-          // Reduce opacity slightly on mobile to not distract
-          this.pluto.element.style.opacity = '0.85';
-        } else {
-          // Full visibility on desktop/tablet
-          this.pluto.element.style.opacity = '1';
-          this.pluto.element.style.zIndex = '10';
+        // Apply scaling to the container (centering is handled by CSS)
+        this.plutoContainer.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        this.plutoContainer.style.transformOrigin = 'center center';
+
+        // Apply animation speed to all CSS animations
+        const animationSpeed = RESPONSIVE_CONSTANTS.PLUTO_ANIMATION_SPEED;
+        this.pluto.element.style.animationDuration = `${2 / animationSpeed}s`; // Base 2s animation
+
+        // Apply to all child elements that might have animations
+        const childElements = this.pluto.element.querySelectorAll('*');
+        childElements.forEach(child => {
+          child.style.animationDuration = `inherit`;
+        });
+
+        // Note: Z-index and opacity are now handled by CSS media queries
+
+        // Force Pluto to recenter after all changes
+        if (this.pluto.resetPosition) {
+          setTimeout(() => {
+            this.pluto.resetPosition();
+            // Re-apply scaling to container (centering is guaranteed by CSS)
+            this.plutoContainer.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            this.plutoContainer.style.transformOrigin = 'center center';
+          }, 100);
         }
 
-        console.log(`🔧 Pluto scaled to ${scale}x for ${deviceType}`);
+        console.log(`🔧 Pluto centered and scaled to ${scale}x, anim speed: ${RESPONSIVE_CONSTANTS.PLUTO_ANIMATION_SPEED}x for ${deviceType}`);
       }
 
     }
