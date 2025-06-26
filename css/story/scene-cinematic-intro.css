@@ -467,9 +467,11 @@
     width: 280px;
     height: 280px;
     border-radius: 50%;
-    /* animation: orbital-rotation 15s linear infinite; */ /* This was the issue */
+    /* animation: orbital-rotation 15s linear infinite; */
+    /* This was the issue */
     z-index: 2;
-    transform-style: preserve-3d; /* This is important for 3D children */
+    transform-style: preserve-3d;
+    /* This is important for 3D children */
 }
 
 .ring-segment {
@@ -479,19 +481,51 @@
     background: linear-gradient(90deg, #DAA520 0%, #FFD700 50%, #B8860B 100%);
     border-radius: 4px;
     box-shadow: 0 0 8px rgba(218, 165, 32, 0.6);
-    transform-origin: 140px center; /* Use center for the y-origin of the transform */
+    transform-origin: 140px center;
+    /* Use center for the y-origin of the transform */
     animation: segment-3d-rotation 5s linear infinite;
     /* The transform property is now part of the animation keyframes */
 }
 
-.ring-segment:nth-child(1) { --rotation-z: 0deg;   animation-delay: 0s; }
-.ring-segment:nth-child(2) { --rotation-z: 45deg;  animation-delay: -0.6s; }
-.ring-segment:nth-child(3) { --rotation-z: 90deg;  animation-delay: -1.2s; }
-.ring-segment:nth-child(4) { --rotation-z: 135deg; animation-delay: -1.8s; }
-.ring-segment:nth-child(5) { --rotation-z: 180deg; animation-delay: -2.4s; }
-.ring-segment:nth-child(6) { --rotation-z: 225deg; animation-delay: -3.0s; }
-.ring-segment:nth-child(7) { --rotation-z: 270deg; animation-delay: -3.6s; }
-.ring-segment:nth-child(8) { --rotation-z: 315deg; animation-delay: -4.2s; }
+.ring-segment:nth-child(1) {
+    --rotation-z: 0deg;
+    animation-delay: 0s;
+}
+
+.ring-segment:nth-child(2) {
+    --rotation-z: 45deg;
+    animation-delay: -0.6s;
+}
+
+.ring-segment:nth-child(3) {
+    --rotation-z: 90deg;
+    animation-delay: -1.2s;
+}
+
+.ring-segment:nth-child(4) {
+    --rotation-z: 135deg;
+    animation-delay: -1.8s;
+}
+
+.ring-segment:nth-child(5) {
+    --rotation-z: 180deg;
+    animation-delay: -2.4s;
+}
+
+.ring-segment:nth-child(6) {
+    --rotation-z: 225deg;
+    animation-delay: -3.0s;
+}
+
+.ring-segment:nth-child(7) {
+    --rotation-z: 270deg;
+    animation-delay: -3.6s;
+}
+
+.ring-segment:nth-child(8) {
+    --rotation-z: 315deg;
+    animation-delay: -4.2s;
+}
 
 @keyframes orbital-rotation {
     from {
@@ -509,6 +543,7 @@
         /* Combine the positioning rotation with the start of the spin */
         transform: rotate(var(--rotation-z, 0deg)) rotateY(0deg);
     }
+
     to {
         /* Combine the positioning rotation with the end of the spin */
         transform: rotate(var(--rotation-z, 0deg)) rotateY(360deg);
@@ -974,7 +1009,8 @@
 @media (max-width: 480px) {
     #kronos {
         top: 40%;
-        transform: translate(-50%, -50%) scale(0.6); /* Increased scale for better visibility */
+        transform: translate(-50%, -50%) scale(0.6);
+        /* Increased scale for better visibility */
         width: 250px;
         height: 250px;
     }
@@ -1097,5 +1133,693 @@
     .press-continue {
         padding: 12px 24px;
         font-size: 12px;
+    }
+}
+
+/* =============================================================================
+   🪐 ENHANCED CHRONOS WITH CHORONOS.PNG - STEAMPUNK CLOCKWORK GOD
+   ============================================================================= */
+
+/* ===== MAIN CHRONOS IMAGE ===== */
+.chronos-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 15px rgba(255, 165, 0, 0.2)) brightness(1.05) contrast(1.1);
+    animation: divine-presence 8s ease-in-out infinite;
+    z-index: 5;
+}
+
+@keyframes divine-presence {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.3)) drop-shadow(0 0 15px rgba(255, 165, 0, 0.2)) brightness(1.05) contrast(1.1);
+        transform: scale(1);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.4)) drop-shadow(0 0 20px rgba(255, 165, 0, 0.3)) drop-shadow(0 0 25px rgba(255, 140, 0, 0.2)) brightness(1.1) contrast(1.2);
+        transform: scale(1.02);
+    }
+}
+
+/* ===== CLOCKWORK OVERLAY SYSTEM ===== */
+.clockwork-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* ===== GEAR SYSTEM REMOVED PER USER REQUEST ===== */
+
+/* ===== TIME MANIPULATION AURA ===== */
+.time-aura {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+}
+
+.time-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    animation: time-ripple-effect 6s ease-out infinite;
+}
+
+.time-ripple:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.time-ripple:nth-child(2) {
+    animation-delay: 2s;
+}
+
+.time-ripple:nth-child(3) {
+    animation-delay: 4s;
+}
+
+@keyframes time-ripple-effect {
+    0% {
+        width: 50px;
+        height: 50px;
+        opacity: 1;
+        border-width: 3px;
+    }
+
+    100% {
+        width: 400px;
+        height: 400px;
+        opacity: 0;
+        border-width: 1px;
+    }
+}
+
+/* ===== DIVINE EYES ===== */
+.chronos-eyes {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 40px;
+}
+
+.divine-eye {
+    position: absolute;
+    width: 25px;
+    height: 15px;
+    background: radial-gradient(ellipse, #FF4136 20%, #85144b 80%);
+    border-radius: 50%;
+    box-shadow:
+        0 0 10px #FF4136,
+        0 0 20px rgba(255, 65, 54, 0.6),
+        inset 0 0 5px rgba(0, 0, 0, 0.5);
+    animation: divine-eye-glow 4s ease-in-out infinite;
+}
+
+.left-eye {
+    left: 20px;
+}
+
+.right-eye {
+    right: 20px;
+}
+
+.pupil {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    animation: divine-pupil-scan 5s ease-in-out infinite;
+}
+
+.power-glow {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+            transparent 60%,
+            rgba(255, 65, 54, 0.4) 70%,
+            transparent 80%);
+    animation: power-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes divine-eye-glow {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 5px #FF4136,
+            0 0 10px rgba(255, 65, 54, 0.3),
+            inset 0 0 3px rgba(0, 0, 0, 0.5);
+    }
+
+    50% {
+        box-shadow:
+            0 0 8px #FF4136,
+            0 0 15px rgba(255, 65, 54, 0.4),
+            0 0 20px rgba(255, 140, 0, 0.2),
+            inset 0 0 5px rgba(0, 0, 0, 0.7);
+    }
+}
+
+@keyframes divine-pupil-scan {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) translateX(-2px);
+    }
+
+    25% {
+        transform: translate(-50%, -50%) translateX(2px);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateX(0px);
+    }
+
+    75% {
+        transform: translate(-50%, -50%) translateX(-1px);
+    }
+}
+
+@keyframes power-glow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* ===== DIVINE CROWN ===== */
+.divine-crown {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 40px;
+}
+
+.crown-gem {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, #FFD700 0%, #FF8C00 100%);
+    border-radius: 50%;
+    box-shadow:
+        0 0 15px #FFD700,
+        0 0 25px rgba(255, 215, 0, 0.8);
+    animation: crown-gem-shine 3s ease-in-out infinite;
+}
+
+.crown-spikes {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 20px;
+}
+
+.spike {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 20px solid #DAA520;
+    filter: drop-shadow(0 0 5px rgba(218, 165, 32, 0.6));
+}
+
+.spike:nth-child(1) {
+    left: 10px;
+}
+
+.spike:nth-child(2) {
+    left: 32px;
+}
+
+.spike:nth-child(3) {
+    right: 10px;
+}
+
+@keyframes crown-gem-shine {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 8px #FFD700,
+            0 0 12px rgba(255, 215, 0, 0.4);
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 12px #FFD700,
+            0 0 18px rgba(255, 215, 0, 0.6),
+            0 0 25px rgba(255, 165, 0, 0.3);
+        transform: translateX(-50%) scale(1.05);
+    }
+}
+
+/* ===== ENHANCED RING SYSTEM ===== */
+.ring-system {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    height: 350px;
+}
+
+.ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 3px solid transparent;
+}
+
+.outer-ring {
+    width: 300px;
+    height: 300px;
+    border-color: rgba(255, 215, 0, 0.4);
+    animation: ring-rotation-slow 20s linear infinite;
+}
+
+.middle-ring {
+    width: 250px;
+    height: 250px;
+    border-color: rgba(255, 165, 0, 0.6);
+    animation: ring-rotation-medium 15s linear infinite reverse;
+}
+
+.inner-ring {
+    width: 200px;
+    height: 200px;
+    border-color: rgba(255, 140, 0, 0.8);
+    animation: ring-rotation-fast 10s linear infinite;
+}
+
+@keyframes ring-rotation-slow {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes ring-rotation-medium {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes ring-rotation-fast {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* ===== RING PARTICLES ===== */
+.ring-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #FFD700;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #FFD700;
+    animation: particle-orbit 8s linear infinite;
+}
+
+.particle:nth-child(1) {
+    top: 0;
+    left: 50%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    top: 50%;
+    right: 0;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+    bottom: 0;
+    left: 50%;
+    animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+    top: 50%;
+    left: 0;
+    animation-delay: 6s;
+}
+
+@keyframes particle-orbit {
+    from {
+        transform: rotate(0deg) translateX(150px) rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg) translateX(150px) rotate(-360deg);
+    }
+}
+
+/* ===== DIVINE POWERS AND EFFECTS ===== */
+.divine-powers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 15;
+}
+
+/* ===== TEMPORAL ENERGY STREAMS ===== */
+.temporal-streams {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+}
+
+.stream {
+    position: absolute;
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 215, 0, 0.8) 50%,
+            transparent 100%);
+    transform-origin: center left;
+    animation: stream-flow 4s ease-in-out infinite;
+}
+
+.stream-1 {
+    top: 40%;
+    left: 50%;
+    transform: translateY(-50%) rotate(30deg);
+    animation-delay: 0s;
+}
+
+.stream-2 {
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) rotate(150deg);
+    animation-delay: 1.3s;
+}
+
+.stream-3 {
+    top: 60%;
+    left: 50%;
+    transform: translateY(-50%) rotate(270deg);
+    animation-delay: 2.6s;
+}
+
+@keyframes stream-flow {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translateY(-50%) rotate(var(--rotation, 30deg)) scaleX(0.5);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateY(-50%) rotate(var(--rotation, 30deg)) scaleX(1.2);
+    }
+}
+
+/* ===== CELESTIAL MUSIC VISUALIZATION ===== */
+.celestial-music {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+    pointer-events: none;
+}
+
+.music-note {
+    position: absolute;
+    font-size: 24px;
+    color: #FFD700;
+    text-shadow: 0 0 10px #FFD700;
+    animation: music-float 6s ease-in-out infinite;
+}
+
+.note-1 {
+    top: 20%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.note-2 {
+    top: 30%;
+    right: 20%;
+    animation-delay: 1.5s;
+}
+
+.note-3 {
+    bottom: 30%;
+    left: 30%;
+    animation-delay: 3s;
+}
+
+.note-4 {
+    bottom: 20%;
+    right: 30%;
+    animation-delay: 4.5s;
+}
+
+@keyframes music-float {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.6;
+    }
+
+    25% {
+        transform: translateY(-20px) scale(1.2);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(-10px) scale(1.1);
+        opacity: 0.8;
+    }
+
+    75% {
+        transform: translateY(-15px) scale(1.15);
+        opacity: 0.9;
+    }
+}
+
+/* ===== POWER EMANATIONS ===== */
+.power-emanations {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+}
+
+.emanation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(255, 215, 0, 0.2);
+    border-radius: 50%;
+    animation: power-emanation 8s ease-out infinite;
+}
+
+.emanation:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.emanation:nth-child(2) {
+    animation-delay: 2.7s;
+}
+
+.emanation:nth-child(3) {
+    animation-delay: 5.4s;
+}
+
+@keyframes power-emanation {
+    0% {
+        width: 100px;
+        height: 100px;
+        opacity: 1;
+        border-width: 3px;
+    }
+
+    100% {
+        width: 600px;
+        height: 600px;
+        opacity: 0;
+        border-width: 1px;
+    }
+}
+
+/* ===== PHASE-BASED REVEALS ===== */
+.scene-cinematic-intro[data-phase="2"] #kronos .chronos-image,
+.scene-cinematic-intro[data-phase="3"] #kronos .chronos-image {
+    animation: divine-entrance 3s ease-out;
+}
+
+@keyframes divine-entrance {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+        filter: brightness(0);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        filter: brightness(1.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        filter: brightness(1);
+    }
+}
+
+/* ===== MOBILE OPTIMIZATIONS FOR ENHANCED CHRONOS ===== */
+@media (max-width: 768px) {
+    #kronos {
+        width: 200px;
+        height: 200px;
+    }
+
+    .time-aura {
+        width: 250px;
+        height: 250px;
+    }
+
+    .ring-system {
+        width: 200px;
+        height: 200px;
+    }
+
+    .outer-ring {
+        width: 180px;
+        height: 180px;
+    }
+
+    .middle-ring {
+        width: 150px;
+        height: 150px;
+    }
+
+    .inner-ring {
+        width: 120px;
+        height: 120px;
+    }
+
+    .temporal-streams {
+        width: 300px;
+        height: 300px;
+    }
+
+    .celestial-music {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    #kronos {
+        width: 150px;
+        height: 150px;
+    }
+
+    .divine-eye {
+        width: 15px;
+        height: 10px;
+    }
+
+    .crown-gem {
+        width: 12px;
+        height: 12px;
+    }
+
+    .music-note {
+        font-size: 16px;
+    }
+
+    /* Gear system removed per user request */
+
+    .time-ripple {
+        border-width: 1px;
+    }
+
+    .temporal-streams {
+        width: 200px;
+        height: 200px;
+    }
+
+    .stream {
+        width: 100px;
+        height: 2px;
     }
 }
