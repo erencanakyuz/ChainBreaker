@@ -898,8 +898,8 @@
                     timeSinceLastInput: this.lastInputTime ? now - this.lastInputTime : 'first'
                 });
 
-                // SIMPLE DEBOUNCING: Prevent multiple rapid inputs
-                if (this.lastInputTime && now - this.lastInputTime < 50) {
+                // OPTIMIZED DEBOUNCING: Çok az delay - sadece double-click önleme
+                if (this.lastInputTime && now - this.lastInputTime < 16) { // ~1 frame (60fps)
                     console.log('🚫 Input debounced - too fast', { gap: now - this.lastInputTime });
                     return;
                 }
@@ -953,29 +953,33 @@
                 }
 
                 if (isHit) {
-                    // BAŞARILI VURUŞ:
-                    console.log('✅ SUCCESS HIT!', { lives: this.lives, combo: this.combo });
-                    this.activeRing.inputReceived = true; // Hileleri önlemek için ANINDA işle
+                    // ANINDA BAŞARILI VURUŞ - Hiç delay yok!
+                    console.log('✅ INSTANT SUCCESS HIT!', { lives: this.lives, combo: this.combo });
+                    this.activeRing.inputReceived = true; // ANINDA işle
+
+                    // INSTANT FEEDBACK - Tüm efektler aynı frame'de başlar
+                    this.triggerShake(8, 200); // Titreme anında
+                    this.animateRingBreak(this.activeRing); // Patlama anında
+
+                    // Ring değişimini anında yap - delay yok
                     this.handleSuccessfulHit();
-                    this.resetRegenTimer(); // Zamanlayıcıyı sadece başarıda sıfırla
+                    this.resetRegenTimer();
                 } else {
-                    // ISKA:
-                    console.log('❌ MISS!', { lives: this.lives, combo: this.combo });
+                    // ANINDA MISS
+                    console.log('❌ INSTANT MISS!', { lives: this.lives, combo: this.combo });
                     this.handleMiss();
                 }
             }
 
             handleSuccessfulHit() {
-                console.log('🎉 handleSuccessfulHit called - LIVES SHOULD NOT DECREASE!');
+                console.log('🎉 handleSuccessfulHit called - ULTRA FAST PROCESSING!');
 
                 const points = Math.floor(10 * (this.feverMode ? 2 : (1 + this.combo * 0.1)));
                 this.score += points;
                 this.combo++;
 
-                // ANINDA GERİ BİLDİRİM - Tüm efektler tıklama ile aynı anda tetiklenir
-                this.triggerShake(8, 200); // Güçlü titreme efekti
-                this.animateRingBreak(this.activeRing); // Kırılma animasyonunu ve parçacıkları BAŞLAT
-                this.showScorePopup(points, this.centerX, this.centerY); // Skoru göster
+                // Sadece skor popup - efektler zaten handleGameClick'te çalıştı
+                this.showScorePopup(points, this.centerX, this.centerY);
 
                 // SMOOTH RING TRANSITION: Needle pozisyonunu yumuşak geçişle ayarla
                 const oldRing = this.activeRing;
@@ -1017,16 +1021,16 @@
                 this.shakeDuration = Math.max(this.shakeDuration || 0, duration);
             }
 
-            // Bu fonksiyon artık sadece görsel animasyonu yönetiyor.
+            // ULTRA FAST RING BREAK - Minimal animation delay
             animateRingBreak(ring) {
                 ring.isBreaking = true;
                 ring.breakStartTime = performance.now();
-                ring.breakDuration = 300; // Ultra hızlı, tatmin edici kırılma süresi
+                ring.breakDuration = 200; // Çok hızlı kırılma - daha responsive
                 ring.originalRadius = ring.radius;
                 ring.originalThickness = ring.thickness;
                 this.breakingRings.push(ring);
 
-                // Yeni parçacık fonksiyonunu çağır
+                // Parçacık efektini anında başlat
                 this.createShatterParticles(ring);
             }
 
@@ -1234,115 +1238,146 @@
                 this.ui.levelText.textContent = 'Level: ' + this.level;
                 this.ui.livesText.textContent = 'Lives: ' + this.lives;
                 this.ui.comboText.textContent = 'Combo: ' + this.combo;
+
+                // FPS göstergesi ekle
+                if (this.fpsCounter && this.ui.feverText) {
+                    const fpsText = this.feverMode ?
+                        `FEVER MODE: ${Math.ceil(this.feverTimer / 1000)}s | FPS: ${this.fpsCounter.currentFps}` :
+                        `FPS: ${this.fpsCounter.currentFps} | Particles: ${this.particles.length}`;
+                    this.ui.feverText.textContent = fpsText;
+                }
             }
 
             update(deltaTime) {
                 if (this.currentScene !== 'game' || this.gameOverFlag) return;
 
-                // Initialize frame counter
+                // Performance optimized frame counter
                 if (!this.frameCount) this.frameCount = 0;
-
-                // Performance tracking
                 this.performanceMetrics.frameCount++;
 
-                // Update needle - FIXED: Only update if needle is active
-                if (this.needle && this.activeRing && this.needleActive) {
-                    this.needle.angle += this.needle.speed * deltaTime;
-                    if (this.needle.angle > Math.PI * 2) {
-                        this.needle.angle -= Math.PI * 2;
-                    }
-                }
+                // OPTIMIZED: Sadece gerekli güncellemeler
 
-                // Update fever mode
+                // Fever mode - her frame gerekli
                 if (this.feverMode) {
                     this.feverTimer -= deltaTime * 1000;
                     if (this.feverTimer <= 0) {
                         this.feverMode = false;
                         this.ui.feverText.textContent = '';
-                    } else {
-                        this.ui.feverText.textContent = 'FEVER MODE: ' + Math.ceil(this.feverTimer / 1000) + 's';
                     }
                 }
 
-                // Update Pluto mood system
-                if (this.frameCount % 6 === 0) { // Every 6 frames for performance
+                // Pluto mood - sadece her 12 frame'de (performance)
+                if (this.frameCount % 12 === 0) {
                     this.updatePlutoMood(deltaTime);
                 }
 
-                // GÜNCELLE: Sarsıntı mantığını ekleyin
-                if (this.shakeDuration > 0) {
-                    this.shakeDuration -= deltaTime * 1000;
-                    if (this.shakeDuration <= 0) this.shakeIntensity = 0; // Süre bitince sarsıntıyı sıfırla
-                }
-
+                // Normal parçacıklar - flaşlar hariç (onlar fastUpdate'de)
                 this.particles = this.particles.filter(p => {
-                    // Merkeze çekilme efekti
-                    if (p.isImploding && p.life > 0.1) {
-                        // Merkeze doğru çekim kuvveti
-                        const toCenter = {
-                            x: p.centerX - p.x,
-                            y: p.centerY - p.y
-                        };
-                        const distance = Math.sqrt(toCenter.x * toCenter.x + toCenter.y * toCenter.y);
+                    if (!p.isFlash) { // Sadece normal parçacıklar
+                        // Merkeze çekilme efekti
+                        if (p.isImploding && p.life > 0.1) {
+                            const toCenter = {
+                                x: p.centerX - p.x,
+                                y: p.centerY - p.y
+                            };
+                            const distance = Math.sqrt(toCenter.x * toCenter.x + toCenter.y * toCenter.y);
 
-                        if (distance > 5) {
-                            const pullForce = 1; // Çekim gücü
-                            const normalizedX = toCenter.x / distance;
-                            const normalizedY = toCenter.y / distance;
+                            if (distance > 5) {
+                                const pullForce = 1;
+                                const normalizedX = toCenter.x / distance;
+                                const normalizedY = toCenter.y / distance;
 
-                            // Hızı merkeze doğru değiştir
-                            p.vx += normalizedX * pullForce * deltaTime * 60;
-                            p.vy += normalizedY * pullForce * deltaTime * 60;
+                                p.vx += normalizedX * pullForce * deltaTime * 60;
+                                p.vy += normalizedY * pullForce * deltaTime * 60;
+                            }
                         }
-                    }
 
-                    p.x += p.vx * deltaTime * 60;
-                    p.y += p.vy * deltaTime * 60;
-                    p.life -= p.decay;
+                        p.x += p.vx * deltaTime * 60;
+                        p.y += p.vy * deltaTime * 60;
+                        p.life -= p.decay;
+                    }
                     return p.life > 0;
                 });
 
-                // Update stars
-                this.stars.forEach(star => {
-                    star.alpha += Math.sin(Date.now() * star.twinkleSpeed) * 0.01;
-                    star.alpha = Math.max(0.2, Math.min(1, star.alpha));
-                });
+                // Stars - sadece her 6 frame'de (performance boost)
+                if (this.frameCount % 6 === 0) {
+                    this.stars.forEach(star => {
+                        star.alpha += Math.sin(Date.now() * star.twinkleSpeed) * 0.01;
+                        star.alpha = Math.max(0.2, Math.min(1, star.alpha));
+                    });
+                }
 
-                this.frameCount = (this.frameCount + 1) % 12; // Reset cycle
+                this.frameCount = (this.frameCount + 1) % 24; // Bigger cycle for less computation
             }
 
             render() {
-                // Apply screen shake effect with new system
+                // HIGH FPS OPTIMIZED RENDER
                 this.ctx.save();
+
+                // Shake effect - optimized calculation
                 if (this.shakeIntensity > 0) {
                     const shakeX = (Math.random() - 0.5) * this.shakeIntensity;
                     const shakeY = (Math.random() - 0.5) * this.shakeIntensity;
                     this.ctx.translate(shakeX, shakeY);
                 }
 
-                // Clear canvas
-                this.ctx.fillStyle = '#000';
+                // Fast clear - solid color only
+                this.ctx.fillStyle = '#0f0f23';
                 this.ctx.fillRect(0, 0, this.width, this.height);
 
-                // Draw gradient background
-                const gradient = this.ctx.createRadialGradient(
-                    this.centerX, this.centerY, 0,
-                    this.centerX, this.centerY, Math.max(this.width, this.height)
-                );
-                gradient.addColorStop(0, '#1e3c72');
-                gradient.addColorStop(0.5, '#2a5298');
-                gradient.addColorStop(1, '#0f0f23');
-                this.ctx.fillStyle = gradient;
-                this.ctx.fillRect(0, 0, this.width, this.height);
+                // Lightweight background - gradyantsız daha hızlı
+                if (!this.isHighFpsMode) {
+                    this.isHighFpsMode = true; // Sadece bir kez set et
+                    console.log('🚀 HIGH FPS MODE ACTIVATED - Simplified rendering');
+                }
 
+                // Scene rendering
                 if (this.currentScene === 'menu') {
                     this.renderMenu();
                 } else if (this.currentScene === 'game') {
-                    this.renderGame();
+                    this.renderGameOptimized(); // Optimized version
                 }
 
-                // Restore canvas transform after shake effect
                 this.ctx.restore();
+            }
+
+            // OPTIMIZED: Oyun render'ı - daha hızlı
+            renderGameOptimized() {
+                // Stars - basit çizim
+                if (this.frameCount % 3 === 0) { // Her 3 frame'de star update
+                    this.ctx.fillStyle = '#ffffff';
+                    this.stars.forEach(star => {
+                        this.ctx.globalAlpha = star.alpha * 0.3; // Daha hafif
+                        this.ctx.fillRect(star.x - 1, star.y - 1, 2, 2); // Basit kare
+                    });
+                    this.ctx.globalAlpha = 1;
+                }
+
+                // Rings - ana çizim
+                [...this.rings, ...this.breakingRings].forEach(ring => this.drawRing(ring));
+                this.breakingRings = this.breakingRings.filter(r => (performance.now() - r.breakStartTime) < r.breakDuration);
+
+                // Needle - kritik çizim
+                if (this.needle && this.activeRing && this.needleActive) {
+                    this.drawNeedle();
+                }
+
+                // Particles - basit çizim
+                this.ctx.fillStyle = '#ffffff';
+                this.particles.forEach(p => {
+                    this.ctx.globalAlpha = p.life;
+
+                    if (p.isFlash) {
+                        // Basit flaş - gradient yok
+                        this.ctx.fillStyle = `rgba(255, 255, 255, ${p.life * 0.5})`;
+                        this.ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+                    } else {
+                        // Normal parçacık
+                        this.ctx.fillStyle = p.color;
+                        this.ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+                    }
+                });
+                this.ctx.globalAlpha = 1;
             }
 
             renderMenu() {
@@ -1442,13 +1477,75 @@
 
 
             gameLoop(currentTime = 0) {
-                this.deltaTime = (currentTime - this.lastTime) / 1000;
+                // FPS ölçümü ve optimizasyon
+                if (!this.fpsCounter) {
+                    this.fpsCounter = {
+                        frameCount: 0,
+                        lastFpsTime: currentTime,
+                        currentFps: 60,
+                        frameHistory: [],
+                        targetFps: 120 // Hedef FPS artırıldı
+                    };
+                }
+
+                // FPS BOOST: Delta time'ı sınırla - çok yüksek FPS için
+                this.deltaTime = Math.min((currentTime - this.lastTime) / 1000, 1 / 60); // Max 60fps delta
                 this.lastTime = currentTime;
 
-                this.update(this.deltaTime);
+                // FPS hesapla
+                this.fpsCounter.frameCount++;
+                if (currentTime - this.fpsCounter.lastFpsTime >= 1000) {
+                    this.fpsCounter.currentFps = Math.round(this.fpsCounter.frameCount * 1000 / (currentTime - this.fpsCounter.lastFpsTime));
+                    this.fpsCounter.frameCount = 0;
+                    this.fpsCounter.lastFpsTime = currentTime;
+
+                    // Console'da detaylı FPS bilgisi
+                    console.log(`🚀 HIGH FPS: ${this.fpsCounter.currentFps} | Target: ${this.fpsCounter.targetFps} | Delta: ${(this.deltaTime * 1000).toFixed(1)}ms | Particles: ${this.particles.length}`);
+                }
+
+                // TRIPLE UPDATE SYSTEM: Ultra responsive için 3 katmanlı güncelleme
+                this.ultraFastUpdate(this.deltaTime); // En kritik: Input ve needle
+                this.fastUpdate(this.deltaTime);      // Orta: Collision ve efektler  
+                this.update(this.deltaTime);          // Normal: Diğer game logic
                 this.render();
 
+                // HIGH FPS REQUEST: Daha sık frame talep et
                 requestAnimationFrame((time) => this.gameLoop(time));
+            }
+
+            // YENİ: ULTRA FAST - En kritik işlemler
+            ultraFastUpdate(deltaTime) {
+                // SADECE needle pozisyonu - her frame'de çalışır
+                if (this.currentScene === 'game' && !this.gameOverFlag && this.needle && this.activeRing && this.needleActive) {
+                    // Multiple needle updates for ultra smooth movement
+                    const microDelta = deltaTime / 2; // Daha küçük adımlar
+                    for (let i = 0; i < 2; i++) {
+                        this.needle.angle += this.needle.speed * microDelta;
+                        if (this.needle.angle > Math.PI * 2) {
+                            this.needle.angle -= Math.PI * 2;
+                        }
+                    }
+                }
+            }
+
+            // YENİ: FAST - Orta öncelik işlemler
+            fastUpdate(deltaTime) {
+                // Collision detection ve immediate effects
+                if (this.currentScene === 'game' && !this.gameOverFlag) {
+                    // Titreme efektini hızlı güncelle
+                    if (this.shakeDuration > 0) {
+                        this.shakeDuration -= deltaTime * 1000;
+                        if (this.shakeDuration <= 0) this.shakeIntensity = 0;
+                    }
+
+                    // Kritik parçacıkları hızlı güncelle (sadece flaş efektleri)
+                    this.particles = this.particles.filter(p => {
+                        if (p.isFlash) {
+                            p.life -= p.decay * 2; // Flaş efektlerini daha hızlı güncelle
+                        }
+                        return p.life > 0;
+                    });
+                }
             }
         }
 
