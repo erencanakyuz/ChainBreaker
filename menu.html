@@ -183,6 +183,48 @@
       getGradientColors: getGradientColors
     };
 
+    // GAME CONSTANTS - Single source of truth
+    const GAME_CONSTANTS = {
+      // Ring properties
+      BASE_RADIUS: 100,
+      RING_THICKNESS: 20,
+      RING_GAP: 15,
+      MAX_RINGS: 12,
+      INITIAL_RINGS: 6,
+
+      // Timing
+      REGEN_DELAY: 5000,
+      FEVER_DURATION: 5000,
+      INPUT_THROTTLE_NORMAL: 85,
+      INPUT_THROTTLE_FEVER: 60,
+
+      // Gameplay
+      INITIAL_LIVES: 3,
+      MAX_LIVES: 5,
+      COMBO_FOR_FEVER: 5,
+      POINTS_BASE: 10,
+      NEEDLE_SPEED_MULTIPLIER: 1.03,
+
+      // Performance
+      TARGET_FPS: 144,
+      DOM_POOL_SIZE: 80,
+
+      // Update frequencies (frame skipping)
+      UPDATE_CRITICAL: 1,      // Every frame
+      UPDATE_ESSENTIAL: 2,     // Every 2 frames
+      UPDATE_VISUAL: 4,        // Every 4 frames
+      UPDATE_NONCRITICAL: 6,   // Every 6 frames
+      UPDATE_CYCLE: 12,        // Reset cycle
+
+      // Animation durations
+      ANIM_SCORE_POPUP: 800,
+      ANIM_COMBO_EFFECT: 600,
+      ANIM_LEVEL_UP: 2000,
+      ANIM_RING_BREAK: 800,
+      ANIM_RING_SPAWN: 300,
+      ANIM_RING_SPAWN_DELAY: 480
+    };
+
     // BootScene: Enhanced with gradient loading and better visuals
     class BootScene extends Phaser.Scene {
       constructor() {
@@ -385,7 +427,6 @@
         this.titleElement = titleElement;
 
         // Create new base Pluto on the left side
-        this.setupNewBasePluto();
 
         // Create modern subtitle
         const subtitleText = this.add.text(width / 2, 180, 'BREAK THE CHAINS • MASTER THE RINGS', {
@@ -396,8 +437,6 @@
           strokeThickness: 1,
           alpha: 0.9
         }).setOrigin(0.5);
-
-
 
 
         // Note: Story Mode button removed - story is accessed from index.html (main page)
@@ -673,447 +712,6 @@
         }
       }
 
-      setupNewBasePluto() {
-        // Create new base Pluto using the new component system
-        const plutoContainer = document.createElement('div');
-        plutoContainer.id = 'menu-pluto-container';
-        plutoContainer.style.cssText = `
-          position: absolute;
-          left: 80px;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 1000;
-          pointer-events: none;
-          width: 100px;
-          height: 100px;
-        `;
-
-        // Create the new base Pluto structure directly
-        const plutoEntity = document.createElement('div');
-        plutoEntity.className = 'pluto-base-entity';
-        plutoEntity.dataset.mood = 'neutral';
-        plutoEntity.dataset.animation = 'idle';
-        plutoEntity.dataset.skin = 'default';
-        plutoEntity.dataset.context = 'menu';
-
-        // Create shadow
-        const shadow = document.createElement('div');
-        shadow.className = 'scene_plutoShadow';
-
-        // Create t_wrap container
-        const tWrap = document.createElement('div');
-        tWrap.className = 't_wrap';
-
-        // Create main pluto body
-        const pluto = document.createElement('div');
-        pluto.className = 'scene_pluto';
-
-        // Create eyes
-        const eyes = document.createElement('div');
-        eyes.className = 'eyes';
-
-        const leftEye = document.createElement('div');
-        leftEye.className = 'eye eye--left';
-
-        const rightEye = document.createElement('div');
-        rightEye.className = 'eye eye--right';
-
-        eyes.appendChild(leftEye);
-        eyes.appendChild(rightEye);
-
-        // Create mouth
-        const mouth = document.createElement('div');
-        mouth.className = 'mouth';
-
-        // Assemble the new structure
-        pluto.appendChild(eyes);
-        pluto.appendChild(mouth);
-        tWrap.appendChild(pluto);
-        plutoEntity.appendChild(shadow);
-        plutoEntity.appendChild(tWrap);
-        plutoContainer.appendChild(plutoEntity);
-        document.body.appendChild(plutoContainer);
-
-        // Store references for the new structure
-        this.menuPlutoContainer = plutoContainer;
-        this.menuPlutoEntity = plutoEntity;
-        this.menuPlutopluto = pluto;
-
-        // 🎲 Start random animation cycling
-        this.setupRandomAnimationCycling();
-
-
-      }
-
-      // 🎲 RANDOM ANIMATION CYCLING SYSTEM
-      setupRandomAnimationCycling() {
-
-
-        // Start random cycling after 3 seconds (Phaser timing optimization)
-        this.time.delayedCall(3000, () => {
-          this.startRandomAnimationCycle();
-        });
-      }
-
-      startRandomAnimationCycle() {
-        const menuPluto = document.querySelector('#menu-pluto-container .pluto-base-entity');
-        if (!menuPluto) return;
-
-        // Enable random mode
-        menuPluto.setAttribute('data-random', 'true');
-
-        // Single animation only (Orbital Dance)
-        const animationDuration = 5000; // 5 seconds
-
-        const cycleAnimations = () => {
-          // Stop if not in menu scene anymore
-          if (this.scene.key !== 'MenuScene') {
-            return;
-          }
-
-          // Set random CSS variables for full screen movement
-          this.setRandomMovementRange(menuPluto);
-
-          // Reset animation first to trigger new animation
-          menuPluto.removeAttribute('data-current-random');
-          menuPluto.style.animation = 'none';
-
-          // Force reflow to reset animation
-          menuPluto.offsetHeight;
-
-          // Apply the orbital dance animation after small delay
-          setTimeout(() => {
-            menuPluto.setAttribute('data-current-random', '1');
-          }, 50);
-
-
-
-          // Return to idle after animation finishes
-          setTimeout(() => {
-            if (menuPluto.getAttribute('data-current-random') === '1') {
-              menuPluto.removeAttribute('data-current-random');
-
-            }
-          }, animationDuration);
-
-          // Schedule next animation after current one finishes + 3-4 second idle break (Phaser timing)
-          const nextDelay = animationDuration + Math.random() * 1000 + 3000; // 3-4 second break between animations
-          this.time.delayedCall(nextDelay, cycleAnimations);
-        };
-
-        const setRandomMovementRange = (element) => {
-          // Generate random movement ranges for entire screen coverage
-          const screenWidth = window.innerWidth;
-          const screenHeight = window.innerHeight;
-
-          // Calculate safe movement ranges (keep Pluto visible)
-          const maxX = Math.min(screenWidth * 0.8, 1000); // Max 80% of screen width
-          const maxY = Math.min(screenHeight * 0.6, 600); // Max 60% of screen height
-
-          const randomValues = {
-            // X coordinates (horizontal movement)
-            '--random-x1': `${Math.random() * maxX + 200}px`,        // Top-right area
-            '--random-x2': `${Math.random() * maxX + 300}px`,        // Far right
-            '--random-x3': `${Math.random() * maxX + 100}px`,        // Right side
-            '--random-x4': `${Math.random() * 400 + 200}px`,         // Center-right
-            '--random-x5': `${-Math.random() * 400 - 100}px`,        // Left side
-            '--random-x6': `${-Math.random() * maxX - 200}px`,       // Far left
-            '--random-x7': `${-Math.random() * 600 - 100}px`,        // Top-left area
-
-            // Y coordinates (vertical movement) - NEW!
-            '--random-y1': `${-Math.random() * maxY - 100}%`,        // Top areas
-            '--random-y2': `${-Math.random() * maxY - 150}%`,        // High top
-            '--random-y3': `${Math.random() * maxY + 50}%`,          // Bottom areas
-            '--random-y4': `${Math.random() * maxY + 100}%`,         // Lower bottom
-            '--random-y5': `${Math.random() * maxY + 150}%`,         // Deep bottom
-            '--random-y6': `${Math.random() * 200 + 50}%`,           // Mid-bottom
-            '--random-y7': `${-Math.random() * 200 - 50}%`           // Mid-top
-          };
-
-          // Apply all random values to the element
-          Object.entries(randomValues).forEach(([property, value]) => {
-            element.style.setProperty(property, value);
-          });
-
-
-        };
-
-        // Store the function on this object for external access
-        this.setRandomMovementRange = setRandomMovementRange;
-
-        // Start the cycle
-        cycleAnimations();
-      }
-
-
-
-
-
-      setPlutoPosition(mode) {
-        if (!this.unifiedPlutoContainer) return;
-
-        if (mode === 'menu') {
-          this.unifiedPlutoContainer.style.cssText = `
-            position: absolute;
-            left: 80px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1000;
-            pointer-events: none;
-          `;
-          if (this.plutoShadow) {
-            this.plutoShadow.style.opacity = '0';
-          }
-        } else if (mode === 'game') {
-          this.unifiedPlutoContainer.style.cssText = `
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            pointer-events: none;
-          `;
-          if (this.plutoShadow) {
-            this.plutoShadow.style.opacity = '1';
-          }
-        }
-      }
-
-      addUnifiedPlutoAnimations() {
-        if (!document.getElementById('unified-pluto-animations')) {
-          const styleSheet = document.createElement('style');
-          styleSheet.id = 'unified-pluto-animations';
-          styleSheet.textContent = `
-            /* Unified Pluto Animations - Simplified */
-            @keyframes pluto-idle {
-              0%, 100% {
-                transform: translateY(0px) scale(1);
-                box-shadow: 0px 0px 0px 3px rgba(142, 45, 226, 0.6) inset,
-                    -20px -15px 40px #4a00e0 inset,
-                    0 0 18px rgba(142, 45, 226, 0.4);
-              }
-              50% {
-                transform: translateY(-4px) scale(1.05);
-                box-shadow: 0px 0px 0px 3px rgba(142, 45, 226, 0.8) inset,
-                    -20px -15px 40px #4a00e0 inset,
-                    0 0 25px rgba(142, 45, 226, 0.6);
-              }
-            }
-
-            @keyframes pluto-excited {
-              0%, 100% {
-                transform: translateY(0px) scale(1) rotate(0deg);
-              }
-              25% {
-                transform: translateY(-8px) scale(1.1) rotate(2deg);
-              }
-              75% {
-                transform: translateY(-8px) scale(1.1) rotate(-2deg);
-              }
-            }
-
-            @keyframes pluto-happy {
-              0%, 100% {
-                transform: scale(1);
-                box-shadow: 0px 0px 0px 3px rgba(255, 215, 0, 0.8) inset,
-                    -20px -15px 40px #4a00e0 inset,
-                    0 0 30px rgba(255, 215, 0, 0.7);
-              }
-              50% {
-                transform: scale(1.1);
-                box-shadow: 0px 0px 0px 5px rgba(255, 215, 0, 1) inset,
-                    -20px -15px 40px #4a00e0 inset,
-                    0 0 40px rgba(255, 215, 0, 0.9);
-              }
-            }
-
-            @keyframes pluto-orbit {
-              0% {
-                transform: rotate(0deg) translateX(30px) rotate(0deg);
-              }
-              100% {
-                transform: rotate(360deg) translateX(30px) rotate(-360deg);
-              }
-            }
-
-            @keyframes pluto-blink {
-              0%, 90%, 100% { 
-                height: 7px; 
-                opacity: 1;
-                background: #ffffff;
-              }
-              95% { 
-                height: 1px; 
-                opacity: 0.8;
-              }
-              98% {
-                height: 7px;
-                opacity: 1;
-                background: #ffaa00;
-                box-shadow: 0 0 8px rgba(255, 170, 0, 1);
-              }
-            }
-
-            /* Speech bubble for unified Pluto */
-            .pluto-speech-bubble {
-              position: absolute;
-              top: -80px;
-              left: 60px;
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 240, 255, 0.95));
-              border: 2px solid rgba(142, 45, 226, 0.6);
-              border-radius: 15px;
-              padding: 10px 15px;
-              max-width: 200px;
-              box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-              z-index: 20000;
-              opacity: 0;
-              transition: all 0.3s ease;
-              pointer-events: none;
-              font-family: 'Arial', sans-serif;
-              font-size: 12px;
-              color: #333;
-              text-align: left;
-              line-height: 1.3;
-              backdrop-filter: blur(5px);
-            }
-
-            .pluto-speech-bubble.show {
-              opacity: 1;
-              transform: translateY(-5px);
-            }
-
-            .pluto-speech-bubble::after {
-              content: '';
-              position: absolute;
-              bottom: -8px;
-              left: 20px;
-              width: 0;
-              height: 0;
-              border-left: 8px solid transparent;
-              border-right: 8px solid transparent;
-              border-top: 8px solid rgba(255, 255, 255, 0.95);
-            }
-          `;
-          document.head.appendChild(styleSheet);
-        }
-      }
-
-      startPlutoSpeech() {
-        if (this.plutoMode !== 'menu') return;
-
-        // Random menu greetings
-        const menuGreetings = [
-          "Merhaba! 👋✨",
-          "Hoş geldin! 🪐",
-          "Hangi modu seçeceksin? 🤔",
-          "Ben buradayım! 😊",
-          "Hadi oynayalım! 🎮",
-          "Bugün nasılsın? 💫",
-          "Harika bir gün! ☀️",
-          "Maceraya hazır mısın? 🚀"
-        ];
-
-        const showRandomGreeting = () => {
-          if (!this.unifiedPlutoContainer || this.plutoMode !== 'menu') return;
-
-          const message = menuGreetings[Math.floor(Math.random() * menuGreetings.length)];
-          this.showPlutoSpeech(message);
-        };
-
-        // Show initial greeting after delay
-        this.time.delayedCall(2000, showRandomGreeting);
-
-        // Show random greetings every 8-12 seconds
-        const scheduleNextSpeech = () => {
-          if (!this.unifiedPlutoContainer || this.plutoMode !== 'menu') return;
-
-          const delay = Phaser.Math.Between(8000, 12000);
-          this.time.delayedCall(delay, () => {
-            showRandomGreeting();
-            scheduleNextSpeech(); // Schedule next one
-          });
-        };
-
-        scheduleNextSpeech();
-      }
-
-      showPlutoSpeech(message) {
-        if (!this.unifiedPlutoContainer) return;
-
-        // Remove existing speech bubble
-        const existingBubble = this.unifiedPlutoContainer.querySelector('.pluto-speech-bubble');
-        if (existingBubble) {
-          existingBubble.remove();
-        }
-
-        // Create new speech bubble
-        const speechBubble = document.createElement('div');
-        speechBubble.className = 'pluto-speech-bubble';
-        speechBubble.textContent = message;
-
-        this.unifiedPlutoContainer.appendChild(speechBubble);
-
-        // Show with animation (Phaser timing optimization)
-        this.time.delayedCall(10, () => {
-          speechBubble.classList.add('show');
-        });
-
-        // Hide after delay (Phaser timing optimization)  
-        this.time.delayedCall(3000 + message.length * 100, () => {
-          if (speechBubble && speechBubble.parentNode) {
-            speechBubble.classList.remove('show');
-            this.time.delayedCall(300, () => {
-              if (speechBubble && speechBubble.parentNode) {
-                speechBubble.remove();
-              }
-            });
-          }
-        });
-      }
-
-      // Add simple animation control methods
-      setPlutoAnimation(animationType) {
-        if (!this.plutoBody) return;
-
-        // Remove existing animation classes
-        this.plutoBody.style.animation = '';
-
-        switch (animationType) {
-          case 'idle':
-            this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
-            break;
-          case 'excited':
-            this.plutoBody.style.animation = 'pluto-excited 1s infinite ease-in-out';
-            break;
-          case 'happy':
-            this.plutoBody.style.animation = 'pluto-happy 2s infinite ease-in-out';
-            break;
-          case 'orbit':
-            this.plutoBody.style.animation = 'pluto-orbit 4s infinite linear';
-            break;
-          default:
-            this.plutoBody.style.animation = 'pluto-idle 3s infinite ease-in-out';
-        }
-      }
-
-      switchPlutoToGameMode() {
-        if (!this.unifiedPlutoContainer) return;
-
-        this.plutoMode = 'game';
-        this.setPlutoPosition('game');
-
-        // Remove any speech bubbles
-        const speechBubble = this.unifiedPlutoContainer.querySelector('.pluto-speech-bubble');
-        if (speechBubble) {
-          speechBubble.remove();
-        }
-
-        // Switch to more active animations for game
-        this.setPlutoAnimation('excited');
-
-
-      }
-
       shutdown() {
         // Clean up the DOM title element when leaving menu
         if (this.titleElement) {
@@ -1127,152 +725,92 @@
           this.keydownHandler = null;
         }
 
-        // Clean up menu Pluto
-        if (this.menuPlutoContainer) {
-          this.menuPlutoContainer.remove();
-          this.menuPlutoContainer = null;
-          this.menuPlutoEntity = null;
-        }
-
-        // Clean up unified Pluto (legacy)
-        if (this.unifiedPlutoContainer) {
-          this.unifiedPlutoContainer.remove();
-          this.unifiedPlutoContainer = null;
-          this.plutoBody = null;
-          this.plutoShadow = null;
-          this.plutoEyes = null;
-          this.plutoMouth = null;
+        // Clean up menu Pluto by calling the new UI manager's destroy method
+        if (window.menuUI) {
+          window.menuUI.destroy();
+          window.menuUI = null;
         }
       }
     }
-
     // MainScene: Oyun mekaniğini barındırır.
     class MainScene extends Phaser.Scene {
       constructor() {
         super('MainScene');
-        // Expanded object pools for maximum efficiency
-        this.scorePopupPool = [];
-        this.comboEffectPool = [];
-        this.ringPool = [];
-        this.maxPoolSize = 80; // Hybrit optimization: Increased from 50 to 80 for better DOM pooling
+        // Enhanced DOM Pool Manager
+        this.domPools = {};
+        this.maxPoolSize = GAME_CONSTANTS.DOM_POOL_SIZE;
+      }
+
+      // DOM Pool Manager Class
+      createDOMPool(className) {
+        return {
+          pool: [],
+          active: new Set(),
+          className: className,
+          get: function () {
+            let element = this.pool.pop();
+            if (!element) {
+              element = document.createElement('div');
+              element.className = this.className;
+            }
+            this.active.add(element);
+            element.style.display = 'block';
+            return element;
+          },
+          release: function (element) {
+            if (this.active.delete(element)) {
+              if (element.parentNode) {
+                element.remove();
+              }
+              element.style.display = 'none';
+              element.textContent = '';
+              if (this.pool.length < 80) {
+                this.pool.push(element);
+              }
+            }
+          },
+          clear: function () {
+            this.active.forEach(element => {
+              if (element.parentNode) element.remove();
+            });
+            this.pool.forEach(element => {
+              if (element.parentNode) element.remove();
+            });
+            this.active.clear();
+            this.pool.length = 0;
+          }
+        };
       }
 
       init(data) {
         this.selectedMode = data.selectedMode || null;
         this.level = 1;
         this.lastUpdateTime = 0;
-        this.targetFPS = 144; // Updated from 60 to 144
+        this.targetFPS = GAME_CONSTANTS.TARGET_FPS;
         this.frameBudget = 1000 / this.targetFPS;
         this.needleActive = false; // Needle starts inactive until all rings are created
       }
 
-      switchMenuPlutoToGameMode() {
-        // Find menu Pluto from menu scene
-        const menuPluto = document.getElementById('menu-pluto-container');
-
-        if (menuPluto) {
-          // Store reference
-          this.gamePlutoContainer = menuPluto;
-          this.gamePlutoEntity = menuPluto.querySelector('.pluto-base-entity');
-
-          // Switch to game position and mode
-          menuPluto.style.cssText = `
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            pointer-events: none;
-            width: 100px;
-            height: 100px;
-          `;
-
-          // Change to game context and excited animation for game mode
-          if (this.gamePlutoEntity) {
-            this.gamePlutoEntity.dataset.context = 'game';
-            this.gamePlutoEntity.dataset.animation = 'excited';
-            this.gamePlutoEntity.dataset.mood = 'happy';
-          }
-
-          console.log('✅ Menu Pluto successfully switched to game mode');
-
-        } else {
-          console.log('ℹ️ Menu Pluto container not found, creating game Pluto directly...');
-          this.createGamePlutoDirectly();
-        }
-      }
-
-      createGamePlutoDirectly() {
-        // Create Pluto directly in game if menu version doesn't exist
-        const gamePlutoContainer = document.createElement('div');
-        gamePlutoContainer.id = 'game-pluto-container';
-        gamePlutoContainer.style.cssText = `
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 1000;
-          pointer-events: none;
-          width: 100px;
-          height: 100px;
-        `;
-
-        // Create the new base Pluto structure directly
-        const plutoEntity = document.createElement('div');
-        plutoEntity.className = 'pluto-base-entity';
-        plutoEntity.dataset.mood = 'happy';
-        plutoEntity.dataset.animation = 'excited';
-        plutoEntity.dataset.skin = 'default';
-        plutoEntity.dataset.context = 'game';
-
-        // Create shadow
-        const shadow = document.createElement('div');
-        shadow.className = 'scene_plutoShadow';
-
-        // Create t_wrap container
-        const tWrap = document.createElement('div');
-        tWrap.className = 't_wrap';
-
-        // Create main pluto body
-        const pluto = document.createElement('div');
-        pluto.className = 'scene_pluto';
-
-        // Create eyes
-        const eyes = document.createElement('div');
-        eyes.className = 'eyes';
-
-        const leftEye = document.createElement('div');
-        leftEye.className = 'eye eye--left';
-
-        const rightEye = document.createElement('div');
-        rightEye.className = 'eye eye--right';
-
-        eyes.appendChild(leftEye);
-        eyes.appendChild(rightEye);
-
-        // Create mouth
-        const mouth = document.createElement('div');
-        mouth.className = 'mouth';
-
-        // Assemble the structure
-        pluto.appendChild(eyes);
-        pluto.appendChild(mouth);
-        tWrap.appendChild(pluto);
-        plutoEntity.appendChild(shadow);
-        plutoEntity.appendChild(tWrap);
-        gamePlutoContainer.appendChild(plutoEntity);
-        document.body.appendChild(gamePlutoContainer);
-
-        // Store references
-        this.gamePlutoContainer = gamePlutoContainer;
-        this.gamePlutoEntity = plutoEntity;
-
-
-      }
-
       create() {
-        // Switch menu Pluto to game mode
-        this.switchMenuPlutoToGameMode();
+        // Create a new Pluto instance for the game
+        this.plutoContainer = document.createElement('div');
+        this.plutoContainer.id = 'game-pluto-container';
+        document.body.appendChild(this.plutoContainer);
+
+        this.pluto = new Pluto(this.plutoContainer, { storyMode: false });
+        this.pluto.initialized.then(() => {
+          if (this.pluto.element) {
+            this.pluto.element.dataset.context = 'game';
+            this.pluto.setAnimation('excited');
+            this.pluto.resetPosition(); // Center it for the game
+          }
+        });
+
+        // Initialize DOM Pools
+        this.domPools.scorePopup = this.createDOMPool('score-popup');
+        this.domPools.comboEffect = this.createDOMPool('combo-effect');
+        this.domPools.levelUp = this.createDOMPool('level-up');
+        this.domPools.fever = this.createDOMPool('fever-mode');
 
         // Initialize game state flags
         this.justBrokeChain = false;
@@ -1299,59 +837,45 @@
         );
         this.ambientLight.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
 
+        // UNIFIED PARTICLE SYSTEM - Replaces 4 separate systems
+        this.particleConfigs = {
+          spark: {
+            lifespan: 200,
+            speed: { min: -60, max: 60 },
+            scale: { start: 0.6, end: 0 },
+            quantity: 4,
+            texture: 'particle'
+          },
+          break: {
+            lifespan: 400,
+            speed: { min: 50, max: 100 },
+            scale: { start: 0.4, end: 0 },
+            quantity: 6,
+            gravityY: 60,
+            texture: 'diamond'
+          },
+          fever: {
+            lifespan: 2000,
+            speed: { min: 30, max: 60 },
+            scale: { start: 0.3, end: 0 },
+            quantity: 2,
+            alpha: { start: 0.5, end: 0 },
+            texture: 'star'
+          },
+          confetti: {
+            lifespan: 1500,
+            speed: { min: 100, max: 150 },
+            angle: { min: 80, max: 100 },
+            scale: { start: 0.4, end: 0 },
+            quantity: 8,
+            texture: 'diamond'
+          }
+        };
 
-
-        // Ultra-optimized spark emitter (performance focused)
-        this.sparkEmitter = this.add.particles(0, 0, 'particle', {
-          lifespan: 200, // Even shorter lifespan
-          speed: { min: -60, max: 60 }, // Further reduced speed
-          scale: { start: 0.6, end: 0 }, // Smaller size
-          quantity: 4, // Reduced from 8 to 4
-          blendMode: 'ADD',
-          tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.neon,
-          emitting: false
-        });
-
-        // Ultra-optimized break particles (performance focused)
-        this.breakParticles = this.add.particles(0, 0, 'diamond', {
-          lifespan: 400, // Shorter lifespan
-          speed: { min: 50, max: 100 }, // Reduced speed range
-          scale: { start: 0.4, end: 0 }, // Smaller size
-          quantity: 6, // Reduced from 12 to 6
-          blendMode: 'ADD',
-          gravityY: 60, // Reduced gravity
-          tint: this.selectedMode ? this.selectedMode.ringColors : colorSystem.convertedPalettes.fire,
-          emitting: false
-        });
-
-        // Ultra-optimized fever mode particles (minimal count)
-        this.feverParticles = this.add.particles(0, 0, 'star', {
-          x: { min: 0, max: this.cameras.main.width },
-          y: { min: 0, max: this.cameras.main.height },
-          lifespan: 2000, // Shorter lifespan
-          speed: { min: 30, max: 60 }, // Reduced speed range
-          scale: { start: 0.3, end: 0 }, // Smaller size
-          quantity: 2, // Reduced from 4 to 2
-          blendMode: 'ADD',
-          tint: colorSystem.convertedPalettes.fire,
-          alpha: { start: 0.5, end: 0 }, // Reduced opacity
-          emitting: false
-        });
-
-        // Ultra-optimized confetti system (minimal setup)
-        this.confettiParticles = this.add.particles(0, 0, 'diamond', {
-          x: { min: 0, max: this.cameras.main.width },
-          y: -50,
-          speed: { min: 100, max: 150 }, // Reduced speed range
-          angle: { min: 80, max: 100 },
-          scale: { start: 0.4, end: 0 }, // Smaller size
-          lifespan: 1500, // Much shorter lifespan
-          quantity: 8, // Heavily reduced from 25
-          tint: [
-            ...colorSystem.convertedPalettes.neon.slice(0, 2), // Only 2 colors
-            ...colorSystem.convertedPalettes.sunset.slice(0, 2)
-          ],
-          emitting: false
+        // Single particle emitter that can be reconfigured
+        this.unifiedParticles = this.add.particles(0, 0, 'particle', {
+          emitting: false,
+          blendMode: 'ADD'
         });
 
         // Use viewport center directly for stability
@@ -1427,9 +951,9 @@
         }).setOrigin(0.5);
 
         // Çember ayarları
-        this.baseRadius = 100;
-        this.ringThickness = 20;
-        this.ringGap = 15;
+        this.baseRadius = GAME_CONSTANTS.BASE_RADIUS;
+        this.ringThickness = GAME_CONSTANTS.RING_THICKNESS;
+        this.ringGap = GAME_CONSTANTS.RING_GAP;
         this.setupLevelDesigns();
         this.startLevel();
       }
@@ -1438,12 +962,12 @@
         // Initialize game UI elements
         this.score = 0;
         this.combo = 0;
-        this.lives = 3;
+        this.lives = GAME_CONSTANTS.INITIAL_LIVES;
         this.level = 1;
         this.feverMode = false;
         this.feverTimer = 0;
-        this.feverModeDuration = 5000;
-        this.regenDelay = 5000;
+        this.feverModeDuration = GAME_CONSTANTS.FEVER_DURATION;
+        this.regenDelay = GAME_CONSTANTS.REGEN_DELAY;
 
         // Create UI text elements
         this.scoreText = this.add.text(20, 20, 'Score: 0', {
@@ -1532,27 +1056,42 @@
       update(time, delta) {
         if (this.gameOverFlag) return;
 
-        let dt = delta / 1000;
+        // Initialize frame counter if not exists
+        if (!this.frameCount) this.frameCount = 0;
 
-        // Priority 1: Critical game logic (always runs)
-        this.updateNeedle(dt);
-        this.updateFeverMode(delta);
-        this.updatePlutoMood(delta);
+        // PRIORITY 1: Critical needle update (every frame)
+        this.updateNeedle(delta * 0.001);
 
-        // Priority 2: Visual updates
-        this.updateBackgroundGlow(time);
-
-        // Update all moving rings every frame
-        this.ringStack.forEach(ring => {
-          if (ring.needsUpdate) {
-            ring.update(delta);
-          }
-        });
-
-        // Enhanced game Pluto animations based on game events
-        if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
-          this.updateGamePlutoAnimation();
+        // PRIORITY 2: Essential updates
+        if (this.frameCount % GAME_CONSTANTS.UPDATE_ESSENTIAL === 0) {
+          this.updateFeverMode(delta);
         }
+
+        // PRIORITY 3: Visual updates
+        if (this.frameCount % GAME_CONSTANTS.UPDATE_VISUAL === 0) {
+          this.updateBackgroundGlow(time);
+        }
+
+        // PRIORITY 4: Ring updates (using essential frequency)
+        if (this.frameCount % GAME_CONSTANTS.UPDATE_ESSENTIAL === 0 && this.ringStack && this.ringStack.length > 0) {
+          this.ringStack.forEach(ring => {
+            if (ring.needsUpdate && ring.graphics && ring.movementEnabled) {
+              ring.update(delta);
+            }
+          });
+        }
+
+        // PRIORITY 5: Non-critical updates
+        if (this.frameCount % GAME_CONSTANTS.UPDATE_NONCRITICAL === 0) {
+          this.updatePlutoMood(delta);
+
+          // Pluto animations
+          if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
+            this.updateGamePlutoAnimation();
+          }
+        }
+
+        this.frameCount = (this.frameCount + 1) % GAME_CONSTANTS.UPDATE_CYCLE;
       }
 
       setupNeedle() {
@@ -1646,47 +1185,6 @@
         // Cache the design with level info
         this.cachedDesign = { ...design, level: this.level };
         return design;
-      }
-
-      update(time, delta) {
-        if (this.gameOverFlag) return;
-
-        // Initialize frame counter if not exists
-        if (!this.frameCount) this.frameCount = 0;
-
-        // PRIORITY 1: Critical needle update (every frame)
-        this.updateNeedle(delta * 0.001);
-
-        // PRIORITY 2: Essential updates (every other frame)
-        if (this.frameCount % 2 === 0) {
-          this.updateFeverMode(delta);
-        }
-
-        // PRIORITY 3: Visual updates (every 4th frame)
-        if (this.frameCount % 4 === 0) {
-          this.updateBackgroundGlow(time);
-        }
-
-        // PRIORITY 4: Ring updates (every 2nd frame, only moving rings)
-        if (this.frameCount % 2 === 0 && this.ringStack && this.ringStack.length > 0) {
-          this.ringStack.forEach(ring => {
-            if (ring.needsUpdate && ring.graphics && ring.movementEnabled) {
-              ring.update(delta);
-            }
-          });
-        }
-
-        // PRIORITY 5: Non-critical updates (every 6th frame)
-        if (this.frameCount % 6 === 0) {
-          this.updatePlutoMood(delta);
-
-          // Pluto animations
-          if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
-            this.updateGamePlutoAnimation();
-          }
-        }
-
-        this.frameCount = (this.frameCount + 1) % 12; // Reset every 12 frames
       }
 
       updateGamePlutoAnimation() {
@@ -2038,18 +1536,17 @@
         this.justBrokeChain = true;
 
         // Ultra-reduced particle count for maximum performance
-        this.breakParticles.explode(6, this.center.x, this.center.y);
+        this.emitParticles('break', this.center.x, this.center.y);
 
         // Minimal spark effects
-        this.sparkEmitter.explode(4, this.center.x, this.center.y);
+        this.emitParticles('spark', this.center.x, this.center.y);
         this.cameras.main.shake(100, 0.008); // Shorter, less intense shake
 
         // Background particles already configured with design colors
 
         // Activate fever mode particle effects
         if (this.feverMode) {
-          this.feverParticles.start();
-          this.time.delayedCall(500, () => { this.feverParticles.stop(); });
+          this.emitParticles('fever');
         }
 
         let multiplier = this.feverMode ? 2 : (1 + this.combo * 0.1);
@@ -2115,30 +1612,17 @@
         if (this.lastScorePopupTime && Date.now() - this.lastScorePopupTime < 50) return;
         this.lastScorePopupTime = Date.now();
 
-        // Use object pool for DOM elements to reduce creation/destruction overhead
-        let scoreDiv = this.scorePopupPool.pop();
-        if (!scoreDiv) {
-          scoreDiv = document.createElement('div');
-          scoreDiv.className = 'score-popup';
-        }
-
+        // Use DOM pool manager
+        const scoreDiv = this.domPools.scorePopup.get();
         scoreDiv.textContent = '+' + points;
         scoreDiv.style.left = x + 'px';
         scoreDiv.style.top = y + 'px';
-        scoreDiv.style.display = 'block';
         document.body.appendChild(scoreDiv);
 
-        // Return to pool after animation completes (Phaser timing optimization)
+        // Return to pool after animation completes
         this.time.delayedCall(800, () => {
-          if (scoreDiv.parentNode) {
-            scoreDiv.remove();
-            scoreDiv.style.display = 'none';
-            // Return to pool if not full
-            if (this.scorePopupPool.length < this.maxPoolSize) {
-              this.scorePopupPool.push(scoreDiv);
-            }
-          }
-        }); // Reduced timeout to match CSS animation
+          this.domPools.scorePopup.release(scoreDiv);
+        });
       }
 
       handleMiss() {
@@ -2177,19 +1661,21 @@
         this.feverText.setText('FEVER MODE: 5s');
         this.cameras.main.flash(500, 255, 0, 255);
 
-        // Add CSS fever mode overlay
-        const feverDiv = document.createElement('div');
-        feverDiv.className = 'fever-mode';
+        // Use DOM pool for fever overlay
+        const feverDiv = this.domPools.fever.get();
         feverDiv.id = 'current-fever-overlay';
         document.body.appendChild(feverDiv);
 
-        // Remove fever overlay when fever mode ends
-        setTimeout(() => {
-          const existingFever = document.getElementById('current-fever-overlay');
-          if (existingFever) {
-            existingFever.remove();
+        // Store reference for cleanup
+        this.currentFeverOverlay = feverDiv;
+
+        // Return to pool when fever mode ends
+        this.time.delayedCall(this.feverModeDuration, () => {
+          if (this.currentFeverOverlay) {
+            this.domPools.fever.release(this.currentFeverOverlay);
+            this.currentFeverOverlay = null;
           }
-        }, this.feverModeDuration);
+        });
       }
 
       showComboEffect() {
@@ -2197,28 +1683,15 @@
         if (this.lastComboEffectTime && Date.now() - this.lastComboEffectTime < 500) return;
         this.lastComboEffectTime = Date.now();
 
-        // Use object pool for combo effects to reduce DOM creation overhead
-        let comboDiv = this.comboEffectPool.pop();
-        if (!comboDiv) {
-          comboDiv = document.createElement('div');
-          comboDiv.className = 'combo-effect';
-        }
-
+        // Use DOM pool manager
+        const comboDiv = this.domPools.comboEffect.get();
         comboDiv.textContent = `COMBO x${this.combo}!`;
-        comboDiv.style.display = 'block';
         document.body.appendChild(comboDiv);
 
-        // Return to pool after animation completes (Phaser timing optimization)
+        // Return to pool after animation completes
         this.time.delayedCall(600, () => {
-          if (comboDiv.parentNode) {
-            comboDiv.remove();
-            comboDiv.style.display = 'none';
-            // Return to pool if not full
-            if (this.comboEffectPool.length < this.maxPoolSize) {
-              this.comboEffectPool.push(comboDiv);
-            }
-          }
-        }); // Reduced timeout to match CSS animation
+          this.domPools.comboEffect.release(comboDiv);
+        });
       }
 
       resetRegenTimer() {
@@ -2271,7 +1744,7 @@
 
       levelUp() {
         // Ultra-reduced confetti for performance
-        this.confettiParticles.explode(8, this.center.x, this.center.y);
+        this.emitParticles('confetti', this.center.x, this.center.y);
         this.cameras.main.flash(300, 0, 255, 0); // Shorter flash
 
         // Set level complete flag for animation
@@ -2282,17 +1755,14 @@
           this.levelComplete = false;
         });
 
-        // Use CSS level-up effect instead of just Phaser text
-        const levelUpDiv = document.createElement('div');
-        levelUpDiv.className = 'level-up';
+        // Use DOM pool for level-up effect
+        const levelUpDiv = this.domPools.levelUp.get();
         levelUpDiv.textContent = 'LEVEL UP!';
         document.body.appendChild(levelUpDiv);
 
-        // Remove CSS effect after animation completes (Phaser timing optimization)
+        // Return to pool after animation completes
         this.time.delayedCall(2000, () => {
-          if (levelUpDiv.parentNode) {
-            levelUpDiv.remove();
-          }
+          this.domPools.levelUp.release(levelUpDiv);
         });
         this.level++;
         this.levelText.setText('Level: ' + this.level);
@@ -2443,23 +1913,11 @@
           this.ringStack.length = 0; // Clear array
         }
 
-        // Clean up object pools - DOM elements don't have destroy method
-        if (this.scorePopupPool) {
-          this.scorePopupPool.forEach(popup => {
-            if (popup.parentNode) {
-              popup.remove(); // Remove DOM element properly
-            }
+        // Clean up DOM pools properly
+        if (this.domPools) {
+          Object.values(this.domPools).forEach(pool => {
+            pool.clear();
           });
-          this.scorePopupPool.length = 0;
-        }
-
-        if (this.comboEffectPool) {
-          this.comboEffectPool.forEach(combo => {
-            if (combo.parentNode) {
-              combo.remove(); // Remove DOM element properly
-            }
-          });
-          this.comboEffectPool.length = 0;
         }
 
         // Memory cleanup (texture cache removed for stability)
@@ -2589,6 +2047,40 @@
           }
         } catch (error) {
           console.warn('Stars background creation error:', error);
+        }
+      }
+
+      // Unified particle emission method
+      emitParticles(type, x, y) {
+        const config = this.particleConfigs[type];
+        if (!config) return;
+
+        // Configure emitter based on type
+        const baseConfig = {
+          ...config,
+          tint: this.selectedMode ? this.selectedMode.particleColors : colorSystem.convertedPalettes.neon,
+          emitting: false
+        };
+
+        // Special positioning for certain types
+        if (type === 'fever') {
+          baseConfig.x = { min: 0, max: this.cameras.main.width };
+          baseConfig.y = { min: 0, max: this.cameras.main.height };
+        } else if (type === 'confetti') {
+          baseConfig.x = { min: 0, max: this.cameras.main.width };
+          baseConfig.y = -50;
+        }
+
+        // Update emitter configuration
+        this.unifiedParticles.setTexture(config.texture);
+        this.unifiedParticles.setConfig(baseConfig);
+
+        // Emit particles
+        if (type === 'fever') {
+          this.unifiedParticles.start();
+          this.time.delayedCall(500, () => { this.unifiedParticles.stop(); });
+        } else {
+          this.unifiedParticles.explode(config.quantity, x || this.center.x, y || this.center.y);
         }
       }
 
@@ -2980,8 +2472,7 @@
   </script>
 
   <!-- ChainBreaker Pro - New Modular Application (TEMPORARILY DISABLED TO FIX MENU CONFLICT) -->
-  <!-- <script type="module" src="js/main.js"></script> -->
-
+  <script type="module" src="js/ui/MenuUI.js"></script>
   <!-- 🔗 HYBRID OPTIMIZATION: GameManager Helper Integration (Phase 1) -->
   <script type="module">
     // Import GameManager for helper functions only - Does NOT replace current system
