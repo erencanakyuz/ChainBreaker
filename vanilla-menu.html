@@ -357,6 +357,7 @@
 
                 // Game objects
                 this.rings = [];
+                this.breakingRings = []; // Separate array for breaking rings
                 this.particles = [];
                 this.stars = [];
                 this.needle = null;
@@ -370,6 +371,12 @@
                 this.feverMode = false;
                 this.feverTimer = 0;
                 this.gameOverFlag = false;
+                this.needleActive = false;
+                this.regenTimer = null;
+                this.regenDelay = 5000;
+                this.originalNeedleSpeed = Math.PI; // 180 degrees per second
+                this.lastInputTime = null;
+                this.frameCount = 0;
 
                 // UI elements
                 this.ui = {
@@ -503,10 +510,30 @@
             }
 
             setupInput() {
-                this.canvas.addEventListener('click', (e) => this.handleClick(e));
+                // DESKTOP FIX: Multiple input methods for better compatibility
+                this.canvas.addEventListener('click', (e) => {
+                    console.log('🖱️ Desktop click detected:', e);
+                    this.handleClick(e);
+                });
+
+                this.canvas.addEventListener('mousedown', (e) => {
+                    console.log('🖱️ Desktop mousedown detected:', e);
+                    this.handleClick(e);
+                });
+
                 this.canvas.addEventListener('touchstart', (e) => {
                     e.preventDefault();
+                    console.log('📱 Mobile touch detected:', e.touches[0]);
                     this.handleClick(e.touches[0]);
+                });
+
+                // KEYBOARD support for desktop
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && this.currentScene === 'game') {
+                        e.preventDefault();
+                        console.log('⌨️ Spacebar detected');
+                        this.handleClick({});
+                    }
                 });
             }
 
@@ -516,8 +543,9 @@
                     return;
                 }
 
-                if (this.currentScene === 'game') {
+                if (this.currentScene === 'game' && !this.gameOverFlag) {
                     this.handleGameClick();
+                    return; // FIXED: Prevent falling through to game over logic
                 }
 
                 if (this.gameOverFlag) {
@@ -556,6 +584,8 @@
                 this.ui.menuContainer.style.display = 'none';
                 this.ui.gameTitle.style.display = 'none';
                 this.resetGameState();
+                this.setupAdvancedFeatures();
+                this.setupInputThrottling();
                 this.createStars();
                 this.startLevel();
             }
@@ -569,8 +599,220 @@
                 this.feverTimer = 0;
                 this.gameOverFlag = false;
                 this.rings = [];
+                this.breakingRings = [];
                 this.particles = [];
+                this.needleActive = false;
+                this.regenTimer = null;
+                this.regenDelay = 5000;
+                this.originalNeedleSpeed = Math.PI; // 180 degrees per second
+                this.lastInputTime = null;
+                this.frameCount = 0;
                 this.updateUI();
+            }
+
+            setupAdvancedFeatures() {
+                // Device debug info
+                this.createDeviceDebugInfo();
+
+                // Performance metrics
+                this.performanceMetrics = {
+                    frameCount: 0,
+                    lastTime: performance.now(),
+                    fpsHistory: [],
+                    averageFPS: 60
+                };
+
+                // Pluto features
+                this.plutoMood = 'idle';
+                this.plutoOrbitTimer = 0;
+                this.plutoOrbitInterval = 15000; // 15 seconds
+                this.plutoIsAnimating = false;
+                this.plutoMovementTypes = ['orbit', 'fly-around', 'zoom-out', 'spiral-dance'];
+                this.lastMovementType = -1;
+            }
+
+            createDeviceDebugInfo() {
+                const deviceType = this.getDeviceType();
+                const debugDiv = document.createElement('div');
+                debugDiv.className = 'ui-text';
+                debugDiv.style.cssText = `
+                    position: fixed;
+                    bottom: 100px;
+                    left: 10px;
+                    font-size: 12px;
+                    color: #ffff00;
+                    background: rgba(0,0,0,0.5);
+                    padding: 5px;
+                    border-radius: 3px;
+                    font-family: monospace;
+                    line-height: 1.4;
+                `;
+                debugDiv.innerHTML = `
+                    Device: ${deviceType}<br>
+                    Screen: ${window.innerWidth}x${window.innerHeight}<br>
+                    Radius: ${this.constants.BASE_RADIUS}<br>
+                    Target FPS: ${this.constants.TARGET_FPS}
+                `;
+                document.body.appendChild(debugDiv);
+                this.deviceDebugDiv = debugDiv;
+            }
+
+            getDeviceType() {
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+                const isSmallMobile = window.innerWidth <= 480;
+                const isTablet = window.innerWidth >= 768 && window.innerWidth <= 1024;
+
+                if (isSmallMobile) return 'small-mobile';
+                if (isMobile) return 'mobile';
+                if (isTablet) return 'tablet';
+                return 'desktop';
+            }
+
+            resetRegenTimer() {
+                if (this.regenTimer) {
+                    clearTimeout(this.regenTimer);
+                }
+                this.regenTimer = setTimeout(() => {
+                    this.regenerateRing();
+                }, this.regenDelay);
+            }
+
+            regenerateRing() {
+                if (this.activeRing && !this.activeRing.inputReceived) {
+                    this.combo = 0;
+                    this.updateUI();
+                }
+
+                const maxRings = Math.min(this.constants.MAX_RINGS, this.constants.INITIAL_RINGS + Math.floor(this.level / 3));
+
+                if (this.rings.length >= maxRings) {
+                    this.gameOver();
+                    return;
+                }
+
+                const lastRadius = this.rings.length > 0
+                    ? this.rings[this.rings.length - 1].radius
+                    : this.constants.BASE_RADIUS - (this.constants.RING_THICKNESS + this.constants.RING_GAP);
+
+                const newRadius = lastRadius + this.constants.RING_THICKNESS + this.constants.RING_GAP;
+                const colorIndex = this.rings.length % this.palettes[this.selectedMode.palette].length;
+                const color = this.palettes[this.selectedMode.palette][colorIndex];
+
+                const ring = {
+                    x: this.centerX,
+                    y: this.centerY,
+                    radius: newRadius,
+                    thickness: this.constants.RING_THICKNESS,
+                    color: color,
+                    sweetSpotAngle: Math.random() * Math.PI * 2,
+                    sweetSpotSize: this.selectedMode.sweetSpotSize,
+                    alpha: 1,
+                    inputReceived: false,
+                    proximityEffect: false
+                };
+
+                this.rings.push(ring);
+                this.activeRing = ring;
+                this.needle.radius = ring.radius + ring.thickness / 2 + 15;
+                this.resetRegenTimer();
+            }
+
+            updatePlutoMood(deltaTime) {
+                if (this.plutoIsAnimating) return;
+
+                this.plutoOrbitTimer += deltaTime * 1000;
+
+                let newMood = 'idle';
+
+                if (this.feverMode) {
+                    newMood = 'excited';
+                } else if (this.lives <= 1) {
+                    newMood = 'sad';
+                } else if (this.combo >= 3) {
+                    newMood = 'excited';
+                } else if (this.plutoOrbitTimer >= this.plutoOrbitInterval) {
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * this.plutoMovementTypes.length);
+                    } while (randomIndex === this.lastMovementType);
+
+                    newMood = this.plutoMovementTypes[randomIndex];
+                    this.lastMovementType = randomIndex;
+                    this.plutoOrbitTimer = 0;
+                }
+
+                if (this.plutoMood !== newMood) {
+                    this.changePlutoMood(newMood);
+                }
+
+                this.checkRingProximity();
+            }
+
+            changePlutoMood(mood) {
+                this.plutoMood = mood;
+
+                switch (mood) {
+                    case 'excited':
+                        // Add visual indication or animation
+                        break;
+                    case 'sad':
+                        // Add visual indication
+                        break;
+                    case 'orbit':
+                    case 'fly-around':
+                    case 'zoom-out':
+                    case 'spiral-dance':
+                        this.plutoIsAnimating = true;
+                        setTimeout(() => {
+                            this.plutoIsAnimating = false;
+                            this.changePlutoMood('idle');
+                        }, 8000);
+                        break;
+                    default:
+                        this.plutoIsAnimating = false;
+                        break;
+                }
+            }
+
+            checkRingProximity() {
+                if (!this.rings.length) return;
+
+                this.rings.forEach(ring => {
+                    const distance = ring.radius;
+                    if (distance < 150) {
+                        ring.proximityEffect = true;
+                    } else {
+                        ring.proximityEffect = false;
+                    }
+                });
+            }
+
+            setupInputThrottling() {
+                this.lastInputTime = 0;
+                // DESKTOP/MOBILE OPTIMIZED: Different throttling for different devices
+                const deviceType = this.getDeviceType();
+                if (deviceType === 'desktop') {
+                    // DESKTOP: Virtually no throttling - mouse is super precise
+                    this.inputThrottleNormal = 0;  // No throttling
+                    this.inputThrottleFever = 0;   // No throttling
+                } else {
+                    // MOBILE: Light throttling to prevent double-taps
+                    this.inputThrottleNormal = 8;  // ~125 FPS response
+                    this.inputThrottleFever = 4;   // ~250 FPS response in fever mode
+                }
+                console.log(`🎮 Input setup for ${deviceType}: throttle=${this.inputThrottleNormal}ms`);
+            }
+
+            canProcessInput() {
+                const now = performance.now();
+                const throttle = this.feverMode ? this.inputThrottleFever : this.inputThrottleNormal;
+
+                if (this.lastInputTime && now - this.lastInputTime < throttle) {
+                    return false;
+                }
+
+                this.lastInputTime = now;
+                return true;
             }
 
             createStars() {
@@ -588,6 +830,9 @@
 
             startLevel() {
                 this.rings = [];
+
+                // Stop needle during ring creation
+                this.needleActive = false;
 
                 // Create rings
                 const numRings = Math.min(this.constants.MAX_RINGS, this.constants.INITIAL_RINGS + Math.floor(this.level / 5));
@@ -607,7 +852,8 @@
                         sweetSpotAngle: Math.random() * Math.PI * 2,
                         sweetSpotSize: this.selectedMode.sweetSpotSize,
                         alpha: 1,
-                        inputReceived: false
+                        inputReceived: false,
+                        proximityEffect: false
                     };
 
                     this.rings.push(ring);
@@ -618,42 +864,87 @@
                 // Create needle
                 this.needle = {
                     angle: 0,
-                    speed: (Math.PI / 180) * 180 * this.selectedMode.needleSpeed,
+                    speed: this.originalNeedleSpeed * this.selectedMode.needleSpeed,
                     radius: this.activeRing.radius + this.activeRing.thickness / 2 + 15
                 };
+
+                // Start needle after brief delay with console debug
+                console.log('🎯 Starting needle in 500ms...');
+                setTimeout(() => {
+                    console.log('🎯 Needle is now ACTIVE!');
+                    this.needleActive = true;
+                }, 500);
+
+                // Start regeneration timer
+                this.resetRegenTimer();
             }
 
+            // ===================================================================
+            // CORE GAMEPLAY LOGIC - REBUILT FOR PRECISION AND FEEL
+            // ===================================================================
             handleGameClick() {
-                if (!this.activeRing || this.gameOverFlag) return;
+                console.log('🎯 handleGameClick called', {
+                    activeRing: !!this.activeRing,
+                    needleActive: this.needleActive,
+                    inputReceived: this.activeRing?.inputReceived,
+                    scene: this.currentScene
+                });
 
-                this.activeRing.inputReceived = true;
+                // Tıklamanın mümkün olup olmadığını en başta kontrol et (daha temiz mantık)
+                if (!this.activeRing || !this.needleActive || this.activeRing.inputReceived) {
+                    console.log('🚫 Click blocked - conditions not met');
+                    return;
+                }
 
-                // Check if needle is in sweet spot
-                const angleDiff = Math.abs(this.needle.angle - this.activeRing.sweetSpotAngle);
-                const normalizedDiff = Math.min(angleDiff, Math.PI * 2 - angleDiff);
-                const threshold = (this.activeRing.sweetSpotSize * Math.PI) / 180;
+                // BÜYÜTÜLMÜŞ: Collision threshold'u daha da büyük
+                // Görsel %50 büyük, collision da %50 büyük olmalı
+                const baseThreshold = (this.activeRing.sweetSpotSize * Math.PI / 180) / 2;
+                const threshold = baseThreshold * 1.5; // %50 büyütme
 
-                if (normalizedDiff <= threshold) {
+                // Yüksek hassasiyetli açı farkı hesaplaması
+                let angleDiff = this.needle.angle - this.activeRing.sweetSpotAngle;
+                while (angleDiff <= -Math.PI) angleDiff += 2 * Math.PI;
+                while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+
+                // Enhanced debug info
+                if (this.deviceDebugDiv) {
+                    this.deviceDebugDiv.innerHTML = `
+                        Device: ${this.getDeviceType()}<br>
+                        Screen: ${window.innerWidth}x${window.innerHeight}<br>
+                        Needle: ${(this.needle.angle * 180 / Math.PI).toFixed(3)}°<br>
+                        Sweet: ${(this.activeRing.sweetSpotAngle * 180 / Math.PI).toFixed(3)}°<br>
+                        Diff: ${(Math.abs(angleDiff) * 180 / Math.PI).toFixed(3)}°<br>
+                        Threshold: ${(threshold * 180 / Math.PI).toFixed(3)}°<br>
+                        <span style="color: ${Math.abs(angleDiff) <= threshold ? '#00ff00' : '#ff0000'}; font-weight: bold;">
+                        ${Math.abs(angleDiff) <= threshold ? '✅ PERFECT HIT!' : '❌ MISS'}
+                        </span><br>
+                        Lives: ${this.lives}<br>
+                        Combo: ${this.combo}
+                    `;
+                }
+
+                if (Math.abs(angleDiff) <= threshold) {
+                    // BAŞARILI VURUŞ:
+                    this.activeRing.inputReceived = true; // Hileleri önlemek için ANINDA işle
                     this.handleSuccessfulHit();
+                    this.resetRegenTimer(); // Zamanlayıcıyı sadece başarıda sıfırla
                 } else {
+                    // ISKA:
                     this.handleMiss();
                 }
             }
 
             handleSuccessfulHit() {
-                // Create particles
-                this.createParticles(this.centerX, this.centerY, '#ffffff', 6);
-
-                // Calculate score
-                const multiplier = this.feverMode ? 2 : (1 + this.combo * 0.1);
-                const points = Math.floor(10 * multiplier);
+                const points = Math.floor(10 * (this.feverMode ? 2 : (1 + this.combo * 0.1)));
                 this.score += points;
                 this.combo++;
 
-                // Show score popup
-                this.showScorePopup(points, this.centerX, this.centerY);
+                // ANINDA GERİ BİLDİRİM - Tüm efektler tıklama ile aynı anda tetiklenir
+                this.triggerShake(3, 100); // Hafif ve anlık bir sarsıntı
+                this.animateRingBreak(this.activeRing); // Kırılma animasyonunu ve parçacıkları BAŞLAT
+                this.showScorePopup(points, this.centerX, this.centerY); // Skoru göster
 
-                // Remove ring
+                // Oyun mantığını devam ettir
                 this.rings.pop();
 
                 if (this.rings.length === 0) {
@@ -663,12 +954,117 @@
                     this.needle.radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15;
                 }
 
-                // Check fever mode
-                if (this.combo >= 5 && !this.feverMode) {
-                    this.activateFeverMode();
+                this.needle.speed *= 1.02; // Hızı hafifçe artır
+                this.regenDelay = Math.max(2500, this.regenDelay * 0.98); // Bekleme süresini azalt
+                if (this.combo >= 5 && !this.feverMode) this.activateFeverMode();
+                if (this.combo > 0 && this.combo % 5 === 0) this.showComboEffect();
+                this.updateUI();
+            }
+
+            // EKLE: Bu fonksiyonu class'ınıza ekleyin
+            triggerShake(intensity, duration) {
+                // Mevcut sarsıntıdan daha güçlüyse üzerine yaz
+                this.shakeIntensity = Math.max(this.shakeIntensity || 0, intensity);
+                this.shakeDuration = Math.max(this.shakeDuration || 0, duration);
+            }
+
+            // Bu fonksiyon artık sadece görsel animasyonu yönetiyor.
+            animateRingBreak(ring) {
+                ring.isBreaking = true;
+                ring.breakStartTime = performance.now();
+                ring.breakDuration = 300; // Ultra hızlı, tatmin edici kırılma süresi
+                ring.originalRadius = ring.radius;
+                ring.originalThickness = ring.thickness;
+                this.breakingRings.push(ring);
+
+                // Yeni parçacık fonksiyonunu çağır
+                this.createShatterParticles(ring);
+            }
+
+            // YENİ FONKSİYON: Patlama hissini yaratır
+            createShatterParticles(ring) {
+                const count = 20; // Daha fazla parçacık
+                for (let i = 0; i < count; i++) {
+                    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
+                    const speed = Math.random() * 4 + 3; // Daha enerjik hız
+                    this.particles.push({
+                        x: ring.x + Math.cos(angle) * ring.radius,
+                        y: ring.y + Math.sin(angle) * ring.radius,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        life: 1,
+                        decay: 0.015,
+                        color: ring.color,
+                        size: Math.random() * 4 + 2
+                    });
+                }
+                // Merkezde büyük bir beyaz flaş patlaması efekti
+                this.particles.push({
+                    x: ring.x, y: ring.y, vx: 0, vy: 0, life: 1, decay: 0.05,
+                    color: '#FFFFFF', size: ring.radius, isFlash: true // Flaş parçacığı
+                });
+            }
+
+            // FIXED: Ultra-precise needle drawing with exact collision feedback
+            drawNeedle() {
+                const ctx = this.ctx;
+
+                // Only draw needle if it's active
+                if (!this.needleActive) return;
+
+                const needleX = this.centerX + Math.cos(this.needle.angle) * this.needle.radius;
+                const needleY = this.centerY + Math.sin(this.needle.angle) * this.needle.radius;
+
+                // EXACT: Use identical collision logic for visual feedback
+                const needleAngle = this.needle.angle;
+                const sweetSpotAngle = this.activeRing.sweetSpotAngle;
+
+                // Calculate angle difference with proper wrapping (same as handleGameClick)
+                let angleDiff = needleAngle - sweetSpotAngle;
+                while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+                while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+                const absAngleDiff = Math.abs(angleDiff);
+
+                // HASSAS: Çarpışma mantığıyla birebir aynı hesaplama
+                const baseThreshold = (this.activeRing.sweetSpotSize * Math.PI / 180) / 2;
+                const threshold = baseThreshold * 1.5; // Görsel ile aynı %50 büyütme
+                const inSweetSpot = absAngleDiff <= threshold;
+
+                ctx.save();
+                // Parlaklık azaltılmış görsel geri bildirim
+                if (inSweetSpot) {
+                    const precision = 1 - (absAngleDiff / threshold);
+                    if (precision > 0.9) {
+                        ctx.fillStyle = '#00cc00'; // Daha az parlak yeşil
+                        ctx.shadowColor = '#00cc00';
+                        ctx.shadowBlur = 4; // Daha az parlaklık
+                    } else if (precision > 0.7) {
+                        ctx.fillStyle = '#cccc00'; // Daha az parlak sarı
+                    } else {
+                        ctx.fillStyle = '#cccccc'; // Daha az parlak beyaz
+                    }
+                } else {
+                    ctx.fillStyle = '#cc0000'; // Daha az parlak kırmızı
                 }
 
-                this.updateUI();
+                // Needle circle
+                ctx.beginPath();
+                ctx.arc(needleX, needleY, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Reset shadow
+                ctx.shadowBlur = 0;
+
+                // Needle line
+                ctx.strokeStyle = ctx.fillStyle; // Match fill color
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(needleX, needleY);
+                ctx.lineTo(needleX + Math.cos(this.needle.angle + Math.PI) * 25,
+                    needleY + Math.sin(this.needle.angle + Math.PI) * 25);
+                ctx.stroke();
+
+                ctx.restore();
             }
 
             handleMiss() {
@@ -762,6 +1158,17 @@
                 }, 2000);
             }
 
+            showComboEffect() {
+                const effect = document.createElement('div');
+                effect.className = 'combo-effect';
+                effect.textContent = `COMBO x${this.combo}!`;
+                document.body.appendChild(effect);
+
+                setTimeout(() => {
+                    if (effect.parentNode) effect.remove();
+                }, 600);
+            }
+
             updateUI() {
                 this.ui.scoreText.textContent = 'Score: ' + this.score;
                 this.ui.levelText.textContent = 'Level: ' + this.level;
@@ -772,8 +1179,14 @@
             update(deltaTime) {
                 if (this.currentScene !== 'game' || this.gameOverFlag) return;
 
-                // Update needle
-                if (this.needle && this.activeRing) {
+                // Initialize frame counter
+                if (!this.frameCount) this.frameCount = 0;
+
+                // Performance tracking
+                this.performanceMetrics.frameCount++;
+
+                // Update needle - FIXED: Only update if needle is active
+                if (this.needle && this.activeRing && this.needleActive) {
                     this.needle.angle += this.needle.speed * deltaTime;
                     if (this.needle.angle > Math.PI * 2) {
                         this.needle.angle -= Math.PI * 2;
@@ -791,10 +1204,20 @@
                     }
                 }
 
-                // Update particles
+                // Update Pluto mood system
+                if (this.frameCount % 6 === 0) { // Every 6 frames for performance
+                    this.updatePlutoMood(deltaTime);
+                }
+
+                // GÜNCELLE: Sarsıntı mantığını ekleyin
+                if (this.shakeDuration > 0) {
+                    this.shakeDuration -= deltaTime * 1000;
+                    if (this.shakeDuration <= 0) this.shakeIntensity = 0; // Süre bitince sarsıntıyı sıfırla
+                }
+
                 this.particles = this.particles.filter(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
+                    p.x += p.vx * deltaTime * 60; // Parçacık hızı deltaTime'a bağlı olsun
+                    p.y += p.vy * deltaTime * 60;
                     p.life -= p.decay;
                     return p.life > 0;
                 });
@@ -804,9 +1227,19 @@
                     star.alpha += Math.sin(Date.now() * star.twinkleSpeed) * 0.01;
                     star.alpha = Math.max(0.2, Math.min(1, star.alpha));
                 });
+
+                this.frameCount = (this.frameCount + 1) % 12; // Reset cycle
             }
 
             render() {
+                // Apply screen shake effect with new system
+                this.ctx.save();
+                if (this.shakeIntensity > 0) {
+                    const shakeX = (Math.random() - 0.5) * this.shakeIntensity;
+                    const shakeY = (Math.random() - 0.5) * this.shakeIntensity;
+                    this.ctx.translate(shakeX, shakeY);
+                }
+
                 // Clear canvas
                 this.ctx.fillStyle = '#000';
                 this.ctx.fillRect(0, 0, this.width, this.height);
@@ -827,6 +1260,9 @@
                 } else if (this.currentScene === 'game') {
                     this.renderGame();
                 }
+
+                // Restore canvas transform after shake effect
+                this.ctx.restore();
             }
 
             renderMenu() {
@@ -854,95 +1290,82 @@
                     this.ctx.restore();
                 });
 
-                // Draw rings
-                this.rings.forEach(ring => {
-                    this.drawRing(ring);
-                });
+                // GÜNCELLE: Halkaları daha verimli çiz
+                [...this.rings, ...this.breakingRings].forEach(ring => this.drawRing(ring));
+                this.breakingRings = this.breakingRings.filter(r => (performance.now() - r.breakStartTime) < r.breakDuration);
 
-                // Draw needle
-                if (this.needle && this.activeRing) {
+                // Draw needle - FIXED: Only draw if needle is active
+                if (this.needle && this.activeRing && this.needleActive) {
                     this.drawNeedle();
                 }
 
-                // Draw particles
-                this.particles.forEach(particle => {
+                // GÜNCELLE: Flaş parçacığını farklı çiz
+                this.particles.forEach(p => {
                     this.ctx.save();
-                    this.ctx.globalAlpha = particle.life;
-                    this.ctx.fillStyle = particle.color;
-                    this.ctx.beginPath();
-                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    this.ctx.fill();
+                    this.ctx.globalAlpha = p.life;
+
+                    // YENİ: Flaş parçacığını farklı çiz
+                    if (p.isFlash) {
+                        const grad = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * (1 - p.life));
+                        grad.addColorStop(0, `rgba(255, 255, 255, ${p.life})`);
+                        grad.addColorStop(1, 'transparent');
+                        this.ctx.fillStyle = grad;
+                        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); this.ctx.fill();
+                    } else {
+                        this.ctx.fillStyle = p.color;
+                        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); this.ctx.fill();
+                    }
                     this.ctx.restore();
                 });
             }
 
             drawRing(ring) {
                 const ctx = this.ctx;
+                let { x, y, radius, thickness, color, alpha } = ring;
 
-                // Main ring
+                // DEĞİŞTİ: Kırılma animasyonu artık daha patlayıcı
+                if (ring.isBreaking) {
+                    const progress = (performance.now() - ring.breakStartTime) / ring.breakDuration;
+                    const easeOut = 1 - Math.pow(1 - progress, 4); // Daha keskin bir başlangıç
+                    radius += easeOut * 10; // İçe değil, DIŞA doğru patlayarak genişlesin
+                    alpha = 1 - progress; // Hızla kaybolsun
+                    thickness *= (1 - progress);
+                }
+
                 ctx.save();
-                ctx.globalAlpha = ring.alpha;
-                ctx.strokeStyle = ring.color;
-                ctx.lineWidth = ring.thickness;
-                ctx.beginPath();
-                ctx.arc(ring.x, ring.y, ring.radius, 0, Math.PI * 2);
-                ctx.stroke();
+                ctx.globalAlpha = alpha;
+                ctx.strokeStyle = color;
+                ctx.lineWidth = thickness;
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 5; // Daha az parlaklık
+                ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.stroke();
 
-                // Sweet spot
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = ring.thickness;
-                const sweetSpotRad = (ring.sweetSpotSize * Math.PI) / 180;
-                ctx.beginPath();
-                ctx.arc(ring.x, ring.y, ring.radius,
-                    ring.sweetSpotAngle - sweetSpotRad,
-                    ring.sweetSpotAngle + sweetSpotRad);
-                ctx.stroke();
+                // ULTRA-VISIBLE COLLISION ZONE: Çok büyük ve tam beyaz
+                if (!ring.isBreaking) {
+                    // Collision alanını %50 büyüt - çok daha kolay vurmak için
+                    const sweetSpotRad = (ring.sweetSpotSize * Math.PI / 180) / 2 * 1.5; // 50% büyük görsel
 
-                // Sweet spot arrow
-                const arrowX = ring.x + Math.cos(ring.sweetSpotAngle) * (ring.radius - ring.thickness - 10);
-                const arrowY = ring.y + Math.sin(ring.sweetSpotAngle) * (ring.radius - ring.thickness - 10);
+                    // Arka plan (koyu kenarlık) - daha kalın
+                    ctx.strokeStyle = '#222222';
+                    ctx.lineWidth = thickness + 12;
+                    ctx.shadowBlur = 0;
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, ring.sweetSpotAngle - sweetSpotRad, ring.sweetSpotAngle + sweetSpotRad);
+                    ctx.stroke();
 
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                ctx.moveTo(arrowX, arrowY);
-                ctx.lineTo(arrowX - 6, arrowY - 8);
-                ctx.lineTo(arrowX + 6, arrowY - 8);
-                ctx.closePath();
-                ctx.fill();
-
+                    // Ana beyaz alan - TAM BEYAZ ve çok belirgin
+                    ctx.strokeStyle = '#ffffff'; // Tam beyaz
+                    ctx.lineWidth = thickness + 10;
+                    ctx.shadowColor = '#ffffff';
+                    ctx.shadowBlur = 12; // Daha belirgin glow
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, ring.sweetSpotAngle - sweetSpotRad, ring.sweetSpotAngle + sweetSpotRad);
+                    ctx.stroke();
+                }
                 ctx.restore();
             }
 
-            drawNeedle() {
-                const ctx = this.ctx;
-                const needleX = this.centerX + Math.cos(this.needle.angle) * this.needle.radius;
-                const needleY = this.centerY + Math.sin(this.needle.angle) * this.needle.radius;
 
-                // Check if in sweet spot for color
-                const angleDiff = Math.abs(this.needle.angle - this.activeRing.sweetSpotAngle);
-                const normalizedDiff = Math.min(angleDiff, Math.PI * 2 - angleDiff);
-                const threshold = (this.activeRing.sweetSpotSize * Math.PI) / 180;
-                const inSweetSpot = normalizedDiff <= threshold;
-
-                ctx.save();
-                ctx.fillStyle = inSweetSpot ? '#ffffff' : '#ff0000';
-
-                // Needle circle
-                ctx.beginPath();
-                ctx.arc(needleX, needleY, 6, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Needle line
-                ctx.strokeStyle = inSweetSpot ? '#ffffff' : '#ff0000';
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.moveTo(needleX, needleY);
-                ctx.lineTo(needleX + Math.cos(this.needle.angle + Math.PI) * 25,
-                    needleY + Math.sin(this.needle.angle + Math.PI) * 25);
-                ctx.stroke();
-
-                ctx.restore();
-            }
 
             gameLoop(currentTime = 0) {
                 this.deltaTime = (currentTime - this.lastTime) / 1000;
