@@ -35,7 +35,7 @@
     height: 6px;
     background: #ff1744;
     border-radius: 50%;
-    animation: blink 1s 0s infinite linear;
+    animation: blink-standard 1s infinite linear;
     box-shadow: 0 0 8px rgba(255, 23, 68, 0.6);
     margin-top: -12px;
 }
@@ -86,18 +86,7 @@
     }
 }
 
-@keyframes blink {
-
-    0%,
-    90%,
-    100% {
-        opacity: 1;
-    }
-
-    95% {
-        opacity: 0;
-    }
-}
+/* BLINK ANIMATION MOVED TO css/components/animations.css - USING CONSOLIDATED VERSION */
 
 /* ===== STORY SCENE ANIMATIONS (PROTECTED) ===== */
 /* These animations are used by story scenes and must not be removed */

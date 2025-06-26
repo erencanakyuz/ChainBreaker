@@ -20,8 +20,15 @@
   <!-- <link rel="stylesheet" href="css/main.css?v=1.0"> -->
 
   <!-- Component Styles -->
-  <link rel="stylesheet" href="css/components/animations.css?v=3.0">
-  <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
+  <link rel="preload" href="css/components/animations.css?v=3.0" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="css/components/animations.css?v=3.0">
+  </noscript>
+  <link rel="preload" href="css/components/pluto.css?v=3.0" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
+  </noscript>
 
   <!-- 🌍 UNIFIED RESPONSIVE SYSTEM - PHASE 3 -->
   <link rel="stylesheet" href="css/responsive-unified.css">
@@ -343,9 +350,9 @@
       POINTS_BASE: 10,
       NEEDLE_SPEED_MULTIPLIER: 1.03,
 
-      // Performance
+      // Performance (OPTIMIZED)
       TARGET_FPS: 144,
-      DOM_POOL_SIZE: 80,
+      DOM_POOL_SIZE: 20, // Reduced from 80 for better memory efficiency
 
       // Update frequencies (frame skipping)
       UPDATE_CRITICAL: 1,      // Every frame
@@ -409,7 +416,7 @@
             MAX_RINGS: 8,
             INITIAL_RINGS: 4,
             TARGET_FPS: 60, // Lower FPS for battery life
-            DOM_POOL_SIZE: 40,
+            DOM_POOL_SIZE: 10, // Optimized for small mobile
             ANIM_RING_SPAWN_DELAY: 300, // Faster spawning
             // Touch-friendly adjustments
             INPUT_THROTTLE_NORMAL: 120,
@@ -429,7 +436,7 @@
             MAX_RINGS: 10,
             INITIAL_RINGS: 5,
             TARGET_FPS: 90,
-            DOM_POOL_SIZE: 60,
+            DOM_POOL_SIZE: 15, // Optimized for mobile
             ANIM_RING_SPAWN_DELAY: 360,
             // Touch-friendly adjustments
             INPUT_THROTTLE_NORMAL: 100,
@@ -449,7 +456,7 @@
             MAX_RINGS: 11,
             INITIAL_RINGS: 5,
             TARGET_FPS: 120,
-            DOM_POOL_SIZE: 70,
+            DOM_POOL_SIZE: 18, // Optimized for tablet
             ANIM_RING_SPAWN_DELAY: 420,
             // Pluto responsive settings
             PLUTO_SCALE: 0.3,
@@ -1051,6 +1058,12 @@
       create() {
         // Register this game instance globally for resize handling
         window.currentGameInstance = this;
+        // Scene-scoped resize listener so we can detach it on shutdown (prevents leaks)
+        this.__onResize = () => this.handleResize(getAdaptiveConstants());
+        window.addEventListener('resize', this.__onResize);
+
+        // Ensure we fully release resources when the scene is shut down
+        this.events.once('shutdown', this.cleanUp, this);
 
         // Create a new Pluto instance for the game
         this.plutoContainer = document.createElement('div');
@@ -1350,10 +1363,12 @@
           this.updateBackgroundGlow(time);
         }
 
-        // PRIORITY 4: Ring updates (using essential frequency)
-        if (this.frameCount % RESPONSIVE_CONSTANTS.UPDATE_ESSENTIAL === 0 && this.ringStack && this.ringStack.length > 0) {
+        // PRIORITY 4: Ring updates (OPTIMIZED FREQUENCY)
+        // Changed from UPDATE_ESSENTIAL (2) to UPDATE_VISUAL (4) for better performance
+        if (this.frameCount % RESPONSIVE_CONSTANTS.UPDATE_VISUAL === 0 && this.ringStack && this.ringStack.length > 0) {
           this.ringStack.forEach(ring => {
-            if (ring.needsUpdate && ring.graphics && ring.movementEnabled) {
+            // More conservative update check - only update if really necessary
+            if (ring.needsUpdate && ring.graphics && ring.movementEnabled && !ring.graphics.destroyed) {
               ring.update(delta);
             }
           });
@@ -2446,6 +2461,40 @@
         console.log(`🔧 Pluto centered and scaled to ${scale}x, anim speed: ${RESPONSIVE_CONSTANTS.PLUTO_ANIMATION_SPEED}x for ${deviceType}`);
       }
 
+      // --------------------------------------------------
+      // Scene-level cleanup to prevent memory leaks
+      // --------------------------------------------------
+      cleanUp() {
+        // 1️⃣ Remove resize listener added in create()
+        if (this.__onResize) {
+          window.removeEventListener('resize', this.__onResize);
+          this.__onResize = null;
+        }
+
+        // 2️⃣ Kill any remaining tweens / timers
+        if (this.tweens) this.tweens.killAll();
+
+        // 3️⃣ Destroy particle emitter & allow GL buffers to free
+        if (this.unifiedParticles) {
+          this.unifiedParticles.destroy();
+          this.unifiedParticles = null;
+        }
+
+        // 4️⃣ Remove dynamically-generated textures to release ArrayBuffers
+        if (this.textures && this.textures.remove) {
+          ['particle', 'star', 'diamond'].forEach(key => {
+            if (this.textures.exists(key)) this.textures.remove(key);
+          });
+        }
+
+        // 5️⃣ Clear DOM pools to avoid detached DOM nodes
+        if (this.domPools) {
+          Object.values(this.domPools).forEach(pool => {
+            if (pool.clear) pool.clear();
+          });
+        }
+      }
+
     }
 
 
@@ -2484,60 +2533,67 @@
       }
 
       draw() {
-        // Enhanced caching system - skip if no changes
+        // PERFORMANCE OPTIMIZATION: More intelligent caching system
         if (!this.isDirty && this.hasDrawn) return;
 
-        // Skip clear if graphics hasn't changed significantly
-        if (this.isDirty || !this.hasDrawn) {
+        // Cache visual state to avoid unnecessary redraws
+        const currentState = {
+          color: this.ringColor,
+          proximity: this.proximityEffect,
+          angle: Math.round(this.sweetSpotAngle * 100) / 100 // Round for cache efficiency
+        };
+
+        // Skip redraw if visual state hasn't changed significantly
+        if (this.lastDrawState &&
+          this.lastDrawState.color === currentState.color &&
+          this.lastDrawState.proximity === currentState.proximity &&
+          Math.abs(this.lastDrawState.angle - currentState.angle) < 0.05) {
+          return;
+        }
+
+        // Only clear graphics when absolutely necessary
+        if (this.isDirty && this.hasDrawn) {
           this.graphics.clear();
         }
 
-        // Simplified ring drawing for performance - remove excessive gradients
+        // ULTRA-OPTIMIZED ring drawing for maximum performance
         const coreColor = this.ringColor;
         const glowColor = this.proximityEffect ? 0xffd700 : coreColor;
 
-        // Single shadow layer (removed multiple shadows)
-        this.graphics.fillStyle(0x000000, 0.2);
-        this.graphics.fillCircle(2, 2, this.radius + 1);
+        // OPTIMIZED: Minimal shadow (reduced alpha and size)
+        this.graphics.fillStyle(0x000000, 0.1);
+        this.graphics.fillCircle(1, 1, this.radius);
 
-        // Simplified glow (single layer instead of multiple)
-        const glowAlpha = this.proximityEffect ? 0.3 : 0.1;
-        this.graphics.lineStyle(this.thickness + 4, glowColor, glowAlpha);
+        // OPTIMIZED: Single glow layer with reduced thickness
+        const glowAlpha = this.proximityEffect ? 0.2 : 0.06;
+        this.graphics.lineStyle(this.thickness + 2, glowColor, glowAlpha);
         this.graphics.strokeCircle(0, 0, this.radius);
 
-        // Main ring (single layer instead of 4 layers)
+        // Main ring (unchanged - most important)
         this.graphics.lineStyle(this.thickness, coreColor, 1.0);
         this.graphics.strokeCircle(0, 0, this.radius);
 
-        // Simplified sweet spot (2 layers instead of multiple)
+        // OPTIMIZED: Single sweet spot layer (combined for performance)
         const sweetSpotColor = 0xFFFFFF;
-
-        // Sweet spot glow
-        this.graphics.lineStyle(this.thickness + 2, sweetSpotColor, 0.4);
+        this.graphics.lineStyle(this.thickness, sweetSpotColor, 0.8);
         this.graphics.beginPath();
         this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
         this.graphics.strokePath();
 
-        // Sweet spot main
-        this.graphics.lineStyle(this.thickness - 2, sweetSpotColor, 1.0);
-        this.graphics.beginPath();
-        this.graphics.arc(0, 0, this.radius, this.sweetSpotAngle - this.arcWidth, this.sweetSpotAngle + this.arcWidth, false);
-        this.graphics.strokePath();
+        // OPTIMIZED: Minimal arrow (smaller and simpler)
+        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 4);
+        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 4);
 
-        // Simplified arrow (removed shadows and excessive details)
-        const arrowX = this.arrowCosCache * (this.radius - this.thickness - 6);
-        const arrowY = this.arrowSinCache * (this.radius - this.thickness - 6);
-
-        // Simple arrow (single layer)
         this.graphics.fillStyle(sweetSpotColor, 1);
         this.graphics.beginPath();
         this.graphics.moveTo(arrowX, arrowY);
-        this.graphics.lineTo(arrowX - 6, arrowY - 8);
-        this.graphics.lineTo(arrowX + 6, arrowY - 8);
+        this.graphics.lineTo(arrowX - 4, arrowY - 6);
+        this.graphics.lineTo(arrowX + 4, arrowY - 6);
         this.graphics.closePath();
         this.graphics.fillPath();
 
-        // Cache state
+        // Cache current state and mark as drawn
+        this.lastDrawState = currentState;
         this.hasDrawn = true;
         this.isDirty = false;
 
@@ -2742,65 +2798,26 @@
 
       // High-quality canvas maintenance system (only if game initialized successfully)
       if (game) {
-        const maintainCanvasQuality = () => {
+        // One-time canvas optimization on initialization
+        setTimeout(() => {
           const canvas = document.querySelector('#phaser-game canvas');
           if (canvas) {
-            const currentWidth = parseInt(canvas.style.width);
-            const currentHeight = parseInt(canvas.style.height);
-            const expectedWidth = window.innerWidth;
-            const expectedHeight = window.innerHeight;
-
-            // Maintain correct size and quality
-            if (currentWidth !== expectedWidth || currentHeight !== expectedHeight) {
-              const pixelRatio = window.devicePixelRatio || 1;
-
-              canvas.style.position = 'fixed';
-              canvas.style.top = '0';
-              canvas.style.left = '0';
-              canvas.style.width = expectedWidth + 'px';
-              canvas.style.height = expectedHeight + 'px';
-              canvas.style.imageRendering = 'auto';
-              canvas.style.imageRendering = 'crisp-edges';
-              canvas.style.imageRendering = '-webkit-optimize-contrast';
-
-              console.log(`🔧 Canvas quality maintained: ${expectedWidth}x${expectedHeight} @ ${pixelRatio}x`);
-            }
-          }
-        };
-
-        // Monitor canvas quality every 3 seconds
-        setInterval(maintainCanvasQuality, 3000);
-      }
-
-      // High-quality resize handler (only if game initialized)
-      if (game) {
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(() => {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
             const pixelRatio = window.devicePixelRatio || 1;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
 
-            // Update Phaser scale manager for proper internal resolution
-            game.scale.resize(newWidth, newHeight);
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            canvas.style.imageRendering = 'auto';
+            canvas.style.imageRendering = 'crisp-edges';
+            canvas.style.imageRendering = '-webkit-optimize-contrast';
 
-            // Apply high-quality canvas styling
-            const canvas = document.querySelector('#phaser-game canvas');
-            if (canvas) {
-              canvas.style.position = 'fixed';
-              canvas.style.top = '0';
-              canvas.style.left = '0';
-              canvas.style.width = newWidth + 'px';
-              canvas.style.height = newHeight + 'px';
-              canvas.style.imageRendering = 'auto';
-              canvas.style.imageRendering = 'crisp-edges';
-              canvas.style.imageRendering = '-webkit-optimize-contrast';
-
-              console.log(`🔧 Canvas resized to ${newWidth}x${newHeight} @ ${pixelRatio}x`);
-            }
-          }, 100); // Debounce resize events
-        });
+            console.log(`✅ Canvas optimized once at ${width}x${height} @ ${pixelRatio}x`);
+          }
+        }, 100);
       }
     }
 

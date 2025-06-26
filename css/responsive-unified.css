@@ -523,23 +523,23 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
 
-    /* Sadece gereksiz animasyonları yavaşlat, ana game animasyonlarını değil */
+    /* Sadece arka plan efektlerini disable et, game animasyonlarını değil */
     .decorative-animation,
-    .particle-effect,
-    .background-animation {
-        animation-duration: 0.01ms;
-        animation-iteration-count: 1;
-        transition-duration: 0.01ms;
+    .particle-effect:not(.game-critical),
+    .background-animation:not(.game-critical) {
+        animation: none;
+        transition: none;
     }
 
-    /* Ana game elementleri normal kalacak */
+    /* Game kritik elementleri hiç etkileme */
     .scene_pluto,
     .scene_saturn,
     #kronos,
     #pluto,
     .chronos-image,
-    .pluto-entity {
-        /* animation-duration ayarlama - normal kal */
+    .pluto-entity,
+    .story-scene * {
+        /* Hiçbir değişiklik yapma */
     }
 }
 
@@ -548,3 +548,7 @@ body {
 (min-resolution: 192dpi) {
     .high-dpi-optimize {
         image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimize-contrast;
+        -ms-interpolation-mode: nearest-neighbor;
+    }
+}
