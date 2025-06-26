@@ -248,6 +248,44 @@
             display: none;
         }
 
+        /* RING SPAWNING ANIMATIONS - Teker teker dışa doğru doğma */
+        @keyframes ringSpawn {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(0.8) rotate(180deg);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes ringGlow {
+            0% {
+                box-shadow: 0 0 10px currentColor;
+            }
+
+            50% {
+                box-shadow: 0 0 30px currentColor, 0 0 50px currentColor;
+            }
+
+            100% {
+                box-shadow: 0 0 15px currentColor;
+            }
+        }
+
+        /* Ring spawn effect sınıfı */
+        .ring-spawning {
+            animation: ringSpawn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards,
+                ringGlow 0.8s ease-in-out forwards;
+        }
+
         /* Mobile Optimizations */
         @media screen and (max-width: 768px) {
             .game-title {
@@ -742,9 +780,12 @@
                     color: color,
                     sweetSpotAngle: Math.random() * Math.PI * 2,
                     sweetSpotSize: this.selectedMode.sweetSpotSize,
-                    alpha: 1,
+                    alpha: 0, // Başlangıçta görünmez
                     inputReceived: false,
-                    proximityEffect: false
+                    proximityEffect: false,
+                    isSpawning: true, // Spawn animasyonu bayrağı
+                    spawnStartTime: performance.now(),
+                    spawnDuration: 800 // 800ms spawn animasyonu
                 };
 
                 this.rings.push(ring);
@@ -881,9 +922,12 @@
                         color: color,
                         sweetSpotAngle: Math.random() * Math.PI * 2,
                         sweetSpotSize: this.selectedMode.sweetSpotSize,
-                        alpha: 1,
+                        alpha: 0, // Başlangıçta görünmez
                         inputReceived: false,
-                        proximityEffect: false
+                        proximityEffect: false,
+                        isSpawning: true, // Spawn animasyonu bayrağı
+                        spawnStartTime: performance.now() + (i * 200), // Teker teker doğma - her ring 200ms gecikmeli
+                        spawnDuration: 800 // 800ms spawn animasyonu
                     };
 
                     this.rings.push(ring);
@@ -1492,6 +1536,22 @@
                     // Draw all rings of same color in one path
                     colorRings.forEach(ring => {
                         let { x, y, radius, thickness, alpha } = ring;
+                        let scale = ring.scale || 1;
+
+                        // Spawn animation - ring doğarken
+                        if (ring.isSpawning) {
+                            // Doğma animasyonu sırasında ring'in merkezi sabit kalır, sadece boyutu değişir
+                            radius *= scale;
+                            thickness *= scale;
+
+                            // Spawn rotation effect - dönme efekti
+                            if (ring.spawnRotation) {
+                                ctx.save();
+                                ctx.translate(x, y);
+                                ctx.rotate(ring.spawnRotation);
+                                ctx.translate(-x, -y);
+                            }
+                        }
 
                         // Breaking animation
                         if (ring.isBreaking) {
@@ -1508,8 +1568,13 @@
                         ctx.arc(x, y, radius, 0, Math.PI * 2);
                         ctx.stroke();
 
-                        // Sweet spots - batch these too
-                        if (!ring.isBreaking) {
+                        // Spawn rotasyonu varsa restore et
+                        if (ring.isSpawning && ring.spawnRotation) {
+                            ctx.restore();
+                        }
+
+                        // Sweet spots - batch these too (spawn animasyonu sırasında da çiz)
+                        if (!ring.isBreaking && (!ring.isSpawning || ring.alpha > 0.5)) {
                             const sweetSpotRad = (ring.sweetSpotSize * Math.PI / 180) / 2 * 2.5;
                             ctx.strokeStyle = '#ffffff';
                             ctx.shadowColor = '#ffffff';
@@ -1603,8 +1668,46 @@
                 requestAnimationFrame((time) => this.gameLoop(time));
             }
 
+            // RING SPAWNING ANIMATION - Ring doğma animasyonlarını güncelle
+            updateRingSpawning() {
+                const currentTime = performance.now();
+
+                this.rings.forEach(ring => {
+                    if (ring.isSpawning && currentTime >= ring.spawnStartTime) {
+                        // Spawn animasyonu ilerleme hesabı (0-1 arası)
+                        const progress = Math.min(1, (currentTime - ring.spawnStartTime) / ring.spawnDuration);
+
+                        // Easing function: cubic-bezier(0.68, -0.55, 0.265, 1.55) - bounce etkisi
+                        const t = progress;
+                        const easedProgress = t < 0.5
+                            ? 4 * t * t * t
+                            : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                        // Alpha ve scale animasyonu
+                        ring.alpha = easedProgress;
+                        ring.scale = 0.3 + (easedProgress * 0.7); // 0.3'ten 1.0'a scale
+
+                        // Rotasyon efekti
+                        ring.spawnRotation = easedProgress * Math.PI * 2; // 360 derece dönüş
+
+                        // Spawn tamamlandığında
+                        if (progress >= 1) {
+                            ring.isSpawning = false;
+                            ring.alpha = 1;
+                            ring.scale = 1;
+                            delete ring.spawnRotation;
+                        }
+                    }
+                });
+            }
+
             // YENİ: ULTRA FAST - En kritik işlemler
             ultraFastUpdate(deltaTime) {
+                // RING SPAWNING - Her frame güncelle
+                if (this.currentScene === 'game') {
+                    this.updateRingSpawning();
+                }
+
                 // SADECE needle pozisyonu - her frame'de çalışır
                 if (this.currentScene === 'game' && !this.gameOverFlag && this.needle && this.activeRing && this.needleActive) {
                     // Multiple needle updates for ultra smooth movement
