@@ -856,7 +856,6 @@
               if (this.menuPlutoContainer) {
                 this.menuPlutoContainer.remove();
                 this.menuPlutoContainer = null;
-                this.menuPlutoEntity = null;
               }
 
               // Modern selection effect
@@ -1364,10 +1363,7 @@
         if (this.frameCount % RESPONSIVE_CONSTANTS.UPDATE_NONCRITICAL === 0) {
           this.updatePlutoMood(delta);
 
-          // Pluto animations
-          if (this.gamePlutoEntity && this.gamePlutoEntity.dataset.context === 'game') {
-            this.updateGamePlutoAnimation();
-          }
+          // Pluto animations handled by unified system
         }
 
         this.frameCount = (this.frameCount + 1) % RESPONSIVE_CONSTANTS.UPDATE_CYCLE;
@@ -1466,43 +1462,7 @@
         return design;
       }
 
-      updateGamePlutoAnimation() {
-        // Trigger specific animations based on game state
-        if (this.gamePlutoEntity) {
-          const currentAnimation = this.gamePlutoEntity.dataset.animation;
 
-          // Chain break detection
-          if (this.justBrokeChain) {
-            this.gamePlutoEntity.dataset.animation = 'chain-break';
-            this.justBrokeChain = false;
-            setTimeout(() => {
-              if (this.gamePlutoEntity) {
-                this.gamePlutoEntity.dataset.animation = 'idle';
-              }
-            }, 1000);
-          }
-          // Victory condition
-          else if (this.levelComplete && currentAnimation !== 'victory-dance') {
-            this.gamePlutoEntity.dataset.animation = 'victory-dance';
-          }
-          // Power mode
-          else if (this.feverMode && currentAnimation !== 'power-burst') {
-            this.gamePlutoEntity.dataset.animation = 'power-burst';
-          }
-          // High combo
-          else if (this.combo >= 5 && currentAnimation !== 'excited') {
-            this.gamePlutoEntity.dataset.animation = 'excited';
-          }
-          // Low health warning
-          else if (this.lives === 1 && currentAnimation !== 'shake') {
-            this.gamePlutoEntity.dataset.animation = 'shake';
-          }
-          // Default idle with cute animation
-          else if (this.combo === 0 && !this.feverMode && currentAnimation !== 'idle') {
-            this.gamePlutoEntity.dataset.animation = 'idle';
-          }
-        }
-      }
 
       updateBackgroundGlow(time) {
         // Ultra-conservative update - only when significant change
