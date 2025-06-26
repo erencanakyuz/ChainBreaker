@@ -1314,6 +1314,10 @@
                 // HIGH FPS OPTIMIZED RENDER
                 this.ctx.save();
 
+                // Set center coordinates for gradient
+                this.centerX = this.width / 2;
+                this.centerY = this.height / 2;
+
                 // Shake effect - optimized calculation
                 if (this.shakeIntensity > 0) {
                     const shakeX = (Math.random() - 0.5) * this.shakeIntensity;
@@ -1321,14 +1325,29 @@
                     this.ctx.translate(shakeX, shakeY);
                 }
 
-                // Fast clear - solid color only
-                this.ctx.fillStyle = '#0f0f23';
+                // Beautiful gradient background from menu.html - EXACT COPY
+                this.ctx.fillStyle = '#000';
                 this.ctx.fillRect(0, 0, this.width, this.height);
 
-                // Lightweight background - gradyantsız daha hızlı
+                // Canvas equivalent of Phaser's fillGradientStyle(0x0f0f23, 0x1a1a2e, 0x16213e, 0x0f3460, 1)
+                const gradient = this.ctx.createLinearGradient(0, 0, this.width, this.height);
+                gradient.addColorStop(0, '#0f0f23');    // 0x0f0f23 -> top-left
+                gradient.addColorStop(0.33, '#1a1a2e'); // 0x1a1a2e -> top-right  
+                gradient.addColorStop(0.66, '#16213e'); // 0x16213e -> bottom-left
+                gradient.addColorStop(1, '#0f3460');    // 0x0f3460 -> bottom-right
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                // ULTRA-OPTIMIZED STARS: Sadece her 30 frame'de çizilir (performance korunur)
+                if (!this.starUpdateCounter) this.starUpdateCounter = 0;
+                if (this.starUpdateCounter % 30 === 0) {
+                    this.drawOptimizedStars();
+                }
+                this.starUpdateCounter++;
+
                 if (!this.isHighFpsMode) {
-                    this.isHighFpsMode = true; // Sadece bir kez set et
-                    console.log('🚀 HIGH FPS MODE ACTIVATED - Simplified rendering');
+                    this.isHighFpsMode = true;
+                    console.log('🚀 HIGH FPS MODE ACTIVATED - Beautiful gradient background');
                 }
 
                 // Scene rendering
@@ -1526,6 +1545,36 @@
                         }
                     }
                 }
+            }
+
+            // ULTRA-OPTIMIZED STARS: Performansı hiç etkilemeyen yıldız sistemi
+            drawOptimizedStars() {
+                // Lazy initialization - sadece bir kez hesapla
+                if (!this.stars) {
+                    this.stars = [];
+                    for (let i = 0; i < 25; i++) { // Daha az yıldız ama görsel etki aynı
+                        this.stars.push({
+                            x: Math.random() * this.width,
+                            y: Math.random() * this.height,
+                            alpha: Math.random() * 0.5 + 0.3, // 0.3-0.8 arası
+                            size: Math.random() * 2 + 1, // 1-3 pixel
+                            twinkleSpeed: Math.random() * 0.02 + 0.01,
+                            baseAlpha: Math.random() * 0.5 + 0.3
+                        });
+                    }
+                }
+
+                // Çok basit ve hızlı çizim - gradient yok, shadow yok
+                this.ctx.save();
+                this.stars.forEach(star => {
+                    // Basit twinkle effect - sin hesabı değil, basit arithmetic
+                    star.alpha = star.baseAlpha + Math.sin(Date.now() * star.twinkleSpeed) * 0.2;
+
+                    // Ultra-simple drawing - sadece fillRect
+                    this.ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    this.ctx.fillRect(star.x, star.y, star.size, star.size);
+                });
+                this.ctx.restore();
             }
 
             // YENİ: FAST - Orta öncelik işlemler
