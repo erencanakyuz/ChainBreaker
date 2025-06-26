@@ -1320,12 +1320,9 @@
                     return;
                 }
 
-                // 🎲 Random break type selection
-                const breakTypes = ['shatter', 'implode', 'dissolve', 'lightning', 'spiral', 'bloom'];
-                const breakType = breakTypes[Math.floor(Math.random() * breakTypes.length)];
-
+                // ✨ Dissolve break animation - smooth sparkle fade
                 ring.isBreaking = true;
-                ring.breakType = breakType;
+                ring.breakType = 'dissolve';
                 ring.breakStartTime = performance.now();
                 ring.breakDuration = window.EffectsSettings?.breaking?.duration || 400;
                 ring.originalRadius = ring.radius;
@@ -1333,8 +1330,8 @@
 
                 this.breakingRings.push(ring);
 
-                // Execute break type specific effects
-                this.executeBreakType(ring, breakType);
+                // Execute dissolve effect
+                this.createDissolveBreak(ring);
 
                 // Enhanced particle effects
                 this.createShatterParticles(ring);
@@ -1345,69 +1342,7 @@
                 }
             }
 
-            // 🎨 CREATIVE BREAK TYPES
-            executeBreakType(ring, breakType) {
-                switch (breakType) {
-                    case 'shatter':
-                        this.createShatterBreak(ring);
-                        break;
-                    case 'implode':
-                        this.createImplodeBreak(ring);
-                        break;
-                    case 'dissolve':
-                        this.createDissolveBreak(ring);
-                        break;
-                    case 'lightning':
-                        this.createLightningBreak(ring);
-                        break;
-                    case 'spiral':
-                        this.createSpiralBreak(ring);
-                        break;
-                    case 'bloom':
-                        this.createBloomBreak(ring);
-                        break;
-                }
-            }
-
-            // 💥 SHATTER BREAK - Klasik patla
-            createShatterBreak(ring) {
-                ring.breakPhase = 'shatter';
-                ring.shatterLines = [];
-
-                // Create crack lines
-                const crackCount = window.EffectsSettings?.breaking?.crackLines || 8;
-                for (let i = 0; i < crackCount; i++) {
-                    const angle = (i / crackCount) * Math.PI * 2;
-                    ring.shatterLines.push({
-                        angle: angle,
-                        length: 0,
-                        maxLength: ring.radius + 20,
-                        speed: 2 + Math.random() * 3
-                    });
-                }
-            }
-
-            // 🌀 IMPLODE BREAK - Merkeze çökme
-            createImplodeBreak(ring) {
-                ring.breakPhase = 'implode';
-                ring.implodeIntensity = 1;
-
-                // Create inward energy waves
-                for (let i = 0; i < 12; i++) {
-                    const angle = (i / 12) * Math.PI * 2;
-                    this.getPooledParticle({
-                        x: ring.x + Math.cos(angle) * ring.radius,
-                        y: ring.y + Math.sin(angle) * ring.radius,
-                        vx: -Math.cos(angle) * 8,
-                        vy: -Math.sin(angle) * 8,
-                        centerX: ring.x, centerY: ring.y,
-                        life: 0.8, decay: 0.025,
-                        color: ring.color, size: 6,
-                        effectType: 'energyWave',
-                        isImploding: true
-                    });
-                }
-            }
+            // ✨ DISSOLVE BREAK - Only dissolve effect kept
 
             // ✨ DISSOLVE BREAK - Yavaş çözülme
             createDissolveBreak(ring) {
@@ -1431,118 +1366,7 @@
                 }
             }
 
-            // ⚡ LIGHTNING BREAK - Elektrik çarpması
-            createLightningBreak(ring) {
-                ring.breakPhase = 'lightning';
-                ring.lightningBolts = [];
 
-                // Create lightning bolts
-                for (let i = 0; i < 6; i++) {
-                    const startAngle = (i / 6) * Math.PI * 2;
-                    const bolt = {
-                        startAngle: startAngle,
-                        segments: [],
-                        life: 1,
-                        decay: 0.05
-                    };
-
-                    // Create jagged lightning path
-                    let currentAngle = startAngle;
-                    let currentRadius = ring.radius;
-
-                    for (let j = 0; j < 8; j++) {
-                        currentAngle += (Math.random() - 0.5) * 0.5;
-                        currentRadius += 15 + Math.random() * 10;
-
-                        bolt.segments.push({
-                            x: ring.x + Math.cos(currentAngle) * currentRadius,
-                            y: ring.y + Math.sin(currentAngle) * currentRadius
-                        });
-                    }
-
-                    ring.lightningBolts.push(bolt);
-                }
-
-                // Lightning particles
-                for (let i = 0; i < 20; i++) {
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = ring.radius + Math.random() * 30;
-                    this.getPooledParticle({
-                        x: ring.x + Math.cos(angle) * distance,
-                        y: ring.y + Math.sin(angle) * distance,
-                        vx: (Math.random() - 0.5) * 6,
-                        vy: (Math.random() - 0.5) * 6,
-                        life: 0.6, decay: 0.04,
-                        color: '#00FFFF', size: Math.random() * 4 + 2,
-                        effectType: 'lightning',
-                        flash: true
-                    });
-                }
-            }
-
-            // 🌀 SPIRAL BREAK - Dönerek parçalanma
-            createSpiralBreak(ring) {
-                ring.breakPhase = 'spiral';
-                ring.spiralAngle = 0;
-                ring.spiralSpeed = 0.3;
-
-                // Create spiral trail particles
-                for (let i = 0; i < 40; i++) {
-                    const angle = (i / 40) * Math.PI * 4; // 2 tam tur
-                    const distance = ring.radius * (1 - i / 40); // İçe doğru spiral
-
-                    setTimeout(() => {
-                        this.getPooledParticle({
-                            x: ring.x + Math.cos(angle) * distance,
-                            y: ring.y + Math.sin(angle) * distance,
-                            vx: Math.cos(angle + Math.PI / 2) * 3,
-                            vy: Math.sin(angle + Math.PI / 2) * 3,
-                            life: 1, decay: 0.015,
-                            color: ring.color, size: 3,
-                            effectType: 'spiralTrail',
-                            rotation: angle,
-                            rotationSpeed: 0.2
-                        });
-                    }, i * 10); // Staggered release
-                }
-            }
-
-            // 🌸 BLOOM BREAK - Çiçek gibi açılma
-            createBloomBreak(ring) {
-                ring.breakPhase = 'bloom';
-                ring.bloomPetals = [];
-
-                // Create flower petal shapes
-                const petalCount = 8;
-                for (let i = 0; i < petalCount; i++) {
-                    const angle = (i / petalCount) * Math.PI * 2;
-                    const petal = {
-                        angle: angle,
-                        baseX: ring.x + Math.cos(angle) * ring.radius,
-                        baseY: ring.y + Math.sin(angle) * ring.radius,
-                        expansion: 0,
-                        maxExpansion: 40,
-                        life: 1,
-                        decay: 0.02
-                    };
-                    ring.bloomPetals.push(petal);
-
-                    // Petal particles
-                    for (let j = 0; j < 5; j++) {
-                        this.getPooledParticle({
-                            x: petal.baseX,
-                            y: petal.baseY,
-                            vx: Math.cos(angle + (j - 2) * 0.2) * 2,
-                            vy: Math.sin(angle + (j - 2) * 0.2) * 2,
-                            life: 1.2, decay: 0.012,
-                            color: this.lightenColor(ring.color, 30),
-                            size: Math.random() * 4 + 2,
-                            effectType: 'petalParticle',
-                            twinkle: true
-                        });
-                    }
-                }
-            }
 
             // 🎆 ADVANCED IMPACT EFFECTS - Layered visual impact
 
@@ -1920,42 +1744,12 @@
                             p.vy *= 0.95;
                             break;
 
-                        case 'energyWave':
-                            // Energy waves for implode effect
-                            p.vx *= 1.05; // Accelerate inward
-                            p.vy *= 1.05;
-                            break;
-
                         case 'dissolveSparkle':
                             // Dissolve sparkles float upward
                             p.vy -= 0.5;
                             if (p.twinkle) {
                                 p.twinklePhase = (p.twinklePhase || 0) + deltaTime * 6;
                                 p.currentAlpha = p.life * (0.5 + Math.sin(p.twinklePhase) * 0.5);
-                            }
-                            break;
-
-                        case 'lightning':
-                            // Lightning particles flicker
-                            p.flash = Math.random() > 0.7;
-                            p.vx *= 0.95;
-                            p.vy *= 0.95;
-                            break;
-
-                        case 'spiralTrail':
-                            // Spiral particles continue spinning
-                            if (p.rotation !== undefined) {
-                                p.rotation += p.rotationSpeed * deltaTime * 60;
-                            }
-                            break;
-
-                        case 'petalParticle':
-                            // Petal particles flutter
-                            p.vx += Math.sin(Date.now() * 0.01 + p.x * 0.01) * 0.1;
-                            p.vy += Math.cos(Date.now() * 0.01 + p.y * 0.01) * 0.1;
-                            if (p.twinkle) {
-                                p.twinklePhase = (p.twinklePhase || 0) + deltaTime * 4;
-                                p.currentAlpha = p.life * (0.6 + Math.sin(p.twinklePhase) * 0.4);
                             }
                             break;
                     }
@@ -2013,57 +1807,10 @@
                         const currentTime = performance.now();
                         const progress = (currentTime - ring.breakStartTime) / ring.breakDuration;
 
-                        // Update break-specific animations
-                        switch (ring.breakPhase) {
-                            case 'shatter':
-                                // Animate crack lines growing
-                                if (ring.shatterLines) {
-                                    ring.shatterLines.forEach(line => {
-                                        if (line.length < line.maxLength) {
-                                            line.length += line.speed * deltaTime * 60;
-                                        }
-                                    });
-                                }
-                                break;
-
-                            case 'implode':
-                                // Animate implode intensity
-                                ring.implodeIntensity = 1 - progress;
-                                ring.radius = ring.originalRadius * ring.implodeIntensity;
-                                break;
-
-                            case 'dissolve':
-                                // Animate dissolve progress
-                                ring.dissolveProgress = progress;
-                                ring.alpha = 1 - progress;
-                                break;
-
-                            case 'lightning':
-                                // Update lightning bolts
-                                if (ring.lightningBolts) {
-                                    ring.lightningBolts.forEach(bolt => {
-                                        bolt.life -= bolt.decay;
-                                    });
-                                    ring.lightningBolts = ring.lightningBolts.filter(bolt => bolt.life > 0);
-                                }
-                                break;
-
-                            case 'spiral':
-                                // Animate spiral rotation
-                                ring.spiralAngle += ring.spiralSpeed * deltaTime * 60;
-                                break;
-
-                            case 'bloom':
-                                // Animate petal expansion
-                                if (ring.bloomPetals) {
-                                    ring.bloomPetals.forEach(petal => {
-                                        if (petal.expansion < petal.maxExpansion) {
-                                            petal.expansion += 2 * deltaTime * 60;
-                                        }
-                                        petal.life -= petal.decay;
-                                    });
-                                }
-                                break;
+                        // Update dissolve animation
+                        if (ring.breakPhase === 'dissolve') {
+                            ring.dissolveProgress = progress;
+                            ring.alpha = 1 - progress;
                         }
 
                         // Remove completed break animations
@@ -2633,120 +2380,19 @@
                             const currentTime = performance.now();
                             const progress = (currentTime - ring.breakStartTime) / ring.breakDuration;
 
-                            // Creative break type specific rendering
-                            if (progress < 1) {
+                            // ✨ Dissolve breaking animation - smooth sparkle fade
+                            if (progress < 1 && ring.breakPhase === 'dissolve') {
                                 ctx.save();
 
-                                switch (ring.breakPhase) {
-                                    case 'shatter':
-                                        // Draw crack lines
-                                        if (ring.shatterLines) {
-                                            ctx.strokeStyle = '#FF0000';
-                                            ctx.lineWidth = 2;
-                                            ctx.globalAlpha = 0.8;
-
-                                            ring.shatterLines.forEach(line => {
-                                                ctx.beginPath();
-                                                ctx.moveTo(x, y);
-                                                ctx.lineTo(x + Math.cos(line.angle) * line.length,
-                                                    y + Math.sin(line.angle) * line.length);
-                                                ctx.stroke();
-                                            });
-                                        }
-                                        // Normal break effect
-                                        const easeOut = 1 - Math.pow(1 - progress, 4);
-                                        radius += easeOut * 10;
-                                        alpha = 1 - progress;
-                                        thickness *= (1 - progress);
-                                        break;
-
-                                    case 'implode':
-                                        // Imploding ring with energy distortion
-                                        alpha = ring.implodeIntensity * alpha;
-                                        ctx.shadowColor = ring.color;
-                                        ctx.shadowBlur = 15 * (1 - ring.implodeIntensity);
-                                        break;
-
-                                    case 'dissolve':
-                                        // Dissolving ring with sparkles
-                                        alpha = (1 - ring.dissolveProgress) * alpha;
-                                        for (let i = 0; i < 10; i++) {
-                                            if (Math.random() > ring.dissolveProgress) {
-                                                const angle = Math.random() * Math.PI * 2;
-                                                const r = radius + (Math.random() - 0.5) * thickness;
-                                                ctx.fillStyle = '#FFFFFF';
-                                                ctx.fillRect(x + Math.cos(angle) * r - 1, y + Math.sin(angle) * r - 1, 2, 2);
-                                            }
-                                        }
-                                        break;
-
-                                    case 'lightning':
-                                        // Lightning strike effect
-                                        alpha = alpha * (0.5 + Math.random() * 0.5);
-                                        ctx.shadowColor = '#00FFFF';
-                                        ctx.shadowBlur = 20;
-
-                                        // Draw lightning bolts
-                                        if (ring.lightningBolts) {
-                                            ctx.strokeStyle = '#00FFFF';
-                                            ctx.lineWidth = 3;
-
-                                            ring.lightningBolts.forEach(bolt => {
-                                                if (bolt.life > 0) {
-                                                    ctx.globalAlpha = bolt.life * 0.8;
-                                                    ctx.beginPath();
-                                                    ctx.moveTo(x, y);
-                                                    bolt.segments.forEach((segment, i) => {
-                                                        if (i === 0) ctx.moveTo(segment.x, segment.y);
-                                                        else ctx.lineTo(segment.x, segment.y);
-                                                    });
-                                                    ctx.stroke();
-                                                }
-                                            });
-                                        }
-                                        break;
-
-                                    case 'spiral':
-                                        // Spiraling fragments
-                                        alpha = (1 - progress) * alpha;
-                                        ctx.save();
-                                        ctx.translate(x, y);
-                                        ctx.rotate(ring.spiralAngle);
-                                        ctx.translate(-x, -y);
-                                        break;
-
-                                    case 'bloom':
-                                        // Blooming petals
-                                        alpha = (1 - progress) * alpha;
-                                        if (ring.bloomPetals) {
-                                            ring.bloomPetals.forEach(petal => {
-                                                if (petal.life > 0) {
-                                                    ctx.save();
-                                                    ctx.globalAlpha = petal.life * 0.6;
-                                                    ctx.strokeStyle = color;
-                                                    ctx.lineWidth = thickness / 3;
-
-                                                    // Draw expanding petal
-                                                    const petalRadius = petal.expansion;
-                                                    const petalX = x + Math.cos(petal.angle) * (radius + petalRadius);
-                                                    const petalY = y + Math.sin(petal.angle) * (radius + petalRadius);
-
-                                                    ctx.beginPath();
-                                                    ctx.arc(petalX, petalY, petalRadius / 4 + 2, 0, Math.PI * 2);
-                                                    ctx.stroke();
-                                                    ctx.restore();
-                                                }
-                                            });
-                                        }
-                                        break;
-
-                                    default:
-                                        // Fallback animation
-                                        const fallbackEase = 1 - Math.pow(1 - progress, 4);
-                                        radius += fallbackEase * 10;
-                                        alpha = 1 - progress;
-                                        thickness *= (1 - progress);
-                                        break;
+                                // Dissolving ring with sparkles
+                                alpha = (1 - ring.dissolveProgress) * alpha;
+                                for (let i = 0; i < 10; i++) {
+                                    if (Math.random() > ring.dissolveProgress) {
+                                        const angle = Math.random() * Math.PI * 2;
+                                        const r = radius + (Math.random() - 0.5) * thickness;
+                                        ctx.fillStyle = '#FFFFFF';
+                                        ctx.fillRect(x + Math.cos(angle) * r - 1, y + Math.sin(angle) * r - 1, 2, 2);
+                                    }
                                 }
 
                                 ctx.restore();
