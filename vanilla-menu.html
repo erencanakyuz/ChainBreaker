@@ -510,24 +510,23 @@
             }
 
             setupInput() {
-                // DESKTOP FIX: Multiple input methods for better compatibility
-                this.canvas.addEventListener('click', (e) => {
-                    console.log('🖱️ Desktop click detected:', e);
-                    this.handleClick(e);
-                });
+                // SIMPLIFIED: Universal input handling - same for all devices
+                console.log('🎮 Setting up UNIVERSAL input system');
 
-                this.canvas.addEventListener('mousedown', (e) => {
-                    console.log('🖱️ Desktop mousedown detected:', e);
+                // Universal click/touch handling
+                this.canvas.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    console.log('🖱️ Click detected:', e.type);
                     this.handleClick(e);
                 });
 
                 this.canvas.addEventListener('touchstart', (e) => {
                     e.preventDefault();
-                    console.log('📱 Mobile touch detected:', e.touches[0]);
+                    console.log('📱 Touch detected:', e.touches[0]);
                     this.handleClick(e.touches[0]);
                 });
 
-                // KEYBOARD support for desktop
+                // KEYBOARD support
                 document.addEventListener('keydown', (e) => {
                     if (e.code === 'Space' && this.currentScene === 'game') {
                         e.preventDefault();
@@ -535,6 +534,8 @@
                         this.handleClick({});
                     }
                 });
+
+                console.log('🎮 Universal input setup complete');
             }
 
             handleClick(e) {
@@ -658,13 +659,21 @@
             }
 
             getDeviceType() {
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-                const isSmallMobile = window.innerWidth <= 480;
-                const isTablet = window.innerWidth >= 768 && window.innerWidth <= 1024;
+                // ENHANCED: Better device detection for input handling
+                const userAgent = navigator.userAgent;
+                const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+                const isSmallScreen = window.innerWidth <= 480;
+                const isTabletScreen = window.innerWidth >= 768 && window.innerWidth <= 1024;
 
-                if (isSmallMobile) return 'small-mobile';
-                if (isMobile) return 'mobile';
-                if (isTablet) return 'tablet';
+                // Prioritize user agent over screen size for better input detection
+                if (isMobileUA || (isTouchDevice && isSmallScreen)) return 'mobile';
+                if (isTouchDevice && isTabletScreen) return 'tablet';
+                if (!isTouchDevice && !isMobileUA) return 'desktop';
+
+                // Fallback based on screen size
+                if (isSmallScreen) return 'mobile';
+                if (isTabletScreen) return 'tablet';
                 return 'desktop';
             }
 
@@ -804,14 +813,8 @@
             }
 
             canProcessInput() {
-                const now = performance.now();
-                const throttle = this.feverMode ? this.inputThrottleFever : this.inputThrottleNormal;
-
-                if (this.lastInputTime && now - this.lastInputTime < throttle) {
-                    return false;
-                }
-
-                this.lastInputTime = now;
+                // REMOVED: Input throttling now handled in handleGameClick with debouncing
+                // This prevents double throttling that was causing desktop issues
                 return true;
             }
 
@@ -883,12 +886,23 @@
             // CORE GAMEPLAY LOGIC - REBUILT FOR PRECISION AND FEEL
             // ===================================================================
             handleGameClick() {
+                const now = performance.now();
+                const deviceType = this.getDeviceType();
+
                 console.log('🎯 handleGameClick called', {
                     activeRing: !!this.activeRing,
                     needleActive: this.needleActive,
                     inputReceived: this.activeRing?.inputReceived,
-                    scene: this.currentScene
+                    scene: this.currentScene,
+                    device: deviceType,
+                    timeSinceLastInput: this.lastInputTime ? now - this.lastInputTime : 'first'
                 });
+
+                // SIMPLE DEBOUNCING: Prevent multiple rapid inputs
+                if (this.lastInputTime && now - this.lastInputTime < 50) {
+                    console.log('🚫 Input debounced - too fast', { gap: now - this.lastInputTime });
+                    return;
+                }
 
                 // Tıklamanın mümkün olup olmadığını en başta kontrol et (daha temiz mantık)
                 if (!this.activeRing || !this.needleActive || this.activeRing.inputReceived) {
@@ -896,15 +910,30 @@
                     return;
                 }
 
-                // BÜYÜTÜLMÜŞ: Collision threshold'u daha da büyük
-                // Görsel %50 büyük, collision da %50 büyük olmalı
+                this.lastInputTime = now;
+
+                // ULTRA BÜYÜK: Collision threshold'u çok daha büyük yap - desktop için
+                // Görsel çok büyük göründüğü için collision'ı da ona uygun yapmalıyız
                 const baseThreshold = (this.activeRing.sweetSpotSize * Math.PI / 180) / 2;
-                const threshold = baseThreshold * 1.5; // %50 büyütme
+                const threshold = baseThreshold * 2.5; // %150 büyütme - çok daha kolay vurmak için
 
                 // Yüksek hassasiyetli açı farkı hesaplaması
                 let angleDiff = this.needle.angle - this.activeRing.sweetSpotAngle;
                 while (angleDiff <= -Math.PI) angleDiff += 2 * Math.PI;
                 while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+
+                // ENHANCED DEBUG: Detailed collision analysis
+                const absAngleDiff = Math.abs(angleDiff);
+                const isHit = absAngleDiff <= threshold;
+
+                console.log('🔍 COLLISION DETECTION DEBUG:');
+                console.log('   Needle:', (this.needle.angle * 180 / Math.PI).toFixed(3) + '°');
+                console.log('   Sweet Spot:', (this.activeRing.sweetSpotAngle * 180 / Math.PI).toFixed(3) + '°');
+                console.log('   Angle Diff:', (absAngleDiff * 180 / Math.PI).toFixed(3) + '°');
+                console.log('   Threshold:', (threshold * 180 / Math.PI).toFixed(3) + '°');
+                console.log('   Sweet Spot Size:', this.activeRing.sweetSpotSize + '°');
+                console.log('   Math Check:', absAngleDiff.toFixed(6), '<=', threshold.toFixed(6), '=', isHit);
+                console.log('   RESULT:', isHit ? '✅ HIT' : '❌ MISS');
 
                 // Enhanced debug info
                 if (this.deviceDebugDiv) {
@@ -913,51 +942,71 @@
                         Screen: ${window.innerWidth}x${window.innerHeight}<br>
                         Needle: ${(this.needle.angle * 180 / Math.PI).toFixed(3)}°<br>
                         Sweet: ${(this.activeRing.sweetSpotAngle * 180 / Math.PI).toFixed(3)}°<br>
-                        Diff: ${(Math.abs(angleDiff) * 180 / Math.PI).toFixed(3)}°<br>
+                        Diff: ${(absAngleDiff * 180 / Math.PI).toFixed(3)}°<br>
                         Threshold: ${(threshold * 180 / Math.PI).toFixed(3)}°<br>
-                        <span style="color: ${Math.abs(angleDiff) <= threshold ? '#00ff00' : '#ff0000'}; font-weight: bold;">
-                        ${Math.abs(angleDiff) <= threshold ? '✅ PERFECT HIT!' : '❌ MISS'}
+                        <span style="color: ${isHit ? '#00ff00' : '#ff0000'}; font-weight: bold;">
+                        ${isHit ? '✅ PERFECT HIT!' : '❌ MISS'}
                         </span><br>
                         Lives: ${this.lives}<br>
                         Combo: ${this.combo}
                     `;
                 }
 
-                if (Math.abs(angleDiff) <= threshold) {
+                if (isHit) {
                     // BAŞARILI VURUŞ:
+                    console.log('✅ SUCCESS HIT!', { lives: this.lives, combo: this.combo });
                     this.activeRing.inputReceived = true; // Hileleri önlemek için ANINDA işle
                     this.handleSuccessfulHit();
                     this.resetRegenTimer(); // Zamanlayıcıyı sadece başarıda sıfırla
                 } else {
                     // ISKA:
+                    console.log('❌ MISS!', { lives: this.lives, combo: this.combo });
                     this.handleMiss();
                 }
             }
 
             handleSuccessfulHit() {
+                console.log('🎉 handleSuccessfulHit called - LIVES SHOULD NOT DECREASE!');
+
                 const points = Math.floor(10 * (this.feverMode ? 2 : (1 + this.combo * 0.1)));
                 this.score += points;
                 this.combo++;
 
                 // ANINDA GERİ BİLDİRİM - Tüm efektler tıklama ile aynı anda tetiklenir
-                this.triggerShake(3, 100); // Hafif ve anlık bir sarsıntı
+                this.triggerShake(8, 200); // Güçlü titreme efekti
                 this.animateRingBreak(this.activeRing); // Kırılma animasyonunu ve parçacıkları BAŞLAT
                 this.showScorePopup(points, this.centerX, this.centerY); // Skoru göster
 
-                // Oyun mantığını devam ettir
+                // SMOOTH RING TRANSITION: Needle pozisyonunu yumuşak geçişle ayarla
+                const oldRing = this.activeRing;
                 this.rings.pop();
 
                 if (this.rings.length === 0) {
+                    console.log('🆙 Level complete!');
                     this.levelUp();
                 } else {
-                    this.activeRing = this.rings[this.rings.length - 1];
-                    this.needle.radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15;
+                    const newRing = this.rings[this.rings.length - 1];
+                    this.activeRing = newRing;
+
+                    // SMOOTH NEEDLE TRANSITION: Aynı açıyı koruyarak yeni ring'e geç
+                    const currentAngle = this.needle.angle;
+                    this.needle.radius = newRing.radius + newRing.thickness / 2 + 15;
+                    // Açıyı aynı tutarak smooth geçiş
+                    this.needle.angle = currentAngle;
+
+                    console.log('🔄 Smooth transition to new ring', {
+                        oldRadius: oldRing.radius,
+                        newRadius: newRing.radius,
+                        needleAngle: (currentAngle * 180 / Math.PI).toFixed(2) + '°'
+                    });
                 }
 
                 this.needle.speed *= 1.02; // Hızı hafifçe artır
                 this.regenDelay = Math.max(2500, this.regenDelay * 0.98); // Bekleme süresini azalt
                 if (this.combo >= 5 && !this.feverMode) this.activateFeverMode();
                 if (this.combo > 0 && this.combo % 5 === 0) this.showComboEffect();
+
+                console.log('✅ Success hit complete. Lives:', this.lives);
                 this.updateUI();
             }
 
@@ -981,27 +1030,30 @@
                 this.createShatterParticles(ring);
             }
 
-            // YENİ FONKSİYON: Patlama hissini yaratır
+            // YENİ FONKSİYON: Merkeze doğru çekilen patlama efekti
             createShatterParticles(ring) {
-                const count = 20; // Daha fazla parçacık
+                const count = 60; // Daha fazla parçacık
                 for (let i = 0; i < count; i++) {
                     const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
-                    const speed = Math.random() * 4 + 3; // Daha enerjik hız
+                    const startSpeed = Math.random() * 2 + 1; // Başlangıç hızı
                     this.particles.push({
                         x: ring.x + Math.cos(angle) * ring.radius,
                         y: ring.y + Math.sin(angle) * ring.radius,
-                        vx: Math.cos(angle) * speed,
-                        vy: Math.sin(angle) * speed,
+                        vx: Math.cos(angle) * startSpeed, // İlk hız dışa doğru
+                        vy: Math.sin(angle) * startSpeed,
+                        centerX: ring.x, // Merkez koordinatları
+                        centerY: ring.y,
                         life: 1,
-                        decay: 0.015,
+                        decay: 0.012,
                         color: ring.color,
-                        size: Math.random() * 4 + 2
+                        size: Math.random() * 5 + 3,
+                        isImploding: true // Merkeze çekilme efekti için bayrak
                     });
                 }
                 // Merkezde büyük bir beyaz flaş patlaması efekti
                 this.particles.push({
-                    x: ring.x, y: ring.y, vx: 0, vy: 0, life: 1, decay: 0.05,
-                    color: '#FFFFFF', size: ring.radius, isFlash: true // Flaş parçacığı
+                    x: ring.x, y: ring.y, vx: 0, vy: 0, life: 1, decay: 0.04,
+                    color: '#FFFFFF', size: ring.radius * 1.5, isFlash: true
                 });
             }
 
@@ -1027,7 +1079,7 @@
 
                 // HASSAS: Çarpışma mantığıyla birebir aynı hesaplama
                 const baseThreshold = (this.activeRing.sweetSpotSize * Math.PI / 180) / 2;
-                const threshold = baseThreshold * 1.5; // Görsel ile aynı %50 büyütme
+                const threshold = baseThreshold * 2.5; // Görsel ile aynı %150 büyütme
                 const inSweetSpot = absAngleDiff <= threshold;
 
                 ctx.save();
@@ -1068,10 +1120,18 @@
             }
 
             handleMiss() {
+                console.log('💥 handleMiss called - LIVES WILL DECREASE!', {
+                    livesBefore: this.lives,
+                    combo: this.combo
+                });
+
                 this.combo = 0;
                 this.lives--;
 
+                console.log('💔 Lives decreased:', this.lives);
+
                 if (this.lives <= 0) {
+                    console.log('☠️ Game Over!');
                     this.gameOver();
                 }
 
@@ -1216,7 +1276,27 @@
                 }
 
                 this.particles = this.particles.filter(p => {
-                    p.x += p.vx * deltaTime * 60; // Parçacık hızı deltaTime'a bağlı olsun
+                    // Merkeze çekilme efekti
+                    if (p.isImploding && p.life > 0.1) {
+                        // Merkeze doğru çekim kuvveti
+                        const toCenter = {
+                            x: p.centerX - p.x,
+                            y: p.centerY - p.y
+                        };
+                        const distance = Math.sqrt(toCenter.x * toCenter.x + toCenter.y * toCenter.y);
+
+                        if (distance > 5) {
+                            const pullForce = 1; // Çekim gücü
+                            const normalizedX = toCenter.x / distance;
+                            const normalizedY = toCenter.y / distance;
+
+                            // Hızı merkeze doğru değiştir
+                            p.vx += normalizedX * pullForce * deltaTime * 60;
+                            p.vy += normalizedY * pullForce * deltaTime * 60;
+                        }
+                    }
+
+                    p.x += p.vx * deltaTime * 60;
                     p.y += p.vy * deltaTime * 60;
                     p.life -= p.decay;
                     return p.life > 0;
@@ -1304,13 +1384,15 @@
                     this.ctx.save();
                     this.ctx.globalAlpha = p.life;
 
-                    // YENİ: Flaş parçacığını farklı çiz
+                    // YENİ: Güçlü flaş patlaması efekti
                     if (p.isFlash) {
-                        const grad = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * (1 - p.life));
-                        grad.addColorStop(0, `rgba(255, 255, 255, ${p.life})`);
+                        const flashSize = p.size * (1.2 - p.life * 0.2); // Büyüyerek başlasın
+                        const grad = this.ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, flashSize);
+                        grad.addColorStop(0, `rgba(255, 255, 255, ${p.life * 0.9})`);
+                        grad.addColorStop(0.5, `rgba(255, 255, 255, ${p.life * 0.4})`);
                         grad.addColorStop(1, 'transparent');
                         this.ctx.fillStyle = grad;
-                        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); this.ctx.fill();
+                        this.ctx.beginPath(); this.ctx.arc(p.x, p.y, flashSize, 0, Math.PI * 2); this.ctx.fill();
                     } else {
                         this.ctx.fillStyle = p.color;
                         this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2); this.ctx.fill();
@@ -1340,24 +1422,16 @@
                 ctx.shadowBlur = 5; // Daha az parlaklık
                 ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.stroke();
 
-                // ULTRA-VISIBLE COLLISION ZONE: Çok büyük ve tam beyaz
+                // NORMAL SWEET SPOT: Sadece beyaz renkte, normal şekilde
                 if (!ring.isBreaking) {
-                    // Collision alanını %50 büyüt - çok daha kolay vurmak için
-                    const sweetSpotRad = (ring.sweetSpotSize * Math.PI / 180) / 2 * 1.5; // 50% büyük görsel
+                    // Normal collision alanı - sadece rengi beyaz
+                    const sweetSpotRad = (ring.sweetSpotSize * Math.PI / 180) / 2 * 2.5; // Aynı collision alanı
 
-                    // Arka plan (koyu kenarlık) - daha kalın
-                    ctx.strokeStyle = '#222222';
-                    ctx.lineWidth = thickness + 12;
-                    ctx.shadowBlur = 0;
-                    ctx.beginPath();
-                    ctx.arc(x, y, radius, ring.sweetSpotAngle - sweetSpotRad, ring.sweetSpotAngle + sweetSpotRad);
-                    ctx.stroke();
-
-                    // Ana beyaz alan - TAM BEYAZ ve çok belirgin
-                    ctx.strokeStyle = '#ffffff'; // Tam beyaz
-                    ctx.lineWidth = thickness + 10;
+                    // Ana beyaz alan - Normal kalınlıkta, sadece beyaz renk
+                    ctx.strokeStyle = '#ffffff'; // Beyaz renk
+                    ctx.lineWidth = thickness; // Normal kalınlık
                     ctx.shadowColor = '#ffffff';
-                    ctx.shadowBlur = 12; // Daha belirgin glow
+                    ctx.shadowBlur = 8; // Hafif glow
                     ctx.beginPath();
                     ctx.arc(x, y, radius, ring.sweetSpotAngle - sweetSpotRad, ring.sweetSpotAngle + sweetSpotRad);
                     ctx.stroke();
