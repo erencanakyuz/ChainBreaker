@@ -328,7 +328,7 @@
             <!-- BREAKING ANIMATION -->
             <div class="effect-section">
                 <div class="effect-title">
-                    💥 Breaking Animation
+                    🎨 Creative Breaking System
                     <div class="toggle-switch active" onclick="toggleEffect('breaking')" id="toggleBreaking"></div>
                 </div>
 
@@ -339,14 +339,25 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Multi-Stage Animation</label>
-                    <div class="toggle-switch active" onclick="toggleMultiStage()" id="toggleMultiStage"></div>
+                    <label class="control-label">Break Types Available:</label>
+                    <div style="font-size: 10px; color: #888; margin-top: 5px; line-height: 1.3;">
+                        💥 Shatter - Classic explosion with crack lines<br>
+                        🌀 Implode - Ring collapses to center<br>
+                        ✨ Dissolve - Slowly fades with sparkles<br>
+                        ⚡ Lightning - Electric strike effect<br>
+                        🌀 Spiral - Twisting destruction<br>
+                        🌸 Bloom - Flower-like expansion
+                    </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Crack Lines Count (4-16)</label>
+                    <label class="control-label">Crack Lines (Shatter Mode)</label>
                     <input type="number" class="control-input" min="4" max="16" value="8"
                         onchange="updateCrackLines(this.value)" id="crackLines">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label" style="color: #888;">Random Type Selection: AUTO</label>
                 </div>
             </div>
 
@@ -478,14 +489,7 @@
             }
         }
 
-        function toggleMultiStage() {
-            const settings = getSettings().breaking;
-            settings.multiStage = !settings.multiStage;
-            const toggle = document.getElementById('toggleMultiStage');
-            toggle.classList.toggle('active', settings.multiStage);
-            console.log('🎛️ Multi-stage breaking:', settings.multiStage ? 'ENABLED' : 'DISABLED');
-            updateParentSettings();
-        }
+        // toggleMultiStage REMOVED - now using creative break types
 
         function toggleDebugMode() {
             const settings = getSettings().advanced;
