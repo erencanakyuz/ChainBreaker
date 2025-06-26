@@ -329,37 +329,8 @@
                 </div>
             </div>
 
-            <!-- RIPPLE EFFECTS -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    🌊 Ripple Waves
-                    <div class="toggle-switch active" onclick="toggleEffect('ripples')" id="toggleRipples"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Wave Count (1-5)</label>
-                    <input type="number" class="control-input" min="1" max="5" value="3"
-                        onchange="updateRippleCount(this.value)" id="rippleCount">
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Expansion Speed</label>
-                    <div style="display: flex; align-items: center;">
-                        <input type="range" class="control-input range-input" min="50" max="200" value="100"
-                            onchange="updateRippleSpeed(this.value)" id="rippleSpeed">
-                        <span class="range-value" id="rippleSpeedValue">1.0x</span>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Max Radius Multiplier</label>
-                    <div style="display: flex; align-items: center;">
-                        <input type="range" class="control-input range-input" min="100" max="300" value="200"
-                            onchange="updateRippleRadius(this.value)" id="rippleRadius">
-                        <span class="range-value" id="rippleRadiusValue">2.0x</span>
-                    </div>
-                </div>
-            </div>
+            <!-- RIPPLE EFFECTS - REMOVED -->
+            <!-- Ripple waves have been removed from the game -->
 
             <!-- PERFECT HIT SYSTEM -->
             <div class="effect-section">
@@ -432,60 +403,87 @@
                     <button class="preset-btn" onclick="resetToDefaults()">Reset</button>
                 </div>
             </div>
+
+            <!-- TEST CONTROLS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    ⚡ Test Controls
+                </div>
+
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="testEffects()">Test FX</button>
+                    <button class="preset-btn" onclick="breakRing()">Break Ring</button>
+                    <button class="preset-btn" onclick="addRing()">Add Ring</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         // 🎛️ EFFECTS CONTROL PANEL JAVASCRIPT
 
-        // Global settings object
-        window.EffectsSettings = {
-            global: { scale: 100 },
-            shake: {
-                enabled: true,
-                intensity: 8,
-                duration: 200,
-                comboMultiplier: 10
-            },
-            fragments: {
-                enabled: true,
-                count: 80,
-                speed: 100,
-                life: 8,
-                gravity: 10
-            },
-            sparkles: {
-                enabled: true,
-                count: 20,
-                speed: 8
-            },
-            ringFragments: {
-                enabled: true,
-                count: 6,
-                speed: 100
-            },
-            ripples: {
-                enabled: true,
-                count: 3,
-                speed: 100,
-                radius: 200
-            },
-            perfectHit: {
-                enabled: true,
-                threshold: 90,
-                particles: 30
-            },
-            breaking: {
-                enabled: true,
-                duration: 400,
-                multiStage: true,
-                crackLines: 8
-            },
-            advanced: {
-                performanceMode: 'balanced',
-                debugMode: false
+        // 🎯 ACCESS PARENT WINDOW'S SETTINGS - Ana window'a erişim
+        function getParentSettings() {
+            // Ana window'un EffectsSettings'ini al veya varsayılan değerler oluştur
+            if (window.parent && window.parent !== window && window.parent.EffectsSettings) {
+                return window.parent.EffectsSettings;
             }
-        };
+
+            // Fallback: Ana window erişilemiyorsa kendi ayarlarımızı kullan
+            return window.EffectsSettings || {
+                global: { scale: 100 },
+                shake: {
+                    enabled: true,
+                    intensity: 8,
+                    duration: 200,
+                    comboMultiplier: 10
+                },
+                fragments: {
+                    enabled: true,
+                    count: 80,
+                    speed: 100,
+                    life: 8,
+                    gravity: 10
+                },
+                sparkles: {
+                    enabled: true,
+                    count: 20,
+                    speed: 8
+                },
+                ringFragments: {
+                    enabled: true,
+                    count: 6,
+                    speed: 100
+                },
+                perfectHit: {
+                    enabled: true,
+                    threshold: 90,
+                    particles: 30
+                },
+                breaking: {
+                    enabled: true,
+                    duration: 400,
+                    multiStage: true,
+                    crackLines: 8
+                },
+                advanced: {
+                    performanceMode: 'balanced',
+                    debugMode: false
+                }
+            };
+        }
+
+        // Ana window'un ayarlarına kısayol
+        function getSettings() {
+            return getParentSettings();
+        }
+
+        // Ana window'a değişiklikleri uygula
+        function updateParentSettings() {
+            if (window.parent && window.parent !== window) {
+                console.log('🎛️ Settings updated in parent window:', getSettings());
+            }
+        }
 
         // Panel collapse/expand
         let panelCollapsed = false;
@@ -495,122 +493,146 @@
             panel.classList.toggle('collapsed', panelCollapsed);
         }
 
-        // Effect toggles
+        // Effect toggles - Ana window'u güncelle
         function toggleEffect(effectType) {
-            const settings = window.EffectsSettings[effectType];
+            const settings = getSettings()[effectType];
             if (settings) {
                 settings.enabled = !settings.enabled;
                 const toggle = document.getElementById(`toggle${effectType.charAt(0).toUpperCase() + effectType.slice(1)}`);
                 toggle.classList.toggle('active', settings.enabled);
                 console.log(`🎛️ ${effectType} effects:`, settings.enabled ? 'ENABLED' : 'DISABLED');
+                updateParentSettings();
             }
         }
 
         function toggleMultiStage() {
-            const settings = window.EffectsSettings.breaking;
+            const settings = getSettings().breaking;
             settings.multiStage = !settings.multiStage;
             const toggle = document.getElementById('toggleMultiStage');
             toggle.classList.toggle('active', settings.multiStage);
             console.log('🎛️ Multi-stage breaking:', settings.multiStage ? 'ENABLED' : 'DISABLED');
+            updateParentSettings();
         }
 
         function toggleDebugMode() {
-            const settings = window.EffectsSettings.advanced;
+            const settings = getSettings().advanced;
             settings.debugMode = !settings.debugMode;
             const toggle = document.getElementById('toggleDebug');
             toggle.classList.toggle('active', settings.debugMode);
             console.log('🎛️ Debug mode:', settings.debugMode ? 'ENABLED' : 'DISABLED');
+            updateParentSettings();
         }
 
-        // Update functions
+        // Update functions - Ana window'u güncelle
         function updateGlobalScale(value) {
-            window.EffectsSettings.global.scale = parseInt(value);
+            getSettings().global.scale = parseInt(value);
             document.getElementById('globalScaleValue').textContent = value + '%';
+            console.log('🎛️ Global scale:', value + '%');
+            updateParentSettings();
         }
 
         function updateShakeIntensity(value) {
-            window.EffectsSettings.shake.intensity = parseInt(value);
+            getSettings().shake.intensity = parseInt(value);
+            console.log('🎛️ Shake intensity:', value);
+            updateParentSettings();
         }
 
         function updateShakeDuration(value) {
-            window.EffectsSettings.shake.duration = parseInt(value);
+            getSettings().shake.duration = parseInt(value);
+            console.log('🎛️ Shake duration:', value + 'ms');
+            updateParentSettings();
         }
 
         function updateShakeComboMult(value) {
-            window.EffectsSettings.shake.comboMultiplier = parseInt(value);
+            getSettings().shake.comboMultiplier = parseInt(value);
             document.getElementById('shakeComboValue').textContent = (1 + value / 100).toFixed(1) + 'x';
+            console.log('🎛️ Shake combo multiplier:', (1 + value / 100).toFixed(1) + 'x');
+            updateParentSettings();
         }
 
         function updateFragmentCount(value) {
-            window.EffectsSettings.fragments.count = parseInt(value);
+            getSettings().fragments.count = parseInt(value);
+            console.log('🎛️ Fragment count:', value);
+            updateParentSettings();
         }
 
         function updateFragmentSpeed(value) {
-            window.EffectsSettings.fragments.speed = parseInt(value);
+            getSettings().fragments.speed = parseInt(value);
             document.getElementById('fragmentSpeedValue').textContent = (value / 100).toFixed(1) + 'x';
+            console.log('🎛️ Fragment speed:', (value / 100).toFixed(1) + 'x');
+            updateParentSettings();
         }
 
         function updateFragmentLife(value) {
-            window.EffectsSettings.fragments.life = parseInt(value);
+            getSettings().fragments.life = parseInt(value);
             document.getElementById('fragmentLifeValue').textContent = (125 / value).toFixed(2) + 's';
+            console.log('🎛️ Fragment life:', (125 / value).toFixed(2) + 's');
+            updateParentSettings();
         }
 
         function updateFragmentGravity(value) {
-            window.EffectsSettings.fragments.gravity = parseInt(value);
+            getSettings().fragments.gravity = parseInt(value);
             document.getElementById('fragmentGravityValue').textContent = (value / 100).toFixed(2);
+            console.log('🎛️ Fragment gravity:', (value / 100).toFixed(2));
+            updateParentSettings();
         }
 
         function updateSparkleCount(value) {
-            window.EffectsSettings.sparkles.count = parseInt(value);
+            getSettings().sparkles.count = parseInt(value);
+            console.log('🎛️ Sparkle count:', value);
+            updateParentSettings();
         }
 
         function updateSparkleSpeed(value) {
-            window.EffectsSettings.sparkles.speed = parseInt(value);
+            getSettings().sparkles.speed = parseInt(value);
             document.getElementById('sparkleSpeedValue').textContent = value + 'x';
+            console.log('🎛️ Sparkle speed:', value + 'x');
+            updateParentSettings();
         }
 
         function updateRingFragmentCount(value) {
-            window.EffectsSettings.ringFragments.count = parseInt(value);
+            getSettings().ringFragments.count = parseInt(value);
+            console.log('🎛️ Ring fragment count:', value);
+            updateParentSettings();
         }
 
         function updateRingFragmentSpeed(value) {
-            window.EffectsSettings.ringFragments.speed = parseInt(value);
+            getSettings().ringFragments.speed = parseInt(value);
             document.getElementById('ringFragmentSpeedValue').textContent = (value / 100).toFixed(1) + 'x';
+            console.log('🎛️ Ring fragment speed:', (value / 100).toFixed(1) + 'x');
+            updateParentSettings();
         }
 
-        function updateRippleCount(value) {
-            window.EffectsSettings.ripples.count = parseInt(value);
-        }
-
-        function updateRippleSpeed(value) {
-            window.EffectsSettings.ripples.speed = parseInt(value);
-            document.getElementById('rippleSpeedValue').textContent = (value / 100).toFixed(1) + 'x';
-        }
-
-        function updateRippleRadius(value) {
-            window.EffectsSettings.ripples.radius = parseInt(value);
-            document.getElementById('rippleRadiusValue').textContent = (value / 100).toFixed(1) + 'x';
-        }
+        // Ripple functions REMOVED
 
         function updatePerfectThreshold(value) {
-            window.EffectsSettings.perfectHit.threshold = parseInt(value);
+            getSettings().perfectHit.threshold = parseInt(value);
+            console.log('🎛️ Perfect hit threshold:', value + '%');
+            updateParentSettings();
         }
 
         function updatePerfectParticles(value) {
-            window.EffectsSettings.perfectHit.particles = parseInt(value);
+            getSettings().perfectHit.particles = parseInt(value);
+            console.log('🎛️ Perfect hit particles:', value);
+            updateParentSettings();
         }
 
         function updateBreakingDuration(value) {
-            window.EffectsSettings.breaking.duration = parseInt(value);
+            getSettings().breaking.duration = parseInt(value);
+            console.log('🎛️ Breaking duration:', value + 'ms');
+            updateParentSettings();
         }
 
         function updateCrackLines(value) {
-            window.EffectsSettings.breaking.crackLines = parseInt(value);
+            getSettings().breaking.crackLines = parseInt(value);
+            console.log('🎛️ Crack lines:', value);
+            updateParentSettings();
         }
 
         function updatePerformanceMode(value) {
-            window.EffectsSettings.advanced.performanceMode = value;
+            getSettings().advanced.performanceMode = value;
             console.log('🎛️ Performance mode:', value);
+            updateParentSettings();
         }
 
         // Preset functions
@@ -633,16 +655,18 @@
         }
 
         function savePreset() {
-            localStorage.setItem('chainbreaker_effects_preset', JSON.stringify(window.EffectsSettings));
+            localStorage.setItem('chainbreaker_effects_preset', JSON.stringify(getSettings()));
             console.log('🎛️ Settings saved to localStorage');
         }
 
         function loadPreset() {
             const saved = localStorage.getItem('chainbreaker_effects_preset');
             if (saved) {
-                window.EffectsSettings = JSON.parse(saved);
+                const settings = JSON.parse(saved);
+                // Ana window'a yükle
+                Object.assign(getSettings(), settings);
                 console.log('🎛️ Settings loaded from localStorage');
-                // Update UI elements
+                updateParentSettings();
                 updateUIFromSettings();
             }
         }
@@ -657,9 +681,38 @@
             console.log('🎛️ UI updated from settings');
         }
 
+        // 🎯 TEST FUNCTIONS - Ana window'daki fonksiyonları çağır
+        function testEffects() {
+            if (window.parent && window.parent.testAllEffects) {
+                window.parent.testAllEffects();
+                console.log('🎛️ Test effects triggered');
+            } else {
+                console.log('🎛️ Test function not available - game not loaded');
+            }
+        }
+
+        function breakRing() {
+            if (window.parent && window.parent.breakOuterRing) {
+                window.parent.breakOuterRing();
+                console.log('🎛️ Break ring triggered');
+            } else {
+                console.log('🎛️ Break ring function not available - game not loaded');
+            }
+        }
+
+        function addRing() {
+            if (window.parent && window.parent.addTestRing) {
+                window.parent.addTestRing();
+                console.log('🎛️ Add ring triggered');
+            } else {
+                console.log('🎛️ Add ring function not available - game not loaded');
+            }
+        }
+
         // Initialize
         console.log('🎛️ Effects Control Panel initialized');
-        console.log('🎛️ Access settings via: window.EffectsSettings');
+        console.log('🎛️ Parent window access:', window.parent !== window ? 'Available' : 'Not available');
+        console.log('🎛️ Settings will be synced with parent window');
     </script>
 </body>
 

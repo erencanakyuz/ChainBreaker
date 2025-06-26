@@ -286,170 +286,7 @@
                 ringGlow 0.8s ease-in-out forwards;
         }
 
-        /* 🎛️ EFFECTS CONTROL PANEL STYLES */
-        .effects-control-panel {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 300px;
-            max-height: 90vh;
-            background: rgba(20, 20, 30, 0.95);
-            border: 2px solid #00ffff;
-            border-radius: 10px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            color: #00ffff;
-            z-index: 1000;
-            overflow-y: auto;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-        }
-
-        .panel-header {
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px #00ffff;
-        }
-
-        .effect-section {
-            margin-bottom: 20px;
-            border: 1px solid #333;
-            border-radius: 5px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .effect-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #ffff00;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 40px;
-            height: 20px;
-            background: #333;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: #00ff00;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(20px);
-        }
-
-        .control-group {
-            margin: 8px 0;
-        }
-
-        .control-label {
-            font-size: 11px;
-            color: #ccc;
-            margin-bottom: 3px;
-            display: block;
-        }
-
-        .control-input {
-            width: 100%;
-            padding: 4px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #555;
-            border-radius: 3px;
-            color: #fff;
-            font-size: 11px;
-        }
-
-        .range-input {
-            width: 70%;
-            margin-right: 5px;
-        }
-
-        .range-value {
-            color: #00ffff;
-            font-size: 11px;
-            width: 25%;
-            text-align: right;
-        }
-
-        .preset-buttons {
-            display: flex;
-            gap: 5px;
-            margin-top: 10px;
-        }
-
-        .preset-btn {
-            flex: 1;
-            padding: 5px;
-            background: rgba(0, 255, 255, 0.2);
-            border: 1px solid #00ffff;
-            border-radius: 3px;
-            color: #00ffff;
-            cursor: pointer;
-            font-size: 10px;
-        }
-
-        .preset-btn:hover {
-            background: rgba(0, 255, 255, 0.4);
-        }
-
-        .collapse-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: none;
-            border: none;
-            color: #00ffff;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .effects-control-panel.collapsed {
-            width: 40px;
-            height: 40px;
-            overflow: hidden;
-        }
-
-        .effects-control-panel.collapsed .panel-content {
-            display: none;
-        }
-
-        /* Scrollbar styling */
-        .effects-control-panel::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .effects-control-panel::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 4px;
-        }
-
-        .effects-control-panel::-webkit-scrollbar-thumb {
-            background: rgba(0, 255, 255, 0.5);
-            border-radius: 4px;
-        }
+        /* 🎛️ EFFECTS CONTROL PANEL - Using separate file */
 
         /* Mobile Optimizations */
         @media screen and (max-width: 768px) {
@@ -539,134 +376,18 @@
     </div>
 
     <!-- Vanilla Game Engine -->
-    <!-- 🎛️ EFFECTS CONTROL PANEL -->
-    <div class="effects-control-panel" id="effectsPanel">
-        <button class="collapse-btn" onclick="togglePanel()">⚙️</button>
-
-        <div class="panel-content">
-            <div class="panel-header">🎆 EFFECTS CONTROL</div>
-
-            <!-- BASIC SHAKE SYSTEM -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    💥 Screen Shake
-                    <div class="toggle-switch active" onclick="toggleEffect('shake')" id="toggleShake"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Base Intensity (1-50)</label>
-                    <input type="number" class="control-input" min="1" max="50" value="8"
-                        onchange="updateShakeIntensity(this.value)" id="shakeIntensity">
-                </div>
-            </div>
-
-            <!-- FRAGMENT PARTICLES -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    🔥 Fragment Particles
-                    <div class="toggle-switch active" onclick="toggleEffect('fragments')" id="toggleFragments"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Particle Count (10-200)</label>
-                    <input type="number" class="control-input" min="10" max="200" value="80"
-                        onchange="updateFragmentCount(this.value)" id="fragmentCount">
-                </div>
-            </div>
-
-            <!-- SPARKLE EFFECTS -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    ✨ Sparkle Effects
-                    <div class="toggle-switch active" onclick="toggleEffect('sparkles')" id="toggleSparkles"></div>
-                </div>
-            </div>
-
-            <!-- RING FRAGMENTS -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    🧩 Ring Fragments
-                    <div class="toggle-switch active" onclick="toggleEffect('ringFragments')" id="toggleRingFragments">
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Fragment Count (3-12)</label>
-                    <input type="number" class="control-input" min="3" max="12" value="6"
-                        onchange="updateRingFragmentCount(this.value)" id="ringFragmentCount">
-                </div>
-            </div>
-
-            <!-- RIPPLE EFFECTS -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    🌊 Ripple Waves
-                    <div class="toggle-switch active" onclick="toggleEffect('ripples')" id="toggleRipples"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Wave Count (1-5)</label>
-                    <input type="number" class="control-input" min="1" max="5" value="3"
-                        onchange="updateRippleCount(this.value)" id="rippleCount">
-                </div>
-            </div>
-
-            <!-- PERFECT HIT SYSTEM -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    🌟 Perfect Hit Bonus
-                    <div class="toggle-switch active" onclick="toggleEffect('perfectHit')" id="togglePerfectHit"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Precision Threshold (80-98%)</label>
-                    <input type="number" class="control-input" min="80" max="98" value="90"
-                        onchange="updatePerfectThreshold(this.value)" id="perfectThreshold">
-                </div>
-            </div>
-
-            <!-- BREAKING ANIMATION -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    💥 Breaking Animation
-                    <div class="toggle-switch active" onclick="toggleEffect('breaking')" id="toggleBreaking"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Animation Duration (200-1000ms)</label>
-                    <input type="number" class="control-input" min="200" max="1000" value="400"
-                        onchange="updateBreakingDuration(this.value)" id="breakingDuration">
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Multi-Stage Animation</label>
-                    <div class="toggle-switch active" onclick="toggleMultiStage()" id="toggleMultiStage"></div>
-                </div>
-            </div>
-
-            <!-- PRESET CONTROLS -->
-            <div class="effect-section">
-                <div class="effect-title">⚡ Presets</div>
-                <div class="preset-buttons">
-                    <button class="preset-btn" onclick="setPreset('minimal')">Minimal</button>
-                    <button class="preset-btn" onclick="setPreset('extreme')">Extreme</button>
-                </div>
-                <div class="preset-buttons" style="margin-top: 5px;">
-                    <button class="preset-btn" onclick="toggleDebugMode()">Debug</button>
-                    <button class="preset-btn" onclick="testAllEffects()">Test All</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- 🎛️ EFFECTS CONTROL PANEL - Include separate file -->
+    <iframe src="effects-control-panel.html" style="position: fixed; top: 10px; right: 10px; width: 320px; height: 90vh; 
+                   border: none; z-index: 1000; background: transparent; pointer-events: all;"
+        id="effectsControlFrame"></iframe>
 
     <script>
-        // 🎛️ EFFECTS CONTROL PANEL JAVASCRIPT
-        window.EffectsSettings = {
+        // 🎛️ EFFECTS CONTROL PANEL - Basic settings fallback
+        window.EffectsSettings = window.EffectsSettings || {
             shake: { enabled: true, intensity: 8, duration: 200 },
             fragments: { enabled: true, count: 80 },
             sparkles: { enabled: true, count: 20 },
             ringFragments: { enabled: true, count: 6 },
-            ripples: { enabled: true, count: 3 },
             perfectHit: { enabled: true, threshold: 90, particles: 30 },
             breaking: { enabled: true, duration: 400, multiStage: true },
             advanced: { debugMode: false }
@@ -709,10 +430,7 @@
             console.log('🎛️ Breaking duration:', value + 'ms');
         }
 
-        function updateRippleCount(value) {
-            window.EffectsSettings.ripples.count = parseInt(value);
-            console.log('🎛️ Ripple count:', value);
-        }
+        // updateRippleCount - REMOVED (ripples disabled)
 
         function updateRingFragmentCount(value) {
             window.EffectsSettings.ringFragments.count = parseInt(value);
@@ -761,11 +479,122 @@
 
         function testAllEffects() {
             console.log('🎛️ Testing all effects...');
-            // Trigger a test ring break if game is running
-            if (window.chainBreakerGame?.activeRing) {
-                window.chainBreakerGame.animateRingBreak(window.chainBreakerGame.activeRing);
+
+            // Safe test: Break the outermost ring without affecting gameplay
+            if (window.chainBreakerGame?.rings?.length > 0) {
+                const game = window.chainBreakerGame;
+
+                // Find the outermost ring (largest radius)
+                let outermostRing = game.rings[0];
+                for (let ring of game.rings) {
+                    if (ring.radius > outermostRing.radius) {
+                        outermostRing = ring;
+                    }
+                }
+
+                // Create a copy for effects testing without breaking actual game
+                const testRing = {
+                    x: outermostRing.x,
+                    y: outermostRing.y,
+                    radius: outermostRing.radius,
+                    thickness: outermostRing.thickness,
+                    color: outermostRing.color
+                };
+
+                // Trigger only visual effects without game logic
+                console.log('🎯 Testing effects on outermost ring');
+                game.createShatterParticles?.(testRing);
+                game.createRingFragments?.(testRing);
+                game.triggerShake?.(15, 300); // Strong test shake
+
+            } else {
+                console.log('🎛️ No rings available for testing');
             }
         }
+
+        function updateRingLimit(value) {
+            console.log('🎛️ Ring limit updated:', value);
+            // Update game constants if game exists
+            if (window.chainBreakerGame) {
+                window.chainBreakerGame.constants.MAX_RINGS = parseInt(value);
+                console.log('🎯 New ring limit applied to current game');
+            }
+        }
+
+        function breakOuterRing() {
+            if (window.chainBreakerGame?.rings?.length > 0) {
+                const game = window.chainBreakerGame;
+
+                // Find the outermost ring (largest radius, not active ring)
+                let outermostRing = null;
+                let maxRadius = 0;
+
+                for (let ring of game.rings) {
+                    if (ring.radius > maxRadius && ring !== game.activeRing) {
+                        maxRadius = ring.radius;
+                        outermostRing = ring;
+                    }
+                }
+
+                if (outermostRing) {
+                    console.log('🎯 Breaking outermost ring safely');
+                    // Remove from rings array
+                    const index = game.rings.indexOf(outermostRing);
+                    if (index > -1) {
+                        game.rings.splice(index, 1);
+                    }
+                    // Trigger break animation
+                    game.animateRingBreak(outermostRing);
+                } else {
+                    console.log('🎛️ No outer rings available to break (only active ring remains)');
+                }
+            } else {
+                console.log('🎛️ No rings available');
+            }
+        }
+
+        function addTestRing() {
+            if (window.chainBreakerGame?.rings && window.chainBreakerGame.currentScene === 'game') {
+                const game = window.chainBreakerGame;
+
+                // Create a new ring beyond the outermost ring
+                let maxRadius = game.constants.BASE_RADIUS;
+                if (game.rings.length > 0) {
+                    maxRadius = Math.max(...game.rings.map(r => r.radius));
+                }
+
+                const newRadius = maxRadius + game.constants.RING_THICKNESS + game.constants.RING_GAP;
+                const colorIndex = game.rings.length % game.palettes[game.selectedMode.palette].length;
+                const color = game.palettes[game.selectedMode.palette][colorIndex];
+
+                const newRing = {
+                    x: game.centerX,
+                    y: game.centerY,
+                    radius: newRadius,
+                    thickness: game.constants.RING_THICKNESS,
+                    color: color,
+                    sweetSpotAngle: Math.random() * Math.PI * 2,
+                    sweetSpotSize: game.selectedMode.sweetSpotSize,
+                    alpha: 0,
+                    inputReceived: false,
+                    proximityEffect: false,
+                    isSpawning: true,
+                    spawnStartTime: performance.now(),
+                    spawnDuration: 800
+                };
+
+                game.rings.push(newRing);
+                console.log('🎯 Test ring added');
+            } else {
+                console.log('🎛️ Game not running or no rings array');
+            }
+        }
+
+        // 🎯 DIŞ PANEL İÇİN GLOBAL FONKSİYONLAR
+        // Bu fonksiyonları dış iframe erişebilsin diye global yapalım
+        window.testAllEffects = testAllEffects;
+        window.breakOuterRing = breakOuterRing;
+        window.addTestRing = addTestRing;
 
         console.log('🎛️ Effects Control Panel ready!');
         console.log('🎛️ Settings:', window.EffectsSettings);
@@ -864,7 +693,7 @@
                         BASE_RADIUS: 60,
                         RING_THICKNESS: 12,
                         RING_GAP: 8,
-                        MAX_RINGS: 8,
+                        MAX_RINGS: 6, // 🎯 Mobile limit for visual performance only
                         INITIAL_RINGS: 4,
                         TARGET_FPS: 60
                     };
@@ -873,7 +702,7 @@
                         BASE_RADIUS: 75,
                         RING_THICKNESS: 15,
                         RING_GAP: 10,
-                        MAX_RINGS: 10,
+                        MAX_RINGS: 6, // 🎯 Mobile limit for visual performance only
                         INITIAL_RINGS: 5,
                         TARGET_FPS: 90
                     };
@@ -882,7 +711,7 @@
                         BASE_RADIUS: 100,
                         RING_THICKNESS: 20,
                         RING_GAP: 15,
-                        MAX_RINGS: 12,
+                        MAX_RINGS: 8, // 🎯 Desktop limit for visual performance only
                         INITIAL_RINGS: 6,
                         TARGET_FPS: 144
                     };
@@ -1157,10 +986,10 @@
                     this.updateUI();
                 }
 
-                const maxRings = Math.min(this.constants.MAX_RINGS, this.constants.INITIAL_RINGS + Math.floor(this.level / 3));
-
-                if (this.rings.length >= maxRings) {
-                    this.gameOver();
+                // 🎯 RING LIMIT CHECK - Prevent infinite rings
+                if (this.rings.length >= this.constants.MAX_RINGS) {
+                    console.log('🚫 MAX_RINGS limit reached:', this.rings.length, '/', this.constants.MAX_RINGS);
+                    this.triggerGameOver();
                     return;
                 }
 
@@ -1305,7 +1134,7 @@
                 // Stop needle during ring creation
                 this.needleActive = false;
 
-                // Create rings
+                // Create initial rings for level start - limited for visual performance
                 const numRings = Math.min(this.constants.MAX_RINGS, this.constants.INITIAL_RINGS + Math.floor(this.level / 5));
                 const radiusIncrement = this.constants.RING_THICKNESS + this.constants.RING_GAP;
 
@@ -1511,11 +1340,9 @@
                 // 🎆 ENHANCED IMPACT SEQUENCE - Simple but effective
                 this.createShatterParticles(ring);
                 this.createRingFragments(ring);
-                this.triggerRippleEffect(ring);
 
                 if (window.EffectsSettings?.advanced?.debugMode) {
                     console.log('🧩 Fragments created:', this.ringFragments?.length || 0); // DEBUG
-                    console.log('🌊 Ripples created:', this.rippleEffects?.length || 0); // DEBUG
                 }
             }
 
@@ -1605,26 +1432,8 @@
                 }
             }
 
-            // 🌊 RIPPLE EFFECT - Expanding energy waves
-            triggerRippleEffect(ring) {
-                // Check if ripples are enabled
-                if (!window.EffectsSettings?.ripples?.enabled) return;
-
-                if (!this.rippleEffects) this.rippleEffects = [];
-
-                // Configurable ripple count
-                const rippleCount = window.EffectsSettings?.ripples?.count || 3;
-                for (let i = 0; i < rippleCount; i++) {
-                    this.rippleEffects.push({
-                        x: ring.x, y: ring.y,
-                        radius: 0, maxRadius: ring.radius * (2 + i * 0.5),
-                        life: 1, decay: 0.02 + i * 0.005,
-                        thickness: 3 - i, alpha: 0.8 - i * 0.2,
-                        color: ring.color, delay: i * 100,
-                        startTime: performance.now()
-                    });
-                }
-            }
+            // 🌊 RIPPLE EFFECT - REMOVED
+            // Ripple effects have been removed from the game
 
             // 🎨 DYNAMIC COLOR SYSTEM - Fragment color variation
             getFragmentColor(baseColor, index) {
@@ -1979,19 +1788,6 @@
                     });
                 }
 
-                // 🌊 RIPPLE EFFECTS UPDATE
-                if (this.rippleEffects) {
-                    const currentTime = performance.now();
-                    this.rippleEffects = this.rippleEffects.filter(r => {
-                        if (currentTime - r.startTime >= r.delay) {
-                            r.radius += (r.maxRadius / 30) * deltaTime * 60;
-                            r.life -= r.decay;
-                        }
-                        return r.life > 0 && r.radius <= r.maxRadius;
-                    });
-                }
-
-                // 📺 SCREEN EFFECTS UPDATE - Removed as function was deleted
 
                 // 🔄 PERSPECTIVE SHIFT UPDATE - Simplified
                 if (this.perspectiveShift) {
@@ -2011,29 +1807,8 @@
                 this.frameCount = (this.frameCount + 1) % 24; // Bigger cycle for less computation
             }
 
-            // 🌊 RIPPLE EFFECTS RENDERING - Expanding energy waves
-            drawRippleEffects() {
-                if (!this.rippleEffects || !this.rippleEffects.length) return;
-
-                const ctx = this.ctx;
-                ctx.save();
-
-                this.rippleEffects.forEach(ripple => {
-                    if (ripple.radius > 0) {
-                        ctx.globalAlpha = ripple.life * ripple.alpha;
-                        ctx.strokeStyle = ripple.color;
-                        ctx.lineWidth = ripple.thickness;
-                        ctx.shadowColor = ripple.color;
-                        ctx.shadowBlur = 8;
-
-                        ctx.beginPath();
-                        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
-                });
-
-                ctx.restore();
-            }
+            // 🌊 RIPPLE EFFECTS RENDERING - REMOVED
+            // Ripple rendering has been removed from the game
 
             // 🧩 RING FRAGMENTS RENDERING - Large breaking pieces
             drawRingFragments() {
@@ -2356,8 +2131,7 @@
 
                 // 🎆 ENHANCED RENDERING SYSTEM - Multi-layered visual effects
 
-                // 🌊 Ripple effects (background layer)
-                this.drawRippleEffects();
+                // 🌊 Ripple effects - REMOVED
 
                 // 🔄 Apply perspective shift
                 this.applyPerspectiveShift();
