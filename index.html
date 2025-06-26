@@ -224,7 +224,7 @@
         /* 📱 MOBILE RESPONSIVE OPTIMIZATIONS */
         @media (max-width: 768px) {
             .story-scene {
-                animation-duration: calc(var(--story-animation-speed, 1) * 3s) !important;
+                animation-duration: calc(var(--story-animation-speed, 1) * 3s);
             }
 
             .scene-message-container {
@@ -241,9 +241,9 @@
             }
 
             .pluto-entity {
-                transform: scale(var(--story-pluto-scale, 1)) !important;
-                max-width: calc(var(--story-pluto-scale, 1) * 100px) !important;
-                max-height: calc(var(--story-pluto-scale, 1) * 100px) !important;
+                transform: scale(var(--story-pluto-scale, 1));
+                max-width: calc(var(--story-pluto-scale, 1) * 100px);
+                max-height: calc(var(--story-pluto-scale, 1) * 100px);
             }
 
             /* Reduce particle effects on mobile */
@@ -260,7 +260,7 @@
             }
 
             .hide-on-mobile {
-                display: none !important;
+                display: none;
             }
         }
 
@@ -280,8 +280,8 @@
             }
 
             .pluto-entity {
-                max-width: calc(var(--story-pluto-scale, 1) * 60px) !important;
-                max-height: calc(var(--story-pluto-scale, 1) * 60px) !important;
+                max-width: calc(var(--story-pluto-scale, 1) * 60px);
+                max-height: calc(var(--story-pluto-scale, 1) * 60px);
             }
 
             /* Further reduce effects on small mobile */
@@ -290,7 +290,7 @@
             }
 
             .animation-layer div {
-                animation-duration: calc(var(--story-animation-speed, 1) * 8s) !important;
+                animation-duration: calc(var(--story-animation-speed, 1) * 8s);
             }
         }
 

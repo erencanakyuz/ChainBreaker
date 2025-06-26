@@ -16,10 +16,10 @@
     /* Large screens */
 
     /* Responsive Scaling Factors */
-    --mobile-scale: 0.6;
-    /* 60% on mobile */
-    --tablet-scale: 0.8;
-    /* 80% on tablet */
+    --mobile-scale: 0.85;
+    /* 85% on mobile - less aggressive */
+    --tablet-scale: 0.92;
+    /* 92% on tablet - less aggressive */
     --desktop-scale: 1.0;
     /* 100% on desktop */
 
@@ -49,10 +49,10 @@
     --game-element-desktop: 100%;
 
     /* Animation Performance Scaling */
-    --animation-mobile: 0.8;
-    /* Slower animations on mobile */
-    --animation-tablet: 0.9;
-    /* Medium speed on tablet */
+    --animation-mobile: 1.3;
+    /* Slower animations on mobile (1.3x duration = slower) */
+    --animation-tablet: 1.1;
+    /* Slightly slower on tablet */
     --animation-desktop: 1.0;
     /* Full speed on desktop */
 }
@@ -109,7 +109,7 @@ body {
 /* Large Phones (480px+) */
 @media (min-width: 480px) {
     .responsive-element {
-        transform: scale(0.65);
+        transform: scale(0.88);
     }
 
     .responsive-text {
@@ -171,8 +171,8 @@ body {
 .pluto-entity,
 .pluto-base-entity {
     /* Mobile First */
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     transform: translate(-50%, -50%) scale(var(--mobile-scale));
 }
 
@@ -180,9 +180,9 @@ body {
 
     .pluto-entity,
     .pluto-base-entity {
-        width: 70px;
-        height: 70px;
-        transform: translate(-50%, -50%) scale(0.7);
+        width: 85px;
+        height: 85px;
+        transform: translate(-50%, -50%) scale(0.88);
     }
 }
 
@@ -317,8 +317,8 @@ body {
 /* Reduce animations on mobile for performance */
 @media (max-width: 768px) {
     * {
-        animation-duration: calc(1s * var(--animation-mobile)) !important;
-        transition-duration: calc(0.3s * var(--animation-mobile)) !important;
+        animation-duration: calc(1s * var(--animation-mobile));
+        transition-duration: calc(0.3s * var(--animation-mobile));
     }
 
     /* Hide complex animations on mobile */
@@ -347,7 +347,7 @@ body {
 
     /* Remove hover effects on touch */
     *:hover {
-        transform: none !important;
+        transform: none;
     }
 }
 
@@ -356,16 +356,16 @@ body {
 /* Cinematic Intro Scene */
 .scene-cinematic-intro #kronos {
     /* Mobile First */
-    width: 200px;
-    height: 200px;
+    width: 240px;
+    height: 240px;
     transform: translate(-50%, -50%) scale(var(--mobile-scale));
 }
 
 @media (min-width: 480px) {
     .scene-cinematic-intro #kronos {
-        width: 250px;
-        height: 250px;
-        transform: translate(-50%, -50%) scale(0.65);
+        width: 260px;
+        height: 260px;
+        transform: translate(-50%, -50%) scale(0.88);
     }
 }
 
@@ -510,22 +510,36 @@ body {
     }
 
     .hide-on-mobile {
-        display: none !important;
+        display: none;
     }
 }
 
 /* ===== PRINT AND ACCESSIBILITY ===== */
 @media print {
     .no-print {
-        display: none !important;
+        display: none;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+
+    /* Sadece gereksiz animasyonları yavaşlat, ana game animasyonlarını değil */
+    .decorative-animation,
+    .particle-effect,
+    .background-animation {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+        transition-duration: 0.01ms;
+    }
+
+    /* Ana game elementleri normal kalacak */
+    .scene_pluto,
+    .scene_saturn,
+    #kronos,
+    #pluto,
+    .chronos-image,
+    .pluto-entity {
+        /* animation-duration ayarlama - normal kal */
     }
 }
 

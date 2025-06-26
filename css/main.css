@@ -85,10 +85,13 @@ body {
 }
 
 @keyframes menu-twinkle {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.2;
         transform: scale(0.8);
     }
+
     50% {
         opacity: 1;
         transform: scale(1.2);
@@ -138,8 +141,8 @@ body {
 /* Modern Canvas with Advanced Effects */
 canvas {
     display: block;
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
     box-shadow:
         inset 0 0 100px rgba(0, 150, 255, 0.3),
         0 0 50px rgba(108, 92, 231, 0.2);
@@ -572,12 +575,25 @@ canvas {
 
 @media (prefers-reduced-motion: reduce) {
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    /* Sadece dekoratif animasyonları dur, oyun mekaniklerini değil */
+    .menu-star,
+    .loading-spinner,
+    .decorative-animation,
+    .background-animation {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+        transition-duration: 0.01ms;
+    }
+
+    /* Oyun elementleri normal kalacak */
+    .scene_pluto,
+    .scene_saturn,
+    #kronos,
+    #pluto,
+    .chronos-image,
+    .pluto-entity,
+    .game-ring {
+        /* Normal animasyon hızı korunacak */
     }
 }
 

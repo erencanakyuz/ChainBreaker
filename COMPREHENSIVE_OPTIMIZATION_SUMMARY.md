@@ -93,8 +93,8 @@ RESPONSIVE_CONSTANTS = {
 ```css
 @media (max-width: 768px) {
     .pluto-entity {
-        transform: scale(var(--pluto-scale)) !important;
-        max-width: calc(var(--pluto-scale) * 100px) !important;
+        transform: scale(var(--pluto-scale))  ;
+        max-width: calc(var(--pluto-scale) * 100px)  ;
     }
     
     .animation-layer {
@@ -106,7 +106,7 @@ RESPONSIVE_CONSTANTS = {
     }
     
     .hide-on-mobile {
-        display: none !important;
+        display: none  ;
     }
 }
 ```

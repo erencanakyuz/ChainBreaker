@@ -70,13 +70,13 @@ class ResponsiveStorySystem {
             const style = document.createElement('style');
             style.textContent = `
                 .mobile-optimized .story-scene {
-                    animation-duration: ${3 / this.constants.ANIMATION_SPEED}s !important;
+                    animation-duration: ${3 / this.constants.ANIMATION_SPEED}s  ;
                 }
                 .mobile-optimized .complex-animation {
-                    animation: none !important;
+                    animation: none  ;
                 }
                 .mobile-optimized .heavy-effect {
-                    opacity: ${this.constants.EFFECT_INTENSITY} !important;
+                    opacity: ${this.constants.EFFECT_INTENSITY}  ;
                 }
             `;
             document.head.appendChild(style);

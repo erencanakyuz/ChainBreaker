@@ -979,12 +979,12 @@
 /* Tablet Devices (max-width: 768px) */
 @media (max-width: 768px) {
     #kronos {
-        transform: translate(-50%, -50%) scale(0.75);
+        transform: translate(-50%, -50%) scale(0.92);
     }
 
     #pluto {
         top: 10%;
-        transform: translateX(-50%) scale(0.7);
+        transform: translateX(-50%) scale(0.88);
     }
 
     .story-text-container {
@@ -1009,10 +1009,10 @@
 @media (max-width: 480px) {
     #kronos {
         top: 40%;
-        transform: translate(-50%, -50%) scale(0.6);
-        /* Increased scale for better visibility */
-        width: 250px;
-        height: 250px;
+        transform: translate(-50%, -50%) scale(0.85);
+        /* Better scale for mobile visibility */
+        width: 240px;
+        height: 240px;
     }
 
     .energy-pillar {
@@ -1109,7 +1109,7 @@
 
     #pluto {
         top: 8%;
-        transform: translateX(-50%) scale(0.6);
+        transform: translateX(-50%) scale(0.85);
     }
 
     .story-text-container {
@@ -1747,8 +1747,8 @@
 /* ===== MOBILE OPTIMIZATIONS FOR ENHANCED CHRONOS ===== */
 @media (max-width: 768px) {
     #kronos {
-        width: 200px;
-        height: 200px;
+        width: 260px;
+        height: 260px;
     }
 
     .time-aura {
@@ -1789,8 +1789,8 @@
 
 @media (max-width: 480px) {
     #kronos {
-        width: 150px;
-        height: 150px;
+        width: 240px;
+        height: 240px;
     }
 
     .divine-eye {
