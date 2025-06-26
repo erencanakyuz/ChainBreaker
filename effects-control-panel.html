@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Effects Control Panel</title>
+    <style>
+        /* 🎛️ EFFECTS CONTROL PANEL STYLES */
+        .effects-control-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            max-height: 90vh;
+            background: rgba(20, 20, 30, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            color: #00ffff;
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .panel-header {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .effect-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .effect-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #00ff00;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .control-group {
+            margin: 8px 0;
+        }
+
+        .control-label {
+            font-size: 11px;
+            color: #ccc;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #555;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 11px;
+        }
+
+        .range-input {
+            width: 70%;
+            margin-right: 5px;
+        }
+
+        .range-value {
+            color: #00ffff;
+            font-size: 11px;
+            width: 25%;
+            text-align: right;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 5px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            border-radius: 3px;
+            color: #00ffff;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 255, 255, 0.4);
+        }
+
+        .global-controls {
+            border-color: #ff0080;
+            background: rgba(255, 0, 128, 0.1);
+        }
+
+        .global-controls .effect-title {
+            color: #ff0080;
+        }
+
+        /* Scrollbar styling */
+        .effects-control-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .effects-control-panel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .effects-control-panel::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .collapse-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: #00ffff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .effects-control-panel.collapsed {
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .effects-control-panel.collapsed .panel-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 🎛️ EFFECTS CONTROL PANEL -->
+    <div class="effects-control-panel" id="effectsPanel">
+        <button class="collapse-btn" onclick="togglePanel()">⚙️</button>
+
+        <div class="panel-content">
+            <div class="panel-header">🎆 EFFECTS CONTROL</div>
+
+            <!-- GLOBAL CONTROLS -->
+            <div class="effect-section global-controls">
+                <div class="effect-title">
+                    🌐 Global Controls
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Master Effects Scale</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="0" max="200" value="100"
+                            onchange="updateGlobalScale(this.value)" id="globalScale">
+                        <span class="range-value" id="globalScaleValue">100%</span>
+                    </div>
+                </div>
+
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="setGlobalPreset('minimal')">Minimal</button>
+                    <button class="preset-btn" onclick="setGlobalPreset('balanced')">Balanced</button>
+                    <button class="preset-btn" onclick="setGlobalPreset('extreme')">Extreme</button>
+                </div>
+            </div>
+
+            <!-- BASIC SHAKE SYSTEM -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    💥 Screen Shake
+                    <div class="toggle-switch active" onclick="toggleEffect('shake')" id="toggleShake"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Base Intensity (1-50)</label>
+                    <input type="number" class="control-input" min="1" max="50" value="8"
+                        onchange="updateShakeIntensity(this.value)" id="shakeIntensity">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Duration (50-500ms)</label>
+                    <input type="number" class="control-input" min="50" max="500" value="200"
+                        onchange="updateShakeDuration(this.value)" id="shakeDuration">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Combo Multiplier</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="0" max="50" value="10"
+                            onchange="updateShakeComboMult(this.value)" id="shakeComboMult">
+                        <span class="range-value" id="shakeComboValue">1.0x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FRAGMENT PARTICLES -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🔥 Fragment Particles
+                    <div class="toggle-switch active" onclick="toggleEffect('fragments')" id="toggleFragments"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Particle Count (10-200)</label>
+                    <input type="number" class="control-input" min="10" max="200" value="80"
+                        onchange="updateFragmentCount(this.value)" id="fragmentCount">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Speed Multiplier</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="50" max="300" value="100"
+                            onchange="updateFragmentSpeed(this.value)" id="fragmentSpeed">
+                        <span class="range-value" id="fragmentSpeedValue">1.0x</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Lifetime (0.5-5s)</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="5" max="50" value="8"
+                            onchange="updateFragmentLife(this.value)" id="fragmentLife">
+                        <span class="range-value" id="fragmentLifeValue">1.25s</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Gravity (0-0.5)</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="0" max="50" value="10"
+                            onchange="updateFragmentGravity(this.value)" id="fragmentGravity">
+                        <span class="range-value" id="fragmentGravityValue">0.1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SPARKLE EFFECTS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    ✨ Sparkle Effects
+                    <div class="toggle-switch active" onclick="toggleEffect('sparkles')" id="toggleSparkles"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Sparkle Count (5-50)</label>
+                    <input type="number" class="control-input" min="5" max="50" value="20"
+                        onchange="updateSparkleCount(this.value)" id="sparkleCount">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Twinkle Speed</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="1" max="20" value="8"
+                            onchange="updateSparkleSpeed(this.value)" id="sparkleSpeed">
+                        <span class="range-value" id="sparkleSpeedValue">8x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RING FRAGMENTS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🧩 Ring Fragments
+                    <div class="toggle-switch active" onclick="toggleEffect('ringFragments')" id="toggleRingFragments">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Fragment Count (3-12)</label>
+                    <input type="number" class="control-input" min="3" max="12" value="6"
+                        onchange="updateRingFragmentCount(this.value)" id="ringFragmentCount">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Fragment Speed</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="50" max="200" value="100"
+                            onchange="updateRingFragmentSpeed(this.value)" id="ringFragmentSpeed">
+                        <span class="range-value" id="ringFragmentSpeedValue">1.0x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIPPLE EFFECTS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🌊 Ripple Waves
+                    <div class="toggle-switch active" onclick="toggleEffect('ripples')" id="toggleRipples"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Wave Count (1-5)</label>
+                    <input type="number" class="control-input" min="1" max="5" value="3"
+                        onchange="updateRippleCount(this.value)" id="rippleCount">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Expansion Speed</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="50" max="200" value="100"
+                            onchange="updateRippleSpeed(this.value)" id="rippleSpeed">
+                        <span class="range-value" id="rippleSpeedValue">1.0x</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Max Radius Multiplier</label>
+                    <div style="display: flex; align-items: center;">
+                        <input type="range" class="control-input range-input" min="100" max="300" value="200"
+                            onchange="updateRippleRadius(this.value)" id="rippleRadius">
+                        <span class="range-value" id="rippleRadiusValue">2.0x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERFECT HIT SYSTEM -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🌟 Perfect Hit Bonus
+                    <div class="toggle-switch active" onclick="toggleEffect('perfectHit')" id="togglePerfectHit"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Precision Threshold (80-98%)</label>
+                    <input type="number" class="control-input" min="80" max="98" value="90"
+                        onchange="updatePerfectThreshold(this.value)" id="perfectThreshold">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Golden Particle Count</label>
+                    <input type="number" class="control-input" min="10" max="100" value="30"
+                        onchange="updatePerfectParticles(this.value)" id="perfectParticles">
+                </div>
+            </div>
+
+            <!-- BREAKING ANIMATION -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    💥 Breaking Animation
+                    <div class="toggle-switch active" onclick="toggleEffect('breaking')" id="toggleBreaking"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Animation Duration (200-1000ms)</label>
+                    <input type="number" class="control-input" min="200" max="1000" value="400"
+                        onchange="updateBreakingDuration(this.value)" id="breakingDuration">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Multi-Stage Animation</label>
+                    <div class="toggle-switch active" onclick="toggleMultiStage()" id="toggleMultiStage"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Crack Lines Count (4-16)</label>
+                    <input type="number" class="control-input" min="4" max="16" value="8"
+                        onchange="updateCrackLines(this.value)" id="crackLines">
+                </div>
+            </div>
+
+            <!-- ADVANCED SETTINGS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    ⚡ Advanced
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Performance Mode</label>
+                    <select class="control-input" onchange="updatePerformanceMode(this.value)" id="performanceMode">
+                        <option value="high">High Quality</option>
+                        <option value="balanced" selected>Balanced</option>
+                        <option value="performance">Performance</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Debug Mode</label>
+                    <div class="toggle-switch" onclick="toggleDebugMode()" id="toggleDebug"></div>
+                </div>
+
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="savePreset()">Save</button>
+                    <button class="preset-btn" onclick="loadPreset()">Load</button>
+                    <button class="preset-btn" onclick="resetToDefaults()">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🎛️ EFFECTS CONTROL PANEL JAVASCRIPT
+
+        // Global settings object
+        window.EffectsSettings = {
+            global: { scale: 100 },
+            shake: {
+                enabled: true,
+                intensity: 8,
+                duration: 200,
+                comboMultiplier: 10
+            },
+            fragments: {
+                enabled: true,
+                count: 80,
+                speed: 100,
+                life: 8,
+                gravity: 10
+            },
+            sparkles: {
+                enabled: true,
+                count: 20,
+                speed: 8
+            },
+            ringFragments: {
+                enabled: true,
+                count: 6,
+                speed: 100
+            },
+            ripples: {
+                enabled: true,
+                count: 3,
+                speed: 100,
+                radius: 200
+            },
+            perfectHit: {
+                enabled: true,
+                threshold: 90,
+                particles: 30
+            },
+            breaking: {
+                enabled: true,
+                duration: 400,
+                multiStage: true,
+                crackLines: 8
+            },
+            advanced: {
+                performanceMode: 'balanced',
+                debugMode: false
+            }
+        };
+
+        // Panel collapse/expand
+        let panelCollapsed = false;
+        function togglePanel() {
+            const panel = document.getElementById('effectsPanel');
+            panelCollapsed = !panelCollapsed;
+            panel.classList.toggle('collapsed', panelCollapsed);
+        }
+
+        // Effect toggles
+        function toggleEffect(effectType) {
+            const settings = window.EffectsSettings[effectType];
+            if (settings) {
+                settings.enabled = !settings.enabled;
+                const toggle = document.getElementById(`toggle${effectType.charAt(0).toUpperCase() + effectType.slice(1)}`);
+                toggle.classList.toggle('active', settings.enabled);
+                console.log(`🎛️ ${effectType} effects:`, settings.enabled ? 'ENABLED' : 'DISABLED');
+            }
+        }
+
+        function toggleMultiStage() {
+            const settings = window.EffectsSettings.breaking;
+            settings.multiStage = !settings.multiStage;
+            const toggle = document.getElementById('toggleMultiStage');
+            toggle.classList.toggle('active', settings.multiStage);
+            console.log('🎛️ Multi-stage breaking:', settings.multiStage ? 'ENABLED' : 'DISABLED');
+        }
+
+        function toggleDebugMode() {
+            const settings = window.EffectsSettings.advanced;
+            settings.debugMode = !settings.debugMode;
+            const toggle = document.getElementById('toggleDebug');
+            toggle.classList.toggle('active', settings.debugMode);
+            console.log('🎛️ Debug mode:', settings.debugMode ? 'ENABLED' : 'DISABLED');
+        }
+
+        // Update functions
+        function updateGlobalScale(value) {
+            window.EffectsSettings.global.scale = parseInt(value);
+            document.getElementById('globalScaleValue').textContent = value + '%';
+        }
+
+        function updateShakeIntensity(value) {
+            window.EffectsSettings.shake.intensity = parseInt(value);
+        }
+
+        function updateShakeDuration(value) {
+            window.EffectsSettings.shake.duration = parseInt(value);
+        }
+
+        function updateShakeComboMult(value) {
+            window.EffectsSettings.shake.comboMultiplier = parseInt(value);
+            document.getElementById('shakeComboValue').textContent = (1 + value / 100).toFixed(1) + 'x';
+        }
+
+        function updateFragmentCount(value) {
+            window.EffectsSettings.fragments.count = parseInt(value);
+        }
+
+        function updateFragmentSpeed(value) {
+            window.EffectsSettings.fragments.speed = parseInt(value);
+            document.getElementById('fragmentSpeedValue').textContent = (value / 100).toFixed(1) + 'x';
+        }
+
+        function updateFragmentLife(value) {
+            window.EffectsSettings.fragments.life = parseInt(value);
+            document.getElementById('fragmentLifeValue').textContent = (125 / value).toFixed(2) + 's';
+        }
+
+        function updateFragmentGravity(value) {
+            window.EffectsSettings.fragments.gravity = parseInt(value);
+            document.getElementById('fragmentGravityValue').textContent = (value / 100).toFixed(2);
+        }
+
+        function updateSparkleCount(value) {
+            window.EffectsSettings.sparkles.count = parseInt(value);
+        }
+
+        function updateSparkleSpeed(value) {
+            window.EffectsSettings.sparkles.speed = parseInt(value);
+            document.getElementById('sparkleSpeedValue').textContent = value + 'x';
+        }
+
+        function updateRingFragmentCount(value) {
+            window.EffectsSettings.ringFragments.count = parseInt(value);
+        }
+
+        function updateRingFragmentSpeed(value) {
+            window.EffectsSettings.ringFragments.speed = parseInt(value);
+            document.getElementById('ringFragmentSpeedValue').textContent = (value / 100).toFixed(1) + 'x';
+        }
+
+        function updateRippleCount(value) {
+            window.EffectsSettings.ripples.count = parseInt(value);
+        }
+
+        function updateRippleSpeed(value) {
+            window.EffectsSettings.ripples.speed = parseInt(value);
+            document.getElementById('rippleSpeedValue').textContent = (value / 100).toFixed(1) + 'x';
+        }
+
+        function updateRippleRadius(value) {
+            window.EffectsSettings.ripples.radius = parseInt(value);
+            document.getElementById('rippleRadiusValue').textContent = (value / 100).toFixed(1) + 'x';
+        }
+
+        function updatePerfectThreshold(value) {
+            window.EffectsSettings.perfectHit.threshold = parseInt(value);
+        }
+
+        function updatePerfectParticles(value) {
+            window.EffectsSettings.perfectHit.particles = parseInt(value);
+        }
+
+        function updateBreakingDuration(value) {
+            window.EffectsSettings.breaking.duration = parseInt(value);
+        }
+
+        function updateCrackLines(value) {
+            window.EffectsSettings.breaking.crackLines = parseInt(value);
+        }
+
+        function updatePerformanceMode(value) {
+            window.EffectsSettings.advanced.performanceMode = value;
+            console.log('🎛️ Performance mode:', value);
+        }
+
+        // Preset functions
+        function setGlobalPreset(preset) {
+            switch (preset) {
+                case 'minimal':
+                    updateGlobalScale(50);
+                    document.getElementById('globalScale').value = 50;
+                    break;
+                case 'balanced':
+                    updateGlobalScale(100);
+                    document.getElementById('globalScale').value = 100;
+                    break;
+                case 'extreme':
+                    updateGlobalScale(200);
+                    document.getElementById('globalScale').value = 200;
+                    break;
+            }
+            console.log('🎛️ Global preset applied:', preset);
+        }
+
+        function savePreset() {
+            localStorage.setItem('chainbreaker_effects_preset', JSON.stringify(window.EffectsSettings));
+            console.log('🎛️ Settings saved to localStorage');
+        }
+
+        function loadPreset() {
+            const saved = localStorage.getItem('chainbreaker_effects_preset');
+            if (saved) {
+                window.EffectsSettings = JSON.parse(saved);
+                console.log('🎛️ Settings loaded from localStorage');
+                // Update UI elements
+                updateUIFromSettings();
+            }
+        }
+
+        function resetToDefaults() {
+            location.reload(); // Simple reset by reloading
+        }
+
+        function updateUIFromSettings() {
+            // This would update all UI elements from settings
+            // Implementation depends on the specific needs
+            console.log('🎛️ UI updated from settings');
+        }
+
+        // Initialize
+        console.log('🎛️ Effects Control Panel initialized');
+        console.log('🎛️ Access settings via: window.EffectsSettings');
+    </script>
+</body>
+
+</html>

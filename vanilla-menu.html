@@ -286,8 +286,178 @@
                 ringGlow 0.8s ease-in-out forwards;
         }
 
+        /* 🎛️ EFFECTS CONTROL PANEL STYLES */
+        .effects-control-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            max-height: 90vh;
+            background: rgba(20, 20, 30, 0.95);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            color: #00ffff;
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .panel-header {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .effect-section {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .effect-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #00ff00;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .control-group {
+            margin: 8px 0;
+        }
+
+        .control-label {
+            font-size: 11px;
+            color: #ccc;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .control-input {
+            width: 100%;
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #555;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 11px;
+        }
+
+        .range-input {
+            width: 70%;
+            margin-right: 5px;
+        }
+
+        .range-value {
+            color: #00ffff;
+            font-size: 11px;
+            width: 25%;
+            text-align: right;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 5px;
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid #00ffff;
+            border-radius: 3px;
+            color: #00ffff;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 255, 255, 0.4);
+        }
+
+        .collapse-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: #00ffff;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .effects-control-panel.collapsed {
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .effects-control-panel.collapsed .panel-content {
+            display: none;
+        }
+
+        /* Scrollbar styling */
+        .effects-control-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .effects-control-panel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .effects-control-panel::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
         /* Mobile Optimizations */
         @media screen and (max-width: 768px) {
+            .effects-control-panel {
+                width: 250px;
+                font-size: 10px;
+            }
+
             .game-title {
                 font-size: 2.5em;
                 top: 40px;
@@ -369,7 +539,237 @@
     </div>
 
     <!-- Vanilla Game Engine -->
+    <!-- 🎛️ EFFECTS CONTROL PANEL -->
+    <div class="effects-control-panel" id="effectsPanel">
+        <button class="collapse-btn" onclick="togglePanel()">⚙️</button>
+
+        <div class="panel-content">
+            <div class="panel-header">🎆 EFFECTS CONTROL</div>
+
+            <!-- BASIC SHAKE SYSTEM -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    💥 Screen Shake
+                    <div class="toggle-switch active" onclick="toggleEffect('shake')" id="toggleShake"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Base Intensity (1-50)</label>
+                    <input type="number" class="control-input" min="1" max="50" value="8"
+                        onchange="updateShakeIntensity(this.value)" id="shakeIntensity">
+                </div>
+            </div>
+
+            <!-- FRAGMENT PARTICLES -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🔥 Fragment Particles
+                    <div class="toggle-switch active" onclick="toggleEffect('fragments')" id="toggleFragments"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Particle Count (10-200)</label>
+                    <input type="number" class="control-input" min="10" max="200" value="80"
+                        onchange="updateFragmentCount(this.value)" id="fragmentCount">
+                </div>
+            </div>
+
+            <!-- SPARKLE EFFECTS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    ✨ Sparkle Effects
+                    <div class="toggle-switch active" onclick="toggleEffect('sparkles')" id="toggleSparkles"></div>
+                </div>
+            </div>
+
+            <!-- RING FRAGMENTS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🧩 Ring Fragments
+                    <div class="toggle-switch active" onclick="toggleEffect('ringFragments')" id="toggleRingFragments">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Fragment Count (3-12)</label>
+                    <input type="number" class="control-input" min="3" max="12" value="6"
+                        onchange="updateRingFragmentCount(this.value)" id="ringFragmentCount">
+                </div>
+            </div>
+
+            <!-- RIPPLE EFFECTS -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🌊 Ripple Waves
+                    <div class="toggle-switch active" onclick="toggleEffect('ripples')" id="toggleRipples"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Wave Count (1-5)</label>
+                    <input type="number" class="control-input" min="1" max="5" value="3"
+                        onchange="updateRippleCount(this.value)" id="rippleCount">
+                </div>
+            </div>
+
+            <!-- PERFECT HIT SYSTEM -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    🌟 Perfect Hit Bonus
+                    <div class="toggle-switch active" onclick="toggleEffect('perfectHit')" id="togglePerfectHit"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Precision Threshold (80-98%)</label>
+                    <input type="number" class="control-input" min="80" max="98" value="90"
+                        onchange="updatePerfectThreshold(this.value)" id="perfectThreshold">
+                </div>
+            </div>
+
+            <!-- BREAKING ANIMATION -->
+            <div class="effect-section">
+                <div class="effect-title">
+                    💥 Breaking Animation
+                    <div class="toggle-switch active" onclick="toggleEffect('breaking')" id="toggleBreaking"></div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Animation Duration (200-1000ms)</label>
+                    <input type="number" class="control-input" min="200" max="1000" value="400"
+                        onchange="updateBreakingDuration(this.value)" id="breakingDuration">
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Multi-Stage Animation</label>
+                    <div class="toggle-switch active" onclick="toggleMultiStage()" id="toggleMultiStage"></div>
+                </div>
+            </div>
+
+            <!-- PRESET CONTROLS -->
+            <div class="effect-section">
+                <div class="effect-title">⚡ Presets</div>
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="setPreset('minimal')">Minimal</button>
+                    <button class="preset-btn" onclick="setPreset('extreme')">Extreme</button>
+                </div>
+                <div class="preset-buttons" style="margin-top: 5px;">
+                    <button class="preset-btn" onclick="toggleDebugMode()">Debug</button>
+                    <button class="preset-btn" onclick="testAllEffects()">Test All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 🎛️ EFFECTS CONTROL PANEL JAVASCRIPT
+        window.EffectsSettings = {
+            shake: { enabled: true, intensity: 8, duration: 200 },
+            fragments: { enabled: true, count: 80 },
+            sparkles: { enabled: true, count: 20 },
+            ringFragments: { enabled: true, count: 6 },
+            ripples: { enabled: true, count: 3 },
+            perfectHit: { enabled: true, threshold: 90, particles: 30 },
+            breaking: { enabled: true, duration: 400, multiStage: true },
+            advanced: { debugMode: false }
+        };
+
+        let panelCollapsed = false;
+        function togglePanel() {
+            const panel = document.getElementById('effectsPanel');
+            panelCollapsed = !panelCollapsed;
+            panel.classList.toggle('collapsed', panelCollapsed);
+        }
+
+        function toggleEffect(effectType) {
+            const settings = window.EffectsSettings[effectType];
+            if (settings) {
+                settings.enabled = !settings.enabled;
+                const toggle = document.getElementById(`toggle${effectType.charAt(0).toUpperCase() + effectType.slice(1)}`);
+                toggle.classList.toggle('active', settings.enabled);
+                console.log(`🎛️ ${effectType}:`, settings.enabled ? 'ON' : 'OFF');
+            }
+        }
+
+        function updateShakeIntensity(value) {
+            window.EffectsSettings.shake.intensity = parseInt(value);
+            console.log('🎛️ Shake intensity:', value);
+        }
+
+        function updateFragmentCount(value) {
+            window.EffectsSettings.fragments.count = parseInt(value);
+            console.log('🎛️ Fragment count:', value);
+        }
+
+        function updatePerfectThreshold(value) {
+            window.EffectsSettings.perfectHit.threshold = parseInt(value);
+            console.log('🎛️ Perfect hit threshold:', value + '%');
+        }
+
+        function updateBreakingDuration(value) {
+            window.EffectsSettings.breaking.duration = parseInt(value);
+            console.log('🎛️ Breaking duration:', value + 'ms');
+        }
+
+        function updateRippleCount(value) {
+            window.EffectsSettings.ripples.count = parseInt(value);
+            console.log('🎛️ Ripple count:', value);
+        }
+
+        function updateRingFragmentCount(value) {
+            window.EffectsSettings.ringFragments.count = parseInt(value);
+            console.log('🎛️ Ring fragment count:', value);
+        }
+
+        function toggleMultiStage() {
+            window.EffectsSettings.breaking.multiStage = !window.EffectsSettings.breaking.multiStage;
+            const toggle = document.getElementById('toggleMultiStage');
+            toggle.classList.toggle('active', window.EffectsSettings.breaking.multiStage);
+            console.log('🎛️ Multi-stage breaking:', window.EffectsSettings.breaking.multiStage ? 'ON' : 'OFF');
+        }
+
+        function setPreset(preset) {
+            if (preset === 'minimal') {
+                Object.keys(window.EffectsSettings).forEach(key => {
+                    if (window.EffectsSettings[key].enabled !== undefined) {
+                        window.EffectsSettings[key].enabled = false;
+                        const toggle = document.getElementById(`toggle${key.charAt(0).toUpperCase() + key.slice(1)}`);
+                        if (toggle) toggle.classList.remove('active');
+                    }
+                });
+                // Only keep basic shake
+                window.EffectsSettings.shake.enabled = true;
+                document.getElementById('toggleShake').classList.add('active');
+            } else if (preset === 'extreme') {
+                Object.keys(window.EffectsSettings).forEach(key => {
+                    if (window.EffectsSettings[key].enabled !== undefined) {
+                        window.EffectsSettings[key].enabled = true;
+                        const toggle = document.getElementById(`toggle${key.charAt(0).toUpperCase() + key.slice(1)}`);
+                        if (toggle) toggle.classList.add('active');
+                    }
+                });
+                // Boost values
+                window.EffectsSettings.fragments.count = 150;
+                window.EffectsSettings.sparkles.count = 40;
+                document.getElementById('fragmentCount').value = 150;
+            }
+            console.log('🎛️ Preset applied:', preset);
+        }
+
+        function toggleDebugMode() {
+            window.EffectsSettings.advanced.debugMode = !window.EffectsSettings.advanced.debugMode;
+            console.log('🎛️ Debug mode:', window.EffectsSettings.advanced.debugMode ? 'ON' : 'OFF');
+        }
+
+        function testAllEffects() {
+            console.log('🎛️ Testing all effects...');
+            // Trigger a test ring break if game is running
+            if (window.chainBreakerGame?.activeRing) {
+                window.chainBreakerGame.animateRingBreak(window.chainBreakerGame.activeRing);
+            }
+        }
+
+        console.log('🎛️ Effects Control Panel ready!');
+        console.log('🎛️ Settings:', window.EffectsSettings);
+
         // ====================
         // VANILLA GAME ENGINE
         // ====================
@@ -990,10 +1390,23 @@
 
                 if (isHit) {
                     this.activeRing.inputReceived = true;
-                    this.triggerShake(8, 200);
+
+                    // 🎯 PRECISION-BASED IMPACT - Better hit = bigger effect
+                    const precision = 1 - (absAngleDiff / threshold);
+                    const baseIntensity = 8 + (precision * 12); // 8-20 arası
+                    const duration = 150 + (precision * 100); // 150-250ms arası
+
+                    this.triggerShake(baseIntensity, duration);
                     this.animateRingBreak(this.activeRing);
                     this.handleSuccessfulHit();
                     this.resetRegenTimer();
+
+                    // 🎊 PRECISION FEEDBACK - Perfect hit bonus effects
+                    const perfectThreshold = (window.EffectsSettings?.perfectHit?.threshold || 90) / 100;
+                    if (precision > perfectThreshold) {
+                        this.createPerfectHitEffect(this.activeRing);
+                    }
+
                 } else {
                     this.handleMiss();
                 }
@@ -1027,56 +1440,261 @@
                 this.updateUI();
             }
 
-            // EKLE: Bu fonksiyonu class'ınıza ekleyin
+            // 💥 ENHANCED IMPACT FEEDBACK - Multi-layered screen response
             triggerShake(intensity, duration) {
-                // Mevcut sarsıntıdan daha güçlüyse üzerine yaz
-                this.shakeIntensity = Math.max(this.shakeIntensity || 0, intensity);
-                this.shakeDuration = Math.max(this.shakeDuration || 0, duration);
+                // Check if shake effects are enabled
+                if (!window.EffectsSettings?.shake?.enabled) return;
+
+                // Use settings values
+                const shakeIntensity = window.EffectsSettings?.shake?.intensity || intensity;
+                const shakeDuration = window.EffectsSettings?.shake?.duration || duration;
+
+                // Güçlü impact feedback - kademeli artış
+                this.shakeIntensity = Math.max(this.shakeIntensity || 0, shakeIntensity);
+                this.shakeDuration = Math.max(this.shakeDuration || 0, shakeDuration);
+
+                // Combo-based shake amplification
+                const comboMultiplier = 1 + (this.combo * 0.1);
+                this.shakeIntensity *= comboMultiplier;
+
+                // Screen flash for major hits
+
+
+                // Perspective shift effect
+                this.triggerPerspectiveShift(intensity);
             }
 
-            // ULTRA FAST RING BREAK - Minimal animation delay
+
+            // 🔄 PERSPECTIVE SHIFT - Subtle 3D impact effect
+            triggerPerspectiveShift(intensity) {
+                if (!this.perspectiveShift) {
+                    this.perspectiveShift = { x: 0, y: 0, rotation: 0 };
+                }
+
+                // Direct impact effect - no complex interpolation
+                this.perspectiveShift.x = (Math.random() - 0.5) * intensity * 0.5;
+                this.perspectiveShift.y = (Math.random() - 0.5) * intensity * 0.5;
+                this.perspectiveShift.rotation = (Math.random() - 0.5) * intensity * 0.002;
+            }
+
+            // 🎆 ENHANCED RING BREAK - Multi-layered impact system
             animateRingBreak(ring) {
+                if (window.EffectsSettings?.advanced?.debugMode) {
+                    console.log('🎆 Ring break triggered!'); // DEBUG
+                }
+
+                // Check if breaking animation is enabled
+                if (!window.EffectsSettings?.breaking?.enabled) {
+                    // Simple removal if disabled
+                    const index = this.rings.indexOf(ring);
+                    if (index > -1) this.rings.splice(index, 1);
+                    return;
+                }
+
                 ring.isBreaking = true;
                 ring.breakStartTime = performance.now();
-                ring.breakDuration = 200; // Çok hızlı kırılma - daha responsive
+                ring.breakDuration = window.EffectsSettings?.breaking?.duration || 400;
                 ring.originalRadius = ring.radius;
                 ring.originalThickness = ring.thickness;
+
+                // Multi-stage break animation (if enabled)
+                if (window.EffectsSettings?.breaking?.multiStage) {
+                    ring.breakStages = {
+                        crack: { duration: 100, completed: false },
+                        shatter: { duration: 150, completed: false },
+                        dissolve: { duration: 150, completed: false }
+                    };
+                }
+
                 this.breakingRings.push(ring);
 
-                // Parçacık efektini anında başlat
+                // 🎆 ENHANCED IMPACT SEQUENCE - Simple but effective
                 this.createShatterParticles(ring);
+                this.createRingFragments(ring);
+                this.triggerRippleEffect(ring);
+
+                if (window.EffectsSettings?.advanced?.debugMode) {
+                    console.log('🧩 Fragments created:', this.ringFragments?.length || 0); // DEBUG
+                    console.log('🌊 Ripples created:', this.rippleEffects?.length || 0); // DEBUG
+                }
             }
 
-            // MOBILE-SAFE OPTIMIZATION: Memory pool için yeniden yazıldı
-            createShatterParticles(ring) {
-                const count = 60; // Daha fazla parçacık
-                for (let i = 0; i < count; i++) {
-                    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.1;
-                    const startSpeed = Math.random() * 2 + 1; // Başlangıç hızı
+            // 🎆 ADVANCED IMPACT EFFECTS - Layered visual impact
 
+            // 🔥 ENHANCED SHATTER PARTICLES - Realistic fragmentation
+            createShatterParticles(ring) {
+                // Check if fragments are enabled
+                if (!window.EffectsSettings?.fragments?.enabled) return;
+
+                const count = window.EffectsSettings?.fragments?.count || 80;
+                const fragments = []; // Fragment tracking
+
+                for (let i = 0; i < count; i++) {
+                    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
+                    const startSpeed = Math.random() * 3 + 2; // Daha hızlı başlangıç
+                    const fragmentSize = Math.random() * 6 + 2;
+
+                    // Her parçacığın kendine özgü özellikleri
                     const particle = this.getPooledParticle({
                         x: ring.x + Math.cos(angle) * ring.radius,
                         y: ring.y + Math.sin(angle) * ring.radius,
-                        vx: Math.cos(angle) * startSpeed, // İlk hız dışa doğru
+                        vx: Math.cos(angle) * startSpeed,
                         vy: Math.sin(angle) * startSpeed,
-                        centerX: ring.x, // Merkez koordinatları
-                        centerY: ring.y,
-                        life: 1,
-                        decay: 0.012,
-                        color: ring.color,
-                        size: Math.random() * 5 + 3,
-                        isImploding: true, // Merkeze çekilme efekti için bayrak
-                        isFlash: false
+                        centerX: ring.x, centerY: ring.y,
+                        life: 1, decay: 0.008, // Daha uzun yaşam
+                        color: this.getFragmentColor(ring.color, i),
+                        size: fragmentSize,
+                        isImploding: Math.random() > 0.3, // %70 içe çekilir
+                        rotation: Math.random() * Math.PI * 2,
+                        rotationSpeed: (Math.random() - 0.5) * 0.2,
+                        effectType: 'fragment',
+                        gravity: 0.1 // Yerçekimi efekti
                     });
 
-                    if (!particle) break; // Pool full
+                    if (particle) fragments.push(particle);
                 }
 
-                // Merkezde büyük bir beyaz flaş patlaması efekti
+                // 💫 Sparkle effects - Parıltı efektleri  
+                if (window.EffectsSettings?.sparkles?.enabled) {
+                    const sparkleCount = window.EffectsSettings?.sparkles?.count || 20;
+                    for (let i = 0; i < sparkleCount; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = ring.radius * (0.5 + Math.random() * 0.5);
+                        this.getPooledParticle({
+                            x: ring.x + Math.cos(angle) * distance,
+                            y: ring.y + Math.sin(angle) * distance,
+                            vx: (Math.random() - 0.5) * 2,
+                            vy: (Math.random() - 0.5) * 2,
+                            life: 0.8, decay: 0.04,
+                            color: '#FFFFFF', size: Math.random() * 3 + 1,
+                            effectType: 'sparkle',
+                            twinkle: true
+                        });
+                    }
+                }
+            }
+
+            // 🧩 RING FRAGMENTS - Large breaking pieces
+            createRingFragments(ring) {
+                // Check if ring fragments are enabled
+                if (!window.EffectsSettings?.ringFragments?.enabled) return;
+
+                const fragmentCount = window.EffectsSettings?.ringFragments?.count || 6;
+                const arcSize = (Math.PI * 2) / fragmentCount;
+
+                for (let i = 0; i < fragmentCount; i++) {
+                    const startAngle = i * arcSize + (Math.random() - 0.5) * 0.3;
+                    const endAngle = startAngle + arcSize * 0.8;
+                    const centerAngle = (startAngle + endAngle) / 2;
+
+                    // Her fragment'ın fiziksel özellikleri
+                    const fragment = {
+                        x: ring.x, y: ring.y,
+                        radius: ring.radius, thickness: ring.thickness,
+                        startAngle, endAngle, centerAngle,
+                        vx: Math.cos(centerAngle) * 3,
+                        vy: Math.sin(centerAngle) * 3,
+                        life: 1, decay: 0.015,
+                        color: ring.color, rotation: 0,
+                        rotationSpeed: (Math.random() - 0.5) * 0.1,
+                        isFragment: true
+                    };
+
+                    if (!this.ringFragments) this.ringFragments = [];
+                    this.ringFragments.push(fragment);
+                }
+            }
+
+            // 🌊 RIPPLE EFFECT - Expanding energy waves
+            triggerRippleEffect(ring) {
+                // Check if ripples are enabled
+                if (!window.EffectsSettings?.ripples?.enabled) return;
+
+                if (!this.rippleEffects) this.rippleEffects = [];
+
+                // Configurable ripple count
+                const rippleCount = window.EffectsSettings?.ripples?.count || 3;
+                for (let i = 0; i < rippleCount; i++) {
+                    this.rippleEffects.push({
+                        x: ring.x, y: ring.y,
+                        radius: 0, maxRadius: ring.radius * (2 + i * 0.5),
+                        life: 1, decay: 0.02 + i * 0.005,
+                        thickness: 3 - i, alpha: 0.8 - i * 0.2,
+                        color: ring.color, delay: i * 100,
+                        startTime: performance.now()
+                    });
+                }
+            }
+
+            // 🎨 DYNAMIC COLOR SYSTEM - Fragment color variation
+            getFragmentColor(baseColor, index) {
+                // HSL manipülasyonu için renk varyasyonları
+                const variations = [
+                    baseColor, // Orijinal
+                    this.lightenColor(baseColor, 20), // Açık
+                    this.darkenColor(baseColor, 15), // Koyu
+                    this.adjustHue(baseColor, 10), // Hafif ton değişimi
+                ];
+                return variations[index % variations.length];
+            }
+
+            // Renk yardımcı fonksiyonları
+            lightenColor(color, percent) {
+                // Basit RGB lightening
+                if (color.startsWith('#')) {
+                    const r = parseInt(color.slice(1, 3), 16);
+                    const g = parseInt(color.slice(3, 5), 16);
+                    const b = parseInt(color.slice(5, 7), 16);
+                    const factor = 1 + percent / 100;
+                    return `#${Math.min(255, Math.floor(r * factor)).toString(16).padStart(2, '0')}${Math.min(255, Math.floor(g * factor)).toString(16).padStart(2, '0')}${Math.min(255, Math.floor(b * factor)).toString(16).padStart(2, '0')}`;
+                }
+                return color;
+            }
+
+            darkenColor(color, percent) {
+                if (color.startsWith('#')) {
+                    const r = parseInt(color.slice(1, 3), 16);
+                    const g = parseInt(color.slice(3, 5), 16);
+                    const b = parseInt(color.slice(5, 7), 16);
+                    const factor = 1 - percent / 100;
+                    return `#${Math.floor(r * factor).toString(16).padStart(2, '0')}${Math.floor(g * factor).toString(16).padStart(2, '0')}${Math.floor(b * factor).toString(16).padStart(2, '0')}`;
+                }
+                return color;
+            }
+
+            adjustHue(color, degrees) {
+                // Basit hue shifting (simplified)
+                return color; // Şimdilik orijinal rengi döndür
+            }
+
+            // 🌟 PERFECT HIT EFFECT - Bonus visual feedback for precision
+            createPerfectHitEffect(ring) {
+                // Check if perfect hit effects are enabled
+                if (!window.EffectsSettings?.perfectHit?.enabled) return;
+
+                // ✨ Perfect hit sparkles
+                const perfectParticles = window.EffectsSettings?.perfectHit?.particles || 30;
+                for (let i = 0; i < perfectParticles; i++) {
+                    const angle = (i / 30) * Math.PI * 2;
+                    const distance = ring.radius * (0.8 + Math.random() * 0.4);
+                    this.getPooledParticle({
+                        x: ring.x + Math.cos(angle) * distance,
+                        y: ring.y + Math.sin(angle) * distance,
+                        vx: Math.cos(angle) * 2,
+                        vy: Math.sin(angle) * 2,
+                        life: 1, decay: 0.03,
+                        color: '#FFD700', size: Math.random() * 4 + 2,
+                        effectType: 'perfectHit',
+                        twinkle: true
+                    });
+                }
+
+                // 🎆 Perfect hit burst
                 this.getPooledParticle({
-                    x: ring.x, y: ring.y, vx: 0, vy: 0, life: 1, decay: 0.04,
-                    color: '#FFFFFF', size: ring.radius * 1.5, isFlash: true,
-                    isImploding: false
+                    x: ring.x, y: ring.y, vx: 0, vy: 0,
+                    life: 0.8, decay: 0.04,
+                    color: '#FFD700', size: ring.radius * 1.8,
+                    isFlash: true, effectType: 'perfectBurst'
                 });
             }
 
@@ -1281,12 +1899,43 @@
                     this.updatePlutoMood(deltaTime);
                 }
 
-                // MOBILE-SAFE OPTIMIZATION: Pool-aware particle updates
+                // 🎆 ENHANCED PARTICLE SYSTEM - Advanced physics and effects
                 this.particles = this.particles.filter(p => {
-                    if (!p.active) return false; // Skip inactive particles
+                    if (!p.active) return false;
 
-                    if (!p.isFlash) { // Sadece normal parçacıklar
-                        // Merkeze çekilme efekti
+                    // 🌟 Effect-specific behavior
+                    switch (p.effectType) {
+                        case 'fragment':
+                            // Physics simulation for fragments
+                            if (p.gravity) p.vy += p.gravity * deltaTime * 60;
+                            if (p.rotation !== undefined) {
+                                p.rotation += p.rotationSpeed * deltaTime * 60;
+                            }
+                            break;
+
+                        case 'energyBurst':
+                            // Energy bursts slow down over time
+                            p.vx *= 0.98;
+                            p.vy *= 0.98;
+                            break;
+
+                        case 'sparkle':
+                            // Sparkles twinkle
+                            if (p.twinkle) {
+                                p.twinklePhase = (p.twinklePhase || 0) + deltaTime * 8;
+                                p.currentAlpha = p.life * (0.7 + Math.sin(p.twinklePhase) * 0.3);
+                            }
+                            break;
+
+                        case 'perfectHit':
+                            // Perfect hit particles have special movement
+                            p.vx *= 0.95;
+                            p.vy *= 0.95;
+                            break;
+                    }
+
+                    if (!p.isFlash) {
+                        // Advanced imploding behavior
                         if (p.isImploding && p.life > 0.1) {
                             const toCenter = {
                                 x: p.centerX - p.x,
@@ -1295,7 +1944,7 @@
                             const distance = Math.sqrt(toCenter.x * toCenter.x + toCenter.y * toCenter.y);
 
                             if (distance > 5) {
-                                const pullForce = 1;
+                                const pullForce = 1 + (1 - p.life) * 2; // Stronger pull over time
                                 const normalizedX = toCenter.x / distance;
                                 const normalizedY = toCenter.y / distance;
 
@@ -1304,6 +1953,7 @@
                             }
                         }
 
+                        // Update position
                         p.x += p.vx * deltaTime * 60;
                         p.y += p.vy * deltaTime * 60;
                         p.life -= p.decay;
@@ -1318,6 +1968,38 @@
                     return true;
                 });
 
+                // 🧩 RING FRAGMENTS UPDATE
+                if (this.ringFragments) {
+                    this.ringFragments = this.ringFragments.filter(f => {
+                        f.x += f.vx * deltaTime * 60;
+                        f.y += f.vy * deltaTime * 60;
+                        f.rotation += f.rotationSpeed * deltaTime * 60;
+                        f.life -= f.decay;
+                        return f.life > 0;
+                    });
+                }
+
+                // 🌊 RIPPLE EFFECTS UPDATE
+                if (this.rippleEffects) {
+                    const currentTime = performance.now();
+                    this.rippleEffects = this.rippleEffects.filter(r => {
+                        if (currentTime - r.startTime >= r.delay) {
+                            r.radius += (r.maxRadius / 30) * deltaTime * 60;
+                            r.life -= r.decay;
+                        }
+                        return r.life > 0 && r.radius <= r.maxRadius;
+                    });
+                }
+
+                // 📺 SCREEN EFFECTS UPDATE - Removed as function was deleted
+
+                // 🔄 PERSPECTIVE SHIFT UPDATE - Simplified
+                if (this.perspectiveShift) {
+                    this.perspectiveShift.x *= 0.9; // Simple decay
+                    this.perspectiveShift.y *= 0.9;
+                    this.perspectiveShift.rotation *= 0.9;
+                }
+
                 // Stars - sadece her 6 frame'de (performance boost)
                 if (this.frameCount % 6 === 0) {
                     this.stars.forEach(star => {
@@ -1327,6 +2009,288 @@
                 }
 
                 this.frameCount = (this.frameCount + 1) % 24; // Bigger cycle for less computation
+            }
+
+            // 🌊 RIPPLE EFFECTS RENDERING - Expanding energy waves
+            drawRippleEffects() {
+                if (!this.rippleEffects || !this.rippleEffects.length) return;
+
+                const ctx = this.ctx;
+                ctx.save();
+
+                this.rippleEffects.forEach(ripple => {
+                    if (ripple.radius > 0) {
+                        ctx.globalAlpha = ripple.life * ripple.alpha;
+                        ctx.strokeStyle = ripple.color;
+                        ctx.lineWidth = ripple.thickness;
+                        ctx.shadowColor = ripple.color;
+                        ctx.shadowBlur = 8;
+
+                        ctx.beginPath();
+                        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+                });
+
+                ctx.restore();
+            }
+
+            // 🧩 RING FRAGMENTS RENDERING - Large breaking pieces
+            drawRingFragments() {
+                if (!this.ringFragments || !this.ringFragments.length) return;
+
+                const ctx = this.ctx;
+                ctx.save();
+
+                this.ringFragments.forEach(fragment => {
+                    ctx.save();
+                    ctx.translate(fragment.x, fragment.y);
+                    ctx.rotate(fragment.rotation);
+
+                    ctx.globalAlpha = fragment.life;
+                    ctx.strokeStyle = fragment.color;
+                    ctx.lineWidth = fragment.thickness;
+                    ctx.shadowColor = fragment.color;
+                    ctx.shadowBlur = 5;
+
+                    // Draw fragment arc
+                    ctx.beginPath();
+                    ctx.arc(0, 0, fragment.radius, fragment.startAngle, fragment.endAngle);
+                    ctx.stroke();
+
+                    ctx.restore();
+                });
+
+                ctx.restore();
+            }
+
+            // 🔄 PERSPECTIVE SHIFT APPLICATION - Simplified for stability
+            applyPerspectiveShift() {
+                // Skip complex transforms for now - causing render issues
+                return;
+            }
+
+            // 🔄 PERSPECTIVE SHIFT RESET
+            resetPerspectiveShift() {
+                // Skip complex transforms for now
+                return;
+            }
+
+            // 🎆 ADVANCED PARTICLE RENDERING - Effect-specific drawing
+            drawAdvancedParticles(particles) {
+                if (!particles.length) return;
+
+                const ctx = this.ctx;
+                ctx.save();
+
+                // Group particles by effect type for optimized rendering
+                const effectGroups = {};
+                particles.forEach(p => {
+                    const effectType = p.effectType || 'default';
+                    if (!effectGroups[effectType]) {
+                        effectGroups[effectType] = [];
+                    }
+                    effectGroups[effectType].push(p);
+                });
+
+                // Render each effect type differently
+                Object.entries(effectGroups).forEach(([effectType, effectParticles]) => {
+                    switch (effectType) {
+                        case 'fragment':
+                            this.drawFragmentParticles(effectParticles);
+                            break;
+                        case 'energyBurst':
+                            this.drawEnergyBurstParticles(effectParticles);
+                            break;
+                        case 'sparkle':
+                            this.drawSparkleParticles(effectParticles);
+                            break;
+                        case 'perfectHit':
+                            this.drawPerfectHitParticles(effectParticles);
+                            break;
+                        case 'shockwave':
+                            this.drawShockwaveParticles(effectParticles);
+                            break;
+                        default:
+                            this.drawDefaultParticles(effectParticles);
+                            break;
+                    }
+                });
+
+                ctx.restore();
+            }
+
+            // 🔥 FRAGMENT PARTICLES - Rotating debris with physics
+            drawFragmentParticles(particles) {
+                const ctx = this.ctx;
+
+                particles.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    if (p.rotation !== undefined) {
+                        ctx.rotate(p.rotation);
+                    }
+
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.shadowColor = p.color;
+                    ctx.shadowBlur = 3;
+
+                    // Draw as rotated rectangle
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+
+                    ctx.restore();
+                });
+            }
+
+            // ⚡ ENERGY BURST PARTICLES - Glowing trails
+            drawEnergyBurstParticles(particles) {
+                const ctx = this.ctx;
+
+                particles.forEach(p => {
+                    ctx.save();
+                    ctx.globalAlpha = p.life;
+
+                    // Create glowing effect
+                    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                    gradient.addColorStop(0, p.color);
+                    gradient.addColorStop(0.7, p.color + '80'); // Semi-transparent
+                    gradient.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                });
+            }
+
+            // ✨ SPARKLE PARTICLES - Twinkling effects
+            drawSparkleParticles(particles) {
+                const ctx = this.ctx;
+
+                particles.forEach(p => {
+                    ctx.save();
+
+                    const alpha = p.currentAlpha !== undefined ? p.currentAlpha : p.life;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.shadowColor = p.color;
+                    ctx.shadowBlur = 6;
+
+                    // Draw sparkle as diamond shape
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(Math.PI / 4);
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+
+                    ctx.restore();
+                });
+            }
+
+            // 🌟 PERFECT HIT PARTICLES - Golden celebration
+            drawPerfectHitParticles(particles) {
+                const ctx = this.ctx;
+
+                particles.forEach(p => {
+                    ctx.save();
+
+                    const alpha = p.currentAlpha !== undefined ? p.currentAlpha : p.life;
+                    ctx.globalAlpha = alpha;
+
+                    // Golden glow effect
+                    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 2);
+                    gradient.addColorStop(0, '#FFD700');
+                    gradient.addColorStop(0.5, '#FFA500');
+                    gradient.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Core sparkle
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.shadowColor = '#FFD700';
+                    ctx.shadowBlur = 8;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                });
+            }
+
+            // 💥 SHOCKWAVE PARTICLES - Expanding blast
+            drawShockwaveParticles(particles) {
+                const ctx = this.ctx;
+
+                particles.forEach(p => {
+                    ctx.save();
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.shadowColor = p.color;
+                    ctx.shadowBlur = 4;
+
+                    // Stretched particle for motion blur effect
+                    const stretchFactor = Math.sqrt(p.vx * p.vx + p.vy * p.vy) * 0.5;
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(Math.atan2(p.vy, p.vx));
+                    ctx.fillRect(-stretchFactor, -p.size / 2, p.size + stretchFactor, p.size);
+
+                    ctx.restore();
+                });
+            }
+
+            // 🎨 DEFAULT PARTICLES - Standard rendering
+            drawDefaultParticles(particles) {
+                const ctx = this.ctx;
+
+                // Flash particles
+                const flashParticles = particles.filter(p => p.isFlash);
+                const normalParticles = particles.filter(p => !p.isFlash);
+
+                // Draw flash particles
+                flashParticles.forEach(p => {
+                    ctx.save();
+                    ctx.globalAlpha = p.life;
+
+                    if (p.effectType === 'perfectBurst') {
+                        // Perfect hit burst - golden flash
+                        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size);
+                        gradient.addColorStop(0, '#FFD700');
+                        gradient.addColorStop(0.5, '#FFA500');
+                        gradient.addColorStop(1, 'transparent');
+                        ctx.fillStyle = gradient;
+                    } else {
+                        // Regular flash
+                        ctx.fillStyle = `rgba(255, 255, 255, ${p.life * 0.5})`;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                // Batch normal particles by color (existing optimization)
+                const particlesByColor = {};
+                normalParticles.forEach(p => {
+                    if (!particlesByColor[p.color]) {
+                        particlesByColor[p.color] = [];
+                    }
+                    particlesByColor[p.color].push(p);
+                });
+
+                Object.entries(particlesByColor).forEach(([color, colorParticles]) => {
+                    ctx.fillStyle = color;
+                    colorParticles.forEach(p => {
+                        ctx.globalAlpha = p.life;
+                        ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+                    });
+                });
+
+                ctx.globalAlpha = 1;
             }
 
             render() {
@@ -1390,17 +2354,31 @@
                     this.ctx.globalAlpha = 1;
                 }
 
+                // 🎆 ENHANCED RENDERING SYSTEM - Multi-layered visual effects
+
+                // 🌊 Ripple effects (background layer)
+                this.drawRippleEffects();
+
+                // 🔄 Apply perspective shift
+                this.applyPerspectiveShift();
+
                 // MOBILE-SAFE OPTIMIZATION: Batch ring drawing for better performance
                 this.drawRingsBatched([...this.rings, ...this.breakingRings]);
                 this.breakingRings = this.breakingRings.filter(r => (performance.now() - r.breakStartTime) < r.breakDuration);
+
+                // 🧩 Ring fragments (separate from normal rings)
+                this.drawRingFragments();
 
                 // Needle - kritik çizim
                 if (this.needle && this.activeRing && this.needleActive) {
                     this.drawNeedle();
                 }
 
-                // MOBILE-SAFE OPTIMIZATION: Batch particle drawing
-                this.drawParticlesBatched(this.particles);
+                // 🎆 ENHANCED PARTICLE SYSTEM - Advanced rendering
+                this.drawAdvancedParticles(this.particles);
+
+                // 🔄 Reset perspective shift
+                this.resetPerspectiveShift();
             }
 
             renderMenu() {
@@ -1553,13 +2531,61 @@
                             }
                         }
 
-                        // Breaking animation
+                        // 🎆 ENHANCED BREAKING ANIMATION - Multi-stage destruction
                         if (ring.isBreaking) {
-                            const progress = (performance.now() - ring.breakStartTime) / ring.breakDuration;
-                            const easeOut = 1 - Math.pow(1 - progress, 4);
-                            radius += easeOut * 10;
-                            alpha = 1 - progress;
-                            thickness *= (1 - progress);
+                            const currentTime = performance.now();
+                            const progress = (currentTime - ring.breakStartTime) / ring.breakDuration;
+
+                            // Multi-stage animation
+                            if (ring.breakStages) {
+                                const crackProgress = Math.min(1, progress / 0.25); // First 25%
+                                const shatterProgress = Math.max(0, Math.min(1, (progress - 0.25) / 0.375)); // 25%-62.5%
+                                const dissolveProgress = Math.max(0, (progress - 0.625) / 0.375); // 62.5%-100%
+
+                                // Stage 1: Crack formation - ring shudders
+                                if (crackProgress < 1) {
+                                    const shudder = Math.sin(currentTime * 0.1) * crackProgress * 2;
+                                    radius += shudder;
+                                    thickness += shudder * 0.5;
+                                }
+
+                                // Stage 2: Shattering - explosive expansion
+                                if (shatterProgress > 0) {
+                                    const explosionForce = Math.pow(shatterProgress, 0.5);
+                                    radius += explosionForce * 15;
+                                    thickness *= (1 - shatterProgress * 0.7);
+
+                                    // Add fragmentation lines
+                                    ctx.save();
+                                    ctx.globalAlpha = (1 - shatterProgress) * 0.8;
+                                    ctx.strokeStyle = '#FFFFFF';
+                                    ctx.lineWidth = 1;
+                                    for (let i = 0; i < 8; i++) {
+                                        const fragmentAngle = (i / 8) * Math.PI * 2;
+                                        const innerR = radius - thickness / 2;
+                                        const outerR = radius + thickness / 2;
+                                        ctx.beginPath();
+                                        ctx.moveTo(x + Math.cos(fragmentAngle) * innerR, y + Math.sin(fragmentAngle) * innerR);
+                                        ctx.lineTo(x + Math.cos(fragmentAngle) * outerR, y + Math.sin(fragmentAngle) * outerR);
+                                        ctx.stroke();
+                                    }
+                                    ctx.restore();
+                                }
+
+                                // Stage 3: Dissolve - fading away
+                                if (dissolveProgress > 0) {
+                                    alpha = 1 - dissolveProgress;
+                                    const shrinkage = Math.pow(dissolveProgress, 2);
+                                    radius *= (1 - shrinkage * 0.3);
+                                    thickness *= (1 - shrinkage);
+                                }
+                            } else {
+                                // Fallback to simple animation
+                                const easeOut = 1 - Math.pow(1 - progress, 4);
+                                radius += easeOut * 10;
+                                alpha = 1 - progress;
+                                thickness *= (1 - progress);
+                            }
                         }
 
                         ctx.globalAlpha = alpha;
@@ -1774,7 +2800,7 @@
 
         // Initialize game when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new VanillaChainBreaker();
+            window.chainBreakerGame = new VanillaChainBreaker();
         });
     </script>
 </body>
