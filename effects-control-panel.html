@@ -241,21 +241,21 @@
                 </div>
             </div>
 
-            <!-- FRAGMENT PARTICLES -->
+            <!-- XP FRAGMENT PARTICLES -->
             <div class="effect-section">
                 <div class="effect-title">
-                    🔥 Fragment Particles
+                    ⭐ XP Fragment Particles
                     <div class="toggle-switch active" onclick="toggleEffect('fragments')" id="toggleFragments"></div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Particle Count (10-200)</label>
+                    <label class="control-label">XP Orb Count (10-200)</label>
                     <input type="number" class="control-input" min="10" max="200" value="80"
                         onchange="updateFragmentCount(this.value)" id="fragmentCount">
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Speed Multiplier</label>
+                    <label class="control-label">Collection Speed</label>
                     <div style="display: flex; align-items: center;">
                         <input type="range" class="control-input range-input" min="50" max="300" value="100"
                             onchange="updateFragmentSpeed(this.value)" id="fragmentSpeed">
@@ -264,46 +264,21 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Lifetime (0.5-5s)</label>
+                    <label class="control-label">Orb Lifetime</label>
                     <div style="display: flex; align-items: center;">
-                        <input type="range" class="control-input range-input" min="5" max="50" value="8"
+                        <input type="range" class="control-input range-input" min="5" max="50" value="12"
                             onchange="updateFragmentLife(this.value)" id="fragmentLife">
-                        <span class="range-value" id="fragmentLifeValue">1.25s</span>
+                        <span class="range-value" id="fragmentLifeValue">1.8s</span>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Gravity (0-0.5)</label>
-                    <div style="display: flex; align-items: center;">
-                        <input type="range" class="control-input range-input" min="0" max="50" value="10"
-                            onchange="updateFragmentGravity(this.value)" id="fragmentGravity">
-                        <span class="range-value" id="fragmentGravityValue">0.1</span>
-                    </div>
+                    <label class="control-label" style="color: #888;">Gravity: DISABLED (XP-style)</label>
                 </div>
             </div>
 
-            <!-- SPARKLE EFFECTS -->
-            <div class="effect-section">
-                <div class="effect-title">
-                    ✨ Sparkle Effects
-                    <div class="toggle-switch active" onclick="toggleEffect('sparkles')" id="toggleSparkles"></div>
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Sparkle Count (5-50)</label>
-                    <input type="number" class="control-input" min="5" max="50" value="20"
-                        onchange="updateSparkleCount(this.value)" id="sparkleCount">
-                </div>
-
-                <div class="control-group">
-                    <label class="control-label">Twinkle Speed</label>
-                    <div style="display: flex; align-items: center;">
-                        <input type="range" class="control-input range-input" min="1" max="20" value="8"
-                            onchange="updateSparkleSpeed(this.value)" id="sparkleSpeed">
-                        <span class="range-value" id="sparkleSpeedValue">8x</span>
-                    </div>
-                </div>
-            </div>
+            <!-- SPARKLE EFFECTS - REMOVED FOR PERFORMANCE -->
+            <!-- Sparkle effects have been removed to improve performance -->
 
             <!-- RING FRAGMENTS -->
             <div class="effect-section">
@@ -332,7 +307,7 @@
             <!-- RIPPLE EFFECTS - REMOVED -->
             <!-- Ripple waves have been removed from the game -->
 
-            <!-- PERFECT HIT SYSTEM -->
+            <!-- PERFECT HIT SYSTEM - SIMPLIFIED -->
             <div class="effect-section">
                 <div class="effect-title">
                     🌟 Perfect Hit Bonus
@@ -346,9 +321,7 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Golden Particle Count</label>
-                    <input type="number" class="control-input" min="10" max="100" value="30"
-                        onchange="updatePerfectParticles(this.value)" id="perfectParticles">
+                    <label class="control-label" style="color: #888;">Golden Particles: REMOVED for performance</label>
                 </div>
             </div>
 
@@ -442,13 +415,13 @@
                     enabled: true,
                     count: 80,
                     speed: 100,
-                    life: 8,
-                    gravity: 10
+                    life: 12, // Longer for XP-style
+                    gravity: 0 // REMOVED - XP orbs don't use gravity
                 },
                 sparkles: {
-                    enabled: true,
-                    count: 20,
-                    speed: 8
+                    enabled: false, // REMOVED for performance
+                    count: 0,
+                    speed: 0
                 },
                 ringFragments: {
                     enabled: true,
@@ -458,7 +431,7 @@
                 perfectHit: {
                     enabled: true,
                     threshold: 90,
-                    particles: 30
+                    particles: 0 // REMOVED for performance
                 },
                 breaking: {
                     enabled: true,
@@ -570,25 +543,9 @@
             updateParentSettings();
         }
 
-        function updateFragmentGravity(value) {
-            getSettings().fragments.gravity = parseInt(value);
-            document.getElementById('fragmentGravityValue').textContent = (value / 100).toFixed(2);
-            console.log('🎛️ Fragment gravity:', (value / 100).toFixed(2));
-            updateParentSettings();
-        }
+        // updateFragmentGravity REMOVED - XP-style has no gravity
 
-        function updateSparkleCount(value) {
-            getSettings().sparkles.count = parseInt(value);
-            console.log('🎛️ Sparkle count:', value);
-            updateParentSettings();
-        }
-
-        function updateSparkleSpeed(value) {
-            getSettings().sparkles.speed = parseInt(value);
-            document.getElementById('sparkleSpeedValue').textContent = value + 'x';
-            console.log('🎛️ Sparkle speed:', value + 'x');
-            updateParentSettings();
-        }
+        // Sparkle functions REMOVED for performance
 
         function updateRingFragmentCount(value) {
             getSettings().ringFragments.count = parseInt(value);
@@ -611,11 +568,7 @@
             updateParentSettings();
         }
 
-        function updatePerfectParticles(value) {
-            getSettings().perfectHit.particles = parseInt(value);
-            console.log('🎛️ Perfect hit particles:', value);
-            updateParentSettings();
-        }
+        // updatePerfectParticles REMOVED for performance
 
         function updateBreakingDuration(value) {
             getSettings().breaking.duration = parseInt(value);

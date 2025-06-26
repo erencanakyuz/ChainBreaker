@@ -1358,47 +1358,28 @@
 
                 for (let i = 0; i < count; i++) {
                     const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
-                    const startSpeed = Math.random() * 3 + 2; // Daha hızlı başlangıç
-                    const fragmentSize = Math.random() * 6 + 2;
+                    const distance = ring.radius * (0.7 + Math.random() * 0.6); // Çemberin etrafından başla
+                    const startX = ring.x + Math.cos(angle) * distance;
+                    const startY = ring.y + Math.sin(angle) * distance;
+                    const fragmentSize = Math.random() * 4 + 2;
 
-                    // Her parçacığın kendine özgü özellikleri
+                    // XP-style: Tüm parçacıklar merkeze gider
                     const particle = this.getPooledParticle({
-                        x: ring.x + Math.cos(angle) * ring.radius,
-                        y: ring.y + Math.sin(angle) * ring.radius,
-                        vx: Math.cos(angle) * startSpeed,
-                        vy: Math.sin(angle) * startSpeed,
-                        centerX: ring.x, centerY: ring.y,
-                        life: 1, decay: 0.008, // Daha uzun yaşam
+                        x: startX, y: startY,
+                        vx: 0, vy: 0, // Başlangıçta durak, sonra merkeze çekilir
+                        centerX: ring.x, centerY: ring.y, // Hedef merkez
+                        life: 1.8, decay: 0.006, // Daha uzun yaşam XP toplama hissi için
                         color: this.getFragmentColor(ring.color, i),
                         size: fragmentSize,
-                        isImploding: Math.random() > 0.3, // %70 içe çekilir
-                        rotation: Math.random() * Math.PI * 2,
-                        rotationSpeed: (Math.random() - 0.5) * 0.2,
-                        effectType: 'fragment',
-                        gravity: 0.1 // Yerçekimi efekti
+                        isImploding: true, // Hepsi merkeze gider
+                        effectType: 'xpFragment', // XP-style hareket
+                        gravity: 0 // Yerçekimi yok, sadece merkeze çekim
                     });
 
                     if (particle) fragments.push(particle);
                 }
 
-                // 💫 Sparkle effects - Parıltı efektleri  
-                if (window.EffectsSettings?.sparkles?.enabled) {
-                    const sparkleCount = window.EffectsSettings?.sparkles?.count || 20;
-                    for (let i = 0; i < sparkleCount; i++) {
-                        const angle = Math.random() * Math.PI * 2;
-                        const distance = ring.radius * (0.5 + Math.random() * 0.5);
-                        this.getPooledParticle({
-                            x: ring.x + Math.cos(angle) * distance,
-                            y: ring.y + Math.sin(angle) * distance,
-                            vx: (Math.random() - 0.5) * 2,
-                            vy: (Math.random() - 0.5) * 2,
-                            life: 0.8, decay: 0.04,
-                            color: '#FFFFFF', size: Math.random() * 3 + 1,
-                            effectType: 'sparkle',
-                            twinkle: true
-                        });
-                    }
-                }
+                // 💫 Sparkle effects - REMOVED for performance
             }
 
             // 🧩 RING FRAGMENTS - Large breaking pieces
@@ -1481,30 +1462,8 @@
                 // Check if perfect hit effects are enabled
                 if (!window.EffectsSettings?.perfectHit?.enabled) return;
 
-                // ✨ Perfect hit sparkles
-                const perfectParticles = window.EffectsSettings?.perfectHit?.particles || 30;
-                for (let i = 0; i < perfectParticles; i++) {
-                    const angle = (i / 30) * Math.PI * 2;
-                    const distance = ring.radius * (0.8 + Math.random() * 0.4);
-                    this.getPooledParticle({
-                        x: ring.x + Math.cos(angle) * distance,
-                        y: ring.y + Math.sin(angle) * distance,
-                        vx: Math.cos(angle) * 2,
-                        vy: Math.sin(angle) * 2,
-                        life: 1, decay: 0.03,
-                        color: '#FFD700', size: Math.random() * 4 + 2,
-                        effectType: 'perfectHit',
-                        twinkle: true
-                    });
-                }
-
-                // 🎆 Perfect hit burst
-                this.getPooledParticle({
-                    x: ring.x, y: ring.y, vx: 0, vy: 0,
-                    life: 0.8, decay: 0.04,
-                    color: '#FFD700', size: ring.radius * 1.8,
-                    isFlash: true, effectType: 'perfectBurst'
-                });
+                // 🌟 Simple "PERFECT!" text pop-up only - no particles for performance
+                console.log('🌟 PERFECT HIT!');
             }
 
             // FIXED: Ultra-precise needle drawing with exact collision feedback
@@ -1722,6 +1681,31 @@
                             }
                             break;
 
+                        case 'xpFragment':
+                            // XP-style movement: smooth acceleration toward center
+                            const toCenter = {
+                                x: p.centerX - p.x,
+                                y: p.centerY - p.y
+                            };
+                            const distance = Math.sqrt(toCenter.x * toCenter.x + toCenter.y * toCenter.y);
+
+                            if (distance > 3) {
+                                const pullForce = 2 + (1 - p.life) * 3; // Güçlü çekim
+                                const normalizedX = toCenter.x / distance;
+                                const normalizedY = toCenter.y / distance;
+
+                                p.vx += normalizedX * pullForce * deltaTime * 60;
+                                p.vy += normalizedY * pullForce * deltaTime * 60;
+
+                                // Speed limit for smooth motion
+                                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                                if (speed > 8) {
+                                    p.vx = (p.vx / speed) * 8;
+                                    p.vy = (p.vy / speed) * 8;
+                                }
+                            }
+                            break;
+
                         case 'energyBurst':
                             // Energy bursts slow down over time
                             p.vx *= 0.98;
@@ -1729,15 +1713,11 @@
                             break;
 
                         case 'sparkle':
-                            // Sparkles twinkle
-                            if (p.twinkle) {
-                                p.twinklePhase = (p.twinklePhase || 0) + deltaTime * 8;
-                                p.currentAlpha = p.life * (0.7 + Math.sin(p.twinklePhase) * 0.3);
-                            }
+                            // Sparkles twinkle - REMOVED
                             break;
 
                         case 'perfectHit':
-                            // Perfect hit particles have special movement
+                            // Perfect hit particles - SIMPLIFIED
                             p.vx *= 0.95;
                             p.vy *= 0.95;
                             break;
@@ -1874,14 +1854,17 @@
                         case 'fragment':
                             this.drawFragmentParticles(effectParticles);
                             break;
+                        case 'xpFragment':
+                            this.drawXPFragmentParticles(effectParticles);
+                            break;
                         case 'energyBurst':
                             this.drawEnergyBurstParticles(effectParticles);
                             break;
                         case 'sparkle':
-                            this.drawSparkleParticles(effectParticles);
+                            // Sparkles REMOVED
                             break;
                         case 'perfectHit':
-                            this.drawPerfectHitParticles(effectParticles);
+                            // Perfect hit SIMPLIFIED
                             break;
                         case 'shockwave':
                             this.drawShockwaveParticles(effectParticles);
@@ -1913,6 +1896,37 @@
 
                     // Draw as rotated rectangle
                     ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+
+                    ctx.restore();
+                });
+            }
+
+            // ⭐ XP FRAGMENT PARTICLES - Smooth circular particles moving to center
+            drawXPFragmentParticles(particles) {
+                const ctx = this.ctx;
+
+                particles.forEach(p => {
+                    ctx.save();
+
+                    ctx.globalAlpha = p.life;
+
+                    // Glowing XP orb effect
+                    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 1.5);
+                    gradient.addColorStop(0, p.color);
+                    gradient.addColorStop(0.7, p.color + '80'); // Semi-transparent
+                    gradient.addColorStop(1, 'transparent');
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Inner bright core
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.globalAlpha = p.life * 0.8;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
 
                     ctx.restore();
                 });
