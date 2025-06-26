@@ -156,7 +156,7 @@ export class Pluto {
     async _createPlutoElement() {
         try {
             // Use template system for cleaner HTML structure
-            this.element = await templateManager.createElement('pluto-entity', {
+            this.element = await templateManager.createElement('pluto-base-entity', {
                 mood: 'neutral',
                 animation: 'idle',
                 skin: 'default'

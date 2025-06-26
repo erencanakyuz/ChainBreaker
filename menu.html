@@ -1066,7 +1066,7 @@
         this.pluto.initialized.then(() => {
           if (this.pluto.element) {
             this.pluto.element.dataset.context = 'game';
-            this.pluto.setAnimation('excited');
+            this.pluto.setAnimation('idle'); // Start with idle instead of excited
             this.pluto.resetPosition(); // Center it for the game
             // Apply responsive scaling
             this.applyPlutoResponsiveSettings();
@@ -1620,77 +1620,73 @@
       }
 
       changePlutoMood(mood) {
-        if (!this.plutoBody) return;
+        // Use unified Pluto system instead of legacy plutoBody
+        if (this.pluto && this.pluto.setAnimation) {
+          this.plutoMood = mood;
 
+          // Map moods to unified Pluto animations
+          switch (mood) {
+            case 'excited':
+              this.pluto.setAnimation('excited');
+              this.plutoIsAnimating = false; // Excited can be interrupted
+              break;
+            case 'sad':
+              this.pluto.setMood('sad');
+              this.plutoIsAnimating = false; // Sad can be interrupted
+              break;
+            case 'orbit':
+              this.pluto.setAnimation('curious'); // Map to available animation
+              this.plutoIsAnimating = true; // Block other animations
 
-        this.plutoMood = mood;
+              // Return to idle after orbit
+              setTimeout(() => {
+                if (this.plutoMood === 'orbit') {
+                  this.plutoIsAnimating = false;
+                  this.changePlutoMood('idle');
+                }
+              }, 8000);
+              break;
+            case 'fly-around':
+              this.pluto.setAnimation('cute-wiggle'); // Map to available animation
+              this.plutoIsAnimating = true; // Block other animations
 
-        // Remove all mood animations
-        this.plutoBody.style.animation = '';
+              // Return to idle after flying around
+              setTimeout(() => {
+                if (this.plutoMood === 'fly-around') {
+                  this.plutoIsAnimating = false;
+                  this.changePlutoMood('idle');
+                }
+              }, 10000);
+              break;
+            case 'zoom-out':
+              this.pluto.setAnimation('excited');
+              this.plutoIsAnimating = true; // Block other animations
 
-        // Apply new mood animation
-        switch (mood) {
-          case 'excited':
-            this.plutoBody.style.animation = 'pluto-excited 0.8s infinite ease-in-out';
-            this.plutoIsAnimating = false; // Excited can be interrupted
-            break;
-          case 'sad':
-            this.plutoBody.style.animation = 'pluto-sad 2s infinite ease-in-out';
-            this.plutoIsAnimating = false; // Sad can be interrupted
-            break;
-          case 'orbit':
-            this.plutoBody.style.animation = 'pluto-orbit-mode 8s ease-in-out';
-            this.plutoIsAnimating = true; // Block other animations
+              // Return to idle after zoom
+              setTimeout(() => {
+                if (this.plutoMood === 'zoom-out') {
+                  this.plutoIsAnimating = false;
+                  this.changePlutoMood('idle');
+                }
+              }, 6000);
+              break;
+            case 'spiral-dance':
+              this.pluto.setAnimation('cute-wiggle');
+              this.plutoIsAnimating = true; // Block other animations
 
-            // Return to idle after orbit
-            setTimeout(() => {
-              if (this.plutoMood === 'orbit') {
-                this.plutoIsAnimating = false;
-                this.changePlutoMood('idle');
-              }
-            }, 8000);
-            break;
-          case 'fly-around':
-            this.plutoBody.style.animation = 'pluto-fly-around 10s ease-in-out';
-            this.plutoIsAnimating = true; // Block other animations
-
-            // Return to idle after flying around
-            setTimeout(() => {
-              if (this.plutoMood === 'fly-around') {
-                this.plutoIsAnimating = false;
-
-                this.changePlutoMood('idle');
-              }
-            }, 10000);
-            break;
-          case 'zoom-out':
-            this.plutoBody.style.animation = 'pluto-zoom-out 6s ease-in-out';
-            this.plutoIsAnimating = true; // Block other animations
-
-            // Return to idle after zoom
-            setTimeout(() => {
-              if (this.plutoMood === 'zoom-out') {
-                this.plutoIsAnimating = false;
-                this.changePlutoMood('idle');
-              }
-            }, 6000);
-            break;
-          case 'spiral-dance':
-            this.plutoBody.style.animation = 'pluto-spiral-dance 8s ease-in-out';
-            this.plutoIsAnimating = true; // Block other animations
-
-            // Return to idle after spiral dance
-            setTimeout(() => {
-              if (this.plutoMood === 'spiral-dance') {
-                this.plutoIsAnimating = false;
-                this.changePlutoMood('idle');
-              }
-            }, 8000);
-            break;
-          default: // idle
-            this.plutoBody.style.animation = 'pluto-idle-pulse 4s infinite ease-in-out';
-            this.plutoIsAnimating = false;
-            break;
+              // Return to idle after spiral dance
+              setTimeout(() => {
+                if (this.plutoMood === 'spiral-dance') {
+                  this.plutoIsAnimating = false;
+                  this.changePlutoMood('idle');
+                }
+              }, 8000);
+              break;
+            default: // idle
+              this.pluto.setAnimation('idle');
+              this.plutoIsAnimating = false;
+              break;
+          }
         }
       }
 
@@ -1794,9 +1790,7 @@
             }
 
             // Trigger quick Pluto reaction for wrong place
-            if (typeof this.triggerPlutoAnimation === 'function') {
-              this.triggerPlutoAnimation('confused');
-            }
+            this.changePlutoMood('sad');
 
             this.handleMiss();
           }
@@ -1866,15 +1860,14 @@
         this.needleSpeed *= 1.03;
         this.regenDelay = Math.max(3000, this.regenDelay * 0.98);
 
-        // Trigger Pluto reactions based on combo
-        if (typeof this.triggerPlutoAnimation === 'function') {
-          if (this.combo >= 10) {
-            this.triggerPlutoAnimation('excited');
-          } else if (this.combo >= 5) {
-            this.triggerPlutoAnimation('happy');
-          } else {
-            this.triggerPlutoAnimation('idle');
-          }
+        // Trigger Pluto reactions based on combo - use changePlutoMood instead
+        // Only trigger excited on specific combo milestones, not every hit
+        if (this.combo === 5 || this.combo === 10 || this.combo === 15) {
+          this.changePlutoMood('excited');
+          // Return to idle after 2 seconds
+          setTimeout(() => {
+            this.changePlutoMood('idle');
+          }, 2000);
         }
 
         if (this.combo >= 5 && !this.feverMode) {
@@ -1912,10 +1905,11 @@
         this.lives--;
         this.livesText.setText('Lives: ' + this.lives);
 
-        // Pluto reacts to miss by going back to idle
-        if (typeof this.triggerPlutoAnimation === 'function') {
-          this.triggerPlutoAnimation('idle');
-        }
+        // Pluto reacts to miss - first sad, then idle
+        this.changePlutoMood('sad');
+        setTimeout(() => {
+          this.changePlutoMood('idle');
+        }, 1500);
 
         // Stronger shake effect - increased duration and intensity
         this.cameras.main.shake(300, 0.03); // Increased from 150, 0.015
@@ -1990,6 +1984,8 @@
         if (this.activeRing && !this.activeRing.inputReceived) {
           this.combo = 0;
           this.comboText.setText('Combo: 0');
+          // Return to idle when combo resets due to timeout
+          this.changePlutoMood('idle');
         }
 
         // Dynamic max rings based on level design and device capabilities

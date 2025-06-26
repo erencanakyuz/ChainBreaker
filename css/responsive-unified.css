@@ -167,8 +167,9 @@ body {
 
 /* ===== GAME-SPECIFIC RESPONSIVE ELEMENTS ===== */
 
-/* Pluto Entity Responsive */
-.pluto-entity {
+/* Pluto Entity Responsive - Support both old and new classes */
+.pluto-entity,
+.pluto-base-entity {
     /* Mobile First */
     width: 60px;
     height: 60px;
@@ -176,7 +177,9 @@ body {
 }
 
 @media (min-width: 480px) {
-    .pluto-entity {
+
+    .pluto-entity,
+    .pluto-base-entity {
         width: 70px;
         height: 70px;
         transform: translate(-50%, -50%) scale(0.7);
@@ -184,7 +187,9 @@ body {
 }
 
 @media (min-width: 768px) {
-    .pluto-entity {
+
+    .pluto-entity,
+    .pluto-base-entity {
         width: 84px;
         height: 84px;
         transform: translate(-50%, -50%) scale(var(--tablet-scale));
@@ -192,13 +197,17 @@ body {
 }
 
 @media (min-width: 1024px) {
-    .pluto-entity {
+
+    .pluto-entity,
+    .pluto-base-entity {
         transform: translate(-50%, -50%) scale(0.9);
     }
 }
 
 @media (min-width: 1440px) {
-    .pluto-entity {
+
+    .pluto-entity,
+    .pluto-base-entity {
         transform: translate(-50%, -50%) scale(var(--desktop-scale));
     }
 }

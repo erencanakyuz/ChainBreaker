@@ -598,7 +598,7 @@ export class GameManager {
      */
     async preloadTemplates() {
         await templateManager.preloadTemplates([
-            'pluto-entity',
+            'pluto-base-entity',
             'reward-notification',
             'error-display',
             'test-panel'
