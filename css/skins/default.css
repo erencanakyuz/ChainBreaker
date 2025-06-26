@@ -1,0 +1,76 @@
+/* Default Pluto Skin - Base styling without special effects */
+
+.pluto-entity[data-skin="default"],
+.pluto-base-entity[data-skin="default"] {
+    /* Base Pluto color - grayish blue */
+    --pluto-primary-color: #4a5568;
+    --pluto-secondary-color: #2d3748;
+    --pluto-accent-color: #cbd5e0;
+    --pluto-glow-color: rgba(203, 213, 224, 0.3);
+}
+
+/* Main Pluto body styling */
+.pluto-entity[data-skin="default"] .scene_pluto,
+.pluto-base-entity[data-skin="default"] .scene_pluto {
+    background: radial-gradient(circle at 30% 30%, var(--pluto-primary-color), var(--pluto-secondary-color));
+    border: 2px solid var(--pluto-accent-color);
+    box-shadow:
+        0 0 20px var(--pluto-glow-color),
+        inset 0 5px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* Eyes styling */
+.pluto-entity[data-skin="default"] .eyes .eye,
+.pluto-base-entity[data-skin="default"] .eyes .eye {
+    background: #ffffff;
+    border: 1px solid var(--pluto-secondary-color);
+}
+
+.pluto-entity[data-skin="default"] .eyes .eye::before,
+.pluto-base-entity[data-skin="default"] .eyes .eye::before {
+    background: var(--pluto-secondary-color);
+}
+
+/* Mouth styling */
+.pluto-entity[data-skin="default"] .mouth,
+.pluto-base-entity[data-skin="default"] .mouth {
+    background: var(--pluto-secondary-color);
+    border: 1px solid var(--pluto-accent-color);
+}
+
+/* Subtle hover effect */
+.pluto-entity[data-skin="default"]:hover .scene_pluto,
+.pluto-base-entity[data-skin="default"]:hover .scene_pluto {
+    box-shadow:
+        0 0 30px var(--pluto-glow-color),
+        inset 0 5px 15px rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+/* Shadow styling */
+.pluto-entity[data-skin="default"] .scene_plutoShadow,
+.pluto-base-entity[data-skin="default"] .scene_plutoShadow {
+    background: radial-gradient(ellipse, rgba(45, 55, 72, 0.4), transparent);
+    border-radius: 50%;
+}
+
+/* Responsive optimizations for default skin */
+@media (max-width: 768px) {
+
+    .pluto-entity[data-skin="default"] .scene_pluto,
+    .pluto-base-entity[data-skin="default"] .scene_pluto {
+        border-width: 1px;
+        box-shadow:
+            0 0 10px var(--pluto-glow-color),
+            inset 0 3px 10px rgba(255, 255, 255, 0.1);
+    }
+
+    .pluto-entity[data-skin="default"]:hover .scene_pluto,
+    .pluto-base-entity[data-skin="default"]:hover .scene_pluto {
+        box-shadow:
+            0 0 15px var(--pluto-glow-color),
+            inset 0 3px 10px rgba(255, 255, 255, 0.1);
+        transform: scale(1.01);
+    }
+}

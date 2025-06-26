@@ -17,6 +17,12 @@ export class Pluto {
         // Story mode bypasses unlock restrictions
         this.storyMode = options.storyMode || false;
 
+        // 📱 RESPONSIVE SYSTEM INTEGRATION
+        this.responsiveSystem = {
+            deviceType: this.getDeviceType(),
+            constants: this.getResponsiveConstants()
+        };
+
         // 🎮 CLEAN ANIMATION REGISTRY - NEW BASE SYSTEM
         this.availableAnimations = {
             // 🎯 Core animations (always unlocked)
@@ -109,7 +115,7 @@ export class Pluto {
     async _initialize() {
         try {
             // Preload all available skins
-            const skinsToPreload = Object.keys(this.progression.getUnlockedItems('skin'));
+            const skinsToPreload = this.progression.getUnlockedItems('skin');
             await this.preloadSkinCSS(skinsToPreload);
 
             // Create and initialize the new Pluto element
@@ -117,6 +123,23 @@ export class Pluto {
             await this.applySkin(this.skin);
             this.setAnimation('idle');
             this.setMood('neutral');
+
+            // Apply responsive settings
+            this.applyResponsiveSettings();
+
+            // Listen for window resize to update responsive settings
+            window.addEventListener('resize', () => {
+                this.updateResponsiveSettings();
+                // Reposition based on current context
+                if (this.element) {
+                    const context = this.element.dataset.context;
+                    if (context === 'menu') {
+                        this.setMenuPosition();
+                    } else if (context === 'game') {
+                        this.resetPosition();
+                    }
+                }
+            });
 
             // Listen for global game events
             this._setupEventListeners();
@@ -494,6 +517,70 @@ export class Pluto {
         window.dispatchEvent(new CustomEvent('plutoDestroyed'));
     }
 
+    // 📱 RESPONSIVE SYSTEM METHODS
+    getDeviceType() {
+        if (window.innerWidth <= 480) return 'small-mobile';
+        if (window.innerWidth <= 768) return 'mobile';
+        if (window.innerWidth <= 1024) return 'tablet';
+        return 'desktop';
+    }
+
+    getResponsiveConstants() {
+        const constants = {
+            'small-mobile': {
+                SCALE: 0.2,
+                ANIMATION_SPEED: 0.4,
+                EFFECT_INTENSITY: 0.3,
+                MAX_SIZE: 30
+            },
+            'mobile': {
+                SCALE: 0.25,
+                ANIMATION_SPEED: 0.6,
+                EFFECT_INTENSITY: 0.5,
+                MAX_SIZE: 45
+            },
+            'tablet': {
+                SCALE: 0.3,
+                ANIMATION_SPEED: 0.8,
+                EFFECT_INTENSITY: 0.7,
+                MAX_SIZE: 60
+            },
+            'desktop': {
+                SCALE: 0.35,
+                ANIMATION_SPEED: 1.0,
+                EFFECT_INTENSITY: 1.0,
+                MAX_SIZE: 100
+            }
+        };
+        return constants[this.getDeviceType()] || constants.desktop;
+    }
+
+    applyResponsiveSettings() {
+        if (!this.element) return;
+
+        const constants = this.responsiveSystem.constants;
+
+        // Apply scaling
+        this.element.style.transform = `scale(${constants.SCALE})`;
+        this.element.style.maxWidth = `${constants.MAX_SIZE}px`;
+        this.element.style.maxHeight = `${constants.MAX_SIZE}px`;
+
+        // Apply CSS custom properties for animations
+        this.element.style.setProperty('--pluto-animation-speed', constants.ANIMATION_SPEED);
+        this.element.style.setProperty('--pluto-effect-intensity', constants.EFFECT_INTENSITY);
+
+        // Add device class for CSS targeting
+        this.element.classList.add(`pluto-device-${this.responsiveSystem.deviceType}`);
+
+        console.log(`🪐 Pluto: Responsive settings applied for ${this.responsiveSystem.deviceType}`, constants);
+    }
+
+    updateResponsiveSettings() {
+        this.responsiveSystem.deviceType = this.getDeviceType();
+        this.responsiveSystem.constants = this.getResponsiveConstants();
+        this.applyResponsiveSettings();
+    }
+
     // Get current state
     getState() {
         return {
@@ -519,11 +606,52 @@ export class Pluto {
     // Reset to center position
     resetPosition() {
         if (this.element) {
+            this.element.style.position = 'absolute';
             this.element.style.left = '50%';
             this.element.style.top = '50%';
             this.element.style.transform = 'translate(-50%, -50%)';
+            this.element.style.zIndex = '100';
             console.log('🪐 Pluto: Position reset to center');
         }
+    }
+
+    // Set position for menu mode (responsive)
+    setMenuPosition() {
+        if (!this.element) return;
+
+        const deviceType = this.responsiveSystem.deviceType;
+        const element = this.element;
+
+        // Base menu positioning
+        element.style.position = 'fixed';
+        element.style.zIndex = '1000';
+        element.style.pointerEvents = 'none';
+
+        // Responsive positioning based on device
+        switch (deviceType) {
+            case 'small-mobile':
+                element.style.left = '20px';
+                element.style.top = '60%';
+                element.style.transform = 'translateY(-50%)';
+                break;
+            case 'mobile':
+                element.style.left = '40px';
+                element.style.top = '55%';
+                element.style.transform = 'translateY(-50%)';
+                break;
+            case 'tablet':
+                element.style.left = '60px';
+                element.style.top = '50%';
+                element.style.transform = 'translateY(-50%)';
+                break;
+            default: // desktop
+                element.style.left = '80px';
+                element.style.top = '50%';
+                element.style.transform = 'translateY(-50%)';
+                break;
+        }
+
+        console.log(`🪐 Pluto: Menu position set for ${deviceType}`);
     }
 
     // Animate to position

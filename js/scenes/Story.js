@@ -9,11 +9,90 @@ document.addEventListener('DOMContentLoaded', () => {
     story.init();
 });
 
+// 📱 RESPONSIVE STORY SYSTEM INTEGRATION
+class ResponsiveStorySystem {
+    constructor() {
+        this.deviceType = this.getDeviceType();
+        this.constants = this.getResponsiveConstants();
+    }
+
+    getDeviceType() {
+        if (window.innerWidth <= 480) return 'small-mobile';
+        if (window.innerWidth <= 768) return 'mobile';
+        if (window.innerWidth <= 1024) return 'tablet';
+        return 'desktop';
+    }
+
+    getResponsiveConstants() {
+        const constants = {
+            'small-mobile': {
+                STAR_COUNT: 30,
+                ANIMATION_SPEED: 0.5,
+                EFFECT_INTENSITY: 0.3,
+                MESSAGE_FREQUENCY: 12000 // Slower on mobile
+            },
+            'mobile': {
+                STAR_COUNT: 50,
+                ANIMATION_SPEED: 0.7,
+                EFFECT_INTENSITY: 0.5,
+                MESSAGE_FREQUENCY: 10000
+            },
+            'tablet': {
+                STAR_COUNT: 75,
+                ANIMATION_SPEED: 0.8,
+                EFFECT_INTENSITY: 0.7,
+                MESSAGE_FREQUENCY: 9000
+            },
+            'desktop': {
+                STAR_COUNT: 100,
+                ANIMATION_SPEED: 1.0,
+                EFFECT_INTENSITY: 1.0,
+                MESSAGE_FREQUENCY: 8000
+            }
+        };
+        return constants[this.deviceType] || constants.desktop;
+    }
+
+    optimizeStarsForDevice(starCount) {
+        return Math.floor(starCount * this.constants.STAR_COUNT / 100);
+    }
+
+    getOptimizedMessageInterval() {
+        return this.constants.MESSAGE_FREQUENCY;
+    }
+
+    applyPerformanceOptimizations() {
+        if (this.deviceType === 'small-mobile' || this.deviceType === 'mobile') {
+            // Reduce complex animations on mobile
+            document.body.classList.add('mobile-optimized');
+
+            // Add CSS for mobile optimization
+            const style = document.createElement('style');
+            style.textContent = `
+                .mobile-optimized .story-scene {
+                    animation-duration: ${3 / this.constants.ANIMATION_SPEED}s !important;
+                }
+                .mobile-optimized .complex-animation {
+                    animation: none !important;
+                }
+                .mobile-optimized .heavy-effect {
+                    opacity: ${this.constants.EFFECT_INTENSITY} !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+}
+
 class StoryManager {
     constructor() {
         this.currentScene = 0;
         this.totalScenes = 6;
         this.loadedCSS = new Set();
+
+        // Initialize responsive system
+        this.responsiveSystem = new ResponsiveStorySystem();
+        this.responsiveSystem.applyPerformanceOptimizations();
 
         // DOM Elements
         this.scenes = document.querySelectorAll('.story-scene');
@@ -228,8 +307,9 @@ class StoryManager {
         const showMessage = () => {
             this.showRandomMessage();
 
-            // Schedule next message
-            const nextDelay = Math.random() * 7000 + 8000; // 8-15 seconds
+            // Schedule next message (responsive timing)
+            const baseDelay = this.responsiveSystem.getOptimizedMessageInterval();
+            const nextDelay = Math.random() * 3000 + baseDelay; // Responsive timing
             this.randomMessageTimer = setTimeout(showMessage, nextDelay);
         };
 

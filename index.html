@@ -21,6 +21,132 @@
     <!-- 🌍 UNIFIED RESPONSIVE SYSTEM - PHASE 3 -->
     <link rel="stylesheet" href="css/responsive-unified.css">
 
+    <!-- 📱 RESPONSIVE DEVICE DETECTION AND OPTIMIZATION SYSTEM -->
+    <script>
+        // Device Detection and Responsive Constants System
+        class DeviceDetector {
+            static isMobile() {
+                return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+
+            static isTablet() {
+                return window.innerWidth > 768 && window.innerWidth <= 1024;
+            }
+
+            static isSmallMobile() {
+                return window.innerWidth <= 480;
+            }
+
+            static getDeviceType() {
+                if (this.isSmallMobile()) return 'small-mobile';
+                if (this.isMobile()) return 'mobile';
+                if (this.isTablet()) return 'tablet';
+                return 'desktop';
+            }
+        }
+
+        // Adaptive Background Scaling System
+        function createResponsiveBackground(backgroundSelector) {
+            const bg = document.querySelector(backgroundSelector);
+            if (!bg) return;
+
+            // Store original dimensions
+            bg.orgWidth = bg.offsetWidth || window.innerWidth;
+            bg.orgHeight = bg.offsetHeight || window.innerHeight;
+
+            // Update function for responsive scaling
+            bg.update = function () {
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                if (viewportWidth * this.orgHeight / this.orgWidth < viewportHeight) {
+                    this.style.width = (viewportHeight * this.orgWidth / this.orgHeight) + 'px';
+                    this.style.height = viewportHeight + 'px';
+                } else {
+                    this.style.width = viewportWidth + 'px';
+                    this.style.height = (viewportWidth * this.orgHeight / this.orgWidth) + 'px';
+                }
+
+                // Center the background
+                this.style.position = 'absolute';
+                this.style.left = '50%';
+                this.style.top = '50%';
+                this.style.transform = 'translate(-50%, -50%)';
+            };
+
+            // Initial update and resize listener
+            bg.update();
+            window.addEventListener('resize', () => bg.update());
+
+            return bg;
+        }
+
+        // Story Scene Responsive Optimization
+        window.STORY_RESPONSIVE_CONSTANTS = {
+            'small-mobile': {
+                ANIMATION_SPEED: 0.5,
+                PARTICLE_COUNT: 0.3,
+                EFFECT_INTENSITY: 0.4,
+                TEXT_SCALE: 0.8,
+                PLUTO_SCALE: 0.6
+            },
+            'mobile': {
+                ANIMATION_SPEED: 0.7,
+                PARTICLE_COUNT: 0.5,
+                EFFECT_INTENSITY: 0.6,
+                TEXT_SCALE: 0.9,
+                PLUTO_SCALE: 0.75
+            },
+            'tablet': {
+                ANIMATION_SPEED: 0.8,
+                PARTICLE_COUNT: 0.7,
+                EFFECT_INTENSITY: 0.8,
+                TEXT_SCALE: 0.95,
+                PLUTO_SCALE: 0.9
+            },
+            'desktop': {
+                ANIMATION_SPEED: 1.0,
+                PARTICLE_COUNT: 1.0,
+                EFFECT_INTENSITY: 1.0,
+                TEXT_SCALE: 1.0,
+                PLUTO_SCALE: 1.0
+            }
+        };
+
+        // Apply responsive settings
+        function applyStoryResponsiveSettings() {
+            const deviceType = DeviceDetector.getDeviceType();
+            const constants = window.STORY_RESPONSIVE_CONSTANTS[deviceType];
+
+            // Apply CSS custom properties for responsive scaling
+            document.documentElement.style.setProperty('--story-animation-speed', constants.ANIMATION_SPEED);
+            document.documentElement.style.setProperty('--story-particle-count', constants.PARTICLE_COUNT);
+            document.documentElement.style.setProperty('--story-effect-intensity', constants.EFFECT_INTENSITY);
+            document.documentElement.style.setProperty('--story-text-scale', constants.TEXT_SCALE);
+            document.documentElement.style.setProperty('--story-pluto-scale', constants.PLUTO_SCALE);
+
+            // Apply device-specific optimizations
+            document.body.classList.add(`device-${deviceType}`);
+
+            console.log(`📱 Story responsive settings applied for: ${deviceType}`, constants);
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            applyStoryResponsiveSettings();
+
+            // Apply responsive backgrounds to story scenes
+            setTimeout(() => {
+                createResponsiveBackground('.story-scene');
+                createResponsiveBackground('.nebula-background');
+                createResponsiveBackground('.scene');
+            }, 100);
+        });
+
+        // Reapply on window resize
+        window.addEventListener('resize', applyStoryResponsiveSettings);
+    </script>
+
     <style>
         /* Simple transition for scene changes */
         .story-scene {
@@ -93,6 +219,92 @@
             box-shadow:
                 0 8px 32px rgba(0, 0, 0, 0.4),
                 0 0 20px rgba(0, 184, 148, 0.4);
+        }
+
+        /* 📱 MOBILE RESPONSIVE OPTIMIZATIONS */
+        @media (max-width: 768px) {
+            .story-scene {
+                animation-duration: calc(var(--story-animation-speed, 1) * 3s) !important;
+            }
+
+            .scene-message-container {
+                font-size: 10px;
+                padding: 8px 15px;
+                max-width: 250px;
+                min-width: 150px;
+            }
+
+            .story-text {
+                font-size: calc(var(--story-text-scale, 1) * 10px);
+                padding: 15px;
+                line-height: 1.4;
+            }
+
+            .pluto-entity {
+                transform: scale(var(--story-pluto-scale, 1)) !important;
+                max-width: calc(var(--story-pluto-scale, 1) * 100px) !important;
+                max-height: calc(var(--story-pluto-scale, 1) * 100px) !important;
+            }
+
+            /* Reduce particle effects on mobile */
+            .subtle-stars::before {
+                animation-duration: calc(var(--story-animation-speed, 1) * 6s);
+            }
+
+            .animation-layer {
+                opacity: var(--story-effect-intensity, 1);
+            }
+
+            .reduce-on-mobile {
+                opacity: 0.6;
+            }
+
+            .hide-on-mobile {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scene-message-container {
+                font-size: 8px;
+                padding: 6px 12px;
+                top: 10px;
+                left: 10px;
+                max-width: 200px;
+                min-width: 120px;
+            }
+
+            .story-text {
+                font-size: calc(var(--story-text-scale, 1) * 8px);
+                padding: 10px;
+            }
+
+            .pluto-entity {
+                max-width: calc(var(--story-pluto-scale, 1) * 60px) !important;
+                max-height: calc(var(--story-pluto-scale, 1) * 60px) !important;
+            }
+
+            /* Further reduce effects on small mobile */
+            .reduce-on-mobile {
+                opacity: 0.3;
+            }
+
+            .animation-layer div {
+                animation-duration: calc(var(--story-animation-speed, 1) * 8s) !important;
+            }
+        }
+
+        /* Performance optimization classes */
+        .device-small-mobile .story-scene,
+        .device-mobile .story-scene {
+            will-change: transform, opacity;
+            transform: translateZ(0);
+            /* Force hardware acceleration */
+        }
+
+        .device-small-mobile .animation-layer,
+        .device-mobile .animation-layer {
+            contain: layout style paint;
         }
     </style>
 </head>

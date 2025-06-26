@@ -4,9 +4,9 @@ class PlayerProgression {
     constructor() {
         this.data = {
             activeSkin: 'default',
-            unlockedSkins: ['default'],
+            unlockedSkins: ['default', 'golden', 'cyborg', 'rainbow'], // All base skins unlocked for better testing
             unlockedAnimations: ['idle', 'excited', 'cute-wiggle', 'curious'], // Menu context animations unlocked by default
-            unlockedMoods: ['neutral', 'happy', 'sad'],
+            unlockedMoods: ['neutral', 'happy', 'sad', 'angry'], // All base moods unlocked
             levelProgress: 0,
             totalScore: 0,
             achievementPoints: 0
@@ -207,9 +207,9 @@ class PlayerProgression {
     reset() {
         this.data = {
             activeSkin: 'default',
-            unlockedSkins: ['default'],
-            unlockedAnimations: ['idle', 'excited'],
-            unlockedMoods: ['neutral', 'happy', 'sad'],
+            unlockedSkins: ['default', 'golden', 'cyborg', 'rainbow'],
+            unlockedAnimations: ['idle', 'excited', 'cute-wiggle', 'curious'],
+            unlockedMoods: ['neutral', 'happy', 'sad', 'angry'],
             levelProgress: 0,
             totalScore: 0,
             achievementPoints: 0

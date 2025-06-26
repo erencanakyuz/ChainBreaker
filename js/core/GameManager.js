@@ -47,7 +47,10 @@ export class GameManager {
             // Preload commonly used templates
             await this.preloadTemplates();
 
-            // Transition to menu state
+            // Initialize Pluto for the menu
+            await this.initializePluto();
+
+            // Transition to menu state (will position Pluto)
             this.setState('MENU');
 
             console.log('GameManager: Initialization complete');
@@ -451,6 +454,16 @@ export class GameManager {
     showMenu() {
         // Logic to display the main menu
         console.log("GameManager: Showing main menu.");
+
+        // Position Pluto for menu if available
+        if (this.pluto && this.pluto.element) {
+            this.pluto.element.dataset.context = 'menu';
+            this.pluto.setMenuPosition();
+            this.pluto.setAnimation('idle');
+            this.pluto.setMood('neutral');
+            this.pluto.show();
+            console.log("GameManager: Pluto positioned for menu");
+        }
     }
 
     async startGameplay() {
@@ -461,6 +474,15 @@ export class GameManager {
         if (!this.pluto) {
             await this.initializePluto();
         }
+
+        // Position Pluto for game mode
+        if (this.pluto && this.pluto.element) {
+            this.pluto.element.dataset.context = 'game';
+            this.pluto.resetPosition(); // Center for game
+            this.pluto.show();
+            console.log("GameManager: Pluto positioned for game");
+        }
+
         this.hideAllUI();
         // Additional logic to start the game
         console.log("GameManager: Starting gameplay.");
