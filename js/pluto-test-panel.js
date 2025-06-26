@@ -12,6 +12,7 @@ window.currentPlutoFeature = window.currentPlutoFeature || 'none';
 /**
  * PlutoTestPanelController - Manages the test panel interface
  * Updated to work with the new GameManager and Pluto component system
+ * AUDIT UPDATE: Now supports all 37 discovered animations
  */
 class PlutoTestPanelController {
     constructor() {
@@ -27,6 +28,79 @@ class PlutoTestPanelController {
         this.currentSkin = 'default';
         this.currentMood = 'neutral';
         this.currentAnimation = 'idle';
+
+        // ANIMATION MAPPING - From audit results (37 total)
+        this.animationMapping = {
+            // Menu Context (7)
+            'idle': 'pluto-idle-pulse',
+            'menu-float': 'pluto-menu-float',
+            'menu-bounce': 'pluto-menu-bounce',
+            'menu-wiggle': 'pluto-menu-wiggle',
+            'menu-curious': 'pluto-menu-curious',
+
+            // Game Context (6)
+            'game-idle-cute': 'pluto-game-idle-cute',
+            'game-energy': 'pluto-game-energy',
+            'game-celebration': 'pluto-game-celebration',
+            'game-power-burst': 'pluto-game-power-burst',
+            'game-chain-break': 'pluto-game-chain-break',
+            'game-victory': 'pluto-game-victory',
+
+            // Base Emotions (4)
+            'base-happy': 'pluto-base-happy',
+            'base-sad': 'pluto-base-sad',
+            'base-angry': 'pluto-base-angry',
+            'base-excited': 'pluto-base-excited',
+
+            // Basic Effects (5)
+            'bounce': 'pluto-bounce',
+            'shake': 'pluto-shake',
+            'pulse': 'pluto-pulse',
+            'float': 'pluto-float',
+            'angry-shake': 'pluto-angry-shake',
+
+            // Orbital Effects (6)
+            'orbit-mode': 'pluto-orbit-mode',
+            'fly-around': 'pluto-fly-around',
+            'orbital-dance': 'pluto-orbital-dance',
+            'orbital-dance-single': 'pluto-orbital-dance-single',
+            'orbital-dance-shadow': 'pluto-orbital-dance-shadow',
+            'zoom-out': 'pluto-zoom-out',
+
+            // Advanced Effects (5)
+            'spiral-dance': 'pluto-spiral-dance',
+            'base-ascension': 'pluto-base-ascension',
+            'eyes-glow': 'pluto-eyes-glow',
+            'mouth-move': 'pluto-mouth-move',
+            'base-shadow': 'pluto-base-shadow',
+
+            // Legacy/Problematic (3) - Need renaming
+            'plutoWrap': 'plutoWrap', // ⚠️ Keep as-is for now
+            'pluto_eye': 'pluto_eye', // ⚠️ Keep as-is for now  
+            'pluto': 'pluto', // ⚠️ Keep as-is for now
+
+            // Additional discovered
+            'base-shadow-gentle': 'pluto-base-shadow-gentle',
+
+            // Legacy aliases (backwards compatibility)
+            'excited': 'pluto-excited',
+            'sad': 'pluto-sad',
+            'orbit': 'pluto-orbit-mode',
+            'power-burst': 'pluto-game-power-burst',
+            'chain-break': 'pluto-game-chain-break',
+            'victory-dance': 'pluto-game-victory'
+        };
+
+        // Animation categories for better organization
+        this.animationCategories = {
+            menu: ['idle', 'menu-float', 'menu-bounce', 'menu-wiggle', 'menu-curious'],
+            game: ['game-idle-cute', 'game-energy', 'game-celebration', 'game-power-burst', 'game-chain-break', 'game-victory'],
+            emotions: ['base-happy', 'base-sad', 'base-angry', 'base-excited'],
+            basic: ['bounce', 'shake', 'pulse', 'float', 'angry-shake'],
+            orbital: ['orbit-mode', 'fly-around', 'orbital-dance', 'orbital-dance-single', 'orbital-dance-shadow', 'zoom-out'],
+            advanced: ['spiral-dance', 'base-ascension', 'eyes-glow', 'mouth-move', 'base-shadow'],
+            problematic: ['plutoWrap', 'pluto_eye', 'pluto']
+        };
 
         // Initialize when DOM is ready
         if (document.readyState === 'loading') {
@@ -304,12 +378,26 @@ class PlutoTestPanelController {
         const statusText = `Type: ${pluto.isModern ? 'Modern' : 'Legacy'} | Ready: ${pluto.isReady}`;
         this.updateStatusElement('status', statusText);
 
-        const state = pluto.getState();
-        this.updateStatusElement('context', state.context);
-        this.updateStatusElement('skin', state.skin);
-        this.updateStatusElement('mood', state.mood);
-        this.updateStatusElement('animation', state.animation);
-        this.updateStatusElement('position', `(${state.position.x}, ${state.position.y})`);
+        // Safe state retrieval
+        let state;
+        try {
+            state = pluto.getState ? pluto.getState() : {};
+        } catch (error) {
+            console.warn('🧪 Failed to get Pluto state:', error);
+            state = {};
+        }
+        this.updateStatusElement('context', state.context || 'unknown');
+        this.updateStatusElement('skin', state.skin || 'unknown');
+        this.updateStatusElement('mood', state.mood || 'unknown');
+        this.updateStatusElement('animation', state.animation || 'unknown');
+
+        // Safe position handling
+        if (state.position && typeof state.position === 'object' &&
+            state.position.x !== undefined && state.position.y !== undefined) {
+            this.updateStatusElement('position', `(${state.position.x}, ${state.position.y})`);
+        } else {
+            this.updateStatusElement('position', 'center');
+        }
     }
 
     /**
@@ -760,7 +848,7 @@ class PlutoTestPanelController {
 
     /**
      * Test Pluto animation with new base system
-     * @param {string} animation - Animation to test
+     * @param {string} animation - Animation to test (friendly name)
      */
     testPlutoAnimation(animation) {
         const pluto = this.getPluto();
@@ -770,8 +858,31 @@ class PlutoTestPanelController {
             return false;
         }
 
-        console.log(`🧪 Testing Pluto animation: ${animation}`);
-        const success = pluto.setAnimation(animation);
+        // Map friendly name to CSS animation name
+        const cssAnimationName = this.animationMapping[animation] || animation;
+        console.log(`🧪 Testing Pluto animation: ${animation} → ${cssAnimationName}`);
+
+        let success = false;
+
+        // Try different methods based on animation type
+        if (pluto.setAnimation) {
+            // Modern component method
+            success = pluto.setAnimation(animation);
+        } else if (pluto.element) {
+            // Direct CSS method (fallback)
+            pluto.element.dataset.animation = animation;
+            pluto.element.style.animation = `${cssAnimationName} 2s infinite ease-in-out`;
+            success = true;
+        }
+
+        // For problematic animations, apply directly to CSS
+        if (['plutoWrap', 'pluto_eye', 'pluto'].includes(animation)) {
+            if (pluto.element) {
+                pluto.element.style.animation = `${cssAnimationName} 2s infinite ease-in-out`;
+                success = true;
+                this.showAnimationIndicator(`⚠️ Legacy: ${animation}`);
+            }
+        }
 
         if (success) {
             this.currentAnimation = animation;
@@ -952,16 +1063,80 @@ class PlutoTestPanelController {
     }
 
     /**
-     * Play random animation
+     * Play random animation from current context
      */
     playRandomAnimation() {
-        const pluto = this.getPluto();
-        if (pluto && pluto.playRandomAnimation) {
-            pluto.playRandomAnimation();
-            this.showAnimationIndicator('🎲 Random Animation!');
-            this.updateStatusDisplay();
-            this.updateActiveButtons();
+        const contextAnimations = this.animationCategories[this.currentContext] ||
+            Object.keys(this.animationMapping);
+
+        const randomAnimation = contextAnimations[Math.floor(Math.random() * contextAnimations.length)];
+
+        console.log(`🎲 Playing random ${this.currentContext} animation: ${randomAnimation}`);
+        this.testPlutoAnimation(randomAnimation);
+    }
+
+    /**
+     * Test animations by category
+     * @param {string} category - Category name (menu, game, emotions, basic, orbital, advanced)
+     */
+    testAnimationCategory(category) {
+        if (!this.animationCategories[category]) {
+            console.warn(`❌ Unknown animation category: ${category}`);
+            return;
         }
+
+        const animations = this.animationCategories[category];
+        let currentIndex = 0;
+
+        const playNext = () => {
+            if (currentIndex < animations.length) {
+                const animation = animations[currentIndex];
+                this.testPlutoAnimation(animation);
+                currentIndex++;
+                setTimeout(playNext, 3000); // 3 seconds between animations
+            }
+        };
+
+        this.showAnimationIndicator(`🎭 Testing ${category} category (${animations.length} animations)`);
+        playNext();
+    }
+
+    /**
+     * Test all animations sequentially (for debugging)
+     */
+    testAllAnimations() {
+        const allAnimations = Object.keys(this.animationMapping);
+        let currentIndex = 0;
+
+        const playNext = () => {
+            if (currentIndex < allAnimations.length) {
+                const animation = allAnimations[currentIndex];
+                this.testPlutoAnimation(animation);
+                currentIndex++;
+                setTimeout(playNext, 2500); // 2.5 seconds between animations
+            } else {
+                this.showAnimationIndicator('✅ All animations tested!');
+            }
+        };
+
+        this.showAnimationIndicator(`🎭 Testing ALL ${allAnimations.length} animations...`);
+        playNext();
+    }
+
+    /**
+     * Fix problematic animation names (future implementation)
+     */
+    fixProblematicAnimations() {
+        const fixes = {
+            'plutoWrap': 'pluto-wrap-move',
+            'pluto_eye': 'pluto-eye-rotate'
+        };
+
+        Object.entries(fixes).forEach(([old, fixed]) => {
+            console.log(`🔧 Animation "${old}" should be renamed to "${fixed}"`);
+        });
+
+        this.showAnimationIndicator('🔧 Check console for naming fixes needed');
     }
 
     /**

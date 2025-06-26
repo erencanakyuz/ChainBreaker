@@ -1,11 +1,14 @@
 <div id="pluto-test-panel" class="test-panel"
-    style="position: fixed; top: 10px; left: 10px; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 20px; border-radius: 15px; font-family: 'Press Start 2P', monospace; font-size: 10px; z-index: 1000; max-width: 380px; border: 2px solid #4ecdc4; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px);">
+    style="position: fixed; top: 10px; left: 10px; background: linear-gradient(135deg, #2c3e50, #34495e); color: white; padding: 20px; border-radius: 15px; font-family: 'Press Start 2P', monospace; font-size: 10px; z-index: 1000; max-width: 380px; max-height: 90vh; border: 2px solid #4ecdc4; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px); overflow-y: auto;">
 
     <div class="panel-header"
         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #4ecdc4; padding-bottom: 15px;">
         <h3 style="margin: 0; color: #4ecdc4; font-size: 12px;">🪐 NEW BASE PLUTO LAB</h3>
-        <button id="toggle-panel" class="toggle-btn"
-            style="background: #e74c3c; color: white; border: none; border-radius: 5px; width: 25px; height: 25px; font-size: 14px; cursor: pointer;">━</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-size: 7px; color: #95a5a6;">↕️ Scroll</div>
+            <button id="toggle-panel" class="toggle-btn"
+                style="background: #e74c3c; color: white; border: none; border-radius: 5px; width: 25px; height: 25px; font-size: 14px; cursor: pointer;">━</button>
+        </div>
     </div>
 
     <div class="panel-content">
@@ -66,59 +69,161 @@
         <!-- Menu Context Animations -->
         <div class="test-section menu-animations" style="margin-bottom: 15px;">
             <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">🏠 MENU ANIMATIONS
-                (Cute)</div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px;">
+                (7)</div>
+            <div class="button-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                 <button onclick="plutoTestPanel.testPlutoAnimation('idle')" class="test-btn anim-btn"
-                    data-animation="idle">💤 Float</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('excited')" class="test-btn anim-btn"
-                    data-animation="excited">⚡ Bounce</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('cute-wiggle')" class="test-btn anim-btn"
-                    data-animation="cute-wiggle">😊 Wiggle</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('curious')" class="test-btn anim-btn"
-                    data-animation="curious">👀 Curious</button>
+                    data-animation="idle">💤 Idle Pulse</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('menu-float')" class="test-btn anim-btn"
+                    data-animation="menu-float">☁️ Menu Float</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('menu-bounce')" class="test-btn anim-btn"
+                    data-animation="menu-bounce">🏀 Menu Bounce</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('menu-wiggle')" class="test-btn anim-btn"
+                    data-animation="menu-wiggle">😊 Menu Wiggle</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('menu-curious')" class="test-btn anim-btn"
+                    data-animation="menu-curious">👀 Menu Curious</button>
             </div>
         </div>
 
         <!-- Game Context Animations -->
         <div class="test-section game-animations" style="margin-bottom: 15px; display: none;">
             <div class="section-title" style="color: #1abc9c; margin-bottom: 8px; font-size: 9px;">🎮 GAME ANIMATIONS
-                (Dynamic)</div>
+                (6)</div>
             <div class="button-grid"
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                <button onclick="plutoTestPanel.testPlutoAnimation('idle')" class="test-btn anim-btn"
-                    data-animation="idle">💤 Cute Idle</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('excited')" class="test-btn anim-btn"
-                    data-animation="excited">🎉 Celebration</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('game-idle-cute')" class="test-btn anim-btn"
+                    data-animation="game-idle-cute">💤 Game Idle</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('game-energy')" class="test-btn anim-btn"
+                    data-animation="game-energy">⚡ Game Energy</button>
             </div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testPlutoAnimation('power-burst')" class="test-btn anim-btn"
-                    data-animation="power-burst">💥 Power Burst</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('chain-break')" class="test-btn anim-btn"
-                    data-animation="chain-break">⛓️ Chain Break</button>
-                <button onclick="plutoTestPanel.testPlutoAnimation('victory-dance')" class="test-btn anim-btn"
-                    data-animation="victory-dance">🏆 Victory</button>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('game-celebration')" class="test-btn anim-btn"
+                    data-animation="game-celebration">🎉 Celebration</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('game-power-burst')" class="test-btn anim-btn"
+                    data-animation="game-power-burst">💥 Power Burst</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('game-chain-break')" class="test-btn anim-btn"
+                    data-animation="game-chain-break">⛓️ Chain Break</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('game-victory')" class="test-btn anim-btn"
+                    data-animation="game-victory">🏆 Victory</button>
             </div>
         </div>
 
-        <!-- Universal Animations (Context-Free) -->
+        <!-- Base Emotions -->
         <div class="test-section" style="margin-bottom: 15px;">
-            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">🌟 UNIVERSAL
-                ANIMATIONS</div>
+            <div class="section-title" style="color: #9b59b6; margin-bottom: 8px; font-size: 9px;">😄 BASE EMOTIONS (4)
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('base-happy')" class="test-btn anim-btn"
+                    data-animation="base-happy">😊 Base Happy</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('base-sad')" class="test-btn anim-btn"
+                    data-animation="base-sad">😢 Base Sad</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('base-angry')" class="test-btn anim-btn"
+                    data-animation="base-angry">😡 Base Angry</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('base-excited')" class="test-btn anim-btn"
+                    data-animation="base-excited">🤩 Base Excited</button>
+            </div>
+        </div>
+
+        <!-- Basic Effects -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #f39c12; margin-bottom: 8px; font-size: 9px;">✨ BASIC EFFECTS (5)
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('bounce')" class="test-btn anim-btn"
+                    data-animation="bounce">🏀 Bounce</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('shake')" class="test-btn anim-btn"
+                    data-animation="shake">🌪️ Shake</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('pulse')" class="test-btn anim-btn"
+                    data-animation="pulse">💫 Pulse</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('float')" class="test-btn anim-btn"
+                    data-animation="float">☁️ Float</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('angry-shake')" class="test-btn anim-btn"
+                    data-animation="angry-shake">😤 Angry Shake</button>
+            </div>
+        </div>
+
+        <!-- Orbital Effects -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #e67e22; margin-bottom: 8px; font-size: 9px;">🌍 ORBITAL EFFECTS
+                (6)</div>
             <div class="button-grid"
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                <button onclick="plutoTestPanel.testPlutoAnimation('orbit')" class="test-btn anim-btn"
-                    data-animation="orbit">🌍 Orbit</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('orbit-mode')" class="test-btn anim-btn"
+                    data-animation="orbit-mode">🌍 Orbit Mode</button>
                 <button onclick="plutoTestPanel.testPlutoAnimation('fly-around')" class="test-btn anim-btn"
                     data-animation="fly-around">🚀 Fly Around</button>
             </div>
             <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testPlutoAnimation('spiral-dance')" class="test-btn anim-btn"
-                    data-animation="spiral-dance">🌀 Spiral</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('orbital-dance')" class="test-btn anim-btn"
+                    data-animation="orbital-dance">💃 Orbital Dance</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('orbital-dance-single')" class="test-btn anim-btn"
+                    data-animation="orbital-dance-single">💫 Single Orbit</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('orbital-dance-shadow')" class="test-btn anim-btn"
+                    data-animation="orbital-dance-shadow">🌘 Shadow Orbit</button>
                 <button onclick="plutoTestPanel.testPlutoAnimation('zoom-out')" class="test-btn anim-btn"
                     data-animation="zoom-out">🔍 Zoom Out</button>
             </div>
-            <div style="font-size: 7px; color: #bdc3c7; margin-top: 5px; text-align: center;">
-                Works in both contexts, must be unlocked through progression
+        </div>
+
+        <!-- Advanced Effects -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #8e44ad; margin-bottom: 8px; font-size: 9px;">🎭 ADVANCED EFFECTS
+                (5)</div>
+            <div class="button-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('spiral-dance')" class="test-btn anim-btn"
+                    data-animation="spiral-dance">🌀 Spiral Dance</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('base-ascension')" class="test-btn anim-btn"
+                    data-animation="base-ascension">✨ Ascension</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('eyes-glow')" class="test-btn anim-btn"
+                    data-animation="eyes-glow">👁️ Eyes Glow</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('mouth-move')" class="test-btn anim-btn"
+                    data-animation="mouth-move">👄 Mouth Move</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('base-shadow')" class="test-btn anim-btn"
+                    data-animation="base-shadow">🌘 Shadow</button>
+            </div>
+        </div>
+
+        <!-- Legacy/Problem Animations -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #e74c3c; margin-bottom: 8px; font-size: 9px;">⚠️ LEGACY/PROBLEMATIC
+                (3)</div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.testPlutoAnimation('plutoWrap')" class="test-btn anim-btn"
+                    data-animation="plutoWrap" style="opacity: 0.7;">🔧 plutoWrap</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('pluto_eye')" class="test-btn anim-btn"
+                    data-animation="pluto_eye" style="opacity: 0.7;">👁️ pluto_eye</button>
+                <button onclick="plutoTestPanel.testPlutoAnimation('pluto')" class="test-btn anim-btn"
+                    data-animation="pluto" style="opacity: 0.7;">🪐 pluto</button>
+            </div>
+            <div style="font-size: 7px; color: #e74c3c; margin-top: 5px; text-align: center;">
+                ⚠️ These need renaming: plutoWrap → pluto-wrap-move, pluto_eye → pluto-eye-rotate
+            </div>
+        </div>
+
+        <!-- Animation Count Summary -->
+        <div class="test-section" style="margin-bottom: 15px;">
+            <div class="section-title" style="color: #95a5a6; margin-bottom: 8px; font-size: 9px;">📊 ANIMATION SUMMARY
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 5px; font-size: 8px; color: #ecf0f1;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div>Menu: 7 | Game: 6</div>
+                    <div>Emotions: 4 | Basic: 5</div>
+                    <div>Orbital: 6 | Advanced: 5</div>
+                    <div>Problems: 3 | <strong>Total: 37</strong></div>
+                </div>
             </div>
         </div>
 
@@ -128,11 +233,17 @@
             <div class="button-grid"
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                 <button onclick="plutoTestPanel.playRandomAnimation()" class="test-btn">🎲 Random Animation</button>
-                <button onclick="plutoTestPanel.unlockAllAnimations()" class="test-btn">🔓 Unlock All</button>
+                <button onclick="plutoTestPanel.testAllAnimations()" class="test-btn">🎭 Test All (37)</button>
             </div>
-            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-                <button onclick="plutoTestPanel.testLevel(1)" class="test-btn">📈 Level 1</button>
-                <button onclick="plutoTestPanel.testLevel(5)" class="test-btn">🎯 Level 5</button>
+            <div class="button-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <button onclick="plutoTestPanel.testAnimationCategory('menu')" class="test-btn">🏠 Test Menu</button>
+                <button onclick="plutoTestPanel.testAnimationCategory('game')" class="test-btn">🎮 Test Game</button>
+                <button onclick="plutoTestPanel.testAnimationCategory('orbital')" class="test-btn">🌍 Test
+                    Orbital</button>
+            </div>
+            <div class="button-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="plutoTestPanel.fixProblematicAnimations()" class="test-btn">🔧 Fix Names</button>
                 <button onclick="plutoTestPanel.resetPlutoToDefault()" class="test-btn">🔄 Reset</button>
             </div>
         </div>
@@ -286,6 +397,47 @@
             to {
                 transform: translateX(0);
                 opacity: 1;
+            }
+        }
+
+        /* Custom Scrollbar for Test Panel */
+        #pluto-test-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #pluto-test-panel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        #pluto-test-panel::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #pluto-test-panel::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #5ddbce, #52b2a3);
+        }
+
+        /* Panel Content Padding for Better Scroll */
+        .panel-content {
+            padding-right: 5px;
+            /* Extra space for scrollbar */
+        }
+
+        /* Responsive Panel Height */
+        @media (max-height: 800px) {
+            #pluto-test-panel {
+                max-height: 85vh !important;
+                font-size: 9px !important;
+            }
+        }
+
+        @media (max-height: 600px) {
+            #pluto-test-panel {
+                max-height: 80vh !important;
+                font-size: 8px !important;
             }
         }
     </style>
