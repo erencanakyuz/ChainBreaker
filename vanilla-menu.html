@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chain Breaker - Vanilla Canvas Edition</title>
+
+    <!-- Performance Optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+
+    <!-- Component Styles -->
+    <link rel="preload" href="css/components/animations.css?v=3.0" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="css/components/animations.css?v=3.0">
+    </noscript>
+    <link rel="preload" href="css/components/pluto.css?v=3.0" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="css/components/pluto.css?v=3.0">
+    </noscript>
+
+    <!-- Responsive System -->
+    <link rel="preload" href="css/responsive-unified.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="css/responsive-unified.css">
+    </noscript>
+
+    <!-- Optimized Font Loading -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    </noscript>
+
+    <style>
+        /* Canvas Viewport Fix */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            touch-action: none;
+            user-select: none;
+            background: #000;
+            font-family: 'Orbitron', Arial, sans-serif;
+        }
+
+        /* Game Canvas */
+        #gameCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, #1e3c72 0%, #2a5298 50%, #0f0f23 100%);
+            cursor: pointer;
+        }
+
+        /* UI Overlay */
+        .ui-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .ui-text {
+            position: absolute;
+            color: #ffffff;
+            font-family: 'Orbitron', Arial, sans-serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+        }
+
+        /* Game Title */
+        .game-title {
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Score UI */
+        .score-text {
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+        }
+
+        .level-text {
+            top: 50px;
+            left: 20px;
+            font-size: 20px;
+        }
+
+        .lives-text {
+            top: 80px;
+            left: 20px;
+            font-size: 20px;
+        }
+
+        .combo-text {
+            top: 110px;
+            left: 20px;
+            font-size: 18px;
+        }
+
+        .fever-text {
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            color: #ff6b6b;
+            text-align: center;
+        }
+
+        /* Popup Effects */
+        .score-popup,
+        .combo-effect,
+        .level-up {
+            position: fixed;
+            pointer-events: none;
+            font-family: 'Orbitron', Arial, sans-serif;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            animation: popupFade 800ms ease-out forwards;
+        }
+
+        .score-popup {
+            font-size: 24px;
+            color: #00ff00;
+        }
+
+        .combo-effect {
+            font-size: 32px;
+            color: #ffaa00;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .level-up {
+            font-size: 48px;
+            color: #ff5555;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes popupFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0px) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.2);
+            }
+        }
+
+        /* Menu Buttons */
+        .menu-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 150;
+            pointer-events: auto;
+        }
+
+        .mode-button {
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid #00aaff;
+            border-radius: 15px;
+            padding: 15px 30px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 500px;
+            text-align: left;
+            color: #ffffff;
+            font-family: 'Orbitron', Arial, sans-serif;
+        }
+
+        .mode-button:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+        }
+
+        .mode-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .mode-theme {
+            font-size: 12px;
+            color: #cccccc;
+            opacity: 0.9;
+        }
+
+        .difficulty {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #00aaff;
+        }
+
+        /* Game Over Screen */
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 48px;
+            color: #ff6b6b;
+            font-weight: bold;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            pointer-events: auto;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Mobile Optimizations */
+        @media screen and (max-width: 768px) {
+            .game-title {
+                font-size: 2.5em;
+                top: 40px;
+            }
+
+            .score-popup {
+                font-size: 20px;
+            }
+
+            .combo-effect {
+                font-size: 28px;
+            }
+
+            .level-up {
+                font-size: 36px;
+            }
+
+            .mode-button {
+                width: 90vw;
+                padding: 12px 20px;
+            }
+
+            .mode-name {
+                font-size: 18px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .game-title {
+                font-size: 2em;
+                top: 30px;
+            }
+
+            .score-popup {
+                font-size: 18px;
+            }
+
+            .combo-effect {
+                font-size: 24px;
+            }
+
+            .level-up {
+                font-size: 30px;
+            }
+
+            .mode-name {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div class="ui-overlay">
+        <!-- Game Title -->
+        <div class="ui-text game-title" id="gameTitle" style="display: none;">CHAIN BREAKER</div>
+
+        <!-- Score UI -->
+        <div class="ui-text score-text" id="scoreText">Score: 0</div>
+        <div class="ui-text level-text" id="levelText">Level: 1</div>
+        <div class="ui-text lives-text" id="livesText">Lives: 3</div>
+        <div class="ui-text combo-text" id="comboText">Combo: 0</div>
+        <div class="ui-text fever-text" id="feverText"></div>
+    </div>
+
+    <!-- Menu Container -->
+    <div class="menu-container" id="menuContainer">
+        <!-- Menu buttons will be created dynamically -->
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="game-over" id="gameOverScreen">
+        <div id="gameOverText">GAME OVER</div>
+        <div style="font-size: 24px; margin-top: 20px;">Click to Restart</div>
+    </div>
+
+    <!-- Vanilla Game Engine -->
+    <script>
+        // ====================
+        // VANILLA GAME ENGINE
+        // ====================
+
+        class VanillaChainBreaker {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.currentScene = 'menu';
+                this.gameState = 'loading';
+                this.lastTime = 0;
+                this.deltaTime = 0;
+
+                // Initialize canvas
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+
+                // Device detection and adaptive constants
+                this.setupAdaptiveConstants();
+
+                // Color palettes
+                this.setupColorPalettes();
+
+                // Game objects
+                this.rings = [];
+                this.particles = [];
+                this.stars = [];
+                this.needle = null;
+                this.activeRing = null;
+
+                // Game state
+                this.score = 0;
+                this.level = 1;
+                this.lives = 3;
+                this.combo = 0;
+                this.feverMode = false;
+                this.feverTimer = 0;
+                this.gameOverFlag = false;
+
+                // UI elements
+                this.ui = {
+                    scoreText: document.getElementById('scoreText'),
+                    levelText: document.getElementById('levelText'),
+                    livesText: document.getElementById('livesText'),
+                    comboText: document.getElementById('comboText'),
+                    feverText: document.getElementById('feverText'),
+                    gameTitle: document.getElementById('gameTitle'),
+                    menuContainer: document.getElementById('menuContainer'),
+                    gameOverScreen: document.getElementById('gameOverScreen')
+                };
+
+                // Input handling
+                this.setupInput();
+
+                // Initialize menu
+                this.createMenuButtons();
+
+                // Start game loop
+                this.gameLoop();
+            }
+
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.centerX = this.width / 2;
+                this.centerY = this.height / 2;
+            }
+
+            setupAdaptiveConstants() {
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+                const isSmallMobile = window.innerWidth <= 480;
+
+                if (isSmallMobile) {
+                    this.constants = {
+                        BASE_RADIUS: 60,
+                        RING_THICKNESS: 12,
+                        RING_GAP: 8,
+                        MAX_RINGS: 8,
+                        INITIAL_RINGS: 4,
+                        TARGET_FPS: 60
+                    };
+                } else if (isMobile) {
+                    this.constants = {
+                        BASE_RADIUS: 75,
+                        RING_THICKNESS: 15,
+                        RING_GAP: 10,
+                        MAX_RINGS: 10,
+                        INITIAL_RINGS: 5,
+                        TARGET_FPS: 90
+                    };
+                } else {
+                    this.constants = {
+                        BASE_RADIUS: 100,
+                        RING_THICKNESS: 20,
+                        RING_GAP: 15,
+                        MAX_RINGS: 12,
+                        INITIAL_RINGS: 6,
+                        TARGET_FPS: 144
+                    };
+                }
+            }
+
+            setupColorPalettes() {
+                this.palettes = {
+                    neon: ['#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF6B6B', '#A8E6CF', '#74B9FF', '#FD79A8'],
+                    sunset: ['#FF6B9D', '#F38BA8', '#E8B4CB', '#C8A2C8', '#FDCB6E', '#E17055', '#F39C12', '#E67E22'],
+                    ocean: ['#74B9FF', '#0984E3', '#6C5CE7', '#A29BFE', '#00B894', '#00CEC9', '#55EFC4', '#81ECEC'],
+                    fire: ['#E17055', '#FDCB6E', '#F39C12', '#E67E22', '#D63031', '#FF7675', '#FD79A8', '#FDCB6E'],
+                    cosmic: ['#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E', '#74B9FF', '#00B894', '#FF6B9D', '#FECA57'],
+                    aurora: ['#00CEC9', '#55EFC4', '#81ECEC', '#74B9FF', '#A29BFE', '#6C5CE7', '#FD79A8', '#FDCB6E']
+                };
+
+                this.modeDesigns = [
+                    {
+                        name: "Bubble Pop",
+                        theme: "Gentle bubbles and smooth precision",
+                        palette: 'neon',
+                        sweetSpotSize: 15,
+                        needleSpeed: 1,
+                        ringMovement: false
+                    },
+                    {
+                        name: "Cotton Candy",
+                        theme: "Sweet pastels with swift motions",
+                        palette: 'sunset',
+                        sweetSpotSize: 15,
+                        needleSpeed: 1.3,
+                        ringMovement: false
+                    },
+                    {
+                        name: "Ocean Waves",
+                        theme: "Flowing blues with dancing targets",
+                        palette: 'ocean',
+                        sweetSpotSize: 15,
+                        needleSpeed: 1.2,
+                        ringMovement: true,
+                        ringSpeed: 0.0005
+                    },
+                    {
+                        name: "Golden Sunset",
+                        theme: "Warm golds with precise timing",
+                        palette: 'fire',
+                        sweetSpotSize: 10,
+                        needleSpeed: 1.3,
+                        ringMovement: true,
+                        ringSpeed: 0.0007
+                    },
+                    {
+                        name: "Magic Prism",
+                        theme: "Enchanted colors with wild patterns",
+                        palette: 'cosmic',
+                        sweetSpotSize: 12,
+                        needleSpeed: 1.4,
+                        ringMovement: true,
+                        ringSpeed: 0.001
+                    },
+                    {
+                        name: "Rainbow Master",
+                        theme: "The ultimate cartoon challenge",
+                        palette: 'aurora',
+                        sweetSpotSize: 8,
+                        needleSpeed: 1.8,
+                        ringMovement: true,
+                        ringSpeed: 0.0015
+                    }
+                ];
+            }
+
+            setupInput() {
+                this.canvas.addEventListener('click', (e) => this.handleClick(e));
+                this.canvas.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    this.handleClick(e.touches[0]);
+                });
+            }
+
+            handleClick(e) {
+                if (this.currentScene === 'menu') {
+                    // Menu clicks handled by DOM buttons
+                    return;
+                }
+
+                if (this.currentScene === 'game') {
+                    this.handleGameClick();
+                }
+
+                if (this.gameOverFlag) {
+                    this.resetGame();
+                }
+            }
+
+            createMenuButtons() {
+                const container = this.ui.menuContainer;
+                container.innerHTML = '';
+
+                this.modeDesigns.forEach((mode, index) => {
+                    const button = document.createElement('div');
+                    button.className = 'mode-button';
+                    button.style.borderColor = this.palettes[mode.palette][0];
+
+                    const difficulty = '●'.repeat(index + 1);
+
+                    button.innerHTML = `
+            <div class="mode-name">${mode.name}</div>
+            <div class="mode-theme">${mode.theme}</div>
+            <div class="difficulty">${difficulty}</div>
+          `;
+
+                    button.addEventListener('click', () => {
+                        this.selectedMode = mode;
+                        this.startGame();
+                    });
+
+                    container.appendChild(button);
+                });
+            }
+
+            startGame() {
+                this.currentScene = 'game';
+                this.ui.menuContainer.style.display = 'none';
+                this.ui.gameTitle.style.display = 'none';
+                this.resetGameState();
+                this.createStars();
+                this.startLevel();
+            }
+
+            resetGameState() {
+                this.score = 0;
+                this.level = 1;
+                this.lives = 3;
+                this.combo = 0;
+                this.feverMode = false;
+                this.feverTimer = 0;
+                this.gameOverFlag = false;
+                this.rings = [];
+                this.particles = [];
+                this.updateUI();
+            }
+
+            createStars() {
+                this.stars = [];
+                for (let i = 0; i < 50; i++) {
+                    this.stars.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        size: Math.random() * 2 + 0.5,
+                        alpha: Math.random() * 0.8 + 0.2,
+                        twinkleSpeed: Math.random() * 0.02 + 0.01
+                    });
+                }
+            }
+
+            startLevel() {
+                this.rings = [];
+
+                // Create rings
+                const numRings = Math.min(this.constants.MAX_RINGS, this.constants.INITIAL_RINGS + Math.floor(this.level / 5));
+                const radiusIncrement = this.constants.RING_THICKNESS + this.constants.RING_GAP;
+
+                for (let i = 0; i < numRings; i++) {
+                    const radius = this.constants.BASE_RADIUS + i * radiusIncrement;
+                    const colorIndex = i % this.palettes[this.selectedMode.palette].length;
+                    const color = this.palettes[this.selectedMode.palette][colorIndex];
+
+                    const ring = {
+                        x: this.centerX,
+                        y: this.centerY,
+                        radius: radius,
+                        thickness: this.constants.RING_THICKNESS,
+                        color: color,
+                        sweetSpotAngle: Math.random() * Math.PI * 2,
+                        sweetSpotSize: this.selectedMode.sweetSpotSize,
+                        alpha: 1,
+                        inputReceived: false
+                    };
+
+                    this.rings.push(ring);
+                }
+
+                this.activeRing = this.rings[this.rings.length - 1];
+
+                // Create needle
+                this.needle = {
+                    angle: 0,
+                    speed: (Math.PI / 180) * 180 * this.selectedMode.needleSpeed,
+                    radius: this.activeRing.radius + this.activeRing.thickness / 2 + 15
+                };
+            }
+
+            handleGameClick() {
+                if (!this.activeRing || this.gameOverFlag) return;
+
+                this.activeRing.inputReceived = true;
+
+                // Check if needle is in sweet spot
+                const angleDiff = Math.abs(this.needle.angle - this.activeRing.sweetSpotAngle);
+                const normalizedDiff = Math.min(angleDiff, Math.PI * 2 - angleDiff);
+                const threshold = (this.activeRing.sweetSpotSize * Math.PI) / 180;
+
+                if (normalizedDiff <= threshold) {
+                    this.handleSuccessfulHit();
+                } else {
+                    this.handleMiss();
+                }
+            }
+
+            handleSuccessfulHit() {
+                // Create particles
+                this.createParticles(this.centerX, this.centerY, '#ffffff', 6);
+
+                // Calculate score
+                const multiplier = this.feverMode ? 2 : (1 + this.combo * 0.1);
+                const points = Math.floor(10 * multiplier);
+                this.score += points;
+                this.combo++;
+
+                // Show score popup
+                this.showScorePopup(points, this.centerX, this.centerY);
+
+                // Remove ring
+                this.rings.pop();
+
+                if (this.rings.length === 0) {
+                    this.levelUp();
+                } else {
+                    this.activeRing = this.rings[this.rings.length - 1];
+                    this.needle.radius = this.activeRing.radius + this.activeRing.thickness / 2 + 15;
+                }
+
+                // Check fever mode
+                if (this.combo >= 5 && !this.feverMode) {
+                    this.activateFeverMode();
+                }
+
+                this.updateUI();
+            }
+
+            handleMiss() {
+                this.combo = 0;
+                this.lives--;
+
+                if (this.lives <= 0) {
+                    this.gameOver();
+                }
+
+                this.updateUI();
+            }
+
+            activateFeverMode() {
+                this.feverMode = true;
+                this.feverTimer = 5000; // 5 seconds
+                this.ui.feverText.textContent = 'FEVER MODE: 5s';
+            }
+
+            levelUp() {
+                this.level++;
+                this.showLevelUpEffect();
+
+                // Bonus life every 3 levels
+                if (this.level % 3 === 0) {
+                    this.lives = Math.min(this.lives + 1, 5);
+                }
+
+                setTimeout(() => {
+                    this.startLevel();
+                }, 1000);
+
+                this.updateUI();
+            }
+
+            gameOver() {
+                this.gameOverFlag = true;
+                this.ui.gameOverScreen.style.display = 'block';
+                document.getElementById('gameOverText').innerHTML = `
+          GAME OVER<br>
+          <div style="font-size: 24px; margin: 10px 0;">Score: ${this.score}</div>
+          <div style="font-size: 24px; margin: 10px 0;">Level: ${this.level}</div>
+        `;
+            }
+
+            resetGame() {
+                this.gameOverFlag = false;
+                this.ui.gameOverScreen.style.display = 'none';
+                this.currentScene = 'menu';
+                this.ui.menuContainer.style.display = 'block';
+                this.ui.gameTitle.style.display = 'block';
+                this.resetGameState();
+            }
+
+            createParticles(x, y, color, count) {
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        x: x,
+                        y: y,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10,
+                        life: 1,
+                        decay: 0.02,
+                        color: color,
+                        size: Math.random() * 4 + 2
+                    });
+                }
+            }
+
+            showScorePopup(points, x, y) {
+                const popup = document.createElement('div');
+                popup.className = 'score-popup';
+                popup.textContent = '+' + points;
+                popup.style.left = x + 'px';
+                popup.style.top = y + 'px';
+                document.body.appendChild(popup);
+
+                setTimeout(() => {
+                    if (popup.parentNode) popup.remove();
+                }, 800);
+            }
+
+            showLevelUpEffect() {
+                const effect = document.createElement('div');
+                effect.className = 'level-up';
+                effect.textContent = 'LEVEL UP!';
+                document.body.appendChild(effect);
+
+                setTimeout(() => {
+                    if (effect.parentNode) effect.remove();
+                }, 2000);
+            }
+
+            updateUI() {
+                this.ui.scoreText.textContent = 'Score: ' + this.score;
+                this.ui.levelText.textContent = 'Level: ' + this.level;
+                this.ui.livesText.textContent = 'Lives: ' + this.lives;
+                this.ui.comboText.textContent = 'Combo: ' + this.combo;
+            }
+
+            update(deltaTime) {
+                if (this.currentScene !== 'game' || this.gameOverFlag) return;
+
+                // Update needle
+                if (this.needle && this.activeRing) {
+                    this.needle.angle += this.needle.speed * deltaTime;
+                    if (this.needle.angle > Math.PI * 2) {
+                        this.needle.angle -= Math.PI * 2;
+                    }
+                }
+
+                // Update fever mode
+                if (this.feverMode) {
+                    this.feverTimer -= deltaTime * 1000;
+                    if (this.feverTimer <= 0) {
+                        this.feverMode = false;
+                        this.ui.feverText.textContent = '';
+                    } else {
+                        this.ui.feverText.textContent = 'FEVER MODE: ' + Math.ceil(this.feverTimer / 1000) + 's';
+                    }
+                }
+
+                // Update particles
+                this.particles = this.particles.filter(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= p.decay;
+                    return p.life > 0;
+                });
+
+                // Update stars
+                this.stars.forEach(star => {
+                    star.alpha += Math.sin(Date.now() * star.twinkleSpeed) * 0.01;
+                    star.alpha = Math.max(0.2, Math.min(1, star.alpha));
+                });
+            }
+
+            render() {
+                // Clear canvas
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                // Draw gradient background
+                const gradient = this.ctx.createRadialGradient(
+                    this.centerX, this.centerY, 0,
+                    this.centerX, this.centerY, Math.max(this.width, this.height)
+                );
+                gradient.addColorStop(0, '#1e3c72');
+                gradient.addColorStop(0.5, '#2a5298');
+                gradient.addColorStop(1, '#0f0f23');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                if (this.currentScene === 'menu') {
+                    this.renderMenu();
+                } else if (this.currentScene === 'game') {
+                    this.renderGame();
+                }
+            }
+
+            renderMenu() {
+                // Draw title stars
+                this.stars.forEach(star => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = star.alpha;
+                    this.ctx.fillStyle = '#00ffff';
+                    this.ctx.beginPath();
+                    this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+            }
+
+            renderGame() {
+                // Draw stars
+                this.stars.forEach(star => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = star.alpha * 0.5;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.beginPath();
+                    this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+
+                // Draw rings
+                this.rings.forEach(ring => {
+                    this.drawRing(ring);
+                });
+
+                // Draw needle
+                if (this.needle && this.activeRing) {
+                    this.drawNeedle();
+                }
+
+                // Draw particles
+                this.particles.forEach(particle => {
+                    this.ctx.save();
+                    this.ctx.globalAlpha = particle.life;
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+            }
+
+            drawRing(ring) {
+                const ctx = this.ctx;
+
+                // Main ring
+                ctx.save();
+                ctx.globalAlpha = ring.alpha;
+                ctx.strokeStyle = ring.color;
+                ctx.lineWidth = ring.thickness;
+                ctx.beginPath();
+                ctx.arc(ring.x, ring.y, ring.radius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Sweet spot
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = ring.thickness;
+                const sweetSpotRad = (ring.sweetSpotSize * Math.PI) / 180;
+                ctx.beginPath();
+                ctx.arc(ring.x, ring.y, ring.radius,
+                    ring.sweetSpotAngle - sweetSpotRad,
+                    ring.sweetSpotAngle + sweetSpotRad);
+                ctx.stroke();
+
+                // Sweet spot arrow
+                const arrowX = ring.x + Math.cos(ring.sweetSpotAngle) * (ring.radius - ring.thickness - 10);
+                const arrowY = ring.y + Math.sin(ring.sweetSpotAngle) * (ring.radius - ring.thickness - 10);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.moveTo(arrowX, arrowY);
+                ctx.lineTo(arrowX - 6, arrowY - 8);
+                ctx.lineTo(arrowX + 6, arrowY - 8);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            drawNeedle() {
+                const ctx = this.ctx;
+                const needleX = this.centerX + Math.cos(this.needle.angle) * this.needle.radius;
+                const needleY = this.centerY + Math.sin(this.needle.angle) * this.needle.radius;
+
+                // Check if in sweet spot for color
+                const angleDiff = Math.abs(this.needle.angle - this.activeRing.sweetSpotAngle);
+                const normalizedDiff = Math.min(angleDiff, Math.PI * 2 - angleDiff);
+                const threshold = (this.activeRing.sweetSpotSize * Math.PI) / 180;
+                const inSweetSpot = normalizedDiff <= threshold;
+
+                ctx.save();
+                ctx.fillStyle = inSweetSpot ? '#ffffff' : '#ff0000';
+
+                // Needle circle
+                ctx.beginPath();
+                ctx.arc(needleX, needleY, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Needle line
+                ctx.strokeStyle = inSweetSpot ? '#ffffff' : '#ff0000';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(needleX, needleY);
+                ctx.lineTo(needleX + Math.cos(this.needle.angle + Math.PI) * 25,
+                    needleY + Math.sin(this.needle.angle + Math.PI) * 25);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            gameLoop(currentTime = 0) {
+                this.deltaTime = (currentTime - this.lastTime) / 1000;
+                this.lastTime = currentTime;
+
+                this.update(this.deltaTime);
+                this.render();
+
+                requestAnimationFrame((time) => this.gameLoop(time));
+            }
+        }
+
+        // Initialize game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new VanillaChainBreaker();
+        });
+    </script>
+</body>
+
+</html>
